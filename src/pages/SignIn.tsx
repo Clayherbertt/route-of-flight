@@ -15,6 +15,8 @@ const SignIn = () => {
   const [loading, setLoading] = useState(false);
   const [signInForm, setSignInForm] = useState({ email: "", password: "" });
   const [signUpForm, setSignUpForm] = useState({ 
+    firstName: "",
+    lastName: "",
     email: "", 
     password: "", 
     confirmPassword: "" 
@@ -118,8 +120,32 @@ const SignIn = () => {
               
               <TabsContent value="signup">
                 <form onSubmit={handleSignUp} className="space-y-4">
+                  <div className="grid grid-cols-2 gap-4">
+                    <div className="space-y-2">
+                      <Label htmlFor="first-name">Legal First Name</Label>
+                      <Input
+                        id="first-name"
+                        type="text"
+                        placeholder="First name"
+                        value={signUpForm.firstName}
+                        onChange={(e) => setSignUpForm({ ...signUpForm, firstName: e.target.value })}
+                        required
+                      />
+                    </div>
+                    <div className="space-y-2">
+                      <Label htmlFor="last-name">Legal Last Name</Label>
+                      <Input
+                        id="last-name"
+                        type="text"
+                        placeholder="Last name"
+                        value={signUpForm.lastName}
+                        onChange={(e) => setSignUpForm({ ...signUpForm, lastName: e.target.value })}
+                        required
+                      />
+                    </div>
+                  </div>
                   <div className="space-y-2">
-                    <Label htmlFor="signup-email">Email</Label>
+                    <Label htmlFor="signup-email">Email Address</Label>
                     <Input
                       id="signup-email"
                       type="email"
