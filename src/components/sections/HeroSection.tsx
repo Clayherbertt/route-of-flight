@@ -3,7 +3,6 @@ import { ArrowRight, Book, Building2, TrendingUp } from "lucide-react";
 import { Carousel, CarouselContent, CarouselItem } from "@/components/ui/carousel";
 import Autoplay from "embla-carousel-autoplay";
 import { useRef } from "react";
-import heroImage from "@/assets/aviation-hero.jpg";
 import wingImage from "@/assets/aviation-wing.jpg";
 import engineImage from "@/assets/aviation-engine.jpg";
 
@@ -13,7 +12,6 @@ const HeroSection = () => {
   );
 
   const images = [
-    { src: heroImage, alt: "Professional aviation cockpit view" },
     { src: wingImage, alt: "Aircraft wing view from inside" },
     { src: engineImage, alt: "Jet engine turbine close-up" }
   ];
