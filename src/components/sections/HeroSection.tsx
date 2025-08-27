@@ -4,7 +4,6 @@ import { Carousel, CarouselContent, CarouselItem } from "@/components/ui/carouse
 import Autoplay from "embla-carousel-autoplay";
 import { useRef } from "react";
 import heroImage from "@/assets/aviation-hero.jpg";
-import turbopropImage from "@/assets/aviation-turboprop.jpg";
 import wingImage from "@/assets/aviation-wing.jpg";
 import engineImage from "@/assets/aviation-engine.jpg";
 
@@ -15,7 +14,6 @@ const HeroSection = () => {
 
   const images = [
     { src: heroImage, alt: "Professional aviation cockpit view" },
-    { src: turbopropImage, alt: "White turboprop aircraft on runway" },
     { src: wingImage, alt: "Aircraft wing view from inside" },
     { src: engineImage, alt: "Jet engine turbine close-up" }
   ];
