@@ -1,7 +1,12 @@
 import { Button } from "@/components/ui/button";
 import { Plane, Book, Building2, FileText } from "lucide-react";
+import { useAuth } from "@/contexts/AuthContext";
+import { AuthDialog } from "@/components/auth/AuthDialog";
+import { UserMenu } from "@/components/auth/UserMenu";
 
 const Header = () => {
+  const { user, loading } = useAuth();
+
   return (
     <header className="border-b border-border bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 sticky top-0 z-50">
       <div className="container flex h-16 items-center justify-between">
@@ -35,12 +40,24 @@ const Header = () => {
         </nav>
 
         <div className="flex items-center space-x-4">
-          <Button variant="ghost" size="sm">
-            Sign In
-          </Button>
-          <Button variant="aviation" size="sm">
-            Get Started
-          </Button>
+          {loading ? (
+            <div className="w-8 h-8 animate-pulse bg-muted rounded-full" />
+          ) : user ? (
+            <UserMenu />
+          ) : (
+            <>
+              <AuthDialog>
+                <Button variant="ghost" size="sm">
+                  Sign In
+                </Button>
+              </AuthDialog>
+              <AuthDialog>
+                <Button variant="aviation" size="sm">
+                  Get Started
+                </Button>
+              </AuthDialog>
+            </>
+          )}
         </div>
       </div>
     </header>
