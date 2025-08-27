@@ -1,5 +1,6 @@
 import { Button } from "@/components/ui/button";
 import { Plane, Book, Building2, FileText } from "lucide-react";
+import { Link } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
 import { AuthDialog } from "@/components/auth/AuthDialog";
 import { UserMenu } from "@/components/auth/UserMenu";
@@ -51,11 +52,11 @@ const Header = () => {
                   Sign In
                 </Button>
               </AuthDialog>
-              <AuthDialog>
+              <Link to="/signin">
                 <Button variant="aviation" size="sm">
                   Get Started
                 </Button>
-              </AuthDialog>
+              </Link>
             </>
           )}
         </div>
