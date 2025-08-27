@@ -1,43 +1,17 @@
 import { Button } from "@/components/ui/button";
 import { ArrowRight, Book, Building2, TrendingUp } from "lucide-react";
-import { Carousel, CarouselContent, CarouselItem } from "@/components/ui/carousel";
-import Autoplay from "embla-carousel-autoplay";
-import { useRef } from "react";
-import wingImage from "@/assets/aviation-wing.jpg";
-import engineImage from "@/assets/aviation-engine.jpg";
+import heroImage from "/lovable-uploads/9c341b88-0d1e-4d0e-a7ad-4fbcdfecd5d6.png";
 
 const HeroSection = () => {
-  const plugin = useRef(
-    Autoplay({ delay: 4000, stopOnInteraction: true })
-  );
-
-  const images = [
-    { src: wingImage, alt: "Aircraft wing view from inside" },
-    { src: engineImage, alt: "Jet engine turbine close-up" }
-  ];
-
   return (
     <section className="relative min-h-screen flex items-center justify-center overflow-hidden">
-      {/* Background Image Carousel */}
+      {/* Background Image */}
       <div className="absolute inset-0 z-0">
-        <Carousel
-          plugins={[plugin.current]}
-          className="w-full h-full"
-          onMouseEnter={plugin.current.stop}
-          onMouseLeave={plugin.current.reset}
-        >
-          <CarouselContent className="h-full">
-            {images.map((image, index) => (
-              <CarouselItem key={index} className="h-full">
-                <img
-                  src={image.src}
-                  alt={image.alt}
-                  className="w-full h-full object-cover"
-                />
-              </CarouselItem>
-            ))}
-          </CarouselContent>
-        </Carousel>
+        <img
+          src={heroImage}
+          alt="Jet engine turbine close-up"
+          className="w-full h-full object-cover"
+        />
         <div className="absolute inset-0 bg-black/40"></div>
       </div>
 
