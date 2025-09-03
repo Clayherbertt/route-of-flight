@@ -30,13 +30,15 @@ const Header = () => {
             <Building2 className="inline h-4 w-4 mr-2" />
             Airlines
           </a>
-          <Link
-            to="/subscription"
-            className="text-sm font-medium text-muted-foreground hover:text-foreground smooth-transition"
-          >
-            <Crown className="inline h-4 w-4 mr-2" />
-            Subscription
-          </Link>
+          {user && (
+            <Link
+              to="/subscription"
+              className="text-sm font-medium text-muted-foreground hover:text-foreground smooth-transition"
+            >
+              <Crown className="inline h-4 w-4 mr-2" />
+              Subscription
+            </Link>
+          )}
           <a
             href="#resume"
             className="text-sm font-medium text-muted-foreground hover:text-foreground smooth-transition"
