@@ -53,10 +53,44 @@ const addFlightSchema = z.object({
 
 type AddFlightForm = z.infer<typeof addFlightSchema>;
 
+interface FlightEntry {
+  id: string;
+  date: string;
+  aircraft_registration: string;
+  aircraft_type: string;
+  departure_airport: string;
+  arrival_airport: string;
+  total_time: number;
+  pic_time: number;
+  cross_country_time: number;
+  night_time: number;
+  instrument_time: number;
+  approaches: string;
+  landings: number;
+  remarks: string | null;
+  route?: string;
+  start_time?: string;
+  end_time?: string;
+  sic_time?: number;
+  solo_time?: number;
+  day_takeoffs?: number;
+  day_landings?: number;
+  night_takeoffs?: number;
+  night_landings?: number;
+  actual_instrument?: number;
+  simulated_instrument?: number;
+  holds?: number;
+  dual_given?: number;
+  dual_received?: number;
+  simulated_flight?: number;
+  ground_training?: number;
+}
+
 interface AddFlightDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   onFlightAdded: () => void;
+  editingFlight?: FlightEntry | null;
 }
 
 interface Aircraft {
@@ -67,7 +101,7 @@ interface Aircraft {
   category_class: string;
 }
 
-export const AddFlightDialog = ({ open, onOpenChange, onFlightAdded }: AddFlightDialogProps) => {
+export const AddFlightDialog = ({ open, onOpenChange, onFlightAdded, editingFlight }: AddFlightDialogProps) => {
   const { user } = useAuth();
   const { toast } = useToast();
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -104,6 +138,61 @@ export const AddFlightDialog = ({ open, onOpenChange, onFlightAdded }: AddFlight
       fetchAircraft();
     }
   }, [open, user]);
+
+  // Populate form when editing a flight
+  useEffect(() => {
+    if (editingFlight && open) {
+      form.reset({
+        date: new Date(editingFlight.date),
+        aircraft_registration: editingFlight.aircraft_registration,
+        aircraft_type: editingFlight.aircraft_type,
+        departure_airport: editingFlight.departure_airport,
+        arrival_airport: editingFlight.arrival_airport,
+        route: editingFlight.route || "",
+        start_time: editingFlight.start_time || "",
+        end_time: editingFlight.end_time || "",
+        total_time: editingFlight.total_time,
+        pic_time: editingFlight.pic_time,
+        sic_time: editingFlight.sic_time || 0,
+        solo_time: editingFlight.solo_time || 0,
+        night_time: editingFlight.night_time,
+        cross_country_time: editingFlight.cross_country_time,
+        day_takeoffs: editingFlight.day_takeoffs || 0,
+        day_landings: editingFlight.day_landings || 0,
+        night_takeoffs: editingFlight.night_takeoffs || 0,
+        night_landings: editingFlight.night_landings || 0,
+        actual_instrument: editingFlight.actual_instrument || 0,
+        simulated_instrument: editingFlight.simulated_instrument || 0,
+        holds: editingFlight.holds || 0,
+        approaches: editingFlight.approaches || "",
+        dual_given: editingFlight.dual_given || 0,
+        dual_received: editingFlight.dual_received || 0,
+        simulated_flight: editingFlight.simulated_flight || 0,
+        ground_training: editingFlight.ground_training || 0,
+        remarks: editingFlight.remarks || "",
+      });
+    } else if (!editingFlight && open) {
+      form.reset({
+        total_time: undefined,
+        pic_time: undefined,
+        sic_time: undefined,
+        solo_time: undefined,
+        night_time: undefined,
+        cross_country_time: undefined,
+        day_takeoffs: undefined,
+        day_landings: undefined,
+        night_takeoffs: undefined,
+        night_landings: undefined,
+        actual_instrument: undefined,
+        simulated_instrument: undefined,
+        holds: undefined,
+        dual_given: undefined,
+        dual_received: undefined,
+        simulated_flight: undefined,
+        ground_training: undefined,
+      });
+    }
+  }, [editingFlight, open, form]);
 
   const fetchAircraft = async () => {
     if (!user) return;
@@ -146,56 +235,70 @@ export const AddFlightDialog = ({ open, onOpenChange, onFlightAdded }: AddFlight
 
     setIsSubmitting(true);
     try {
-      const { error } = await supabase
-        .from('flight_entries')
-        .insert({
-          user_id: user.id,
-          date: format(values.date, 'yyyy-MM-dd'),
-          aircraft_registration: values.aircraft_registration,
-          aircraft_type: values.aircraft_type,
-          departure_airport: values.departure_airport.toUpperCase(),
-          arrival_airport: values.arrival_airport.toUpperCase(),
-          route: values.route || null,
-          start_time: values.start_time || null,
-          end_time: values.end_time || null,
-          total_time: values.total_time,
-          pic_time: values.pic_time,
-          sic_time: values.sic_time,
-          solo_time: values.solo_time,
-          night_time: values.night_time,
-          cross_country_time: values.cross_country_time,
-          day_takeoffs: values.day_takeoffs,
-          day_landings: values.day_landings,
-          night_takeoffs: values.night_takeoffs,
-          night_landings: values.night_landings,
-          actual_instrument: values.actual_instrument,
-          simulated_instrument: values.simulated_instrument,
-          holds: values.holds,
-          approaches: values.approaches || null,
-          dual_given: values.dual_given,
-          dual_received: values.dual_received,
-          simulated_flight: values.simulated_flight,
-          ground_training: values.ground_training,
-          instrument_time: values.actual_instrument + values.simulated_instrument,
-          landings: values.day_landings + values.night_landings,
-          remarks: values.remarks || null,
-        });
+      const flightData = {
+        user_id: user.id,
+        date: format(values.date, 'yyyy-MM-dd'),
+        aircraft_registration: values.aircraft_registration,
+        aircraft_type: values.aircraft_type,
+        departure_airport: values.departure_airport.toUpperCase(),
+        arrival_airport: values.arrival_airport.toUpperCase(),
+        route: values.route || null,
+        start_time: values.start_time || null,
+        end_time: values.end_time || null,
+        total_time: values.total_time,
+        pic_time: values.pic_time,
+        sic_time: values.sic_time,
+        solo_time: values.solo_time,
+        night_time: values.night_time,
+        cross_country_time: values.cross_country_time,
+        day_takeoffs: values.day_takeoffs,
+        day_landings: values.day_landings,
+        night_takeoffs: values.night_takeoffs,
+        night_landings: values.night_landings,
+        actual_instrument: values.actual_instrument,
+        simulated_instrument: values.simulated_instrument,
+        holds: values.holds,
+        approaches: values.approaches || null,
+        dual_given: values.dual_given,
+        dual_received: values.dual_received,
+        simulated_flight: values.simulated_flight,
+        ground_training: values.ground_training,
+        instrument_time: values.actual_instrument + values.simulated_instrument,
+        landings: values.day_landings + values.night_landings,
+        remarks: values.remarks || null,
+      };
+
+      let error;
+      if (editingFlight) {
+        // Update existing flight
+        const result = await supabase
+          .from('flight_entries')
+          .update(flightData)
+          .eq('id', editingFlight.id);
+        error = result.error;
+      } else {
+        // Insert new flight
+        const result = await supabase
+          .from('flight_entries')
+          .insert(flightData);
+        error = result.error;
+      }
 
       if (error) throw error;
 
       toast({
         title: "Success",
-        description: "Flight entry added successfully!",
+        description: editingFlight ? "Flight entry updated successfully!" : "Flight entry added successfully!",
       });
 
       form.reset();
       onOpenChange(false);
       onFlightAdded();
     } catch (error) {
-      console.error('Error adding flight:', error);
+      console.error('Error saving flight:', error);
       toast({
         title: "Error",
-        description: "Failed to add flight entry. Please try again.",
+        description: editingFlight ? "Failed to update flight entry. Please try again." : "Failed to add flight entry. Please try again.",
         variant: "destructive",
       });
     } finally {
@@ -207,9 +310,9 @@ export const AddFlightDialog = ({ open, onOpenChange, onFlightAdded }: AddFlight
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
         <DialogHeader>
-          <DialogTitle>Add Flight Entry</DialogTitle>
+          <DialogTitle>{editingFlight ? "Edit Flight Entry" : "Add Flight Entry"}</DialogTitle>
           <DialogDescription>
-            Record your flight details in your logbook
+            {editingFlight ? "Update your flight details" : "Record your flight details in your logbook"}
           </DialogDescription>
         </DialogHeader>
 
@@ -812,7 +915,7 @@ export const AddFlightDialog = ({ open, onOpenChange, onFlightAdded }: AddFlight
                 Cancel
               </Button>
               <Button type="submit" disabled={isSubmitting}>
-                {isSubmitting ? "Adding..." : "Add Flight"}
+                {isSubmitting ? (editingFlight ? "Updating..." : "Adding...") : (editingFlight ? "Update Flight" : "Add Flight")}
               </Button>
             </DialogFooter>
           </form>

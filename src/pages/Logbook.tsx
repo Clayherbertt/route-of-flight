@@ -29,6 +29,22 @@ interface FlightEntry {
   approaches: string;
   landings: number;
   remarks: string | null;
+  route?: string;
+  start_time?: string;
+  end_time?: string;
+  sic_time?: number;
+  solo_time?: number;
+  day_takeoffs?: number;
+  day_landings?: number;
+  night_takeoffs?: number;
+  night_landings?: number;
+  actual_instrument?: number;
+  simulated_instrument?: number;
+  holds?: number;
+  dual_given?: number;
+  dual_received?: number;
+  simulated_flight?: number;
+  ground_training?: number;
 }
 
 const Logbook = () => {
@@ -39,6 +55,7 @@ const Logbook = () => {
   const [flights, setFlights] = useState<FlightEntry[]>([]);
   const [isLoadingFlights, setIsLoadingFlights] = useState(true);
   const [showAddFlightDialog, setShowAddFlightDialog] = useState(false);
+  const [editingFlight, setEditingFlight] = useState<FlightEntry | null>(null);
 
   // Redirect to sign in if not authenticated
   useEffect(() => {
@@ -80,7 +97,17 @@ const Logbook = () => {
     }
   };
 
-  // Calculate totals from actual flight data
+  const handleEditFlight = (flight: FlightEntry) => {
+    setEditingFlight(flight);
+    setShowAddFlightDialog(true);
+  };
+
+  const handleCloseDialog = (open: boolean) => {
+    setShowAddFlightDialog(open);
+    if (!open) {
+      setEditingFlight(null);
+    }
+  };
   const totalHours = flights.reduce((sum, flight) => sum + Number(flight.total_time), 0);
   const totalPIC = flights.reduce((sum, flight) => sum + Number(flight.pic_time), 0);
   const totalXC = flights.reduce((sum, flight) => sum + Number(flight.cross_country_time), 0);
@@ -234,7 +261,11 @@ const Logbook = () => {
                 <TableBody>
                   {flights.length > 0 ? (
                     flights.map((flight) => (
-                      <TableRow key={flight.id} className="hover:bg-muted/50">
+                      <TableRow 
+                        key={flight.id} 
+                        className="hover:bg-muted/50 cursor-pointer"
+                        onClick={() => handleEditFlight(flight)}
+                      >
                         <TableCell className="font-medium">{flight.date}</TableCell>
                         <TableCell>
                           <Badge variant="outline">{flight.aircraft_registration}</Badge>
@@ -275,8 +306,9 @@ const Logbook = () => {
 
       <AddFlightDialog
         open={showAddFlightDialog}
-        onOpenChange={setShowAddFlightDialog}
+        onOpenChange={handleCloseDialog}
         onFlightAdded={fetchFlights}
+        editingFlight={editingFlight}
       />
     </div>
   );
