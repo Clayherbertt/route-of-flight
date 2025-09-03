@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -6,7 +6,8 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Calendar } from "@/components/ui/calendar";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
-import { CalendarIcon } from "lucide-react";
+import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from "@/components/ui/command";
+import { CalendarIcon, Plus } from "lucide-react";
 import { format } from "date-fns";
 import { cn } from "@/lib/utils";
 import { useForm } from "react-hook-form";
@@ -16,6 +17,7 @@ import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/contexts/AuthContext";
+import { AddAircraftDialog } from "./AddAircraftDialog";
 
 const addFlightSchema = z.object({
   date: z.date({
@@ -57,10 +59,21 @@ interface AddFlightDialogProps {
   onFlightAdded: () => void;
 }
 
+interface Aircraft {
+  aircraft_id: string;
+  type_code: string | null;
+  make: string;
+  model: string;
+  category_class: string;
+}
+
 export const AddFlightDialog = ({ open, onOpenChange, onFlightAdded }: AddFlightDialogProps) => {
   const { user } = useAuth();
   const { toast } = useToast();
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [aircraft, setAircraft] = useState<Aircraft[]>([]);
+  const [showAircraftDialog, setShowAircraftDialog] = useState(false);
+  const [aircraftSearchOpen, setAircraftSearchOpen] = useState(false);
 
   const form = useForm<AddFlightForm>({
     resolver: zodResolver(addFlightSchema),
@@ -84,6 +97,49 @@ export const AddFlightDialog = ({ open, onOpenChange, onFlightAdded }: AddFlight
       ground_training: undefined,
     },
   });
+
+  // Fetch user's aircraft on component mount and dialog open
+  useEffect(() => {
+    if (open && user) {
+      fetchAircraft();
+    }
+  }, [open, user]);
+
+  const fetchAircraft = async () => {
+    if (!user) return;
+
+    try {
+      const { data, error } = await supabase
+        .from('aircraft_logbook')
+        .select('aircraft_id, type_code, make, model, category_class')
+        .eq('user_id', user.id)
+        .order('aircraft_id');
+
+      if (error) throw error;
+      setAircraft(data || []);
+    } catch (error) {
+      console.error('Error fetching aircraft:', error);
+    }
+  };
+
+  const handleAircraftAdded = (aircraftId: string) => {
+    fetchAircraft();
+    form.setValue('aircraft_registration', aircraftId);
+    // Auto-fill aircraft type if available
+    const newAircraft = aircraft.find(a => a.aircraft_id === aircraftId);
+    if (newAircraft && newAircraft.type_code) {
+      form.setValue('aircraft_type', newAircraft.type_code);
+    }
+  };
+
+  const handleAircraftSelection = (aircraftId: string) => {
+    form.setValue('aircraft_registration', aircraftId);
+    const selectedAircraft = aircraft.find(a => a.aircraft_id === aircraftId);
+    if (selectedAircraft && selectedAircraft.type_code) {
+      form.setValue('aircraft_type', selectedAircraft.type_code);
+    }
+    setAircraftSearchOpen(false);
+  };
 
   const onSubmit = async (values: AddFlightForm) => {
     if (!user) return;
@@ -206,11 +262,70 @@ export const AddFlightDialog = ({ open, onOpenChange, onFlightAdded }: AddFlight
                 control={form.control}
                 name="aircraft_registration"
                 render={({ field }) => (
-                  <FormItem>
+                  <FormItem className="flex flex-col">
                     <FormLabel>Aircraft Registration</FormLabel>
-                    <FormControl>
-                      <Input placeholder="N123AB" {...field} />
-                    </FormControl>
+                    <div className="flex gap-2">
+                      <Popover open={aircraftSearchOpen} onOpenChange={setAircraftSearchOpen}>
+                        <PopoverTrigger asChild>
+                          <FormControl>
+                            <Button
+                              variant="outline"
+                              role="combobox"
+                              className={cn(
+                                "flex-1 justify-between",
+                                !field.value && "text-muted-foreground"
+                              )}
+                            >
+                              {field.value || "Select aircraft..."}
+                              <CalendarIcon className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+                            </Button>
+                          </FormControl>
+                        </PopoverTrigger>
+                        <PopoverContent className="w-[300px] p-0">
+                          <Command>
+                            <CommandInput 
+                              placeholder="Search aircraft..."
+                              value={field.value}
+                              onValueChange={(value) => {
+                                field.onChange(value);
+                                // Auto-fill type if exact match found
+                                const matchedAircraft = aircraft.find(a => a.aircraft_id === value.toUpperCase());
+                                if (matchedAircraft && matchedAircraft.type_code) {
+                                  form.setValue('aircraft_type', matchedAircraft.type_code);
+                                }
+                              }}
+                            />
+                            <CommandList>
+                              <CommandEmpty>No aircraft found.</CommandEmpty>
+                              <CommandGroup>
+                                {aircraft.map((ac) => (
+                                  <CommandItem
+                                    key={ac.aircraft_id}
+                                    value={ac.aircraft_id}
+                                    onSelect={() => handleAircraftSelection(ac.aircraft_id)}
+                                  >
+                                    <div className="flex flex-col">
+                                      <span className="font-medium">{ac.aircraft_id}</span>
+                                      <span className="text-sm text-muted-foreground">
+                                        {ac.make} {ac.model} • {ac.category_class}
+                                      </span>
+                                    </div>
+                                  </CommandItem>
+                                ))}
+                              </CommandGroup>
+                            </CommandList>
+                          </Command>
+                        </PopoverContent>
+                      </Popover>
+                      <Button
+                        type="button"
+                        variant="outline"
+                        size="icon"
+                        onClick={() => setShowAircraftDialog(true)}
+                      >
+                        <Plus className="h-4 w-4" />
+                      </Button>
+                    </div>
                     <FormMessage />
                   </FormItem>
                 )}
@@ -703,6 +818,12 @@ export const AddFlightDialog = ({ open, onOpenChange, onFlightAdded }: AddFlight
           </form>
         </Form>
       </DialogContent>
+
+      <AddAircraftDialog
+        open={showAircraftDialog}
+        onOpenChange={setShowAircraftDialog}
+        onAircraftAdded={handleAircraftAdded}
+      />
     </Dialog>
   );
 };

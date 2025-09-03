@@ -157,6 +157,66 @@ export type Database = {
           },
         ]
       }
+      aircraft_logbook: {
+        Row: {
+          aircraft_id: string
+          category_class: string
+          complex: boolean | null
+          created_at: string
+          engine_type: string | null
+          equipment_type: string
+          gear_type: string | null
+          high_performance: boolean | null
+          id: string
+          make: string
+          model: string
+          pressurized: boolean | null
+          taa: boolean | null
+          type_code: string | null
+          updated_at: string
+          user_id: string
+          year: number | null
+        }
+        Insert: {
+          aircraft_id: string
+          category_class: string
+          complex?: boolean | null
+          created_at?: string
+          engine_type?: string | null
+          equipment_type: string
+          gear_type?: string | null
+          high_performance?: boolean | null
+          id?: string
+          make: string
+          model: string
+          pressurized?: boolean | null
+          taa?: boolean | null
+          type_code?: string | null
+          updated_at?: string
+          user_id: string
+          year?: number | null
+        }
+        Update: {
+          aircraft_id?: string
+          category_class?: string
+          complex?: boolean | null
+          created_at?: string
+          engine_type?: string | null
+          equipment_type?: string
+          gear_type?: string | null
+          high_performance?: boolean | null
+          id?: string
+          make?: string
+          model?: string
+          pressurized?: boolean | null
+          taa?: boolean | null
+          type_code?: string | null
+          updated_at?: string
+          user_id?: string
+          year?: number | null
+        }
+        Relationships: []
+      }
       aircraft_logbooks: {
         Row: {
           aircraft_id: string
