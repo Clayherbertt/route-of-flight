@@ -24,7 +24,7 @@ const Subscription = () => {
     {
       title: "Standard",
       price: "$24.99",
-      priceId: "price_standard_2499", // Replace with your actual Stripe price ID
+      priceId: "price_1S35oeB9GgOD5ExOhwxJcQFf",
       description: "Perfect for individual pilots and small operations",
       features: [
         "Digital logbook management",
@@ -37,7 +37,7 @@ const Subscription = () => {
     {
       title: "Premium",
       price: "$59.99",
-      priceId: "price_premium_5999", // Replace with your actual Stripe price ID
+      priceId: "price_1S35oFB9GgOD5ExOz3vzGcWQ",
       description: "Advanced features for professional pilots and flight schools",
       features: [
         "Everything in Standard",
