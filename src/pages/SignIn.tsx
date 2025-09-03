@@ -48,7 +48,7 @@ const SignIn = () => {
     setLoading(true);
     
     try {
-      await signUp(signUpForm.email, signUpForm.password);
+      await signUp(signUpForm.email, signUpForm.password, signUpForm.firstName, signUpForm.lastName);
       toast.success("Account created! Please check your email to verify your account.");
       navigate("/");
     } catch (error: any) {
