@@ -28,24 +28,24 @@ const addFlightSchema = z.object({
   route: z.string().optional(),
   start_time: z.string().optional(),
   end_time: z.string().optional(),
-  total_time: z.number().min(0).default(0),
-  pic_time: z.number().min(0).default(0),
-  sic_time: z.number().min(0).default(0),
-  solo_time: z.number().min(0).default(0),
-  night_time: z.number().min(0).default(0),
-  cross_country_time: z.number().min(0).default(0),
-  day_takeoffs: z.number().int().min(0).default(0),
-  day_landings: z.number().int().min(0).default(0),
-  night_takeoffs: z.number().int().min(0).default(0),
-  night_landings: z.number().int().min(0).default(0),
-  actual_instrument: z.number().min(0).default(0),
-  simulated_instrument: z.number().min(0).default(0),
-  holds: z.number().int().min(0).default(0),
+  total_time: z.number().min(0).optional().transform(val => val ?? 0),
+  pic_time: z.number().min(0).optional().transform(val => val ?? 0),
+  sic_time: z.number().min(0).optional().transform(val => val ?? 0),
+  solo_time: z.number().min(0).optional().transform(val => val ?? 0),
+  night_time: z.number().min(0).optional().transform(val => val ?? 0),
+  cross_country_time: z.number().min(0).optional().transform(val => val ?? 0),
+  day_takeoffs: z.number().int().min(0).optional().transform(val => val ?? 0),
+  day_landings: z.number().int().min(0).optional().transform(val => val ?? 0),
+  night_takeoffs: z.number().int().min(0).optional().transform(val => val ?? 0),
+  night_landings: z.number().int().min(0).optional().transform(val => val ?? 0),
+  actual_instrument: z.number().min(0).optional().transform(val => val ?? 0),
+  simulated_instrument: z.number().min(0).optional().transform(val => val ?? 0),
+  holds: z.number().int().min(0).optional().transform(val => val ?? 0),
   approaches: z.string().optional(),
-  dual_given: z.number().min(0).default(0),
-  dual_received: z.number().min(0).default(0),
-  simulated_flight: z.number().min(0).default(0),
-  ground_training: z.number().min(0).default(0),
+  dual_given: z.number().min(0).optional().transform(val => val ?? 0),
+  dual_received: z.number().min(0).optional().transform(val => val ?? 0),
+  simulated_flight: z.number().min(0).optional().transform(val => val ?? 0),
+  ground_training: z.number().min(0).optional().transform(val => val ?? 0),
   remarks: z.string().optional(),
 });
 
@@ -65,23 +65,23 @@ export const AddFlightDialog = ({ open, onOpenChange, onFlightAdded }: AddFlight
   const form = useForm<AddFlightForm>({
     resolver: zodResolver(addFlightSchema),
     defaultValues: {
-      total_time: 0,
-      pic_time: 0,
-      sic_time: 0,
-      solo_time: 0,
-      night_time: 0,
-      cross_country_time: 0,
-      day_takeoffs: 0,
-      day_landings: 0,
-      night_takeoffs: 0,
-      night_landings: 0,
-      actual_instrument: 0,
-      simulated_instrument: 0,
-      holds: 0,
-      dual_given: 0,
-      dual_received: 0,
-      simulated_flight: 0,
-      ground_training: 0,
+      total_time: undefined,
+      pic_time: undefined,
+      sic_time: undefined,
+      solo_time: undefined,
+      night_time: undefined,
+      cross_country_time: undefined,
+      day_takeoffs: undefined,
+      day_landings: undefined,
+      night_takeoffs: undefined,
+      night_landings: undefined,
+      actual_instrument: undefined,
+      simulated_instrument: undefined,
+      holds: undefined,
+      dual_given: undefined,
+      dual_received: undefined,
+      simulated_flight: undefined,
+      ground_training: undefined,
     },
   });
 
@@ -316,8 +316,8 @@ export const AddFlightDialog = ({ open, onOpenChange, onFlightAdded }: AddFlight
                           type="number" 
                           step="0.1" 
                           placeholder="0.0"
-                          {...field} 
-                          onChange={(e) => field.onChange(parseFloat(e.target.value) || 0)}
+                          value={field.value || ""}
+                          onChange={(e) => field.onChange(parseFloat(e.target.value) || undefined)}
                         />
                       </FormControl>
                       <FormMessage />
@@ -336,8 +336,8 @@ export const AddFlightDialog = ({ open, onOpenChange, onFlightAdded }: AddFlight
                           type="number" 
                           step="0.1" 
                           placeholder="0.0"
-                          {...field} 
-                          onChange={(e) => field.onChange(parseFloat(e.target.value) || 0)}
+                          value={field.value || ""}
+                          onChange={(e) => field.onChange(parseFloat(e.target.value) || undefined)}
                         />
                       </FormControl>
                       <FormMessage />
@@ -356,8 +356,8 @@ export const AddFlightDialog = ({ open, onOpenChange, onFlightAdded }: AddFlight
                           type="number" 
                           step="0.1" 
                           placeholder="0.0"
-                          {...field} 
-                          onChange={(e) => field.onChange(parseFloat(e.target.value) || 0)}
+                          value={field.value || ""}
+                          onChange={(e) => field.onChange(parseFloat(e.target.value) || undefined)}
                         />
                       </FormControl>
                       <FormMessage />
@@ -376,8 +376,8 @@ export const AddFlightDialog = ({ open, onOpenChange, onFlightAdded }: AddFlight
                           type="number" 
                           step="0.1" 
                           placeholder="0.0"
-                          {...field} 
-                          onChange={(e) => field.onChange(parseFloat(e.target.value) || 0)}
+                          value={field.value || ""}
+                          onChange={(e) => field.onChange(parseFloat(e.target.value) || undefined)}
                         />
                       </FormControl>
                       <FormMessage />
@@ -396,8 +396,8 @@ export const AddFlightDialog = ({ open, onOpenChange, onFlightAdded }: AddFlight
                           type="number" 
                           step="0.1" 
                           placeholder="0.0"
-                          {...field} 
-                          onChange={(e) => field.onChange(parseFloat(e.target.value) || 0)}
+                          value={field.value || ""}
+                          onChange={(e) => field.onChange(parseFloat(e.target.value) || undefined)}
                         />
                       </FormControl>
                       <FormMessage />
@@ -416,8 +416,8 @@ export const AddFlightDialog = ({ open, onOpenChange, onFlightAdded }: AddFlight
                           type="number" 
                           step="0.1" 
                           placeholder="0.0"
-                          {...field} 
-                          onChange={(e) => field.onChange(parseFloat(e.target.value) || 0)}
+                          value={field.value || ""}
+                          onChange={(e) => field.onChange(parseFloat(e.target.value) || undefined)}
                         />
                       </FormControl>
                       <FormMessage />
@@ -441,8 +441,8 @@ export const AddFlightDialog = ({ open, onOpenChange, onFlightAdded }: AddFlight
                         <Input 
                           type="number" 
                           placeholder="0"
-                          {...field} 
-                          onChange={(e) => field.onChange(parseInt(e.target.value) || 0)}
+                          value={field.value || ""}
+                          onChange={(e) => field.onChange(parseInt(e.target.value) || undefined)}
                         />
                       </FormControl>
                       <FormMessage />
@@ -460,8 +460,8 @@ export const AddFlightDialog = ({ open, onOpenChange, onFlightAdded }: AddFlight
                         <Input 
                           type="number" 
                           placeholder="0"
-                          {...field} 
-                          onChange={(e) => field.onChange(parseInt(e.target.value) || 0)}
+                          value={field.value || ""}
+                          onChange={(e) => field.onChange(parseInt(e.target.value) || undefined)}
                         />
                       </FormControl>
                       <FormMessage />
@@ -479,8 +479,8 @@ export const AddFlightDialog = ({ open, onOpenChange, onFlightAdded }: AddFlight
                         <Input 
                           type="number" 
                           placeholder="0"
-                          {...field} 
-                          onChange={(e) => field.onChange(parseInt(e.target.value) || 0)}
+                          value={field.value || ""}
+                          onChange={(e) => field.onChange(parseInt(e.target.value) || undefined)}
                         />
                       </FormControl>
                       <FormMessage />
@@ -498,8 +498,8 @@ export const AddFlightDialog = ({ open, onOpenChange, onFlightAdded }: AddFlight
                         <Input 
                           type="number" 
                           placeholder="0"
-                          {...field} 
-                          onChange={(e) => field.onChange(parseInt(e.target.value) || 0)}
+                          value={field.value || ""}
+                          onChange={(e) => field.onChange(parseInt(e.target.value) || undefined)}
                         />
                       </FormControl>
                       <FormMessage />
@@ -524,8 +524,8 @@ export const AddFlightDialog = ({ open, onOpenChange, onFlightAdded }: AddFlight
                           type="number" 
                           step="0.1" 
                           placeholder="0.0"
-                          {...field} 
-                          onChange={(e) => field.onChange(parseFloat(e.target.value) || 0)}
+                          value={field.value || ""}
+                          onChange={(e) => field.onChange(parseFloat(e.target.value) || undefined)}
                         />
                       </FormControl>
                       <FormMessage />
@@ -544,8 +544,8 @@ export const AddFlightDialog = ({ open, onOpenChange, onFlightAdded }: AddFlight
                           type="number" 
                           step="0.1" 
                           placeholder="0.0"
-                          {...field} 
-                          onChange={(e) => field.onChange(parseFloat(e.target.value) || 0)}
+                          value={field.value || ""}
+                          onChange={(e) => field.onChange(parseFloat(e.target.value) || undefined)}
                         />
                       </FormControl>
                       <FormMessage />
@@ -563,8 +563,8 @@ export const AddFlightDialog = ({ open, onOpenChange, onFlightAdded }: AddFlight
                         <Input 
                           type="number" 
                           placeholder="0"
-                          {...field} 
-                          onChange={(e) => field.onChange(parseInt(e.target.value) || 0)}
+                          value={field.value || ""}
+                          onChange={(e) => field.onChange(parseInt(e.target.value) || undefined)}
                         />
                       </FormControl>
                       <FormMessage />
@@ -597,8 +597,8 @@ export const AddFlightDialog = ({ open, onOpenChange, onFlightAdded }: AddFlight
                           type="number" 
                           step="0.1" 
                           placeholder="0.0"
-                          {...field} 
-                          onChange={(e) => field.onChange(parseFloat(e.target.value) || 0)}
+                          value={field.value || ""}
+                          onChange={(e) => field.onChange(parseFloat(e.target.value) || undefined)}
                         />
                       </FormControl>
                       <FormMessage />
@@ -617,8 +617,8 @@ export const AddFlightDialog = ({ open, onOpenChange, onFlightAdded }: AddFlight
                           type="number" 
                           step="0.1" 
                           placeholder="0.0"
-                          {...field} 
-                          onChange={(e) => field.onChange(parseFloat(e.target.value) || 0)}
+                          value={field.value || ""}
+                          onChange={(e) => field.onChange(parseFloat(e.target.value) || undefined)}
                         />
                       </FormControl>
                       <FormMessage />
@@ -637,8 +637,8 @@ export const AddFlightDialog = ({ open, onOpenChange, onFlightAdded }: AddFlight
                           type="number" 
                           step="0.1" 
                           placeholder="0.0"
-                          {...field} 
-                          onChange={(e) => field.onChange(parseFloat(e.target.value) || 0)}
+                          value={field.value || ""}
+                          onChange={(e) => field.onChange(parseFloat(e.target.value) || undefined)}
                         />
                       </FormControl>
                       <FormMessage />
@@ -657,8 +657,8 @@ export const AddFlightDialog = ({ open, onOpenChange, onFlightAdded }: AddFlight
                           type="number" 
                           step="0.1" 
                           placeholder="0.0"
-                          {...field} 
-                          onChange={(e) => field.onChange(parseFloat(e.target.value) || 0)}
+                          value={field.value || ""}
+                          onChange={(e) => field.onChange(parseFloat(e.target.value) || undefined)}
                         />
                       </FormControl>
                       <FormMessage />
