@@ -198,6 +198,66 @@ export type Database = {
           },
         ]
       }
+      flight_entries: {
+        Row: {
+          aircraft_registration: string
+          aircraft_type: string
+          approaches: number
+          arrival_airport: string
+          created_at: string
+          cross_country_time: number
+          date: string
+          departure_airport: string
+          id: string
+          instrument_time: number
+          landings: number
+          night_time: number
+          pic_time: number
+          remarks: string | null
+          total_time: number
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          aircraft_registration: string
+          aircraft_type: string
+          approaches?: number
+          arrival_airport: string
+          created_at?: string
+          cross_country_time?: number
+          date: string
+          departure_airport: string
+          id?: string
+          instrument_time?: number
+          landings?: number
+          night_time?: number
+          pic_time?: number
+          remarks?: string | null
+          total_time?: number
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          aircraft_registration?: string
+          aircraft_type?: string
+          approaches?: number
+          arrival_airport?: string
+          created_at?: string
+          cross_country_time?: number
+          date?: string
+          departure_airport?: string
+          id?: string
+          instrument_time?: number
+          landings?: number
+          night_time?: number
+          pic_time?: number
+          remarks?: string | null
+          total_time?: number
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       profiles: {
         Row: {
           approval_status: string | null
