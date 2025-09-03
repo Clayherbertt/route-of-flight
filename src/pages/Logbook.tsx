@@ -60,7 +60,8 @@ const Logbook = () => {
       const { data, error } = await supabase
         .from('flight_entries')
         .select('*')
-        .order('date', { ascending: false });
+        .order('date', { ascending: false })
+        .order('created_at', { ascending: false });
 
       if (error) {
         throw error;
