@@ -1,7 +1,28 @@
 import { Button } from "@/components/ui/button";
 import { ArrowRight, Book, Building2, TrendingUp } from "lucide-react";
+import { useNavigate } from "react-router-dom";
+import { useAuth } from "@/contexts/AuthContext";
 
 const HeroSection = () => {
+  const navigate = useNavigate();
+  const { user } = useAuth();
+
+  const handleStartLogbook = () => {
+    if (user) {
+      // TODO: Navigate to logbook page when it exists
+      console.log("Navigate to logbook");
+    } else {
+      navigate("/signin");
+    }
+  };
+
+  const handleViewAirlines = () => {
+    if (user) {
+      navigate("/airlines");
+    } else {
+      navigate("/signin");
+    }
+  };
   return (
     <section className="min-h-screen flex items-center justify-center bg-background">
       <div className="container mx-auto px-6 text-center">
@@ -18,11 +39,11 @@ const HeroSection = () => {
         </p>
 
         <div className="flex flex-col sm:flex-row gap-4 justify-center mb-12">
-          <Button variant="default" size="xl" className="group">
+          <Button variant="default" size="xl" className="group" onClick={handleStartLogbook}>
             Start Your Logbook
             <ArrowRight className="ml-2 h-5 w-5 group-hover:translate-x-1 transition-transform" />
           </Button>
-          <Button variant="outline" size="xl">
+          <Button variant="outline" size="xl" onClick={handleViewAirlines}>
             View Airlines Database
           </Button>
         </div>

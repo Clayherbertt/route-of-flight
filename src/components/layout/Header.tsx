@@ -2,7 +2,6 @@ import { Button } from "@/components/ui/button";
 import { Plane, Book, Building2, FileText } from "lucide-react";
 import { Link } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
-import { AuthDialog } from "@/components/auth/AuthDialog";
 import { UserMenu } from "@/components/auth/UserMenu";
 
 const Header = () => {
@@ -47,13 +46,13 @@ const Header = () => {
             <UserMenu />
           ) : (
             <>
-              <AuthDialog>
+              <Link to="/signin">
                 <Button variant="ghost" size="sm">
                   Sign In
                 </Button>
-              </AuthDialog>
+              </Link>
               <Link to="/signin">
-                <Button variant="aviation" size="sm">
+                <Button variant="default" size="sm">
                   Get Started
                 </Button>
               </Link>
