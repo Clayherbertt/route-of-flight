@@ -7,7 +7,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Calendar } from "@/components/ui/calendar";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from "@/components/ui/command";
-import { CalendarIcon, Plus } from "lucide-react";
+import { CalendarIcon, Plus, Plane } from "lucide-react";
 import { format } from "date-fns";
 import { cn } from "@/lib/utils";
 import { useForm } from "react-hook-form";
@@ -277,7 +277,7 @@ export const AddFlightDialog = ({ open, onOpenChange, onFlightAdded }: AddFlight
                               )}
                             >
                               {field.value || "Select aircraft..."}
-                              <CalendarIcon className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+                              <Plane className="ml-2 h-4 w-4 shrink-0 opacity-50" />
                             </Button>
                           </FormControl>
                         </PopoverTrigger>
