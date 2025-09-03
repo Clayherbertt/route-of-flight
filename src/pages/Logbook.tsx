@@ -12,57 +12,8 @@ import { useState } from "react";
 const Logbook = () => {
   const [searchTerm, setSearchTerm] = useState("");
 
-  // Sample flight data
-  const flights = [
-    {
-      id: 1,
-      date: "2024-01-15",
-      aircraft: "N123AB",
-      type: "C172",
-      departure: "KORD",
-      arrival: "KMDW",
-      totalTime: "2.3",
-      picTime: "2.3",
-      crossCountry: "0.0",
-      night: "0.0",
-      instrument: "0.0",
-      approaches: 0,
-      landings: 3,
-      remarks: "Pattern work"
-    },
-    {
-      id: 2,
-      date: "2024-01-18",
-      aircraft: "N456CD",
-      type: "PA28",
-      departure: "KMDW",
-      arrival: "KDPA",
-      totalTime: "1.8",
-      picTime: "1.8",
-      crossCountry: "45.2",
-      night: "0.0",
-      instrument: "0.5",
-      approaches: 1,
-      landings: 2,
-      remarks: "Cross country flight"
-    },
-    {
-      id: 3,
-      date: "2024-01-22",
-      aircraft: "N789EF",
-      type: "C152",
-      departure: "KDPA",
-      arrival: "KORD",
-      totalTime: "1.5",
-      picTime: "0.0",
-      crossCountry: "0.0",
-      night: "1.5",
-      instrument: "0.0",
-      approaches: 0,
-      landings: 2,
-      remarks: "Night currency training"
-    }
-  ];
+  // Empty flights array - will be populated from database
+  const flights: any[] = [];
 
   const totalHours = flights.reduce((sum, flight) => sum + parseFloat(flight.totalTime), 0);
   const totalPIC = flights.reduce((sum, flight) => sum + parseFloat(flight.picTime), 0);
@@ -193,28 +144,40 @@ const Logbook = () => {
                   </TableRow>
                 </TableHeader>
                 <TableBody>
-                  {flights.map((flight) => (
-                    <TableRow key={flight.id} className="hover:bg-muted/50">
-                      <TableCell className="font-medium">{flight.date}</TableCell>
-                      <TableCell>
-                        <Badge variant="outline">{flight.aircraft}</Badge>
+                  {flights.length > 0 ? (
+                    flights.map((flight) => (
+                      <TableRow key={flight.id} className="hover:bg-muted/50">
+                        <TableCell className="font-medium">{flight.date}</TableCell>
+                        <TableCell>
+                          <Badge variant="outline">{flight.aircraft}</Badge>
+                        </TableCell>
+                        <TableCell>{flight.type}</TableCell>
+                        <TableCell>
+                          <span className="text-sm">
+                            {flight.departure} → {flight.arrival}
+                          </span>
+                        </TableCell>
+                        <TableCell className="font-medium">{flight.totalTime}</TableCell>
+                        <TableCell>{flight.picTime}</TableCell>
+                        <TableCell>{flight.crossCountry}</TableCell>
+                        <TableCell>{flight.night}</TableCell>
+                        <TableCell>{flight.instrument}</TableCell>
+                        <TableCell>{flight.approaches}</TableCell>
+                        <TableCell>{flight.landings}</TableCell>
+                        <TableCell className="max-w-xs truncate">{flight.remarks}</TableCell>
+                      </TableRow>
+                    ))
+                  ) : (
+                    <TableRow>
+                      <TableCell colSpan={12} className="h-32 text-center">
+                        <div className="flex flex-col items-center justify-center text-muted-foreground">
+                          <Plane className="h-8 w-8 mb-2 opacity-50" />
+                          <p className="text-lg font-medium">No flights recorded yet</p>
+                          <p className="text-sm">Click "Add Flight" to log your first flight</p>
+                        </div>
                       </TableCell>
-                      <TableCell>{flight.type}</TableCell>
-                      <TableCell>
-                        <span className="text-sm">
-                          {flight.departure} → {flight.arrival}
-                        </span>
-                      </TableCell>
-                      <TableCell className="font-medium">{flight.totalTime}</TableCell>
-                      <TableCell>{flight.picTime}</TableCell>
-                      <TableCell>{flight.crossCountry}</TableCell>
-                      <TableCell>{flight.night}</TableCell>
-                      <TableCell>{flight.instrument}</TableCell>
-                      <TableCell>{flight.approaches}</TableCell>
-                      <TableCell>{flight.landings}</TableCell>
-                      <TableCell className="max-w-xs truncate">{flight.remarks}</TableCell>
                     </TableRow>
-                  ))}
+                  )}
                 </TableBody>
               </Table>
             </div>
