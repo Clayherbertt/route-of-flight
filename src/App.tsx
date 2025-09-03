@@ -8,6 +8,7 @@ import Index from "./pages/Index";
 import Profile from "./pages/Profile";
 import SignIn from "./pages/SignIn";
 import Airlines from "./pages/Airlines";
+import Logbook from "./pages/Logbook";
 import Subscription from "./pages/Subscription";
 import SubscriptionSuccess from "./pages/SubscriptionSuccess";
 import NotFound from "./pages/NotFound";
@@ -26,6 +27,7 @@ const App = () => (
             <Route path="/profile" element={<Profile />} />
             <Route path="/signin" element={<SignIn />} />
             <Route path="/airlines" element={<Airlines />} />
+            <Route path="/logbook" element={<Logbook />} />
             <Route path="/subscription" element={<Subscription />} />
             <Route path="/subscription-success" element={<SubscriptionSuccess />} />
             <Route path="*" element={<NotFound />} />

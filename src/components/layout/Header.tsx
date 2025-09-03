@@ -16,13 +16,13 @@ const Header = () => {
         </div>
         
         <nav className="hidden md:flex items-center space-x-6">
-          <a
-            href="#logbook"
+          <Link
+            to="/logbook"
             className="text-sm font-medium text-muted-foreground hover:text-foreground smooth-transition"
           >
             <Book className="inline h-4 w-4 mr-2" />
             Logbook
-          </a>
+          </Link>
           <a
             href="#airlines"
             className="text-sm font-medium text-muted-foreground hover:text-foreground smooth-transition"
