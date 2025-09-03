@@ -12,6 +12,7 @@ import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import { useNavigate } from "react-router-dom";
+import { AddFlightDialog } from "@/components/forms/AddFlightDialog";
 
 interface FlightEntry {
   id: string;
@@ -25,7 +26,7 @@ interface FlightEntry {
   cross_country_time: number;
   night_time: number;
   instrument_time: number;
-  approaches: number;
+  approaches: string;
   landings: number;
   remarks: string | null;
 }
@@ -37,6 +38,7 @@ const Logbook = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [flights, setFlights] = useState<FlightEntry[]>([]);
   const [isLoadingFlights, setIsLoadingFlights] = useState(true);
+  const [showAddFlightDialog, setShowAddFlightDialog] = useState(false);
 
   // Redirect to sign in if not authenticated
   useEffect(() => {
@@ -116,7 +118,7 @@ const Logbook = () => {
             <h1 className="text-3xl font-bold text-foreground mb-2">Flight Logbook</h1>
             <p className="text-muted-foreground">Track and manage your flight hours and experience</p>
           </div>
-          <Button className="w-fit">
+          <Button className="w-fit" onClick={() => setShowAddFlightDialog(true)}>
             <Plus className="h-4 w-4 mr-2" />
             Add Flight
           </Button>
@@ -269,6 +271,12 @@ const Logbook = () => {
           </CardContent>
         </Card>
       </main>
+
+      <AddFlightDialog
+        open={showAddFlightDialog}
+        onOpenChange={setShowAddFlightDialog}
+        onFlightAdded={fetchFlights}
+      />
     </div>
   );
 };

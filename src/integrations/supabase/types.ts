@@ -200,58 +200,106 @@ export type Database = {
       }
       flight_entries: {
         Row: {
+          actual_instrument: number | null
           aircraft_registration: string
           aircraft_type: string
-          approaches: number
+          approaches: string
           arrival_airport: string
           created_at: string
           cross_country_time: number
           date: string
+          day_landings: number | null
+          day_takeoffs: number | null
           departure_airport: string
+          dual_given: number | null
+          dual_received: number | null
+          end_time: string | null
+          ground_training: number | null
+          holds: number | null
           id: string
           instrument_time: number
           landings: number
+          night_landings: number | null
+          night_takeoffs: number | null
           night_time: number
           pic_time: number
           remarks: string | null
+          route: string | null
+          sic_time: number | null
+          simulated_flight: number | null
+          simulated_instrument: number | null
+          solo_time: number | null
+          start_time: string | null
           total_time: number
           updated_at: string
           user_id: string
         }
         Insert: {
+          actual_instrument?: number | null
           aircraft_registration: string
           aircraft_type: string
-          approaches?: number
+          approaches?: string
           arrival_airport: string
           created_at?: string
           cross_country_time?: number
           date: string
+          day_landings?: number | null
+          day_takeoffs?: number | null
           departure_airport: string
+          dual_given?: number | null
+          dual_received?: number | null
+          end_time?: string | null
+          ground_training?: number | null
+          holds?: number | null
           id?: string
           instrument_time?: number
           landings?: number
+          night_landings?: number | null
+          night_takeoffs?: number | null
           night_time?: number
           pic_time?: number
           remarks?: string | null
+          route?: string | null
+          sic_time?: number | null
+          simulated_flight?: number | null
+          simulated_instrument?: number | null
+          solo_time?: number | null
+          start_time?: string | null
           total_time?: number
           updated_at?: string
           user_id: string
         }
         Update: {
+          actual_instrument?: number | null
           aircraft_registration?: string
           aircraft_type?: string
-          approaches?: number
+          approaches?: string
           arrival_airport?: string
           created_at?: string
           cross_country_time?: number
           date?: string
+          day_landings?: number | null
+          day_takeoffs?: number | null
           departure_airport?: string
+          dual_given?: number | null
+          dual_received?: number | null
+          end_time?: string | null
+          ground_training?: number | null
+          holds?: number | null
           id?: string
           instrument_time?: number
           landings?: number
+          night_landings?: number | null
+          night_takeoffs?: number | null
           night_time?: number
           pic_time?: number
           remarks?: string | null
+          route?: string | null
+          sic_time?: number | null
+          simulated_flight?: number | null
+          simulated_instrument?: number | null
+          solo_time?: number | null
+          start_time?: string | null
           total_time?: number
           updated_at?: string
           user_id?: string
