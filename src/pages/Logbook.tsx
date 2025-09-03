@@ -108,10 +108,49 @@ const Logbook = () => {
       setEditingFlight(null);
     }
   };
+  
+  // Calculate totals from actual flight data
   const totalHours = flights.reduce((sum, flight) => sum + Number(flight.total_time), 0);
   const totalPIC = flights.reduce((sum, flight) => sum + Number(flight.pic_time), 0);
   const totalXC = flights.reduce((sum, flight) => sum + Number(flight.cross_country_time), 0);
   const totalNight = flights.reduce((sum, flight) => sum + Number(flight.night_time), 0);
+  const totalInstrument = flights.reduce((sum, flight) => 
+    sum + Number(flight.actual_instrument || 0) + Number(flight.simulated_instrument || 0), 0);
+  const totalSIC = flights.reduce((sum, flight) => sum + Number(flight.sic_time || 0), 0);
+  
+  // Multi-Engine time (assuming aircraft with "twin", "multi", numbers in type, or specific models)
+  const totalMultiEngine = flights.reduce((sum, flight) => {
+    const aircraftType = flight.aircraft_type.toLowerCase();
+    const isMultiEngine = aircraftType.includes('twin') || 
+                         aircraftType.includes('multi') || 
+                         aircraftType.includes('baron') ||
+                         aircraftType.includes('seneca') ||
+                         aircraftType.includes('aztec') ||
+                         aircraftType.includes('duchess') ||
+                         aircraftType.includes('310') ||
+                         aircraftType.includes('414') ||
+                         aircraftType.includes('421') ||
+                         aircraftType.includes('340') ||
+                         /\d{3}/.test(aircraftType); // Contains 3-digit numbers (often jets/turboprops)
+    return isMultiEngine ? sum + Number(flight.total_time) : sum;
+  }, 0);
+  
+  // PIC Turbine time (assuming turbine aircraft based on type)
+  const totalPICTurbine = flights.reduce((sum, flight) => {
+    const aircraftType = flight.aircraft_type.toLowerCase();
+    const isTurbine = aircraftType.includes('jet') ||
+                     aircraftType.includes('turbine') ||
+                     aircraftType.includes('king air') ||
+                     aircraftType.includes('citation') ||
+                     aircraftType.includes('learjet') ||
+                     aircraftType.includes('falcon') ||
+                     aircraftType.includes('challenger') ||
+                     aircraftType.includes('gulfstream') ||
+                     aircraftType.includes('phenom') ||
+                     aircraftType.includes('embraer') ||
+                     /\d{3}/.test(aircraftType); // Contains 3-digit numbers (often jets)
+    return isTurbine ? sum + Number(flight.pic_time) : sum;
+  }, 0);
 
   // Show loading state
   if (loading || isLoadingFlights) {
@@ -153,7 +192,7 @@ const Logbook = () => {
         </div>
 
         {/* Stats Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-6">
           <Card>
             <CardHeader className="pb-3">
               <CardDescription>Total Flight Time</CardDescription>
@@ -176,6 +215,34 @@ const Logbook = () => {
             <CardHeader className="pb-3">
               <CardDescription>Night Time</CardDescription>
               <CardTitle className="text-2xl text-primary">{totalNight.toFixed(1)} hrs</CardTitle>
+            </CardHeader>
+          </Card>
+        </div>
+
+        {/* Additional Stats Cards */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+          <Card>
+            <CardHeader className="pb-3">
+              <CardDescription>Instrument</CardDescription>
+              <CardTitle className="text-2xl text-primary">{totalInstrument.toFixed(1)} hrs</CardTitle>
+            </CardHeader>
+          </Card>
+          <Card>
+            <CardHeader className="pb-3">
+              <CardDescription>Multi-Engine</CardDescription>
+              <CardTitle className="text-2xl text-primary">{totalMultiEngine.toFixed(1)} hrs</CardTitle>
+            </CardHeader>
+          </Card>
+          <Card>
+            <CardHeader className="pb-3">
+              <CardDescription>SIC Time</CardDescription>
+              <CardTitle className="text-2xl text-primary">{totalSIC.toFixed(1)} hrs</CardTitle>
+            </CardHeader>
+          </Card>
+          <Card>
+            <CardHeader className="pb-3">
+              <CardDescription>PIC Turbine</CardDescription>
+              <CardTitle className="text-2xl text-primary">{totalPICTurbine.toFixed(1)} hrs</CardTitle>
             </CardHeader>
           </Card>
         </div>
