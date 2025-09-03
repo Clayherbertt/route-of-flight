@@ -14,7 +14,7 @@ const HeroSection = () => {
         
         <p className="text-xl md:text-2xl mb-8 max-w-3xl mx-auto text-muted-foreground leading-relaxed">
           The complete digital logbook and career platform for professional pilots. 
-          Track hours, maintain currency, and explore opportunities at top airlines.
+          Track hours, maintain currency, and build a road map to get you to your end goal.
         </p>
 
         <div className="flex flex-col sm:flex-row gap-4 justify-center mb-12">
