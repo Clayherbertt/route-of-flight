@@ -1,5 +1,5 @@
 import { Button } from "@/components/ui/button";
-import { Plane, Book, Building2, FileText } from "lucide-react";
+import { Plane, Book, Building2, FileText, Crown } from "lucide-react";
 import { Link } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
 import { UserMenu } from "@/components/auth/UserMenu";
@@ -30,6 +30,13 @@ const Header = () => {
             <Building2 className="inline h-4 w-4 mr-2" />
             Airlines
           </a>
+          <Link
+            to="/subscription"
+            className="text-sm font-medium text-muted-foreground hover:text-foreground smooth-transition"
+          >
+            <Crown className="inline h-4 w-4 mr-2" />
+            Subscription
+          </Link>
           <a
             href="#resume"
             className="text-sm font-medium text-muted-foreground hover:text-foreground smooth-transition"
