@@ -276,9 +276,18 @@ const majorAirlinesData: Record<string, AirlineInfo> = {
     ],
     pay_scales: {
       first_officer: {
-        year_1: "$92,000",
-        year_5: "$156,000",
-        year_10: "$195,000"
+        year_1: "$118.31",
+        year_2: "$225.66", 
+        year_3: "$264.07",
+        year_4: "$270.46",
+        year_5: "$276.92",
+        year_6: "$283.94",
+        year_7: "$291.83", 
+        year_8: "$298.53",
+        year_9: "$301.79",
+        year_10: "$305.88",
+        year_11: "$308.62",
+        year_12: "$311.46"
       },
       captain: {
         year_1: "$205,000",
