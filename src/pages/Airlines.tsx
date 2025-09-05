@@ -100,6 +100,7 @@ const Airlines = () => {
   };
 
   const handleAirlineClick = (airlineName: string) => {
+    console.log("Airline clicked:", airlineName);
     setSelectedAirline(airlineName);
     setDialogOpen(true);
   };
@@ -266,7 +267,10 @@ const Airlines = () => {
       {/* Airlines Details Dialog */}
       <AirlineDetailsDialog 
         open={dialogOpen}
-        onOpenChange={setDialogOpen}
+        onOpenChange={(open) => {
+          console.log("Dialog state changing to:", open);
+          setDialogOpen(open);
+        }}
         airline={selectedAirline ? { name: selectedAirline } : null}
       />
     </div>
