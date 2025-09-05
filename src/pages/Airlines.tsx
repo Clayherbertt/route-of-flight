@@ -3,46 +3,98 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Badge } from "@/components/ui/badge";
 
 const Airlines = () => {
-  const airlines = [
+  const airlineSections = [
     {
-      id: 1,
-      name: "Delta Air Lines",
-      logo: "🔺",
-      minimumHours: 1500,
-      location: "Atlanta, GA",
-      pilots: "15,000+",
-      hiring: true,
-      requirements: ["ATP Certificate", "First Class Medical", "Clean Record"]
+      title: "Majors",
+      airlines: [
+        { name: "Alaska Airlines", logo: "❄️" },
+        { name: "Delta Air Lines", logo: "🔺" },
+        { name: "United Airlines", logo: "🌎" },
+        { name: "American Airlines", logo: "🦅" },
+        { name: "Hawaiian Airlines", logo: "🌺" },
+        { name: "Southwest Airlines", logo: "❤️" }
+      ]
     },
     {
-      id: 2,
-      name: "American Airlines",
-      logo: "🦅",
-      minimumHours: 1500,
-      location: "Fort Worth, TX",
-      pilots: "17,000+",
-      hiring: true,
-      requirements: ["ATP Certificate", "First Class Medical", "4-Year Degree Preferred"]
+      title: "Ultra Low Cost Carriers & Large Operators",
+      airlines: [
+        { name: "Frontier", logo: "🦎" },
+        { name: "Spirit", logo: "✈️" },
+        { name: "Breeze Airways", logo: "🌊" },
+        { name: "Sun Country Airlines", logo: "☀️" },
+        { name: "JetBlue Airways", logo: "💙" },
+        { name: "Allegiant Air", logo: "🏝️" }
+      ]
     },
     {
-      id: 3,
-      name: "United Airlines",
-      logo: "🌎",
-      minimumHours: 1500,
-      location: "Chicago, IL",
-      pilots: "13,000+",
-      hiring: false,
-      requirements: ["ATP Certificate", "First Class Medical", "Multi-Engine Rating"]
+      title: "Regional Carriers",
+      airlines: [
+        { name: "Air Wisconsin", logo: "🧀" },
+        { name: "Alaska Seaplanes", logo: "🛩️" },
+        { name: "Cape Air", logo: "🦅" },
+        { name: "CommuteAir", logo: "🚁" },
+        { name: "Connect Airlines", logo: "🔗" },
+        { name: "Denver Air Connection", logo: "🏔️" },
+        { name: "Elite Airways", logo: "👑" },
+        { name: "Endeavor Air", logo: "🎯" },
+        { name: "Envoy Air", logo: "📧" },
+        { name: "ExpressJet", logo: "⚡" },
+        { name: "GoJet Airlines", logo: "🚀" },
+        { name: "Grant Aviation", logo: "🎁" },
+        { name: "Great Lakes Airlines", logo: "🌊" },
+        { name: "Horizon Air", logo: "🌅" },
+        { name: "Mesa Airlines", logo: "🏜️" },
+        { name: "Ohana by Hawaiian", logo: "🌺" },
+        { name: "Piedmont Airlines", logo: "⛰️" },
+        { name: "PSA Airlines", logo: "📋" },
+        { name: "Quantum Spatial inc. (QSI)", logo: "🔬" },
+        { name: "Ravn Alaska", logo: "🐦" },
+        { name: "Republic Airways", logo: "🏛️" },
+        { name: "Seaborne Airlines", logo: "🌊" },
+        { name: "Silver Airways", logo: "🥈" },
+        { name: "SkyWest", logo: "🌤️" },
+        { name: "Star Marianas Air, Inc.", logo: "⭐" },
+        { name: "Sterling Airways", logo: "💎" }
+      ]
     },
     {
-      id: 4,
-      name: "Southwest Airlines",
-      logo: "❤️",
-      minimumHours: 2500,
-      location: "Dallas, TX",
-      pilots: "10,000+",
-      hiring: true,
-      requirements: ["ATP Certificate", "First Class Medical", "Boeing 737 Type Rating Preferred"]
+      title: "Cargo",
+      airlines: [
+        { name: "21 Air, LLC", logo: "📦" },
+        { name: "ABX Air", logo: "📮" },
+        { name: "Air Cargo Carriers", logo: "🚛" },
+        { name: "Air Transport International", logo: "🌍" },
+        { name: "Alaska Central Express", logo: "📦" },
+        { name: "Aloha Air Cargo", logo: "🌺" },
+        { name: "Alpine Air", logo: "🏔️" },
+        { name: "Ameriflight", logo: "🇺🇸" },
+        { name: "Amerijet International", logo: "✈️" },
+        { name: "Ameristar Air Cargo, Inc.", logo: "⭐" },
+        { name: "Atlas Air", logo: "🗺️" },
+        { name: "Bemidji Aviation Services, Inc.", logo: "✈️" },
+        { name: "CSA Air", logo: "📦" },
+        { name: "Empire Airlines", logo: "👑" },
+        { name: "Encore Air Cargo", logo: "🎭" },
+        { name: "Everts Air Cargo", logo: "📦" },
+        { name: "FedEx Express", logo: "📦" },
+        { name: "Freight Runners Express", logo: "🏃" },
+        { name: "IFL Group", logo: "📦" },
+        { name: "Kalitta Air", logo: "✈️" },
+        { name: "Kalitta Charters II", logo: "🛩️" },
+        { name: "Key Lime Air", logo: "🟢" },
+        { name: "Lynden Air Cargo", logo: "📦" },
+        { name: "Mountain Air Cargo", logo: "⛰️" },
+        { name: "National Airlines", logo: "🇺🇸" },
+        { name: "Northern Air Cargo", logo: "❄️" },
+        { name: "Quest Diagnostics", logo: "🔬" },
+        { name: "Ryan Air", logo: "✈️" },
+        { name: "SkyLease Cargo", logo: "📦" },
+        { name: "Transair", logo: "🔄" },
+        { name: "United Parcel Service", logo: "🤎" },
+        { name: "USA Jet Airlines", logo: "🇺🇸" },
+        { name: "Western Global Airlines", logo: "🌎" },
+        { name: "Wiggins Airways", logo: "✈️" }
+      ]
     }
   ];
 
@@ -62,56 +114,25 @@ const Airlines = () => {
         </div>
       </div>
 
-      {/* Airlines Grid */}
-      <div className="container mx-auto px-6 py-12">
-        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {airlines.map((airline) => (
-            <Card key={airline.id} className="hover:shadow-lg transition-shadow">
-              <CardHeader>
-                <div className="flex items-center gap-3 mb-2">
-                  <span className="text-2xl">{airline.logo}</span>
-                  <div>
-                    <CardTitle className="text-xl">{airline.name}</CardTitle>
-                    <CardDescription className="flex items-center gap-1">
-                      <MapPin className="h-4 w-4" />
-                      {airline.location}
-                    </CardDescription>
-                  </div>
-                </div>
-                <div className="flex gap-2">
-                  <Badge variant={airline.hiring ? "default" : "secondary"}>
-                    {airline.hiring ? "Currently Hiring" : "Not Hiring"}
-                  </Badge>
-                </div>
-              </CardHeader>
-              
-              <CardContent className="space-y-4">
-                <div className="grid grid-cols-2 gap-4 text-sm">
-                  <div className="flex items-center gap-2">
-                    <Clock className="h-4 w-4 text-muted-foreground" />
-                    <span>{airline.minimumHours} min hours</span>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <Users className="h-4 w-4 text-muted-foreground" />
-                    <span>{airline.pilots} pilots</span>
-                  </div>
-                </div>
-                
-                <div>
-                  <h4 className="font-semibold mb-2">Requirements</h4>
-                  <ul className="text-sm text-muted-foreground space-y-1">
-                    {airline.requirements.map((req, index) => (
-                      <li key={index} className="flex items-center gap-2">
-                        <span className="w-1 h-1 bg-primary rounded-full"></span>
-                        {req}
-                      </li>
-                    ))}
-                  </ul>
-                </div>
-              </CardContent>
-            </Card>
-          ))}
-        </div>
+      {/* Airlines Sections */}
+      <div className="container mx-auto px-6 py-12 space-y-16">
+        {airlineSections.map((section, sectionIndex) => (
+          <div key={sectionIndex}>
+            <h2 className="text-3xl font-bold mb-8 text-center">{section.title}</h2>
+            <div className="grid md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+              {section.airlines.map((airline, index) => (
+                <Card key={index} className="hover:shadow-lg transition-shadow cursor-pointer">
+                  <CardHeader className="pb-4">
+                    <div className="flex items-center gap-3">
+                      <span className="text-2xl">{airline.logo}</span>
+                      <CardTitle className="text-lg leading-tight">{airline.name}</CardTitle>
+                    </div>
+                  </CardHeader>
+                </Card>
+              ))}
+            </div>
+          </div>
+        ))}
       </div>
     </div>
   );
