@@ -362,7 +362,9 @@ const majorAirlinesData: Record<string, AirlineInfo> = {
       ]
     },
     inside_scoop: [
-      "3000 total time and 1500 PIC time highly preferred for competitive advantage"
+      "Will get you looked at:",
+      "3000 TT",
+      "1500 Turbine"
     ],
     benefits: [
       "Competitive compensation",
