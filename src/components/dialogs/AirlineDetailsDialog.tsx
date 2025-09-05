@@ -634,7 +634,7 @@ export function AirlineDetailsDialog({ open, onOpenChange, airline }: AirlineDet
 
     return (
       <Dialog open={open} onOpenChange={onOpenChange}>
-        <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
+        <DialogContent className="max-w-4xl">
           <DialogHeader>
             <div className="flex items-center gap-4">
               {airline.logoUrl ? (
@@ -864,7 +864,7 @@ export function AirlineDetailsDialog({ open, onOpenChange, airline }: AirlineDet
           </CardHeader>
           <CardContent>
             <div className="overflow-x-auto">
-              <div className="max-h-48 overflow-y-auto">
+              <div className="max-h-64 overflow-y-auto">
                 <table className="w-full text-sm border-collapse">
                   <thead className="sticky top-0 bg-background">
                     <tr className="border-b">
