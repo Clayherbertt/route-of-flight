@@ -58,6 +58,23 @@ const Airlines = () => {
       ]
     },
     {
+      title: "Fractional Carriers",
+      airlines: [
+        { name: "NetJets", logo: "🛩️" },
+        { name: "Flexjet", logo: "💎" },
+        { name: "Flight Options", logo: "✈️" },
+        { name: "Directional Aviation", logo: "🧭" },
+        { name: "Executive AirShare", logo: "👔" },
+        { name: "PlaneSense", logo: "🎯" },
+        { name: "XOJet", logo: "🚀" },
+        { name: "JetSuite", logo: "🏆" },
+        { name: "Airshare", logo: "🤝" },
+        { name: "Wheels Up", logo: "🎡" },
+        { name: "VistaJet", logo: "👁️" },
+        { name: "Jet Linx", logo: "🔗" }
+      ]
+    },
+    {
       title: "Cargo",
       airlines: [
         { name: "21 Air, LLC", logo: "📦" },
