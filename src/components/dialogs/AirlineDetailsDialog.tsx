@@ -420,7 +420,7 @@ const majorAirlinesData: Record<string, AirlineInfo> = {
     phone: "1-800-367-5320",
     email: "pilotcareers@hawaiianair.com",
     hiring_status: false,
-    pilot_application_url: "https://careers.hawaiianairlines.com/pilots",
+    pilot_application_url: "https://www.hawaiianairlines.com/careers/first-officer",
     description: "Hawaiian Airlines is the largest airline in Hawaii and the 10th-largest commercial airline in the United States. Known for authentic Hawaiian hospitality and connecting the Hawaiian Islands to the world.",
     hiring_requirements: {
       min_hours: "1,500 ATP minimum",
