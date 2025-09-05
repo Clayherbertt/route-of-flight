@@ -152,24 +152,28 @@ const Airlines = () => {
       </div>
 
       {/* Airlines Sections */}
-      <div className="container mx-auto px-6 py-12 space-y-12">
+      <div className="container mx-auto px-6 py-12 space-y-16">
         {airlineSections.map((section, sectionIndex) => {
           console.log(`Rendering section: ${section.title}`);
           return (
           <div key={sectionIndex}>
-            <h2 className="text-3xl font-bold mb-6">{section.title}</h2>
-            <div className="space-y-2">
+            <h2 className="text-3xl font-bold mb-8 text-center">{section.title}</h2>
+            <div className="grid md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
               {section.airlines.map((airline, index) => (
-                <div 
+                <Card 
                   key={index} 
-                  className="flex items-center gap-3 p-4 rounded-lg border bg-card hover:bg-accent/50 transition-colors cursor-pointer" 
+                  className="hover:shadow-lg transition-shadow select-none cursor-pointer" 
                   onClick={() => handleAirlineClick(airline.name)}
                 >
-                  <div className="text-xl">
-                    {getAirlineEmoji()}
-                  </div>
-                  <span className="text-lg font-medium">{airline.name}</span>
-                </div>
+                  <CardHeader className="pb-4">
+                    <div className="flex items-center gap-3">
+                      <div className="text-2xl">
+                        {getAirlineEmoji()}
+                      </div>
+                      <CardTitle className="text-lg leading-tight">{airline.name}</CardTitle>
+                    </div>
+                  </CardHeader>
+                </Card>
               ))}
             </div>
           </div>
