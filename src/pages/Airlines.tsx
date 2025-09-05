@@ -8,24 +8,8 @@ const Airlines = () => {
   const [selectedAirlineLogo, setSelectedAirlineLogo] = useState<string | null>(null);
   const [dialogOpen, setDialogOpen] = useState(false);
 
-  // For now, we'll use emoji logos until actual logo assets are available
-  const getAirlineEmoji = (airlineName: string): string => {
-    const emojiMap: Record<string, string> = {
-      "Alaska Airlines": "❄️",
-      "Delta Air Lines": "🔺", 
-      "United Airlines": "🌎",
-      "American Airlines": "🦅",
-      "Hawaiian Airlines": "🌺",
-      "Southwest Airlines": "❤️",
-      "Frontier": "🦎",
-      "Spirit": "✈️",
-      "Breeze Airways": "🌊",
-      "Sun Country Airlines": "☀️",
-      "JetBlue Airways": "💙",
-      "Allegiant Air": "🏝️"
-    };
-    return emojiMap[airlineName] || "✈️";
-  };
+  // Using consistent airplane emoji for all airlines
+  const getAirlineEmoji = (): string => "✈️";
 
   const handleAirlineClick = (airlineName: string) => {
     console.log("Airline clicked:", airlineName);
@@ -38,110 +22,110 @@ const Airlines = () => {
     {
       title: "Majors",
       airlines: [
-        { name: "Alaska Airlines", logo: "❄️" },
-        { name: "Delta Air Lines", logo: "🔺" },
-        { name: "United Airlines", logo: "🌎" },
-        { name: "American Airlines", logo: "🦅" },
-        { name: "Hawaiian Airlines", logo: "🌺" },
-        { name: "Southwest Airlines", logo: "❤️" }
+        { name: "Alaska Airlines" },
+        { name: "Delta Air Lines" },
+        { name: "United Airlines" },
+        { name: "American Airlines" },
+        { name: "Hawaiian Airlines" },
+        { name: "Southwest Airlines" }
       ]
     },
     {
       title: "Ultra Low Cost Carriers & Large Operators",
       airlines: [
-        { name: "Frontier", logo: "🦎" },
-        { name: "Spirit", logo: "✈️" },
-        { name: "Breeze Airways", logo: "🌊" },
-        { name: "Sun Country Airlines", logo: "☀️" },
-        { name: "JetBlue Airways", logo: "💙" },
-        { name: "Allegiant Air", logo: "🏝️" }
+        { name: "Frontier" },
+        { name: "Spirit" },
+        { name: "Breeze Airways" },
+        { name: "Sun Country Airlines" },
+        { name: "JetBlue Airways" },
+        { name: "Allegiant Air" }
       ]
     },
     {
       title: "Regional Carriers",
       airlines: [
-        { name: "Air Wisconsin", logo: "🧀" },
-        { name: "Alaska Seaplanes", logo: "🛩️" },
-        { name: "Cape Air", logo: "🦅" },
-        { name: "CommutAir", logo: "🚁" },
-        { name: "Contour Airlines", logo: "🔗" },
-        { name: "Denver Air Connection", logo: "🏔️" },
-        { name: "Elite Airways", logo: "👑" },
-        { name: "Endeavor Air", logo: "🎯" },
-        { name: "Envoy Air", logo: "📧" },
-        { name: "ExpressJet Airlines", logo: "⚡" },
-        { name: "GoJet Airlines", logo: "🚀" },
-        { name: "Grant Aviation", logo: "🎁" },
-        { name: "Great Lakes Airlines", logo: "🌊" },
-        { name: "Horizon Air", logo: "🌅" },
-        { name: "Mesa Airlines", logo: "🏜️" },
-        { name: "Ohana by Hawaiian", logo: "🌺" },
-        { name: "Piedmont Airlines", logo: "⛰️" },
-        { name: "PSA Airlines", logo: "📋" },
-        { name: "Quantum Air", logo: "🔬" },
-        { name: "Raven Alaska", logo: "🐦" },
-        { name: "Republic Airways", logo: "🏛️" },
-        { name: "Seaborne Airlines", logo: "🌊" },
-        { name: "Silver Airways", logo: "🥈" },
-        { name: "SkyWest", logo: "🌤️" },
-        { name: "Star Air", logo: "⭐" },
-        { name: "Sterling Airways", logo: "💎" }
+        { name: "Air Wisconsin" },
+        { name: "Alaska Seaplanes" },
+        { name: "Cape Air" },
+        { name: "CommutAir" },
+        { name: "Contour Airlines" },
+        { name: "Denver Air Connection" },
+        { name: "Elite Airways" },
+        { name: "Endeavor Air" },
+        { name: "Envoy Air" },
+        { name: "ExpressJet Airlines" },
+        { name: "GoJet Airlines" },
+        { name: "Grant Aviation" },
+        { name: "Great Lakes Airlines" },
+        { name: "Horizon Air" },
+        { name: "Mesa Airlines" },
+        { name: "Ohana by Hawaiian" },
+        { name: "Piedmont Airlines" },
+        { name: "PSA Airlines" },
+        { name: "Quantum Air" },
+        { name: "Raven Alaska" },
+        { name: "Republic Airways" },
+        { name: "Seaborne Airlines" },
+        { name: "Silver Airways" },
+        { name: "SkyWest" },
+        { name: "Star Air" },
+        { name: "Sterling Airways" }
       ]
     },
     {
       title: "Fractional Carriers",
       airlines: [
-        { name: "NetJets", logo: "🛩️" },
-        { name: "Flexjet", logo: "💎" },
-        { name: "Flight Options", logo: "✈️" },
-        { name: "Directional Aviation", logo: "🧭" },
-        { name: "Executive AirShare", logo: "👔" },
-        { name: "PlaneSense", logo: "🎯" },
-        { name: "XOJet", logo: "🚀" },
-        { name: "JetSuite", logo: "🏆" },
-        { name: "Airshare", logo: "🤝" },
-        { name: "Wheels Up", logo: "🎡" },
-        { name: "VistaJet", logo: "👁️" },
-        { name: "Jet Linx", logo: "🔗" }
+        { name: "NetJets" },
+        { name: "Flexjet" },
+        { name: "Flight Options" },
+        { name: "Directional Aviation" },
+        { name: "Executive AirShare" },
+        { name: "PlaneSense" },
+        { name: "XOJet" },
+        { name: "JetSuite" },
+        { name: "Airshare" },
+        { name: "Wheels Up" },
+        { name: "VistaJet" },
+        { name: "Jet Linx" }
       ]
     },
     {
       title: "Cargo",
       airlines: [
-        { name: "21 Air, LLC", logo: "📦" },
-        { name: "ABX Air", logo: "📮" },
-        { name: "Air Cargo Carriers", logo: "🚛" },
-        { name: "Air Transport International", logo: "🌍" },
-        { name: "Alaska Central Express", logo: "📦" },
-        { name: "Aloha Air Cargo", logo: "🌺" },
-        { name: "Alpine Air", logo: "🏔️" },
-        { name: "Ameriflight", logo: "🇺🇸" },
-        { name: "Amerijet International", logo: "✈️" },
-        { name: "Ameristar Air Cargo, Inc.", logo: "⭐" },
-        { name: "Atlas Air", logo: "🗺️" },
-        { name: "Bemidji Aviation Services, Inc.", logo: "✈️" },
-        { name: "CSA Air", logo: "📦" },
-        { name: "Empire Airlines", logo: "👑" },
-        { name: "Encore Air Cargo", logo: "🎭" },
-        { name: "Everts Air Cargo", logo: "📦" },
-        { name: "FedEx Express", logo: "📦" },
-        { name: "Freight Runners Express", logo: "🏃" },
-        { name: "IFL Group", logo: "📦" },
-        { name: "Kalitta Air", logo: "✈️" },
-        { name: "Kalitta Charters II", logo: "🛩️" },
-        { name: "Key Lime Air", logo: "🟢" },
-        { name: "Lynden Air Cargo", logo: "📦" },
-        { name: "Mountain Air Cargo", logo: "⛰️" },
-        { name: "National Airlines", logo: "🇺🇸" },
-        { name: "Northern Air Cargo", logo: "❄️" },
-        { name: "Quest Diagnostics", logo: "🔬" },
-        { name: "Ryan Air", logo: "✈️" },
-        { name: "SkyLease Cargo", logo: "📦" },
-        { name: "Transair", logo: "🔄" },
-        { name: "United Parcel Service", logo: "🤎" },
-        { name: "USA Jet Airlines", logo: "🇺🇸" },
-        { name: "Western Global Airlines", logo: "🌎" },
-        { name: "Wiggins Airways", logo: "✈️" }
+        { name: "21 Air, LLC" },
+        { name: "ABX Air" },
+        { name: "Air Cargo Carriers" },
+        { name: "Air Transport International" },
+        { name: "Alaska Central Express" },
+        { name: "Aloha Air Cargo" },
+        { name: "Alpine Air" },
+        { name: "Ameriflight" },
+        { name: "Amerijet International" },
+        { name: "Ameristar Air Cargo, Inc." },
+        { name: "Atlas Air" },
+        { name: "Bemidji Aviation Services, Inc." },
+        { name: "CSA Air" },
+        { name: "Empire Airlines" },
+        { name: "Encore Air Cargo" },
+        { name: "Everts Air Cargo" },
+        { name: "FedEx Express" },
+        { name: "Freight Runners Express" },
+        { name: "IFL Group" },
+        { name: "Kalitta Air" },
+        { name: "Kalitta Charters II" },
+        { name: "Key Lime Air" },
+        { name: "Lynden Air Cargo" },
+        { name: "Mountain Air Cargo" },
+        { name: "National Airlines" },
+        { name: "Northern Air Cargo" },
+        { name: "Quest Diagnostics" },
+        { name: "Ryan Air" },
+        { name: "SkyLease Cargo" },
+        { name: "Transair" },
+        { name: "United Parcel Service" },
+        { name: "USA Jet Airlines" },
+        { name: "Western Global Airlines" },
+        { name: "Wiggins Airways" }
       ]
     }
   ];
@@ -177,7 +161,7 @@ const Airlines = () => {
                   <CardHeader className="pb-4">
                     <div className="flex items-center gap-3">
                       <div className="text-2xl">
-                        {getAirlineEmoji(airline.name)}
+                        {getAirlineEmoji()}
                       </div>
                       <CardTitle className="text-lg leading-tight">{airline.name}</CardTitle>
                     </div>
