@@ -3,10 +3,7 @@ import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
 import { Button } from "@/components/ui/button";
-import { MapPin, Users, Clock, Plane, Building2, ExternalLink, Phone, Mail, DollarSign, RefreshCw } from "lucide-react";
-import { AirlineDataService, ScrapedAirlineData } from "@/services/airlineDataService";
-import { useEffect, useState } from "react";
-import { useToast } from "@/components/ui/use-toast";
+import { MapPin, Users, Clock, Plane, Building2, ExternalLink, Phone, Mail, DollarSign } from "lucide-react";
 
 interface AirlineInfo {
   name: string;
@@ -15,11 +12,6 @@ interface AirlineInfo {
   icao: string;
   headquarters: string;
   founded: string;
-  stock_code?: string;
-  pilot_count?: number;
-  is_hiring?: boolean;
-  union?: string;
-  callsign?: string;
   fleet_size: number;
   destinations: number;
   employees: string;
@@ -34,17 +26,19 @@ interface AirlineInfo {
     clean_record: boolean;
   };
   benefits: string[];
-  fleet_details?: Array<{
-    aircraft_type: string;
-    count: number;
-  }>;
-  fleet_types?: string[];
-  domiciles?: string[];
-  most_junior_domicile?: string;
-  bases?: string[];
+  fleet_types: string[];
+  bases: string[];
   pay_scales: {
-    first_officer: Record<string, string>;
-    captain: Record<string, string>;
+    first_officer: {
+      year_1: string;
+      year_5: string;
+      year_10: string;
+    };
+    captain: {
+      year_1: string;
+      year_5: string;
+      year_10: string;
+    };
   };
 }
 
@@ -410,53 +404,8 @@ const majorAirlinesData: Record<string, AirlineInfo> = {
 };
 
 export function AirlineDetailsDialog({ open, onOpenChange, airline }: AirlineDetailsDialogProps) {
-  const { toast } = useToast();
-  const [scrapedData, setScrapedData] = useState<ScrapedAirlineData | null>(null);
-  const [isLoadingScrapedData, setIsLoadingScrapedData] = useState(false);
-  
-  // Use detailed data for major airlines as fallback
-  const staticAirlineData = airline ? majorAirlinesData[airline.name] : null;
-  
-  // Prefer scraped data over static data when available
-  const airlineData = scrapedData || staticAirlineData;
-
-  useEffect(() => {
-    if (airline && open) {
-      loadScrapedData();
-    }
-  }, [airline, open]);
-
-  const loadScrapedData = async () => {
-    if (!airline) return;
-    
-    setIsLoadingScrapedData(true);
-    try {
-      const data = await AirlineDataService.scrapeAirlineData(airline.name);
-      if (data) {
-        setScrapedData(data);
-        toast({
-          title: "Data Updated",
-          description: "Latest airline information loaded successfully",
-        });
-      }
-    } catch (error) {
-      console.error('Error loading scraped data:', error);
-      toast({
-        title: "Note", 
-        description: "Using cached airline data. Live data may be temporarily unavailable.",
-        variant: "default",
-      });
-    } finally {
-      setIsLoadingScrapedData(false);
-    }
-  };
-
-  const handleRefreshData = async () => {
-    if (!airline) return;
-    
-    AirlineDataService.clearCache(airline.name);
-    await loadScrapedData();
-  };
+  // Use detailed data for major airlines
+  const airlineData = airline ? majorAirlinesData[airline.name] : null;
 
   if (!airline) return null;
 
@@ -495,31 +444,17 @@ export function AirlineDetailsDialog({ open, onOpenChange, airline }: AirlineDet
                   alt={`${airline.name} logo`}
                   className="w-12 h-12 object-contain"
                 />
-              ) : staticAirlineData?.logo && (
-                <div className="text-4xl">{staticAirlineData.logo}</div>
+              ) : airlineData?.logo && (
+                <div className="text-4xl">{airlineData.logo}</div>
               )}
-              <div className="flex-1">
-                <div className="flex items-center gap-2">
-                  <DialogTitle className="text-2xl">{airlineData?.name || airline.name}</DialogTitle>
-                  {scrapedData && (
-                    <Badge variant="default" className="text-xs">Live Data</Badge>
-                  )}
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    onClick={handleRefreshData}
-                    disabled={isLoadingScrapedData}
-                    className="ml-auto"
-                  >
-                    <RefreshCw className={`h-4 w-4 ${isLoadingScrapedData ? 'animate-spin' : ''}`} />
-                  </Button>
-                </div>
+              <div>
+                <DialogTitle className="text-2xl">{airlineData.name}</DialogTitle>
                 <DialogDescription>
                   Complete airline profile with hiring requirements, benefits, and career information
                 </DialogDescription>
                 <div className="flex gap-2 mt-1">
-                  {airlineData?.iata && <Badge variant="secondary">{airlineData.iata}</Badge>}
-                  {airlineData?.icao && <Badge variant="secondary">{airlineData.icao}</Badge>}
+                  <Badge variant="secondary">{airlineData.iata}</Badge>
+                  <Badge variant="secondary">{airlineData.icao}</Badge>
                 </div>
               </div>
             </div>
@@ -535,42 +470,28 @@ export function AirlineDetailsDialog({ open, onOpenChange, airline }: AirlineDet
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-3">
-              {airlineData?.headquarters && (
-                <div className="flex justify-between">
-                  <span className="text-muted-foreground">Headquarters:</span>
-                  <span className="font-medium">{airlineData.headquarters}</span>
-                </div>
-              )}
-              {airlineData?.founded && (
-                <div className="flex justify-between">
-                  <span className="text-muted-foreground">Founded:</span>
-                  <span className="font-medium">{airlineData.founded}</span>
-                </div>
-              )}
-              {airlineData?.fleet_size && (
-                <div className="flex justify-between">
-                  <span className="text-muted-foreground">Fleet Size:</span>
-                  <span className="font-medium">{airlineData.fleet_size} aircraft</span>
-                </div>
-              )}
-              {airlineData?.destinations && (
-                <div className="flex justify-between">
-                  <span className="text-muted-foreground">Destinations:</span>
-                  <span className="font-medium">{airlineData.destinations}</span>
-                </div>
-              )}
-              {airlineData?.employees && (
-                <div className="flex justify-between">
-                  <span className="text-muted-foreground">Employees:</span>
-                  <span className="font-medium">{airlineData.employees}</span>
-                </div>
-              )}
-              {airlineData?.description && (
-                <>
-                  <Separator />
-                  <p className="text-sm text-muted-foreground">{airlineData.description}</p>
-                </>
-              )}
+              <div className="flex justify-between">
+                <span className="text-muted-foreground">Headquarters:</span>
+                <span className="font-medium">{airlineData.headquarters}</span>
+              </div>
+              <div className="flex justify-between">
+                <span className="text-muted-foreground">Founded:</span>
+                <span className="font-medium">{airlineData.founded}</span>
+              </div>
+              <div className="flex justify-between">
+                <span className="text-muted-foreground">Fleet Size:</span>
+                <span className="font-medium">{airlineData.fleet_size} aircraft</span>
+              </div>
+              <div className="flex justify-between">
+                <span className="text-muted-foreground">Destinations:</span>
+                <span className="font-medium">{airlineData.destinations}</span>
+              </div>
+              <div className="flex justify-between">
+                <span className="text-muted-foreground">Employees:</span>
+                <span className="font-medium">{airlineData.employees}</span>
+              </div>
+              <Separator />
+              <p className="text-sm text-muted-foreground">{airlineData.description}</p>
             </CardContent>
           </Card>
 
@@ -583,28 +504,22 @@ export function AirlineDetailsDialog({ open, onOpenChange, airline }: AirlineDet
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-3">
-              {airlineData?.website && (
-                <div className="flex items-center gap-3">
-                  <ExternalLink className="h-4 w-4 text-muted-foreground" />
-                  <Button variant="link" className="p-0 h-auto" asChild>
-                    <a href={`https://${airlineData.website}`} target="_blank" rel="noopener noreferrer">
-                      {airlineData.website}
-                    </a>
-                  </Button>
-                </div>
-              )}
-              {airlineData?.phone && (
-                <div className="flex items-center gap-3">
-                  <Phone className="h-4 w-4 text-muted-foreground" />
-                  <span>{airlineData.phone}</span>
-                </div>
-              )}
-              {airlineData?.email && (
-                <div className="flex items-center gap-3">
-                  <Mail className="h-4 w-4 text-muted-foreground" />
-                  <span>{airlineData.email}</span>
-                </div>
-              )}
+              <div className="flex items-center gap-3">
+                <ExternalLink className="h-4 w-4 text-muted-foreground" />
+                <Button variant="link" className="p-0 h-auto" asChild>
+                  <a href={`https://${airlineData.website}`} target="_blank" rel="noopener noreferrer">
+                    {airlineData.website}
+                  </a>
+                </Button>
+              </div>
+              <div className="flex items-center gap-3">
+                <Phone className="h-4 w-4 text-muted-foreground" />
+                <span>{airlineData.phone}</span>
+              </div>
+              <div className="flex items-center gap-3">
+                <Mail className="h-4 w-4 text-muted-foreground" />
+                <span>{airlineData.email}</span>
+              </div>
             </CardContent>
           </Card>
 
@@ -617,39 +532,28 @@ export function AirlineDetailsDialog({ open, onOpenChange, airline }: AirlineDet
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-3">
-              {airlineData?.hiring_requirements?.min_hours && (
-                <div className="flex justify-between">
-                  <span className="text-muted-foreground">Minimum Hours:</span>
-                  <span className="font-medium">{airlineData.hiring_requirements.min_hours}</span>
-                </div>
-              )}
-              {airlineData?.hiring_requirements?.type_rating !== undefined && (
-                <div className="flex justify-between">
-                  <span className="text-muted-foreground">Type Rating:</span>
-                  <Badge variant={airlineData.hiring_requirements.type_rating ? "default" : "secondary"}>
-                    {airlineData.hiring_requirements.type_rating ? "Required" : "Not Required"}
-                  </Badge>
-                </div>
-              )}
-              {airlineData?.hiring_requirements?.college_degree !== undefined && (
-                <div className="flex justify-between">
-                  <span className="text-muted-foreground">College Degree:</span>
-                  <Badge variant={airlineData.hiring_requirements.college_degree ? "default" : "secondary"}>
-                    {airlineData.hiring_requirements.college_degree ? "Required" : "Preferred"}
-                  </Badge>
-                </div>
-              )}
-              {airlineData?.hiring_requirements?.clean_record !== undefined && (
-                <div className="flex justify-between">
-                  <span className="text-muted-foreground">Clean Record:</span>
-                  <Badge variant={airlineData.hiring_requirements.clean_record ? "default" : "secondary"}>
-                    {airlineData.hiring_requirements.clean_record ? "Required" : "Not Required"}
-                  </Badge>
-                </div>
-              )}
-              {!airlineData?.hiring_requirements && (
-                <p className="text-sm text-muted-foreground">Hiring requirements information not available.</p>
-              )}
+              <div className="flex justify-between">
+                <span className="text-muted-foreground">Minimum Hours:</span>
+                <span className="font-medium">{airlineData.hiring_requirements.min_hours}</span>
+              </div>
+              <div className="flex justify-between">
+                <span className="text-muted-foreground">Type Rating:</span>
+                <Badge variant={airlineData.hiring_requirements.type_rating ? "default" : "secondary"}>
+                  {airlineData.hiring_requirements.type_rating ? "Required" : "Not Required"}
+                </Badge>
+              </div>
+              <div className="flex justify-between">
+                <span className="text-muted-foreground">College Degree:</span>
+                <Badge variant={airlineData.hiring_requirements.college_degree ? "default" : "secondary"}>
+                  {airlineData.hiring_requirements.college_degree ? "Required" : "Preferred"}
+                </Badge>
+              </div>
+              <div className="flex justify-between">
+                <span className="text-muted-foreground">Clean Record:</span>
+                <Badge variant={airlineData.hiring_requirements.clean_record ? "default" : "secondary"}>
+                  {airlineData.hiring_requirements.clean_record ? "Required" : "Not Required"}
+                </Badge>
+              </div>
             </CardContent>
           </Card>
 
@@ -659,18 +563,14 @@ export function AirlineDetailsDialog({ open, onOpenChange, airline }: AirlineDet
               <CardTitle>Benefits Package</CardTitle>
             </CardHeader>
             <CardContent>
-              {airlineData?.benefits && airlineData.benefits.length > 0 ? (
-                <div className="grid gap-2">
-                  {airlineData.benefits.map((benefit, index) => (
-                    <div key={index} className="flex items-center gap-2">
-                      <div className="h-1.5 w-1.5 bg-primary rounded-full" />
-                      <span className="text-sm">{benefit}</span>
-                    </div>
-                  ))}
-                </div>
-              ) : (
-                <p className="text-sm text-muted-foreground">Benefits information not available.</p>
-              )}
+              <div className="grid gap-2">
+                {airlineData.benefits.map((benefit, index) => (
+                  <div key={index} className="flex items-center gap-2">
+                    <div className="h-1.5 w-1.5 bg-primary rounded-full" />
+                    <span className="text-sm">{benefit}</span>
+                  </div>
+                ))}
+              </div>
             </CardContent>
           </Card>
 
@@ -683,27 +583,13 @@ export function AirlineDetailsDialog({ open, onOpenChange, airline }: AirlineDet
               </CardTitle>
             </CardHeader>
             <CardContent>
-              {(airlineData?.fleet_details && airlineData.fleet_details.length > 0) || 
-               (airlineData?.fleet_types && airlineData.fleet_types.length > 0) ? (
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-                  {airlineData.fleet_details ? 
-                    airlineData.fleet_details.map((aircraft, index) => (
-                      <div key={index} className="flex justify-between items-center p-2 bg-muted/50 rounded">
-                        <span className="font-medium">{aircraft.aircraft_type}</span>
-                        <Badge variant="outline">{aircraft.count}</Badge>
-                      </div>
-                    )) :
-                    airlineData.fleet_types?.map((aircraft, index) => (
-                      <div key={index} className="flex justify-between items-center p-2 bg-muted/50 rounded">
-                        <span className="font-medium">{aircraft}</span>
-                        <Badge variant="outline">-</Badge>
-                      </div>
-                    ))
-                  }
-                </div>
-              ) : (
-                <p className="text-sm text-muted-foreground">Fleet information not available.</p>
-              )}
+              <div className="flex flex-wrap gap-2">
+                {airlineData.fleet_types.map((aircraft, index) => (
+                  <Badge key={index} variant="outline">
+                    {aircraft}
+                  </Badge>
+                ))}
+              </div>
             </CardContent>
           </Card>
 
@@ -716,47 +602,41 @@ export function AirlineDetailsDialog({ open, onOpenChange, airline }: AirlineDet
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
-              {airlineData?.pay_scales ? (
-                <>
-                  {airlineData.pay_scales.first_officer && (
-                     <div>
-                       <h4 className="font-semibold text-sm mb-2">First Officer</h4>
-                       <div className="space-y-2 text-sm">
-                         {Array.from({ length: 12 }, (_, i) => i + 1).map(year => {
-                           const yearKey = `year_${year}`;
-                           const salary = airlineData.pay_scales?.first_officer?.[yearKey];
-                           return salary ? (
-                             <div key={year} className="flex justify-between">
-                               <span className="text-muted-foreground">Year {year}:</span>
-                               <span className="font-medium">{salary}</span>
-                             </div>
-                           ) : null;
-                         })}
-                       </div>
-                     </div>
-                  )}
-                  {airlineData.pay_scales.first_officer && airlineData.pay_scales.captain && <Separator />}
-                  {airlineData.pay_scales.captain && (
-                     <div>
-                       <h4 className="font-semibold text-sm mb-2">Captain</h4>
-                       <div className="space-y-2 text-sm">
-                         {Array.from({ length: 12 }, (_, i) => i + 1).map(year => {
-                           const yearKey = `year_${year}`;
-                           const salary = airlineData.pay_scales?.captain?.[yearKey];
-                           return salary ? (
-                             <div key={year} className="flex justify-between">
-                               <span className="text-muted-foreground">Year {year}:</span>
-                               <span className="font-medium">{salary}</span>
-                             </div>
-                           ) : null;
-                         })}
-                       </div>
-                     </div>
-                  )}
-                </>
-              ) : (
-                <p className="text-sm text-muted-foreground">Pay scale information not available.</p>
-              )}
+              <div>
+                <h4 className="font-semibold text-sm mb-2">First Officer</h4>
+                <div className="space-y-2 text-sm">
+                  <div className="flex justify-between">
+                    <span className="text-muted-foreground">Year 1:</span>
+                    <span className="font-medium">{airlineData.pay_scales.first_officer.year_1}</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-muted-foreground">Year 5:</span>
+                    <span className="font-medium">{airlineData.pay_scales.first_officer.year_5}</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-muted-foreground">Year 10:</span>
+                    <span className="font-medium">{airlineData.pay_scales.first_officer.year_10}</span>
+                  </div>
+                </div>
+              </div>
+              <Separator />
+              <div>
+                <h4 className="font-semibold text-sm mb-2">Captain</h4>
+                <div className="space-y-2 text-sm">
+                  <div className="flex justify-between">
+                    <span className="text-muted-foreground">Year 1:</span>
+                    <span className="font-medium">{airlineData.pay_scales.captain.year_1}</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-muted-foreground">Year 5:</span>
+                    <span className="font-medium">{airlineData.pay_scales.captain.year_5}</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-muted-foreground">Year 10:</span>
+                    <span className="font-medium">{airlineData.pay_scales.captain.year_10}</span>
+                  </div>
+                </div>
+              </div>
             </CardContent>
           </Card>
 
@@ -765,32 +645,18 @@ export function AirlineDetailsDialog({ open, onOpenChange, airline }: AirlineDet
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
                 <MapPin className="h-5 w-5" />
-                Domiciles
+                Operating Bases
               </CardTitle>
             </CardHeader>
             <CardContent>
-              {(airlineData?.domiciles && airlineData.domiciles.length > 0) ||
-               (airlineData?.bases && airlineData.bases.length > 0) ? (
-                <div className="space-y-3">
-                  <div className="flex flex-wrap gap-2">
-                    {(airlineData.domiciles || airlineData.bases)?.map((location, index) => (
-                      <Badge key={index} variant="outline">
-                        {location}
-                      </Badge>
-                    ))}
+              <div className="grid gap-2">
+                {airlineData.bases.map((base, index) => (
+                  <div key={index} className="flex items-center gap-2">
+                    <MapPin className="h-3 w-3 text-muted-foreground" />
+                    <span className="text-sm">{base}</span>
                   </div>
-                  {airlineData.most_junior_domicile && (
-                    <div className="pt-2 border-t">
-                      <div className="flex justify-between items-center">
-                        <span className="text-muted-foreground">Most Junior Domicile:</span>
-                        <Badge variant="secondary">{airlineData.most_junior_domicile}</Badge>
-                      </div>
-                    </div>
-                  )}
-                </div>
-              ) : (
-                <p className="text-sm text-muted-foreground">Domiciles information not available.</p>
-              )}
+                ))}
+              </div>
             </CardContent>
           </Card>
         </div>
