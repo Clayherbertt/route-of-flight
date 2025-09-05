@@ -27,6 +27,10 @@ interface AirlineInfo {
     college_degree: boolean;
     clean_record: boolean;
   };
+  detailed_requirements?: {
+    required: string[];
+    preferred: string[];
+  };
   benefits: string[];
   fleet_types: string[];
   bases: string[];
@@ -73,6 +77,36 @@ const majorAirlinesData: Record<string, AirlineInfo> = {
       type_rating: false,
       college_degree: false,
       clean_record: true
+    },
+    detailed_requirements: {
+      required: [
+        "Minimum of 1,500 hours of total documented flight time",
+        "A current First Class FAA Medical Certificate",
+        "Minimum of 500 hours of fixed wing turbine time (airplane and powered lift combined)",
+        "Must possess and/or obtain a current passport with unlimited access in and out of the United States and have at least six months of validity remaining at time of employment. Employees with non-U.S. passports also will need any appropriate travel documentation",
+        "Ability to travel immediately and repeatedly to any location, domestic or international, where Alaska Airlines and Hawaiian Airlines flies",
+        "FAA Commercial Pilot Certificate with Instrument-Airplane",
+        "All aeronautical experience requirements for an ATP, Airplane category rating, as set forth in 14 CFR §61.159",
+        "Current ATP written exam",
+        "Strong written and verbal communication skills in English",
+        "Must possess a valid Driver's License issued by a US state or US territory",
+        "Must be comfortable with a domicile in Seattle, WA; Los Angeles, CA; Anchorage, AK; Portland, OR; San Francisco, CA",
+        "Excellent judgement, leadership skills, demonstrated commandability and maturity",
+        "Professional demeanor and appearance",
+        "Ability to use sound judgement in decision making",
+        "Ability to maintain composure under pressure",
+        "Minimum 23 years of age",
+        "Must be Authorized to work in the U.S.",
+        "High school diploma or equivalent"
+      ],
+      preferred: [
+        "Four-year degree from an accredited university",
+        "An FAA Airline Transport Pilot (ATP) certificate",
+        "500 hours of multi-engine airplane time",
+        "Minimum of 50 hours of flight time within the last 12 months",
+        "500 hours of turbine PIC time",
+        "Turbojet/ turbo prop experience in a complex flying environment"
+      ]
     },
     benefits: [
       "Competitive salary",
@@ -536,36 +570,65 @@ export function AirlineDetailsDialog({ open, onOpenChange, airline }: AirlineDet
           </Card>
 
           {/* Hiring Requirements */}
-          <Card>
+          <Card className={airlineData.detailed_requirements ? "md:col-span-2" : ""}>
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
                 <Users className="h-5 w-5" />
                 Hiring Requirements
               </CardTitle>
             </CardHeader>
-            <CardContent className="space-y-3">
-              <div className="flex justify-between">
-                <span className="text-muted-foreground">Minimum Hours:</span>
-                <span className="font-medium">{airlineData.hiring_requirements.min_hours}</span>
-              </div>
-              <div className="flex justify-between">
-                <span className="text-muted-foreground">Type Rating:</span>
-                <Badge variant={airlineData.hiring_requirements.type_rating ? "default" : "secondary"}>
-                  {airlineData.hiring_requirements.type_rating ? "Required" : "Not Required"}
-                </Badge>
-              </div>
-              <div className="flex justify-between">
-                <span className="text-muted-foreground">College Degree:</span>
-                <Badge variant={airlineData.hiring_requirements.college_degree ? "default" : "secondary"}>
-                  {airlineData.hiring_requirements.college_degree ? "Required" : "Preferred"}
-                </Badge>
-              </div>
-              <div className="flex justify-between">
-                <span className="text-muted-foreground">Clean Record:</span>
-                <Badge variant={airlineData.hiring_requirements.clean_record ? "default" : "secondary"}>
-                  {airlineData.hiring_requirements.clean_record ? "Required" : "Not Required"}
-                </Badge>
-              </div>
+            <CardContent className="space-y-4">
+              {airlineData.detailed_requirements ? (
+                <div className="grid md:grid-cols-2 gap-6">
+                  <div>
+                    <h4 className="font-semibold text-sm mb-3 text-green-700 dark:text-green-400">Required</h4>
+                    <div className="space-y-2">
+                      {airlineData.detailed_requirements.required.map((requirement, index) => (
+                        <div key={index} className="flex items-start gap-2">
+                          <div className="h-1.5 w-1.5 bg-green-600 rounded-full mt-2 flex-shrink-0" />
+                          <span className="text-sm">{requirement}</span>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                  <div>
+                    <h4 className="font-semibold text-sm mb-3 text-blue-700 dark:text-blue-400">Preferred</h4>
+                    <div className="space-y-2">
+                      {airlineData.detailed_requirements.preferred.map((requirement, index) => (
+                        <div key={index} className="flex items-start gap-2">
+                          <div className="h-1.5 w-1.5 bg-blue-600 rounded-full mt-2 flex-shrink-0" />
+                          <span className="text-sm">{requirement}</span>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+              ) : (
+                <div className="space-y-3">
+                  <div className="flex justify-between">
+                    <span className="text-muted-foreground">Minimum Hours:</span>
+                    <span className="font-medium">{airlineData.hiring_requirements.min_hours}</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-muted-foreground">Type Rating:</span>
+                    <Badge variant={airlineData.hiring_requirements.type_rating ? "default" : "secondary"}>
+                      {airlineData.hiring_requirements.type_rating ? "Required" : "Not Required"}
+                    </Badge>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-muted-foreground">College Degree:</span>
+                    <Badge variant={airlineData.hiring_requirements.college_degree ? "default" : "secondary"}>
+                      {airlineData.hiring_requirements.college_degree ? "Required" : "Preferred"}
+                    </Badge>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-muted-foreground">Clean Record:</span>
+                    <Badge variant={airlineData.hiring_requirements.clean_record ? "default" : "secondary"}>
+                      {airlineData.hiring_requirements.clean_record ? "Required" : "Not Required"}
+                    </Badge>
+                  </div>
+                </div>
+              )}
             </CardContent>
           </Card>
 
