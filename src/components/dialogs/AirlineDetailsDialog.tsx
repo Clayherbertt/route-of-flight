@@ -50,7 +50,7 @@ interface AirlineInfo {
       year_11?: string;
       year_12?: string;
     };
-    captain: {
+    captain: Record<string, {
       year_1: string;
       year_2?: string;
       year_3?: string;
@@ -63,7 +63,7 @@ interface AirlineInfo {
       year_10: string;
       year_11?: string;
       year_12?: string;
-    };
+    }>;
   };
 }
 
@@ -174,18 +174,20 @@ const majorAirlinesData: Record<string, AirlineInfo> = {
         year_12: "$228.80"
       },
       captain: {
-        year_1: "$300.31",
-        year_2: "$303.01",
-        year_3: "$305.76",
-        year_4: "$308.56",
-        year_5: "$311.31",
-        year_6: "$314.17",
-        year_7: "$316.95",
-        year_8: "$319.73",
-        year_9: "$322.56",
-        year_10: "$325.31",
-        year_11: "$328.16",
-        year_12: "$330.97"
+        "default": {
+          year_1: "$300.31",
+          year_2: "$303.01",
+          year_3: "$305.76",
+          year_4: "$308.56",
+          year_5: "$311.31",
+          year_6: "$314.17",
+          year_7: "$316.95",
+          year_8: "$319.73",
+          year_9: "$322.56",
+          year_10: "$325.31",
+          year_11: "$328.16",
+          year_12: "$330.97"
+        }
       }
     }
   },
@@ -290,18 +292,24 @@ const majorAirlinesData: Record<string, AirlineInfo> = {
         year_12: "$311.46"
       },
       captain: {
-        year_1: "$418.37",
-        year_2: "$421.76", 
-        year_3: "$425.21",
-        year_4: "$428.64",
-        year_5: "$432.08",
-        year_6: "$435.47",
-        year_7: "$438.90", 
-        year_8: "$442.28",
-        year_9: "$445.71",
-        year_10: "$449.11",
-        year_11: "$452.52",
-        year_12: "$455.96"
+        "B-777": { year_1: "$418.37", year_2: "$421.76", year_3: "$425.21", year_4: "$428.64", year_5: "$432.08", year_6: "$435.47", year_7: "$438.90", year_8: "$442.28", year_9: "$445.71", year_10: "$449.11", year_11: "$452.52", year_12: "$455.96" },
+        "A-350": { year_1: "$418.37", year_2: "$421.76", year_3: "$425.21", year_4: "$428.64", year_5: "$432.08", year_6: "$435.47", year_7: "$438.90", year_8: "$442.28", year_9: "$445.71", year_10: "$449.11", year_11: "$452.52", year_12: "$455.96" },
+        "B-787": { year_1: "$418.37", year_2: "$421.76", year_3: "$425.21", year_4: "$428.64", year_5: "$432.08", year_6: "$435.47", year_7: "$438.90", year_8: "$442.28", year_9: "$445.71", year_10: "$449.11", year_11: "$452.52", year_12: "$455.96" },
+        "A-330-900/300/200": { year_1: "$418.37", year_2: "$421.76", year_3: "$425.21", year_4: "$428.64", year_5: "$432.08", year_6: "$435.47", year_7: "$438.90", year_8: "$442.28", year_9: "$445.71", year_10: "$449.11", year_11: "$452.52", year_12: "$455.96" },
+        "B-767-400ER": { year_1: "$418.37", year_2: "$421.76", year_3: "$425.21", year_4: "$428.64", year_5: "$432.08", year_6: "$435.47", year_7: "$438.90", year_8: "$442.28", year_9: "$445.71", year_10: "$449.11", year_11: "$452.52", year_12: "$455.96" },
+        "B-767-300ER": { year_1: "$347.00", year_2: "$349.94", year_3: "$352.78", year_4: "$355.64", year_5: "$358.66", year_6: "$361.46", year_7: "$364.14", year_8: "$367.15", year_9: "$369.76", year_10: "$373.73", year_11: "$377.76", year_12: "$381.66" },
+        "B-767-300/200": { year_1: "$347.00", year_2: "$349.94", year_3: "$352.78", year_4: "$355.64", year_5: "$358.66", year_6: "$361.46", year_7: "$364.14", year_8: "$367.15", year_9: "$369.76", year_10: "$373.73", year_11: "$377.76", year_12: "$381.66" },
+        "B-757": { year_1: "$347.00", year_2: "$349.94", year_3: "$352.78", year_4: "$355.64", year_5: "$358.66", year_6: "$361.46", year_7: "$364.14", year_8: "$367.15", year_9: "$369.76", year_10: "$373.73", year_11: "$377.76", year_12: "$381.66" },
+        "A-321N": { year_1: "$347.00", year_2: "$349.94", year_3: "$352.78", year_4: "$355.64", year_5: "$358.66", year_6: "$361.46", year_7: "$364.14", year_8: "$367.15", year_9: "$369.76", year_10: "$373.73", year_11: "$377.76", year_12: "$381.66" },
+        "B-737-900": { year_1: "$337.46", year_2: "$340.11", year_3: "$342.78", year_4: "$345.56", year_5: "$348.37", year_6: "$351.16", year_7: "$353.92", year_8: "$356.69", year_9: "$359.53", year_10: "$362.20", year_11: "$365.04", year_12: "$367.88" },
+        "A-321": { year_1: "$337.46", year_2: "$340.11", year_3: "$342.78", year_4: "$345.56", year_5: "$348.37", year_6: "$351.16", year_7: "$353.92", year_8: "$356.69", year_9: "$359.53", year_10: "$362.20", year_11: "$365.04", year_12: "$367.88" },
+        "B-737-800/700": { year_1: "$335.99", year_2: "$338.61", year_3: "$341.28", year_4: "$344.04", year_5: "$346.82", year_6: "$349.55", year_7: "$352.27", year_8: "$355.02", year_9: "$357.79", year_10: "$360.51", year_11: "$363.27", year_12: "$365.97" },
+        "A-320/319": { year_1: "$335.99", year_2: "$338.61", year_3: "$341.28", year_4: "$344.04", year_5: "$346.82", year_6: "$349.55", year_7: "$352.27", year_8: "$355.02", year_9: "$357.79", year_10: "$360.51", year_11: "$363.27", year_12: "$365.97" },
+        "A-220-300": { year_1: "$323.79", year_2: "$326.47", year_3: "$329.10", year_4: "$331.76", year_5: "$334.44", year_6: "$337.15", year_7: "$339.80", year_8: "$342.45", year_9: "$345.09", year_10: "$347.77", year_11: "$350.47", year_12: "$353.14" },
+        "A-220-100": { year_1: "$310.53", year_2: "$313.11", year_3: "$315.62", year_4: "$318.19", year_5: "$320.76", year_6: "$323.35", year_7: "$325.87", year_8: "$328.43", year_9: "$330.96", year_10: "$333.53", year_11: "$336.12", year_12: "$338.69" },
+        "B-717": { year_1: "$302.38", year_2: "$304.61", year_3: "$307.10", year_4: "$309.60", year_5: "$311.97", year_6: "$314.55", year_7: "$316.94", year_8: "$319.43", year_9: "$321.90", year_10: "$324.41", year_11: "$326.94", year_12: "$329.32" },
+        "EMB-195": { year_1: "$253.83", year_2: "$255.72", year_3: "$257.81", year_4: "$259.95", year_5: "$261.92", year_6: "$264.06", year_7: "$266.07", year_8: "$268.16", year_9: "$270.24", year_10: "$272.33", year_11: "$274.47", year_12: "$276.48" },
+        "EMB-190/CRJ-900": { year_1: "$215.96", year_2: "$217.56", year_3: "$219.39", year_4: "$221.15", year_5: "$222.82", year_6: "$224.61", year_7: "$226.38", year_8: "$228.16", year_9: "$229.91", year_10: "$231.71", year_11: "$233.49", year_12: "$235.23" }
       }
     }
   },
@@ -381,9 +389,11 @@ const majorAirlinesData: Record<string, AirlineInfo> = {
         year_10: "$185,000"
       },
       captain: {
-        year_1: "$198,000",
-        year_5: "$275,000",
-        year_10: "$335,000"
+        "default": {
+          year_1: "$198,000",
+          year_5: "$275,000", 
+          year_10: "$335,000"
+        }
       }
     }
   },
@@ -469,9 +479,11 @@ const majorAirlinesData: Record<string, AirlineInfo> = {
         year_10: "$190,000"
       },
       captain: {
-        year_1: "$200,000",
-        year_5: "$280,000",
-        year_10: "$340,000"
+        "default": {
+          year_1: "$200,000",
+          year_5: "$280,000",
+          year_10: "$340,000"
+        }
       }
     }
   },
@@ -543,9 +555,11 @@ const majorAirlinesData: Record<string, AirlineInfo> = {
         year_10: "$165,000"
       },
       captain: {
-        year_1: "$175,000",
-        year_5: "$225,000",
-        year_10: "$275,000"
+        "default": {
+          year_1: "$175,000",
+          year_5: "$225,000",
+          year_10: "$275,000"
+        }
       }
     }
   },
@@ -603,9 +617,11 @@ const majorAirlinesData: Record<string, AirlineInfo> = {
         year_10: "$170,000"
       },
       captain: {
-        year_1: "$189,000",
-        year_5: "$245,000",
-        year_10: "$295,000"
+        "default": {
+          year_1: "$189,000",
+          year_5: "$245,000",
+          year_10: "$295,000"
+        }
       }
     }
   }
@@ -978,21 +994,21 @@ export function AirlineDetailsDialog({ open, onOpenChange, airline }: AirlineDet
                   </tr>
                 </thead>
                 <tbody>
-                  {airlineData.fleet_types.map((aircraft, index) => (
-                    <tr key={index} className="border-b hover:bg-muted/50">
-                      <td className="p-3 font-medium">{aircraft}</td>
-                      <td className="text-center p-3">{airlineData.pay_scales.captain.year_1}</td>
-                      <td className="text-center p-3">{airlineData.pay_scales.captain.year_2}</td>
-                      <td className="text-center p-3">{airlineData.pay_scales.captain.year_3}</td>
-                      <td className="text-center p-3">{airlineData.pay_scales.captain.year_4}</td>
-                      <td className="text-center p-3">{airlineData.pay_scales.captain.year_5}</td>
-                      <td className="text-center p-3">{airlineData.pay_scales.captain.year_6}</td>
-                      <td className="text-center p-3">{airlineData.pay_scales.captain.year_7}</td>
-                      <td className="text-center p-3">{airlineData.pay_scales.captain.year_8}</td>
-                      <td className="text-center p-3">{airlineData.pay_scales.captain.year_9}</td>
-                      <td className="text-center p-3">{airlineData.pay_scales.captain.year_10}</td>
-                      <td className="text-center p-3">{airlineData.pay_scales.captain.year_11}</td>
-                      <td className="text-center p-3">{airlineData.pay_scales.captain.year_12}</td>
+                  {Object.entries(airlineData.pay_scales.captain).map(([aircraft, payScale]) => (
+                    <tr key={aircraft} className="border-b hover:bg-muted/50">
+                      <td className="p-3 font-medium">{aircraft === "default" ? "All Aircraft" : aircraft}</td>
+                      <td className="text-center p-3">{payScale.year_1 || "-"}</td>
+                      <td className="text-center p-3">{payScale.year_2 || "-"}</td>
+                      <td className="text-center p-3">{payScale.year_3 || "-"}</td>
+                      <td className="text-center p-3">{payScale.year_4 || "-"}</td>
+                      <td className="text-center p-3">{payScale.year_5 || "-"}</td>
+                      <td className="text-center p-3">{payScale.year_6 || "-"}</td>
+                      <td className="text-center p-3">{payScale.year_7 || "-"}</td>
+                      <td className="text-center p-3">{payScale.year_8 || "-"}</td>
+                      <td className="text-center p-3">{payScale.year_9 || "-"}</td>
+                      <td className="text-center p-3">{payScale.year_10 || "-"}</td>
+                      <td className="text-center p-3">{payScale.year_11 || "-"}</td>
+                      <td className="text-center p-3">{payScale.year_12 || "-"}</td>
                     </tr>
                   ))}
                 </tbody>
