@@ -445,13 +445,16 @@ const majorAirlinesData: Record<string, AirlineInfo> = {
       ]
     },
     benefits: [
-      "Competitive pay scale",
-      "Health and dental insurance",
-      "401(k) retirement plan",
-      "Travel benefits in paradise",
+      "Comprehensive medical plan benefits at excellent rates",
+      "Dental coverage", 
+      "Flexible spending accounts for health care and dependent care",
+      "401(k) retirement plan with company contributions",
+      "Life and accidental death and dismemberment insurance",
+      "Long-term disability",
       "Paid vacation time",
-      "Life insurance",
-      "Flexible work arrangements"
+      "Exceptional travel privileges",
+      "Employee discounts from various stores and companies",
+      "KCM and Cass privileges"
     ],
     fleet_types: [
       "Airbus A321neo",
