@@ -44,6 +44,7 @@ import seaborneAirlinesLogo from "@/assets/airlines/seaborne-airlines.png";
 import silverAirwaysLogo from "@/assets/airlines/silver-airways.png";
 import starAirLogo from "@/assets/airlines/star-air.png";
 import sterlingAirwaysLogo from "@/assets/airlines/sterling-airways.png";
+import netjetsLogo from "@/assets/airlines/netjets.png";
 
 const Airlines = () => {
   // Helper function to get airline logo
@@ -89,7 +90,8 @@ const Airlines = () => {
       "Seaborne Airlines": seaborneAirlinesLogo,
       "Silver Airways": silverAirwaysLogo,
       "Star Air": starAirLogo,
-      "Sterling Airways": sterlingAirwaysLogo
+      "Sterling Airways": sterlingAirwaysLogo,
+      "NetJets": netjetsLogo
     };
     return logoMap[airlineName] || null;
   };
