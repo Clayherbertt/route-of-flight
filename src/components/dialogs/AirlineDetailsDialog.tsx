@@ -894,7 +894,7 @@ export function AirlineDetailsDialog({ open, onOpenChange, airline }: AirlineDet
           </Card>
 
           {/* Fleet Types */}
-          <Card>
+          <Card className="md:col-span-2">
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
                 <Plane className="h-5 w-5" />
