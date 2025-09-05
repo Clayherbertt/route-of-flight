@@ -20,6 +20,11 @@ import mesaAirlinesLogo from "@/assets/airlines/mesa-airlines.png";
 import republicAirwaysLogo from "@/assets/airlines/republic-airways.png";
 import endeavorAirLogo from "@/assets/airlines/endeavor-air.png";
 import envoyAirLogo from "@/assets/airlines/envoy-air.png";
+import psaAirlinesLogo from "@/assets/airlines/psa-airlines.png";
+import piedmontAirlinesLogo from "@/assets/airlines/piedmont-airlines.png";
+import gojetAirlinesLogo from "@/assets/airlines/gojet-airlines.png";
+import airWisconsinLogo from "@/assets/airlines/air-wisconsin.png";
+import commutairLogo from "@/assets/airlines/commutair.png";
 
 const Airlines = () => {
   // Helper function to get airline logo
@@ -41,7 +46,12 @@ const Airlines = () => {
       "Mesa Airlines": mesaAirlinesLogo,
       "Republic Airways": republicAirwaysLogo,
       "Endeavor Air": endeavorAirLogo,
-      "Envoy Air": envoyAirLogo
+      "Envoy Air": envoyAirLogo,
+      "PSA Airlines": psaAirlinesLogo,
+      "Piedmont Airlines": piedmontAirlinesLogo,
+      "GoJet Airlines": gojetAirlinesLogo,
+      "Air Wisconsin": airWisconsinLogo,
+      "CommutAir": commutairLogo
     };
     return logoMap[airlineName] || null;
   };
@@ -75,7 +85,7 @@ const Airlines = () => {
         { name: "Air Wisconsin", logo: "🧀" },
         { name: "Alaska Seaplanes", logo: "🛩️" },
         { name: "Cape Air", logo: "🦅" },
-        { name: "CommuteAir", logo: "🚁" },
+        { name: "CommutAir", logo: "🚁" },
         { name: "Connect Airlines", logo: "🔗" },
         { name: "Denver Air Connection", logo: "🏔️" },
         { name: "Elite Airways", logo: "👑" },
