@@ -55,14 +55,9 @@ interface ScrapingSource {
 
 const SCRAPING_SOURCES: ScrapingSource[] = [
   {
-    name: 'airlinepilotcentral',
-    urlPattern: (name) => `https://www.airlinepilotcentral.com/airlines/${name.toLowerCase().replace(/[^a-z0-9]/g, '_')}`,
-    priority: 3
-  },
-  {
     name: 'wikipedia',
     urlPattern: (name) => `https://en.wikipedia.org/wiki/${name.replace(/\s+/g, '_')}`,
-    priority: 2
+    priority: 3
   },
   {
     name: 'airline_website',
@@ -71,6 +66,11 @@ const SCRAPING_SOURCES: ScrapingSource[] = [
       const cleanName = name.toLowerCase().replace(/\s+/g, '').replace(/airlines?/g, '');
       return `https://${cleanName}.com/careers`;
     },
+    priority: 2
+  },
+  {
+    name: 'planespotters',
+    urlPattern: (name) => `https://www.planespotters.net/airline/${name.replace(/\s+/g, '-').toLowerCase()}`,
     priority: 1
   }
 ];
