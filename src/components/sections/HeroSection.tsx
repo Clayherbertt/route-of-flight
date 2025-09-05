@@ -9,8 +9,7 @@ const HeroSection = () => {
 
   const handleStartLogbook = () => {
     if (user) {
-      // TODO: Navigate to logbook page when it exists
-      console.log("Navigate to logbook");
+      navigate("/logbook");
     } else {
       navigate("/signin");
     }
@@ -40,7 +39,7 @@ const HeroSection = () => {
 
         <div className="flex flex-col sm:flex-row gap-4 justify-center mb-12">
           <Button variant="default" size="xl" className="group" onClick={handleStartLogbook}>
-            Start Your Logbook
+            {user ? "View your logbook" : "Start Your Logbook"}
             <ArrowRight className="ml-2 h-5 w-5 group-hover:translate-x-1 transition-transform" />
           </Button>
           <Button variant="outline" size="xl" onClick={handleViewAirlines}>
