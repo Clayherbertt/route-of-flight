@@ -38,13 +38,31 @@ interface AirlineInfo {
   pay_scales: {
     first_officer: {
       year_1: string;
+      year_2?: string;
+      year_3?: string;
+      year_4?: string;
       year_5: string;
+      year_6?: string;
+      year_7?: string;
+      year_8?: string;
+      year_9?: string;
       year_10: string;
+      year_11?: string;
+      year_12?: string;
     };
     captain: {
       year_1: string;
+      year_2?: string;
+      year_3?: string;
+      year_4?: string;
       year_5: string;
+      year_6?: string;
+      year_7?: string;
+      year_8?: string;
+      year_9?: string;
       year_10: string;
+      year_11?: string;
+      year_12?: string;
     };
   };
 }
@@ -142,14 +160,32 @@ const majorAirlinesData: Record<string, AirlineInfo> = {
     ],
     pay_scales: {
       first_officer: {
-        year_1: "$89,000",
-        year_5: "$142,000",
-        year_10: "$178,000"
+        year_1: "$108.16",
+        year_2: "$160.67",
+        year_3: "$186.06",
+        year_4: "$193.69",
+        year_5: "$201.45",
+        year_6: "$207.45",
+        year_7: "$213.20",
+        year_8: "$218.32",
+        year_9: "$220.73",
+        year_10: "$224.41",
+        year_11: "$226.60",
+        year_12: "$228.80"
       },
       captain: {
-        year_1: "$195,000",
-        year_5: "$248,000",
-        year_10: "$295,000"
+        year_1: "$300.31",
+        year_2: "$303.01",
+        year_3: "$305.76",
+        year_4: "$308.56",
+        year_5: "$311.31",
+        year_6: "$314.17",
+        year_7: "$316.95",
+        year_8: "$319.73",
+        year_9: "$322.56",
+        year_10: "$325.31",
+        year_11: "$328.16",
+        year_12: "$330.97"
       }
     }
   },
