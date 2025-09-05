@@ -428,6 +428,22 @@ const majorAirlinesData: Record<string, AirlineInfo> = {
       college_degree: false,
       clean_record: true
     },
+    detailed_requirements: {
+      required: [
+        "FAA ATP certified, Airplane Multiengine Land with English proficient endorsement",
+        "First Class FAA Medical Certificate",
+        "1,500 total flight hours",
+        "Minimum of 1,000 fixed wing hours",
+        "FCC Restricted Radiotelephone Operator Permit",
+        "High school diploma or its equivalent",
+        "Eligible to work in the United States"
+      ],
+      preferred: [
+        "1,000 hours turbine as PIC (as defined by FAR Part 1)",
+        "Turbojet/turbo prop experience in complex flying environments",
+        "College degree"
+      ]
+    },
     benefits: [
       "Competitive pay scale",
       "Health and dental insurance",
