@@ -693,30 +693,31 @@ export function AirlineDetailsDialog({ open, onOpenChange, airline }: AirlineDet
 
     return (
       <Dialog open={open} onOpenChange={onOpenChange}>
-        <DialogContent className="max-w-6xl max-h-[90vh] overflow-y-auto">
-          <DialogHeader>
-            <div className="flex items-center gap-4">
-              {airline.logoUrl ? (
-                <img 
-                  src={airline.logoUrl} 
-                  alt={`${airline.name} logo`}
-                  className="w-12 h-12 object-contain"
-                />
-              ) : airlineData?.logo && (
-                <div className="text-4xl">{airlineData.logo}</div>
-              )}
-              <div>
-                <DialogTitle className="text-2xl">{airlineData.name}</DialogTitle>
-                <DialogDescription>
-                  Complete airline profile with hiring requirements, benefits, and career information
-                </DialogDescription>
-                <div className="flex gap-2 mt-1">
-                  <Badge variant="secondary">{airlineData.iata}</Badge>
-                  <Badge variant="secondary">{airlineData.icao}</Badge>
+        <DialogContent className="max-w-4xl w-[95vw] max-h-[90vh] overflow-y-auto overflow-x-hidden">
+          <div className="min-w-0 w-full">
+            <DialogHeader>
+              <div className="flex items-center gap-4">
+                {airline.logoUrl ? (
+                  <img 
+                    src={airline.logoUrl} 
+                    alt={`${airline.name} logo`}
+                    className="w-12 h-12 object-contain flex-shrink-0"
+                  />
+                ) : airlineData?.logo && (
+                  <div className="text-4xl flex-shrink-0">{airlineData.logo}</div>
+                )}
+                <div className="min-w-0 flex-1">
+                  <DialogTitle className="text-2xl break-words">{airlineData.name}</DialogTitle>
+                  <DialogDescription className="break-words">
+                    Complete airline profile with hiring requirements, benefits, and career information
+                  </DialogDescription>
+                  <div className="flex gap-2 mt-1 flex-wrap">
+                    <Badge variant="secondary">{airlineData.iata}</Badge>
+                    <Badge variant="secondary">{airlineData.icao}</Badge>
+                  </div>
                 </div>
               </div>
-            </div>
-          </DialogHeader>
+            </DialogHeader>
 
         <div className="grid md:grid-cols-2 gap-6">
           {/* Company Overview */}
@@ -1391,7 +1392,8 @@ export function AirlineDetailsDialog({ open, onOpenChange, airline }: AirlineDet
         <div className="flex justify-end pt-4 border-t">
           <Button onClick={() => onOpenChange(false)}>Close</Button>
         </div>
-      </DialogContent>
+          </div>
+        </DialogContent>
     </Dialog>
   );
 }
