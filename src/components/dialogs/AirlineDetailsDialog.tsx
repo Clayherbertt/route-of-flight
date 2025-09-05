@@ -31,6 +31,7 @@ interface AirlineInfo {
     required: string[];
     preferred: string[];
   };
+  inside_scoop?: string[];
   benefits: string[];
   fleet_types: string[];
   bases: string[];
@@ -360,6 +361,9 @@ const majorAirlinesData: Record<string, AirlineInfo> = {
         "150 - 250 Turbine PIC"
       ]
     },
+    inside_scoop: [
+      "3000 total time and 1500 PIC time highly preferred for competitive advantage"
+    ],
     benefits: [
       "Competitive compensation",
       "Comprehensive medical benefits",
@@ -644,30 +648,45 @@ export function AirlineDetailsDialog({ open, onOpenChange, airline }: AirlineDet
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
-              {airlineData.detailed_requirements ? (
-                <div className="grid md:grid-cols-2 gap-6">
-                  <div>
-                    <h4 className="font-semibold text-sm mb-3 text-green-700 dark:text-green-400">Required</h4>
-                    <div className="space-y-2">
-                      {airlineData.detailed_requirements.required.map((requirement, index) => (
-                        <div key={index} className="flex items-start gap-2">
-                          <div className="h-1.5 w-1.5 bg-green-600 rounded-full mt-2 flex-shrink-0" />
-                          <span className="text-sm">{requirement}</span>
-                        </div>
-                      ))}
+               {airlineData.detailed_requirements ? (
+                <div className="space-y-6">
+                  <div className="grid md:grid-cols-2 gap-6">
+                    <div>
+                      <h4 className="font-semibold text-sm mb-3 text-green-700 dark:text-green-400">Required</h4>
+                      <div className="space-y-2">
+                        {airlineData.detailed_requirements.required.map((requirement, index) => (
+                          <div key={index} className="flex items-start gap-2">
+                            <div className="h-1.5 w-1.5 bg-green-600 rounded-full mt-2 flex-shrink-0" />
+                            <span className="text-sm">{requirement}</span>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                    <div>
+                      <h4 className="font-semibold text-sm mb-3 text-blue-700 dark:text-blue-400">Preferred</h4>
+                      <div className="space-y-2">
+                        {airlineData.detailed_requirements.preferred.map((requirement, index) => (
+                          <div key={index} className="flex items-start gap-2">
+                            <div className="h-1.5 w-1.5 bg-blue-600 rounded-full mt-2 flex-shrink-0" />
+                            <span className="text-sm">{requirement}</span>
+                          </div>
+                        ))}
+                      </div>
                     </div>
                   </div>
-                  <div>
-                    <h4 className="font-semibold text-sm mb-3 text-blue-700 dark:text-blue-400">Preferred</h4>
-                    <div className="space-y-2">
-                      {airlineData.detailed_requirements.preferred.map((requirement, index) => (
-                        <div key={index} className="flex items-start gap-2">
-                          <div className="h-1.5 w-1.5 bg-blue-600 rounded-full mt-2 flex-shrink-0" />
-                          <span className="text-sm">{requirement}</span>
-                        </div>
-                      ))}
+                  {airlineData.inside_scoop && (
+                    <div>
+                      <h4 className="font-semibold text-sm mb-3 text-amber-700 dark:text-amber-400">Inside Scoop</h4>
+                      <div className="space-y-2">
+                        {airlineData.inside_scoop.map((tip, index) => (
+                          <div key={index} className="flex items-start gap-2">
+                            <div className="h-1.5 w-1.5 bg-amber-600 rounded-full mt-2 flex-shrink-0" />
+                            <span className="text-sm italic">{tip}</span>
+                          </div>
+                        ))}
+                      </div>
                     </div>
-                  </div>
+                  )}
                 </div>
               ) : (
                 <div className="space-y-3">
