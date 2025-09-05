@@ -1,11 +1,12 @@
 import { Button } from "@/components/ui/button";
 import { Plane, Book, Building2, FileText, Crown } from "lucide-react";
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
 import { UserMenu } from "@/components/auth/UserMenu";
 
 const Header = () => {
   const { user, loading } = useAuth();
+  const location = useLocation();
 
   return (
     <header className="border-b border-border bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 sticky top-0 z-50">
@@ -30,7 +31,7 @@ const Header = () => {
             <Building2 className="inline h-4 w-4 mr-2" />
             Airlines
           </a>
-          {user && (
+          {user && location.pathname === '/profile' && (
             <Link
               to="/subscription"
               className="text-sm font-medium text-muted-foreground hover:text-foreground smooth-transition"
