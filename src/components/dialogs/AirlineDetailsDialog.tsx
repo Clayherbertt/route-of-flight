@@ -58,7 +58,7 @@ interface AirlineDetailsDialogProps {
 const majorAirlinesData: Record<string, AirlineInfo> = {
   "Alaska Airlines": {
     name: "Alaska Airlines",
-    logo: "❄️",
+    logo: "✈️",
     iata: "AS",
     icao: "ASA",
     headquarters: "Seattle, Washington",
@@ -148,7 +148,7 @@ const majorAirlinesData: Record<string, AirlineInfo> = {
   },
   "Delta Air Lines": {
     name: "Delta Air Lines",
-    logo: "🔺",
+    logo: "✈️",
     iata: "DL",
     icao: "DAL",
     headquarters: "Atlanta, Georgia",
@@ -213,7 +213,7 @@ const majorAirlinesData: Record<string, AirlineInfo> = {
   },
   "United Airlines": {
     name: "United Airlines",
-    logo: "🌎",
+    logo: "✈️",
     iata: "UA",
     icao: "UAL",
     headquarters: "Chicago, Illinois",
@@ -274,7 +274,7 @@ const majorAirlinesData: Record<string, AirlineInfo> = {
   },
   "American Airlines": {
     name: "American Airlines",
-    logo: "🦅",
+    logo: "✈️",
     iata: "AA",
     icao: "AAL",
     headquarters: "Fort Worth, Texas",
@@ -336,7 +336,7 @@ const majorAirlinesData: Record<string, AirlineInfo> = {
   },
   "Hawaiian Airlines": {
     name: "Hawaiian Airlines",
-    logo: "🌺",
+    logo: "✈️",
     iata: "HA",
     icao: "HAL",
     headquarters: "Honolulu, Hawaii",
@@ -391,7 +391,7 @@ const majorAirlinesData: Record<string, AirlineInfo> = {
   },
   "Southwest Airlines": {
     name: "Southwest Airlines",
-    logo: "❤️",
+    logo: "✈️",
     iata: "WN",
     icao: "SWA",
     headquarters: "Dallas, Texas",
