@@ -109,6 +109,7 @@
   * {
     @apply border-border;
     caret-color: transparent;
+    user-select: none;
   }
 
   body {

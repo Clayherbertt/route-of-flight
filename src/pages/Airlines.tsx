@@ -229,7 +229,7 @@ const Airlines = () => {
             <h2 className="text-3xl font-bold mb-8 text-center">{section.title}</h2>
             <div className="grid md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
               {section.airlines.map((airline, index) => (
-                <Card key={index} className="hover:shadow-lg transition-shadow cursor-pointer">
+                <Card key={index} className="hover:shadow-lg transition-shadow select-none">
                   <CardHeader className="pb-4">
                     <div className="flex items-center gap-3">
                       {getAirlineLogo(airline.name) && (
