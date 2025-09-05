@@ -863,23 +863,23 @@ export function AirlineDetailsDialog({ open, onOpenChange, airline }: AirlineDet
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="overflow-x-auto">
+            <div className="max-h-60 overflow-y-auto border rounded">
               <table className="w-full text-sm border-collapse">
-                <thead>
-                  <tr className="border-b">
-                    <th className="text-left p-2 font-semibold">Aircraft Type</th>
-                    <th className="text-center p-2 font-semibold">1</th>
-                    <th className="text-center p-2 font-semibold">2</th>
-                    <th className="text-center p-2 font-semibold">3</th>
-                    <th className="text-center p-2 font-semibold">4</th>
-                    <th className="text-center p-2 font-semibold">5</th>
-                    <th className="text-center p-2 font-semibold">6</th>
-                    <th className="text-center p-2 font-semibold">7</th>
-                    <th className="text-center p-2 font-semibold">8</th>
-                    <th className="text-center p-2 font-semibold">9</th>
-                    <th className="text-center p-2 font-semibold">10</th>
-                    <th className="text-center p-2 font-semibold">11</th>
-                    <th className="text-center p-2 font-semibold">12</th>
+                <thead className="sticky top-0 bg-background border-b">
+                  <tr>
+                    <th className="text-left p-2 font-semibold bg-background">Aircraft Type</th>
+                    <th className="text-center p-2 font-semibold bg-background">1</th>
+                    <th className="text-center p-2 font-semibold bg-background">2</th>
+                    <th className="text-center p-2 font-semibold bg-background">3</th>
+                    <th className="text-center p-2 font-semibold bg-background">4</th>
+                    <th className="text-center p-2 font-semibold bg-background">5</th>
+                    <th className="text-center p-2 font-semibold bg-background">6</th>
+                    <th className="text-center p-2 font-semibold bg-background">7</th>
+                    <th className="text-center p-2 font-semibold bg-background">8</th>
+                    <th className="text-center p-2 font-semibold bg-background">9</th>
+                    <th className="text-center p-2 font-semibold bg-background">10</th>
+                    <th className="text-center p-2 font-semibold bg-background">11</th>
+                    <th className="text-center p-2 font-semibold bg-background">12</th>
                   </tr>
                 </thead>
                 <tbody>
