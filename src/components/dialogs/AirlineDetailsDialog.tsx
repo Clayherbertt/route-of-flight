@@ -631,9 +631,9 @@ export function AirlineDetailsDialog({ open, onOpenChange, airline }: AirlineDet
   // Use detailed data for major airlines
   const airlineData = airline ? majorAirlinesData[airline.name] : null;
 
-  // Helper function to get First Officer pay by aircraft type
+  // Helper function to get First Officer pay by aircraft type (Delta only)
   const getFirstOfficerPay = (aircraft: string, year: number): string => {
-    if (!airlineData) return "$0";
+    if (!airlineData || airlineData.name !== "Delta Air Lines") return "$0";
     
     const payScales: { [key: string]: { [key: string]: string } } = {
       "Boeing 777": { year_1: "$118.31", year_2: "$225.66", year_3: "$264.07", year_4: "$270.46", year_5: "$276.92", year_6: "$283.94", year_7: "$291.83", year_8: "$298.53", year_9: "$301.79", year_10: "$305.88", year_11: "$308.62", year_12: "$311.46" },
@@ -913,280 +913,336 @@ export function AirlineDetailsDialog({ open, onOpenChange, airline }: AirlineDet
           </Card>
         </div>
 
-        {/* First Officer Pay Scale - Full Width */}
-        <Card className="mt-6">
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <DollarSign className="h-5 w-5" />
-              First Officer Hourly Pay Scale
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="max-h-80 overflow-y-auto border rounded-md">
-              <table className="w-full text-sm">
-                <thead className="sticky top-0 bg-background">
-                  <tr className="border-b">
-                    <th className="text-left p-3 font-semibold">Aircraft Type</th>
-                    <th className="text-center p-3 font-semibold">1</th>
-                    <th className="text-center p-3 font-semibold">2</th>
-                    <th className="text-center p-3 font-semibold">3</th>
-                    <th className="text-center p-3 font-semibold">4</th>
-                    <th className="text-center p-3 font-semibold">5</th>
-                    <th className="text-center p-3 font-semibold">6</th>
-                    <th className="text-center p-3 font-semibold">7</th>
-                    <th className="text-center p-3 font-semibold">8</th>
-                    <th className="text-center p-3 font-semibold">9</th>
-                    <th className="text-center p-3 font-semibold">10</th>
-                    <th className="text-center p-3 font-semibold">11</th>
-                    <th className="text-center p-3 font-semibold">12</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {airlineData.fleet_types.map((aircraft, index) => (
-                    <tr key={index} className="border-b hover:bg-muted/50">
-                      <td className="p-3 font-medium">{aircraft}</td>
-                      <td className="text-center p-3">{getFirstOfficerPay(aircraft, 1)}</td>
-                      <td className="text-center p-3">{getFirstOfficerPay(aircraft, 2)}</td>
-                      <td className="text-center p-3">{getFirstOfficerPay(aircraft, 3)}</td>
-                      <td className="text-center p-3">{getFirstOfficerPay(aircraft, 4)}</td>
-                      <td className="text-center p-3">{getFirstOfficerPay(aircraft, 5)}</td>
-                      <td className="text-center p-3">{getFirstOfficerPay(aircraft, 6)}</td>
-                      <td className="text-center p-3">{getFirstOfficerPay(aircraft, 7)}</td>
-                      <td className="text-center p-3">{getFirstOfficerPay(aircraft, 8)}</td>
-                      <td className="text-center p-3">{getFirstOfficerPay(aircraft, 9)}</td>
-                      <td className="text-center p-3">{getFirstOfficerPay(aircraft, 10)}</td>
-                      <td className="text-center p-3">{getFirstOfficerPay(aircraft, 11)}</td>
-                      <td className="text-center p-3">{getFirstOfficerPay(aircraft, 12)}</td>
+        {/* First Officer Pay Scale - Full Width (Delta only) */}
+        {airlineData.name === "Delta Air Lines" && (
+          <Card className="mt-6">
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <DollarSign className="h-5 w-5" />
+                First Officer Hourly Pay Scale
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="max-h-80 overflow-y-auto border rounded-md">
+                <table className="w-full text-sm">
+                  <thead className="sticky top-0 bg-background">
+                    <tr className="border-b">
+                      <th className="text-left p-3 font-semibold">Aircraft Type</th>
+                      <th className="text-center p-3 font-semibold">1</th>
+                      <th className="text-center p-3 font-semibold">2</th>
+                      <th className="text-center p-3 font-semibold">3</th>
+                      <th className="text-center p-3 font-semibold">4</th>
+                      <th className="text-center p-3 font-semibold">5</th>
+                      <th className="text-center p-3 font-semibold">6</th>
+                      <th className="text-center p-3 font-semibold">7</th>
+                      <th className="text-center p-3 font-semibold">8</th>
+                      <th className="text-center p-3 font-semibold">9</th>
+                      <th className="text-center p-3 font-semibold">10</th>
+                      <th className="text-center p-3 font-semibold">11</th>
+                      <th className="text-center p-3 font-semibold">12</th>
                     </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-          </CardContent>
-        </Card>
+                  </thead>
+                  <tbody>
+                    {airlineData.fleet_types.map((aircraft, index) => (
+                      <tr key={index} className="border-b hover:bg-muted/50">
+                        <td className="p-3 font-medium">{aircraft}</td>
+                        <td className="text-center p-3">{getFirstOfficerPay(aircraft, 1)}</td>
+                        <td className="text-center p-3">{getFirstOfficerPay(aircraft, 2)}</td>
+                        <td className="text-center p-3">{getFirstOfficerPay(aircraft, 3)}</td>
+                        <td className="text-center p-3">{getFirstOfficerPay(aircraft, 4)}</td>
+                        <td className="text-center p-3">{getFirstOfficerPay(aircraft, 5)}</td>
+                        <td className="text-center p-3">{getFirstOfficerPay(aircraft, 6)}</td>
+                        <td className="text-center p-3">{getFirstOfficerPay(aircraft, 7)}</td>
+                        <td className="text-center p-3">{getFirstOfficerPay(aircraft, 8)}</td>
+                        <td className="text-center p-3">{getFirstOfficerPay(aircraft, 9)}</td>
+                        <td className="text-center p-3">{getFirstOfficerPay(aircraft, 10)}</td>
+                        <td className="text-center p-3">{getFirstOfficerPay(aircraft, 11)}</td>
+                        <td className="text-center p-3">{getFirstOfficerPay(aircraft, 12)}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            </CardContent>
+          </Card>
+        )}
 
-        {/* Captain Pay Scale - Full Width */}
-        <Card className="mt-6">
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <DollarSign className="h-5 w-5" />
-              Captain Hourly Pay Scale
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="max-h-80 overflow-y-auto border rounded-md">
-              <table className="w-full text-sm">
-                <thead className="sticky top-0 bg-background">
-                  <tr className="border-b">
-                    <th className="text-left p-3 font-semibold">Aircraft Type</th>
-                    <th className="text-center p-3 font-semibold">1</th>
-                    <th className="text-center p-3 font-semibold">2</th>
-                    <th className="text-center p-3 font-semibold">3</th>
-                    <th className="text-center p-3 font-semibold">4</th>
-                    <th className="text-center p-3 font-semibold">5</th>
-                    <th className="text-center p-3 font-semibold">6</th>
-                    <th className="text-center p-3 font-semibold">7</th>
-                    <th className="text-center p-3 font-semibold">8</th>
-                    <th className="text-center p-3 font-semibold">9</th>
-                    <th className="text-center p-3 font-semibold">10</th>
-                    <th className="text-center p-3 font-semibold">11</th>
-                    <th className="text-center p-3 font-semibold">12</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {Object.entries(airlineData.pay_scales.captain).map(([aircraft, payScale]) => (
-                    <tr key={aircraft} className="border-b hover:bg-muted/50">
-                      <td className="p-3 font-medium">{aircraft === "default" ? "All Aircraft" : aircraft}</td>
-                      <td className="text-center p-3">{payScale.year_1 || "-"}</td>
-                      <td className="text-center p-3">{payScale.year_2 || "-"}</td>
-                      <td className="text-center p-3">{payScale.year_3 || "-"}</td>
-                      <td className="text-center p-3">{payScale.year_4 || "-"}</td>
-                      <td className="text-center p-3">{payScale.year_5 || "-"}</td>
-                      <td className="text-center p-3">{payScale.year_6 || "-"}</td>
-                      <td className="text-center p-3">{payScale.year_7 || "-"}</td>
-                      <td className="text-center p-3">{payScale.year_8 || "-"}</td>
-                      <td className="text-center p-3">{payScale.year_9 || "-"}</td>
-                      <td className="text-center p-3">{payScale.year_10 || "-"}</td>
-                      <td className="text-center p-3">{payScale.year_11 || "-"}</td>
-                      <td className="text-center p-3">{payScale.year_12 || "-"}</td>
+        {/* Captain Pay Scale - Full Width (Delta only) */}
+        {airlineData.name === "Delta Air Lines" && (
+          <Card className="mt-6">
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <DollarSign className="h-5 w-5" />
+                Captain Hourly Pay Scale
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="max-h-80 overflow-y-auto border rounded-md">
+                <table className="w-full text-sm">
+                  <thead className="sticky top-0 bg-background">
+                    <tr className="border-b">
+                      <th className="text-left p-3 font-semibold">Aircraft Type</th>
+                      <th className="text-center p-3 font-semibold">1</th>
+                      <th className="text-center p-3 font-semibold">2</th>
+                      <th className="text-center p-3 font-semibold">3</th>
+                      <th className="text-center p-3 font-semibold">4</th>
+                      <th className="text-center p-3 font-semibold">5</th>
+                      <th className="text-center p-3 font-semibold">6</th>
+                      <th className="text-center p-3 font-semibold">7</th>
+                      <th className="text-center p-3 font-semibold">8</th>
+                      <th className="text-center p-3 font-semibold">9</th>
+                      <th className="text-center p-3 font-semibold">10</th>
+                      <th className="text-center p-3 font-semibold">11</th>
+                      <th className="text-center p-3 font-semibold">12</th>
                     </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-          </CardContent>
-        </Card>
-
-        {/* Schedules/Line Details */}
-        <Card className="mt-6">
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <Clock className="h-5 w-5" />
-              Schedules/Line Details
-            </CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-6">
-            {/* Line Types */}
-            <div>
-              <h4 className="font-semibold text-base mb-3">Line Types</h4>
-              <div className="space-y-2 text-sm">
-                <div className="flex gap-3">
-                  <span className="font-medium min-w-32">Initial/Adjusted:</span>
-                  <span>Awarded via PBS/DBMS, modified for conflicts.</span>
-                </div>
-                <div className="flex gap-3">
-                  <span className="font-medium min-w-32">Regular:</span>
-                  <span>Includes rotations, vacations, leaves, days off.</span>
-                </div>
-                <div className="flex gap-3">
-                  <span className="font-medium min-w-32">Reserve:</span>
-                  <span>Includes on-call days and X-days (off days).</span>
-                </div>
-                <div className="flex gap-3">
-                  <span className="font-medium min-w-32">Blank Regular:</span>
-                  <span>No rotations, no guarantee.</span>
-                </div>
-                <div className="flex gap-3">
-                  <span className="font-medium min-w-32">RLL:</span>
-                  <span>Reduced Lower Limit Line - Below Line Construction Window (LCW) lower limit, awarded on request.</span>
-                </div>
-                <div className="flex gap-3">
-                  <span className="font-medium min-w-32">Specially Created:</span>
-                  <span>Post-award reserve line.</span>
-                </div>
+                  </thead>
+                  <tbody>
+                    {Object.entries(airlineData.pay_scales.captain).map(([aircraft, payScale]) => (
+                      <tr key={aircraft} className="border-b hover:bg-muted/50">
+                        <td className="p-3 font-medium">{aircraft === "default" ? "All Aircraft" : aircraft}</td>
+                        <td className="text-center p-3">{payScale.year_1 || "-"}</td>
+                        <td className="text-center p-3">{payScale.year_2 || "-"}</td>
+                        <td className="text-center p-3">{payScale.year_3 || "-"}</td>
+                        <td className="text-center p-3">{payScale.year_4 || "-"}</td>
+                        <td className="text-center p-3">{payScale.year_5 || "-"}</td>
+                        <td className="text-center p-3">{payScale.year_6 || "-"}</td>
+                        <td className="text-center p-3">{payScale.year_7 || "-"}</td>
+                        <td className="text-center p-3">{payScale.year_8 || "-"}</td>
+                        <td className="text-center p-3">{payScale.year_9 || "-"}</td>
+                        <td className="text-center p-3">{payScale.year_10 || "-"}</td>
+                        <td className="text-center p-3">{payScale.year_11 || "-"}</td>
+                        <td className="text-center p-3">{payScale.year_12 || "-"}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
               </div>
-            </div>
+            </CardContent>
+          </Card>
+        )}
 
-            <Separator />
-
-            {/* Key Terms */}
-            <div>
-              <h4 className="font-semibold text-base mb-3">Key Terms</h4>
-              <div className="space-y-2 text-sm">
-                <div className="flex gap-3">
-                  <span className="font-medium min-w-32">Line Adjustment:</span>
-                  <span>Company removes rotations to resolve FAR/PWA conflicts.</span>
-                </div>
-                <div className="flex gap-3">
-                  <span className="font-medium min-w-32">Guarantees:</span>
-                  <span>Minimum pay/credit entitlements; pro rata calculations for partial periods.</span>
-                </div>
-                <div className="flex gap-3">
-                  <span className="font-medium min-w-32">Reserve Day/Share:</span>
-                  <span>On-call or X-day; pro rata share is guarantee divided by on-call days.</span>
-                </div>
-              </div>
-            </div>
-
-            <Separator />
-
-            {/* Regular Line Guarantee */}
-            <div>
-              <h4 className="font-semibold text-base mb-3">Regular Line Guarantee</h4>
-              <div className="space-y-2 text-sm">
+        {/* Basic Pay Scale for non-Delta airlines */}
+        {airlineData.name !== "Delta Air Lines" && (
+          <Card className="mt-6">
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <DollarSign className="h-5 w-5" />
+                Pay Scale (Estimated Annual)
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="grid md:grid-cols-2 gap-6">
                 <div>
-                  <span className="font-medium">Minimum:</span> Lesser of 65 credit hours or pilot's block hour limit.
-                </div>
-                <div>
-                  <span className="font-medium">Exceptions:</span> RLL guarantees LCW lower limit (pilot option); blank lines have no guarantee.
-                </div>
-                <div>
-                  <span className="font-medium">Computation:</span> Computed at aircraft model pay rates; prorated for mixed models based on scheduled credit.
-                </div>
-                <div>
-                  <span className="font-medium">Reductions:</span> For unpaid leaves/furloughs, line adjustments, or net swap losses.
-                </div>
-              </div>
-            </div>
-
-            <Separator />
-
-            {/* Reserve Line Guarantee */}
-            <div>
-              <h4 className="font-semibold text-base mb-3">Reserve Line Guarantee</h4>
-              <div className="space-y-2 text-sm">
-                <div>
-                  <span className="font-medium">Credit:</span> Average Line Value (ALV) minus 2 hours (72–80 hours range).
-                </div>
-                <div>
-                  <span className="font-medium">Pay:</span> Complex formula ensuring minimum based on highest-paying aircraft in category:
-                  <div className="ml-4 mt-1 p-2 bg-muted rounded text-xs">
-                    (ALV - 2 hrs, 72–80 range) - accumulated credit, multiplied by highest rate, plus accumulated credit value (at highest rate, plus international/ocean crossing pay).
+                  <h4 className="font-semibold mb-3">First Officer</h4>
+                  <div className="space-y-2">
+                    <div className="flex justify-between">
+                      <span className="text-muted-foreground">Year 1:</span>
+                      <span className="font-medium">{airlineData.pay_scales.first_officer.year_1}</span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span className="text-muted-foreground">Year 5:</span>
+                      <span className="font-medium">{airlineData.pay_scales.first_officer.year_5}</span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span className="text-muted-foreground">Year 10:</span>
+                      <span className="font-medium">{airlineData.pay_scales.first_officer.year_10}</span>
+                    </div>
                   </div>
                 </div>
                 <div>
-                  <span className="font-medium">Adjustments:</span>
-                  <ul className="ml-4 mt-1 space-y-1">
-                    <li>• Reduced pro rata for vacation/CQ training days or post-award unpaid leaves.</li>
-                    <li>• Increased pro rata for added on-call days or extra short calls (1 hour each).</li>
-                    <li>• Specially created lines: Pro rata for on-call/X-days.</li>
-                  </ul>
+                  <h4 className="font-semibold mb-3">Captain</h4>
+                  <div className="space-y-2">
+                    <div className="flex justify-between">
+                      <span className="text-muted-foreground">Year 1:</span>
+                      <span className="font-medium">{airlineData.pay_scales.captain.default?.year_1}</span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span className="text-muted-foreground">Year 5:</span>
+                      <span className="font-medium">{airlineData.pay_scales.captain.default?.year_5}</span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span className="text-muted-foreground">Year 10:</span>
+                      <span className="font-medium">{airlineData.pay_scales.captain.default?.year_10}</span>
+                    </div>
+                  </div>
                 </div>
               </div>
-            </div>
+            </CardContent>
+          </Card>
+        )}
 
-            <Separator />
-
-            {/* Additional Guarantees */}
-            <div>
-              <h4 className="font-semibold text-base mb-3">Additional Guarantees</h4>
-              <div className="space-y-3 text-sm">
-                <div>
-                  <h5 className="font-medium text-primary mb-1">Unassigned Pilots</h5>
-                  <span>Guarantee: Reserve guarantee of lowest-paying revenue aircraft position (per Section 22 B.).</span>
-                </div>
-                
-                <div>
-                  <h5 className="font-medium text-primary mb-1">Company-Removal Guarantee</h5>
-                  <div className="space-y-1">
-                    <div><span className="font-medium">If removed post-adjustment:</span> Pay/credit for scheduled credit + flown portion, plus international/ocean pay if applicable.</div>
-                    <div><span className="font-medium">Exclusions:</span> Pilot-initiated (e.g., sick, vacation, swaps), IROPS, training/OE, prior bid conflicts, asterisk rotations, low-time pairings, reserve conflicts, recovery/reroutes, discipline, document failures, retirement/death/furlough/termination.</div>
-                    <div><span className="font-medium">Reserve conflict removal:</span> Greater of removed rotation credit or accumulated reserve credit.</div>
+        {/* Schedules/Line Details (Delta only) */}
+        {airlineData.name === "Delta Air Lines" && (
+          <Card className="mt-6">
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <Clock className="h-5 w-5" />
+                Schedules/Line Details
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-6">
+              {/* Line Types */}
+              <div>
+                <h4 className="font-semibold text-base mb-3">Line Types</h4>
+                <div className="space-y-2 text-sm">
+                  <div className="flex gap-3">
+                    <span className="font-medium min-w-32">Initial/Adjusted:</span>
+                    <span>Awarded via PBS/DBMS, modified for conflicts.</span>
                   </div>
-                </div>
-
-                <div>
-                  <h5 className="font-medium text-primary mb-1">Rotation Guarantee</h5>
-                  <div className="space-y-1">
-                    <div><span className="font-medium">For IROPS/FAR/PWA conflicts:</span> Greater of scheduled credit or accumulated recovery/reroute credit.</div>
-                    <div><span className="font-medium">Exception:</span> No guarantee if conflict from prior bid white/yellow slip.</div>
-                    <div><span className="font-medium">Application:</span> At completion date; special rules for transition rotations (may shift credit across bid periods, capped at white slip limit).</div>
+                  <div className="flex gap-3">
+                    <span className="font-medium min-w-32">Regular:</span>
+                    <span>Includes rotations, vacations, leaves, days off.</span>
                   </div>
-                </div>
-
-                <div>
-                  <h5 className="font-medium text-primary mb-1">Mixed Aircraft Model Guarantee</h5>
-                  <div className="space-y-1">
-                    <div>If FAA approves mixing models in types: Composite hourly rate for reserve guarantee is weighted average by fleet mix, adjusted annually Jan 1.</div>
-                    <div className="text-muted-foreground italic">Example: A350 and B767-300ER mix yields ~$373.16/hour (12-year captain rate).</div>
+                  <div className="flex gap-3">
+                    <span className="font-medium min-w-32">Reserve:</span>
+                    <span>Includes on-call days and X-days (off days).</span>
                   </div>
-                </div>
-
-                <div>
-                  <h5 className="font-medium text-primary mb-1">Suit-Up Pay and Credit</h5>
-                  <ul className="space-y-1">
-                    <li>• <span className="font-medium">Regular/long-call reserve:</span> 2 hours pay/credit if unacknowledged removal and reports</li>
-                    <li>• <span className="font-medium">Short-call reserve:</span> 2 hours if notified &lt;2 hours before report</li>
-                    <li>• <span className="font-medium">Reserve short call without flying:</span> 1 hour pay (no credit) per completed period</li>
-                    <li>• <span className="font-medium">Reserve on X-day report:</span> 2 hours pay (no credit), released with rest periods</li>
-                  </ul>
-                </div>
-
-                <div>
-                  <h5 className="font-medium text-primary mb-1">Miscellaneous Guarantees</h5>
-                  <ul className="space-y-1">
-                    <li>• <span className="font-medium">Cancelled known absence (non-unpaid):</span> Pay/credit for original value</li>
-                    <li>• <span className="font-medium">Disciplinary/investigatory meeting on day off:</span> Additional pay equal to Average Daily Guarantee (ADG), if not on paid leave</li>
-                  </ul>
+                  <div className="flex gap-3">
+                    <span className="font-medium min-w-32">Blank Regular:</span>
+                    <span>No rotations, no guarantee.</span>
+                  </div>
+                  <div className="flex gap-3">
+                    <span className="font-medium min-w-32">RLL:</span>
+                    <span>Reduced Lower Limit Line - Below Line Construction Window (LCW) lower limit, awarded on request.</span>
+                  </div>
+                  <div className="flex gap-3">
+                    <span className="font-medium min-w-32">Specially Created:</span>
+                    <span>Post-award reserve line.</span>
+                  </div>
                 </div>
               </div>
-            </div>
 
-            <div className="bg-muted p-3 rounded-md text-sm">
-              <span className="font-medium">Note:</span> This section protects pilots from pay losses due to company actions or disruptions while allowing reductions for personal choices. Guarantees are tied to bid periods (~monthly schedules) and ensure equitable compensation across roles and aircraft.
-            </div>
-          </CardContent>
-        </Card>
+              <Separator />
+
+              {/* Key Terms */}
+              <div>
+                <h4 className="font-semibold text-base mb-3">Key Terms</h4>
+                <div className="space-y-2 text-sm">
+                  <div className="flex gap-3">
+                    <span className="font-medium min-w-32">Line Adjustment:</span>
+                    <span>Company removes rotations to resolve FAR/PWA conflicts.</span>
+                  </div>
+                  <div className="flex gap-3">
+                    <span className="font-medium min-w-32">Guarantees:</span>
+                    <span>Minimum pay/credit entitlements; pro rata calculations for partial periods.</span>
+                  </div>
+                  <div className="flex gap-3">
+                    <span className="font-medium min-w-32">Reserve Day/Share:</span>
+                    <span>On-call or X-day; pro rata share is guarantee divided by on-call days.</span>
+                  </div>
+                </div>
+              </div>
+
+              <Separator />
+
+              {/* Regular Line Guarantee */}
+              <div>
+                <h4 className="font-semibold text-base mb-3">Regular Line Guarantee</h4>
+                <div className="space-y-2 text-sm">
+                  <div>
+                    <span className="font-medium">Minimum:</span> Lesser of 65 credit hours or pilot's block hour limit.
+                  </div>
+                  <div>
+                    <span className="font-medium">Exceptions:</span> RLL guarantees LCW lower limit (pilot option); blank lines have no guarantee.
+                  </div>
+                  <div>
+                    <span className="font-medium">Computation:</span> Computed at aircraft model pay rates; prorated for mixed models based on scheduled credit.
+                  </div>
+                  <div>
+                    <span className="font-medium">Reductions:</span> For unpaid leaves/furloughs, line adjustments, or net swap losses.
+                  </div>
+                </div>
+              </div>
+
+              <Separator />
+
+              {/* Reserve Line Guarantee */}
+              <div>
+                <h4 className="font-semibold text-base mb-3">Reserve Line Guarantee</h4>
+                <div className="space-y-2 text-sm">
+                  <div>
+                    <span className="font-medium">Credit:</span> Average Line Value (ALV) minus 2 hours (72–80 hours range).
+                  </div>
+                  <div>
+                    <span className="font-medium">Pay:</span> Complex formula ensuring minimum based on highest-paying aircraft in category:
+                    <div className="ml-4 mt-1 p-2 bg-muted rounded text-xs">
+                      (ALV - 2 hrs, 72–80 range) - accumulated credit, multiplied by highest rate, plus accumulated credit value (at highest rate, plus international/ocean crossing pay).
+                    </div>
+                  </div>
+                  <div>
+                    <span className="font-medium">Adjustments:</span>
+                    <ul className="ml-4 mt-1 space-y-1">
+                      <li>• Reduced pro rata for vacation/CQ training days or post-award unpaid leaves.</li>
+                      <li>• Increased pro rata for added on-call days or extra short calls (1 hour each).</li>
+                      <li>• Specially created lines: Pro rata for on-call/X-days.</li>
+                    </ul>
+                  </div>
+                </div>
+              </div>
+
+              <Separator />
+
+              {/* Additional Guarantees */}
+              <div>
+                <h4 className="font-semibold text-base mb-3">Additional Guarantees</h4>
+                <div className="space-y-3 text-sm">
+                  <div>
+                    <h5 className="font-medium text-primary mb-1">Unassigned Pilots</h5>
+                    <span>Guarantee: Reserve guarantee of lowest-paying revenue aircraft position (per Section 22 B.).</span>
+                  </div>
+                  
+                  <div>
+                    <h5 className="font-medium text-primary mb-1">Company-Removal Guarantee</h5>
+                    <div className="space-y-1">
+                      <div><span className="font-medium">If removed post-adjustment:</span> Pay/credit for scheduled credit + flown portion, plus international/ocean pay if applicable.</div>
+                      <div><span className="font-medium">Exclusions:</span> Pilot-initiated (e.g., sick, vacation, swaps), IROPS, training/OE, prior bid conflicts, asterisk rotations, low-time pairings, reserve conflicts, recovery/reroutes, discipline, document failures, retirement/death/furlough/termination.</div>
+                      <div><span className="font-medium">Reserve conflict removal:</span> Greater of removed rotation credit or accumulated reserve credit.</div>
+                    </div>
+                  </div>
+
+                  <div>
+                    <h5 className="font-medium text-primary mb-1">Rotation Guarantee</h5>
+                    <div className="space-y-1">
+                      <div><span className="font-medium">For IROPS/FAR/PWA conflicts:</span> Greater of scheduled credit or accumulated recovery/reroute credit.</div>
+                      <div><span className="font-medium">Exception:</span> No guarantee if conflict from prior bid white/yellow slip.</div>
+                      <div><span className="font-medium">Application:</span> At completion date; special rules for transition rotations (may shift credit across bid periods, capped at white slip limit).</div>
+                    </div>
+                  </div>
+
+                  <div>
+                    <h5 className="font-medium text-primary mb-1">Mixed Aircraft Model Guarantee</h5>
+                    <div className="space-y-1">
+                      <div>If FAA approves mixing models in types: Composite hourly rate for reserve guarantee is weighted average by fleet mix, adjusted annually Jan 1.</div>
+                      <div className="text-muted-foreground italic">Example: A350 and B767-300ER mix yields ~$373.16/hour (12-year captain rate).</div>
+                    </div>
+                  </div>
+
+                  <div>
+                    <h5 className="font-medium text-primary mb-1">Suit-Up Pay and Credit</h5>
+                    <ul className="space-y-1">
+                      <li>• <span className="font-medium">Regular/long-call reserve:</span> 2 hours pay/credit if unacknowledged removal and reports</li>
+                      <li>• <span className="font-medium">Short-call reserve:</span> 2 hours if notified &lt;2 hours before report</li>
+                      <li>• <span className="font-medium">Reserve short call without flying:</span> 1 hour pay (no credit) per completed period</li>
+                      <li>• <span className="font-medium">Reserve on X-day report:</span> 2 hours pay (no credit), released with rest periods</li>
+                    </ul>
+                  </div>
+
+                  <div>
+                    <h5 className="font-medium text-primary mb-1">Miscellaneous Guarantees</h5>
+                    <ul className="space-y-1">
+                      <li>• <span className="font-medium">Cancelled known absence (non-unpaid):</span> Pay/credit for original value</li>
+                      <li>• <span className="font-medium">Disciplinary/investigatory meeting on day off:</span> Additional pay equal to Average Daily Guarantee (ADG), if not on paid leave</li>
+                    </ul>
+                  </div>
+                </div>
+              </div>
+
+              <div className="bg-muted p-3 rounded-md text-sm">
+                <span className="font-medium">Note:</span> This section protects pilots from pay losses due to company actions or disruptions while allowing reductions for personal choices. Guarantees are tied to bid periods (~monthly schedules) and ensure equitable compensation across roles and aircraft.
+              </div>
+            </CardContent>
+          </Card>
+        )}
 
         <div className="flex justify-end pt-4 border-t">
           <Button onClick={() => onOpenChange(false)}>Close</Button>
