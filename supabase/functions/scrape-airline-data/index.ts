@@ -14,6 +14,11 @@ interface AirlineData {
   icao?: string;
   headquarters?: string;
   founded?: string;
+  stock_code?: string;
+  pilot_count?: number;
+  is_hiring?: boolean;
+  union?: string;
+  callsign?: string;
   fleet_size?: number;
   destinations?: number;
   employees?: string;
@@ -28,19 +33,17 @@ interface AirlineData {
     clean_record?: boolean;
   };
   benefits?: string[];
-  fleet_types?: string[];
-  bases?: string[];
+  fleet_details?: Array<{
+    aircraft_type: string;
+    count: number;
+  }>;
+  fleet_types?: string[]; // legacy fallback
+  domiciles?: string[];
+  most_junior_domicile?: string;
+  bases?: string[]; // legacy fallback
   pay_scales?: {
-    first_officer?: {
-      year_1?: string;
-      year_5?: string;
-      year_10?: string;
-    };
-    captain?: {
-      year_1?: string;
-      year_5?: string;
-      year_10?: string;
-    };
+    first_officer?: Record<string, string>; // year_1 through year_12
+    captain?: Record<string, string>; // year_1 through year_12
   };
 }
 
@@ -76,10 +79,71 @@ serve(async (req) => {
       },
       body: JSON.stringify({
         url: searchUrl,
-        formats: ['markdown', 'html'],
+        formats: ['markdown'],
         extractorOptions: {
           mode: 'llm-extraction',
-          extractionPrompt: `Extract airline information including: company overview (headquarters, founded, fleet size, destinations, employees), contact information (website, phone, email), hiring requirements (minimum flight hours, type rating required, college degree required, clean record required), benefits, fleet aircraft types, operating bases, and pilot pay scales for First Officer and Captain positions at years 1, 5, and 10. Format as structured JSON.`
+          extractionSchema: {
+            type: "object",
+            properties: {
+              stock_code: { type: "string", description: "Stock exchange ticker symbol" },
+              founded: { type: "string", description: "Year founded" },
+              pilot_count: { type: "number", description: "Number of pilots employed" },
+              is_hiring: { type: "boolean", description: "Currently hiring pilots" },
+              union: { type: "string", description: "Pilot union name if applicable" },
+              callsign: { type: "string", description: "Radio callsign used by pilots" },
+              fleet_details: {
+                type: "array",
+                items: {
+                  type: "object",
+                  properties: {
+                    aircraft_type: { type: "string" },
+                    count: { type: "number" }
+                  }
+                }
+              },
+              domiciles: { type: "array", items: { type: "string" } },
+              most_junior_domicile: { type: "string", description: "Domicile with lowest seniority requirements" },
+              pay_scales: {
+                type: "object",
+                properties: {
+                  first_officer: {
+                    type: "object",
+                    properties: {
+                      year_1: { type: "string" },
+                      year_2: { type: "string" },
+                      year_3: { type: "string" },
+                      year_4: { type: "string" },
+                      year_5: { type: "string" },
+                      year_6: { type: "string" },
+                      year_7: { type: "string" },
+                      year_8: { type: "string" },
+                      year_9: { type: "string" },
+                      year_10: { type: "string" },
+                      year_11: { type: "string" },
+                      year_12: { type: "string" }
+                    }
+                  },
+                  captain: {
+                    type: "object",
+                    properties: {
+                      year_1: { type: "string" },
+                      year_2: { type: "string" },
+                      year_3: { type: "string" },
+                      year_4: { type: "string" },
+                      year_5: { type: "string" },
+                      year_6: { type: "string" },
+                      year_7: { type: "string" },
+                      year_8: { type: "string" },
+                      year_9: { type: "string" },
+                      year_10: { type: "string" },
+                      year_11: { type: "string" },
+                      year_12: { type: "string" }
+                    }
+                  }
+                }
+              }
+            }
+          }
         }
       }),
     });

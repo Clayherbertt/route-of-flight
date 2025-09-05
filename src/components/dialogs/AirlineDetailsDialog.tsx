@@ -15,6 +15,11 @@ interface AirlineInfo {
   icao: string;
   headquarters: string;
   founded: string;
+  stock_code?: string;
+  pilot_count?: number;
+  is_hiring?: boolean;
+  union?: string;
+  callsign?: string;
   fleet_size: number;
   destinations: number;
   employees: string;
@@ -29,19 +34,17 @@ interface AirlineInfo {
     clean_record: boolean;
   };
   benefits: string[];
-  fleet_types: string[];
-  bases: string[];
+  fleet_details?: Array<{
+    aircraft_type: string;
+    count: number;
+  }>;
+  fleet_types?: string[];
+  domiciles?: string[];
+  most_junior_domicile?: string;
+  bases?: string[];
   pay_scales: {
-    first_officer: {
-      year_1: string;
-      year_5: string;
-      year_10: string;
-    };
-    captain: {
-      year_1: string;
-      year_5: string;
-      year_10: string;
-    };
+    first_officer: Record<string, string>;
+    captain: Record<string, string>;
   };
 }
 
@@ -680,13 +683,23 @@ export function AirlineDetailsDialog({ open, onOpenChange, airline }: AirlineDet
               </CardTitle>
             </CardHeader>
             <CardContent>
-              {airlineData?.fleet_types && airlineData.fleet_types.length > 0 ? (
-                <div className="flex flex-wrap gap-2">
-                  {airlineData.fleet_types.map((aircraft, index) => (
-                    <Badge key={index} variant="outline">
-                      {aircraft}
-                    </Badge>
-                  ))}
+              {(airlineData?.fleet_details && airlineData.fleet_details.length > 0) || 
+               (airlineData?.fleet_types && airlineData.fleet_types.length > 0) ? (
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                  {airlineData.fleet_details ? 
+                    airlineData.fleet_details.map((aircraft, index) => (
+                      <div key={index} className="flex justify-between items-center p-2 bg-muted/50 rounded">
+                        <span className="font-medium">{aircraft.aircraft_type}</span>
+                        <Badge variant="outline">{aircraft.count}</Badge>
+                      </div>
+                    )) :
+                    airlineData.fleet_types?.map((aircraft, index) => (
+                      <div key={index} className="flex justify-between items-center p-2 bg-muted/50 rounded">
+                        <span className="font-medium">{aircraft}</span>
+                        <Badge variant="outline">-</Badge>
+                      </div>
+                    ))
+                  }
                 </div>
               ) : (
                 <p className="text-sm text-muted-foreground">Fleet information not available.</p>
@@ -706,55 +719,39 @@ export function AirlineDetailsDialog({ open, onOpenChange, airline }: AirlineDet
               {airlineData?.pay_scales ? (
                 <>
                   {airlineData.pay_scales.first_officer && (
-                    <div>
-                      <h4 className="font-semibold text-sm mb-2">First Officer</h4>
-                      <div className="space-y-2 text-sm">
-                        {airlineData.pay_scales.first_officer.year_1 && (
-                          <div className="flex justify-between">
-                            <span className="text-muted-foreground">Year 1:</span>
-                            <span className="font-medium">{airlineData.pay_scales.first_officer.year_1}</span>
-                          </div>
-                        )}
-                        {airlineData.pay_scales.first_officer.year_5 && (
-                          <div className="flex justify-between">
-                            <span className="text-muted-foreground">Year 5:</span>
-                            <span className="font-medium">{airlineData.pay_scales.first_officer.year_5}</span>
-                          </div>
-                        )}
-                        {airlineData.pay_scales.first_officer.year_10 && (
-                          <div className="flex justify-between">
-                            <span className="text-muted-foreground">Year 10:</span>
-                            <span className="font-medium">{airlineData.pay_scales.first_officer.year_10}</span>
-                          </div>
-                        )}
-                      </div>
-                    </div>
+                     <div>
+                       <h4 className="font-semibold text-sm mb-2">First Officer</h4>
+                       <div className="space-y-2 text-sm">
+                         {Array.from({ length: 12 }, (_, i) => i + 1).map(year => {
+                           const yearKey = `year_${year}`;
+                           const salary = airlineData.pay_scales?.first_officer?.[yearKey];
+                           return salary ? (
+                             <div key={year} className="flex justify-between">
+                               <span className="text-muted-foreground">Year {year}:</span>
+                               <span className="font-medium">{salary}</span>
+                             </div>
+                           ) : null;
+                         })}
+                       </div>
+                     </div>
                   )}
                   {airlineData.pay_scales.first_officer && airlineData.pay_scales.captain && <Separator />}
                   {airlineData.pay_scales.captain && (
-                    <div>
-                      <h4 className="font-semibold text-sm mb-2">Captain</h4>
-                      <div className="space-y-2 text-sm">
-                        {airlineData.pay_scales.captain.year_1 && (
-                          <div className="flex justify-between">
-                            <span className="text-muted-foreground">Year 1:</span>
-                            <span className="font-medium">{airlineData.pay_scales.captain.year_1}</span>
-                          </div>
-                        )}
-                        {airlineData.pay_scales.captain.year_5 && (
-                          <div className="flex justify-between">
-                            <span className="text-muted-foreground">Year 5:</span>
-                            <span className="font-medium">{airlineData.pay_scales.captain.year_5}</span>
-                          </div>
-                        )}
-                        {airlineData.pay_scales.captain.year_10 && (
-                          <div className="flex justify-between">
-                            <span className="text-muted-foreground">Year 10:</span>
-                            <span className="font-medium">{airlineData.pay_scales.captain.year_10}</span>
-                          </div>
-                        )}
-                      </div>
-                    </div>
+                     <div>
+                       <h4 className="font-semibold text-sm mb-2">Captain</h4>
+                       <div className="space-y-2 text-sm">
+                         {Array.from({ length: 12 }, (_, i) => i + 1).map(year => {
+                           const yearKey = `year_${year}`;
+                           const salary = airlineData.pay_scales?.captain?.[yearKey];
+                           return salary ? (
+                             <div key={year} className="flex justify-between">
+                               <span className="text-muted-foreground">Year {year}:</span>
+                               <span className="font-medium">{salary}</span>
+                             </div>
+                           ) : null;
+                         })}
+                       </div>
+                     </div>
                   )}
                 </>
               ) : (
@@ -768,21 +765,31 @@ export function AirlineDetailsDialog({ open, onOpenChange, airline }: AirlineDet
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
                 <MapPin className="h-5 w-5" />
-                Operating Bases
+                Domiciles
               </CardTitle>
             </CardHeader>
             <CardContent>
-              {airlineData?.bases && airlineData.bases.length > 0 ? (
-                <div className="grid gap-2">
-                  {airlineData.bases.map((base, index) => (
-                    <div key={index} className="flex items-center gap-2">
-                      <MapPin className="h-3 w-3 text-muted-foreground" />
-                      <span className="text-sm">{base}</span>
+              {(airlineData?.domiciles && airlineData.domiciles.length > 0) ||
+               (airlineData?.bases && airlineData.bases.length > 0) ? (
+                <div className="space-y-3">
+                  <div className="flex flex-wrap gap-2">
+                    {(airlineData.domiciles || airlineData.bases)?.map((location, index) => (
+                      <Badge key={index} variant="outline">
+                        {location}
+                      </Badge>
+                    ))}
+                  </div>
+                  {airlineData.most_junior_domicile && (
+                    <div className="pt-2 border-t">
+                      <div className="flex justify-between items-center">
+                        <span className="text-muted-foreground">Most Junior Domicile:</span>
+                        <Badge variant="secondary">{airlineData.most_junior_domicile}</Badge>
+                      </div>
                     </div>
-                  ))}
+                  )}
                 </div>
               ) : (
-                <p className="text-sm text-muted-foreground">Operating bases information not available.</p>
+                <p className="text-sm text-muted-foreground">Domiciles information not available.</p>
               )}
             </CardContent>
           </Card>

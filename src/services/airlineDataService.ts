@@ -6,6 +6,11 @@ export interface ScrapedAirlineData {
   icao?: string;
   headquarters?: string;
   founded?: string;
+  stock_code?: string;
+  pilot_count?: number;
+  is_hiring?: boolean;
+  union?: string;
+  callsign?: string;
   fleet_size?: number;
   destinations?: number;
   employees?: string;
@@ -20,19 +25,17 @@ export interface ScrapedAirlineData {
     clean_record?: boolean;
   };
   benefits?: string[];
-  fleet_types?: string[];
-  bases?: string[];
+  fleet_details?: Array<{
+    aircraft_type: string;
+    count: number;
+  }>;
+  fleet_types?: string[]; // legacy fallback
+  domiciles?: string[];
+  most_junior_domicile?: string;
+  bases?: string[]; // legacy fallback
   pay_scales?: {
-    first_officer?: {
-      year_1?: string;
-      year_5?: string;
-      year_10?: string;
-    };
-    captain?: {
-      year_1?: string;
-      year_5?: string;
-      year_10?: string;
-    };
+    first_officer?: Record<string, string>; // year_1 through year_12
+    captain?: Record<string, string>; // year_1 through year_12
   };
 }
 
