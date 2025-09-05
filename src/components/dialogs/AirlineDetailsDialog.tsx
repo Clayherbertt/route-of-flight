@@ -3,7 +3,7 @@ import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
 import { Button } from "@/components/ui/button";
-import { MapPin, Users, Clock, Plane, Building2, ExternalLink, Phone, Mail } from "lucide-react";
+import { MapPin, Users, Clock, Plane, Building2, ExternalLink, Phone, Mail, DollarSign } from "lucide-react";
 
 interface AirlineInfo {
   name: string;
@@ -28,6 +28,18 @@ interface AirlineInfo {
   benefits: string[];
   fleet_types: string[];
   bases: string[];
+  pay_scales: {
+    first_officer: {
+      year_1: string;
+      year_5: string;
+      year_10: string;
+    };
+    captain: {
+      year_1: string;
+      year_5: string;
+      year_10: string;
+    };
+  };
 }
 
 interface AirlineDetailsDialogProps {
@@ -82,7 +94,19 @@ const majorAirlinesData: Record<string, AirlineInfo> = {
       "Los Angeles (LAX)",
       "San Francisco (SFO)",
       "Portland (PDX)"
-    ]
+    ],
+    pay_scales: {
+      first_officer: {
+        year_1: "$89,000",
+        year_5: "$142,000",
+        year_10: "$178,000"
+      },
+      captain: {
+        year_1: "$195,000",
+        year_5: "$248,000",
+        year_10: "$295,000"
+      }
+    }
   },
   "Delta Air Lines": {
     name: "Delta Air Lines",
@@ -133,7 +157,19 @@ const majorAirlinesData: Record<string, AirlineInfo> = {
       "Seattle (SEA)",
       "Salt Lake City (SLC)",
       "Boston (BOS)"
-    ]
+    ],
+    pay_scales: {
+      first_officer: {
+        year_1: "$92,000",
+        year_5: "$156,000",
+        year_10: "$195,000"
+      },
+      captain: {
+        year_1: "$205,000",
+        year_5: "$285,000",
+        year_10: "$350,000"
+      }
+    }
   },
   "United Airlines": {
     name: "United Airlines",
@@ -180,7 +216,19 @@ const majorAirlinesData: Record<string, AirlineInfo> = {
       "Newark (EWR)",
       "San Francisco (SFO)",
       "Washington Dulles (IAD)"
-    ]
+    ],
+    pay_scales: {
+      first_officer: {
+        year_1: "$88,000",
+        year_5: "$148,000",
+        year_10: "$185,000"
+      },
+      captain: {
+        year_1: "$198,000",
+        year_5: "$275,000",
+        year_10: "$335,000"
+      }
+    }
   },
   "American Airlines": {
     name: "American Airlines",
@@ -228,7 +276,19 @@ const majorAirlinesData: Record<string, AirlineInfo> = {
       "Philadelphia (PHL)",
       "Phoenix (PHX)",
       "Washington (DCA)"
-    ]
+    ],
+    pay_scales: {
+      first_officer: {
+        year_1: "$90,000",
+        year_5: "$152,000",
+        year_10: "$190,000"
+      },
+      captain: {
+        year_1: "$200,000",
+        year_5: "$280,000",
+        year_10: "$340,000"
+      }
+    }
   },
   "Hawaiian Airlines": {
     name: "Hawaiian Airlines",
@@ -269,7 +329,19 @@ const majorAirlinesData: Record<string, AirlineInfo> = {
       "Kahului (OGG)",
       "Kona (KOA)",
       "Lihue (LIH)"
-    ]
+    ],
+    pay_scales: {
+      first_officer: {
+        year_1: "$82,000",
+        year_5: "$128,000",
+        year_10: "$165,000"
+      },
+      captain: {
+        year_1: "$175,000",
+        year_5: "$225,000",
+        year_10: "$275,000"
+      }
+    }
   },
   "Southwest Airlines": {
     name: "Southwest Airlines",
@@ -315,7 +387,19 @@ const majorAirlinesData: Record<string, AirlineInfo> = {
       "Las Vegas (LAS)",
       "Orlando (MCO)",
       "Phoenix (PHX)"
-    ]
+    ],
+    pay_scales: {
+      first_officer: {
+        year_1: "$79,000",
+        year_5: "$135,000",
+        year_10: "$170,000"
+      },
+      captain: {
+        year_1: "$189,000",
+        year_5: "$245,000",
+        year_10: "$295,000"
+      }
+    }
   }
 };
 
@@ -505,6 +589,53 @@ export function AirlineDetailsDialog({ open, onOpenChange, airline }: AirlineDet
                     {aircraft}
                   </Badge>
                 ))}
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* Pay Scales */}
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <DollarSign className="h-5 w-5" />
+                Pay Scales
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div>
+                <h4 className="font-semibold text-sm mb-2">First Officer</h4>
+                <div className="space-y-2 text-sm">
+                  <div className="flex justify-between">
+                    <span className="text-muted-foreground">Year 1:</span>
+                    <span className="font-medium">{airlineData.pay_scales.first_officer.year_1}</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-muted-foreground">Year 5:</span>
+                    <span className="font-medium">{airlineData.pay_scales.first_officer.year_5}</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-muted-foreground">Year 10:</span>
+                    <span className="font-medium">{airlineData.pay_scales.first_officer.year_10}</span>
+                  </div>
+                </div>
+              </div>
+              <Separator />
+              <div>
+                <h4 className="font-semibold text-sm mb-2">Captain</h4>
+                <div className="space-y-2 text-sm">
+                  <div className="flex justify-between">
+                    <span className="text-muted-foreground">Year 1:</span>
+                    <span className="font-medium">{airlineData.pay_scales.captain.year_1}</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-muted-foreground">Year 5:</span>
+                    <span className="font-medium">{airlineData.pay_scales.captain.year_5}</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-muted-foreground">Year 10:</span>
+                    <span className="font-medium">{airlineData.pay_scales.captain.year_10}</span>
+                  </div>
+                </div>
               </div>
             </CardContent>
           </Card>
