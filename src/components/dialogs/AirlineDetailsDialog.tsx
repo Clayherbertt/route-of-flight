@@ -989,8 +989,8 @@ export function AirlineDetailsDialog({ open, onOpenChange, airline }: AirlineDet
           </Card>
         </div>
 
-        {/* First Officer Pay Scale - Full Width (Delta only) */}
-        {airlineData.name === "Delta Air Lines" && (
+        {/* First Officer Pay Scale - Full Width (Delta and United only) */}
+        {(airlineData.name === "Delta Air Lines" || airlineData.name === "United Airlines") && (
           <Card className="mt-6">
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
@@ -1043,8 +1043,8 @@ export function AirlineDetailsDialog({ open, onOpenChange, airline }: AirlineDet
           </Card>
         )}
 
-        {/* Captain Pay Scale - Full Width (Delta only) */}
-        {airlineData.name === "Delta Air Lines" && (
+        {/* Captain Pay Scale - Full Width (Delta and United only) */}
+        {(airlineData.name === "Delta Air Lines" || airlineData.name === "United Airlines") && (
           <Card className="mt-6">
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
