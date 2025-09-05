@@ -25,6 +25,10 @@ import piedmontAirlinesLogo from "@/assets/airlines/piedmont-airlines.png";
 import gojetAirlinesLogo from "@/assets/airlines/gojet-airlines.png";
 import airWisconsinLogo from "@/assets/airlines/air-wisconsin.png";
 import commutairLogo from "@/assets/airlines/commutair.png";
+import expressjetAirlinesLogo from "@/assets/airlines/expressjet-airlines.png";
+import transStatesAirlinesLogo from "@/assets/airlines/trans-states-airlines.png";
+import compassAirlinesLogo from "@/assets/airlines/compass-airlines.png";
+import shuttleAmericaLogo from "@/assets/airlines/shuttle-america.png";
 
 const Airlines = () => {
   // Helper function to get airline logo
@@ -51,7 +55,11 @@ const Airlines = () => {
       "Piedmont Airlines": piedmontAirlinesLogo,
       "GoJet Airlines": gojetAirlinesLogo,
       "Air Wisconsin": airWisconsinLogo,
-      "CommutAir": commutairLogo
+      "CommutAir": commutairLogo,
+      "ExpressJet Airlines": expressjetAirlinesLogo,
+      "Trans States Airlines": transStatesAirlinesLogo,
+      "Compass Airlines": compassAirlinesLogo,
+      "Shuttle America": shuttleAmericaLogo
     };
     return logoMap[airlineName] || null;
   };
@@ -91,7 +99,7 @@ const Airlines = () => {
         { name: "Elite Airways", logo: "👑" },
         { name: "Endeavor Air", logo: "🎯" },
         { name: "Envoy Air", logo: "📧" },
-        { name: "ExpressJet", logo: "⚡" },
+        { name: "ExpressJet Airlines", logo: "⚡" },
         { name: "GoJet Airlines", logo: "🚀" },
         { name: "Grant Aviation", logo: "🎁" },
         { name: "Great Lakes Airlines", logo: "🌊" },
