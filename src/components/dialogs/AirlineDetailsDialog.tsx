@@ -33,7 +33,7 @@ interface AirlineInfo {
 interface AirlineDetailsDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
-  airline: { name: string } | null;
+  airline: { name: string; logoUrl?: string } | null;
 }
 
 // Sample data for major airlines
@@ -354,7 +354,13 @@ export function AirlineDetailsDialog({ open, onOpenChange, airline }: AirlineDet
         <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
           <DialogHeader>
             <div className="flex items-center gap-4">
-              {airlineData.logo && (
+              {airline.logoUrl ? (
+                <img 
+                  src={airline.logoUrl} 
+                  alt={`${airline.name} logo`}
+                  className="w-12 h-12 object-contain"
+                />
+              ) : airlineData?.logo && (
                 <div className="text-4xl">{airlineData.logo}</div>
               )}
               <div>

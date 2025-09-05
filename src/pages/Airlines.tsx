@@ -49,6 +49,7 @@ import sterlingAirwaysLogo from "@/assets/airlines/sterling-airways.png";
 
 const Airlines = () => {
   const [selectedAirline, setSelectedAirline] = useState<string | null>(null);
+  const [selectedAirlineLogo, setSelectedAirlineLogo] = useState<string | null>(null);
   const [dialogOpen, setDialogOpen] = useState(false);
 
   // Helper function to get airline logo
@@ -101,7 +102,9 @@ const Airlines = () => {
 
   const handleAirlineClick = (airlineName: string) => {
     console.log("Airline clicked:", airlineName);
+    const logoUrl = getAirlineLogo(airlineName);
     setSelectedAirline(airlineName);
+    setSelectedAirlineLogo(logoUrl);
     setDialogOpen(true);
   };
 
@@ -271,7 +274,7 @@ const Airlines = () => {
           console.log("Dialog state changing to:", open);
           setDialogOpen(open);
         }}
-        airline={selectedAirline ? { name: selectedAirline } : null}
+        airline={selectedAirline ? { name: selectedAirline, logoUrl: selectedAirlineLogo || undefined } : null}
       />
     </div>
   );
