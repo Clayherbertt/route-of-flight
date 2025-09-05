@@ -339,6 +339,27 @@ const majorAirlinesData: Record<string, AirlineInfo> = {
       college_degree: true,
       clean_record: true
     },
+    detailed_requirements: {
+      required: [
+        "Unrestricted FAA Airline Transport Pilot (ATP) certificate with airplane multiengine class rating",
+        "Current FAA first-class medical certificate",
+        "FCC Restricted Radiotelephone Operator Permit (RR)",
+        "Minimum of 1,500 hours of total time",
+        "Current passport with at least six-months of validity remaining at time of employment",
+        "Legal right to work in the United States without sponsorship",
+        "Must be able to travel freely within the United States and without restriction to all countries United serves",
+        "High school diploma or GED equivalent",
+        "International Certificate of Vaccination for Yellow Fever (Yellow Card) must be presented on the first day of employment",
+        "Reliable, punctual attendance is an essential function of the position",
+        "Availability without any planned absences during the first twelve weeks of employment"
+      ],
+      preferred: [
+        "Bachelor's degree from accredited college or university",
+        "1,000 hours of fixed wing turbine time",
+        "Minimum of 100 hours of flight time within the last 12 months",
+        "150 - 250 Turbine PIC"
+      ]
+    },
     benefits: [
       "Competitive compensation",
       "Comprehensive medical benefits",
