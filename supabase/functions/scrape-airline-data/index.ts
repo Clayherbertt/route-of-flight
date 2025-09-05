@@ -71,7 +71,7 @@ serve(async (req) => {
     console.log('Attempting to scrape URL:', searchUrl);
 
     // Use Firecrawl to scrape the airline data
-    const response = await fetch('https://api.firecrawl.dev/v0/scrape', {
+    const response = await fetch('https://api.firecrawl.dev/v1/scrape', {
       method: 'POST',
       headers: {
         'Authorization': `Bearer ${firecrawlApiKey}`,
@@ -79,10 +79,9 @@ serve(async (req) => {
       },
       body: JSON.stringify({
         url: searchUrl,
-        formats: ['markdown'],
-        extractorOptions: {
-          mode: 'llm-extraction',
-          extractionSchema: {
+        formats: ['extract', 'markdown'],
+        extract: {
+          schema: {
             type: "object",
             properties: {
               stock_code: { type: "string", description: "Stock exchange ticker symbol" },
@@ -91,6 +90,10 @@ serve(async (req) => {
               is_hiring: { type: "boolean", description: "Currently hiring pilots" },
               union: { type: "string", description: "Pilot union name if applicable" },
               callsign: { type: "string", description: "Radio callsign used by pilots" },
+              iata: { type: "string", description: "IATA airline code" },
+              icao: { type: "string", description: "ICAO airline code" },
+              headquarters: { type: "string", description: "Company headquarters location" },
+              website: { type: "string", description: "Official website URL" },
               fleet_details: {
                 type: "array",
                 items: {
@@ -99,9 +102,14 @@ serve(async (req) => {
                     aircraft_type: { type: "string" },
                     count: { type: "number" }
                   }
-                }
+                },
+                description: "List of aircraft types and quantities in fleet"
               },
-              domiciles: { type: "array", items: { type: "string" } },
+              domiciles: { 
+                type: "array", 
+                items: { type: "string" },
+                description: "List of pilot domiciles/bases"
+              },
               most_junior_domicile: { type: "string", description: "Domicile with lowest seniority requirements" },
               pay_scales: {
                 type: "object",
@@ -140,7 +148,8 @@ serve(async (req) => {
                       year_12: { type: "string" }
                     }
                   }
-                }
+                },
+                description: "Pilot pay scales by position and years of service"
               }
             }
           }
@@ -168,19 +177,17 @@ serve(async (req) => {
     };
 
     try {
-      // Try to extract structured data from the LLM extraction
-      if (scraped.llm_extraction) {
-        const extracted = typeof scraped.llm_extraction === 'string' 
-          ? JSON.parse(scraped.llm_extraction) 
-          : scraped.llm_extraction;
-        
+      // Try to extract structured data from the extraction
+      if (scraped.data?.extract) {
+        console.log('Using extracted data:', JSON.stringify(scraped.data.extract, null, 2));
         airlineData = {
           ...airlineData,
-          ...extracted
+          ...scraped.data.extract
         };
-      } else if (scraped.markdown) {
+      } else if (scraped.data?.markdown) {
         // Fallback: parse markdown content for key information
-        const content = scraped.markdown;
+        console.log('Falling back to markdown parsing');
+        const content = scraped.data.markdown;
         
         // Extract basic info using regex patterns
         const iataMatch = content.match(/IATA[:\s]+([A-Z]{2})/i);
