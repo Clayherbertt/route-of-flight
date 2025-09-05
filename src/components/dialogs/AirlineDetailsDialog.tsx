@@ -168,6 +168,30 @@ const majorAirlinesData: Record<string, AirlineInfo> = {
       college_degree: true,
       clean_record: true
     },
+    detailed_requirements: {
+      required: [
+        "At least 23 years of age",
+        "Must be legally authorized to work in the US without sponsorship currently and not require future sponsorship for employment",
+        "Current passport or other travel documents enabling the bearer to freely exit and re-enter the U.S. (multiple reentry status)",
+        "High school diploma or GED equivalent",
+        "Graduate of a four-year degree program from a college or university accredited by a U.S. Dept. of Education recognized accrediting organization is preferred",
+        "FAA Commercial Pilot Certificate with Instrument - Airplane",
+        "Current FAA First Class Medical Certificate",
+        "All aeronautical experience requirements for an ATP, Airplane category rating, as set forth in 14 CFR §61.159",
+        "Current ATP written exam",
+        "Minimum of 1,500 hours of total documented flight time",
+        "Minimum of 250 hours PIC or SIC as defined in 14 CFR §61.159(a)(5) in an airplane category",
+        "Minimum of 50 hours of multi-engine airplane time",
+        "FCC Radiotelephone Operator's Permit",
+        "DOT required pre-employment drug test",
+        "International Certificate of Vaccination (Yellow Card) for Yellow Fever prior to starting indoctrination training",
+        "TSA required fingerprint based Criminal History Records Check and a Delta background check"
+      ],
+      preferred: [
+        "1,000 hours of fixed-wing turbine time preferred (A minimum of 500 turbine hours must be in a non-powered lift airplane)",
+        "Degrees obtained from a non-U.S. institution must be evaluated for equivalency to U.S. degrees by a member organization of the National Association of Credential Evaluation Services (NACES)"
+      ]
+    },
     benefits: [
       "Industry-leading compensation",
       "Comprehensive health benefits",
