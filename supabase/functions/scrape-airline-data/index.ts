@@ -70,7 +70,35 @@ serve(async (req) => {
     
     console.log('Attempting to scrape URL:', searchUrl);
 
-    // Use Firecrawl to scrape the airline data
+    // First try to scrape without extraction to see if URL is accessible
+    const testResponse = await fetch('https://api.firecrawl.dev/v1/scrape', {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${firecrawlApiKey}`,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        url: searchUrl,
+        formats: ['markdown']
+      }),
+    });
+
+    if (!testResponse.ok) {
+      console.error('Test scrape failed:', testResponse.status, testResponse.statusText);
+      const errorText = await testResponse.text();
+      console.error('Test error response:', errorText);
+      throw new Error(`Test scrape failed: ${testResponse.status} ${testResponse.statusText}`);
+    }
+
+    const testResult = await testResponse.json();
+    console.log('Test scrape success:', testResult.success);
+    if (testResult.data?.markdown) {
+      console.log('Markdown length:', testResult.data.markdown.length);
+      console.log('First 500 chars:', testResult.data.markdown.substring(0, 500));
+    }
+
+    // Now try with extraction
+    console.log('Starting extraction scrape...');
     const response = await fetch('https://api.firecrawl.dev/v1/scrape', {
       method: 'POST',
       headers: {
@@ -165,9 +193,16 @@ serve(async (req) => {
     }
 
     const scraped = await response.json();
-    console.log('Firecrawl response:', JSON.stringify(scraped, null, 2));
+    console.log('Firecrawl extraction response success:', scraped.success);
+    console.log('Firecrawl extraction response data keys:', Object.keys(scraped.data || {}));
+    
+    if (scraped.data?.extract) {
+      console.log('Extract data keys:', Object.keys(scraped.data.extract));
+      console.log('Extract data:', JSON.stringify(scraped.data.extract, null, 2));
+    }
 
     if (!scraped.success) {
+      console.error('Scraping failed:', scraped.error);
       throw new Error(scraped.error || 'Failed to scrape airline data');
     }
 
