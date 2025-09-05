@@ -29,22 +29,6 @@ import expressjetAirlinesLogo from "@/assets/airlines/expressjet-airlines.png";
 import transStatesAirlinesLogo from "@/assets/airlines/trans-states-airlines.png";
 import compassAirlinesLogo from "@/assets/airlines/compass-airlines.png";
 import shuttleAmericaLogo from "@/assets/airlines/shuttle-america.png";
-import alaskaSeaplanesLogo from "@/assets/airlines/alaska-seaplanes.png";
-import capeAirLogo from "@/assets/airlines/cape-air.png";
-import contourAirlinesLogo from "@/assets/airlines/contour-airlines.png";
-import denverAirConnectionLogo from "@/assets/airlines/denver-air-connection.png";
-import eliteAirwaysLogo from "@/assets/airlines/elite-airways.png";
-import grantAviationLogo from "@/assets/airlines/grant-aviation.png";
-import greatLakesAirlinesLogo from "@/assets/airlines/great-lakes-airlines.png";
-import horizonAirLogo from "@/assets/airlines/horizon-air.png";
-import ohanaByHawaiianLogo from "@/assets/airlines/ohana-by-hawaiian.png";
-import quantumAirLogo from "@/assets/airlines/quantum-air.png";
-import ravenAlaskaLogo from "@/assets/airlines/raven-alaska.png";
-import seaborneAirlinesLogo from "@/assets/airlines/seaborne-airlines.png";
-import silverAirwaysLogo from "@/assets/airlines/silver-airways.png";
-import starAirLogo from "@/assets/airlines/star-air.png";
-import sterlingAirwaysLogo from "@/assets/airlines/sterling-airways.png";
-import netjetsLogo from "@/assets/airlines/netjets.png";
 
 const Airlines = () => {
   // Helper function to get airline logo
@@ -75,23 +59,7 @@ const Airlines = () => {
       "ExpressJet Airlines": expressjetAirlinesLogo,
       "Trans States Airlines": transStatesAirlinesLogo,
       "Compass Airlines": compassAirlinesLogo,
-      "Shuttle America": shuttleAmericaLogo,
-      "Alaska Seaplanes": alaskaSeaplanesLogo,
-      "Cape Air": capeAirLogo,
-      "Contour Airlines": contourAirlinesLogo,
-      "Denver Air Connection": denverAirConnectionLogo,
-      "Elite Airways": eliteAirwaysLogo,
-      "Grant Aviation": grantAviationLogo,
-      "Great Lakes Airlines": greatLakesAirlinesLogo,
-      "Horizon Air": horizonAirLogo,
-      "Ohana by Hawaiian": ohanaByHawaiianLogo,
-      "Quantum Air": quantumAirLogo,
-      "Raven Alaska": ravenAlaskaLogo,
-      "Seaborne Airlines": seaborneAirlinesLogo,
-      "Silver Airways": silverAirwaysLogo,
-      "Star Air": starAirLogo,
-      "Sterling Airways": sterlingAirwaysLogo,
-      "NetJets": netjetsLogo
+      "Shuttle America": shuttleAmericaLogo
     };
     return logoMap[airlineName] || null;
   };
@@ -126,7 +94,7 @@ const Airlines = () => {
         { name: "Alaska Seaplanes", logo: "🛩️" },
         { name: "Cape Air", logo: "🦅" },
         { name: "CommutAir", logo: "🚁" },
-        { name: "Contour Airlines", logo: "🔗" },
+        { name: "Connect Airlines", logo: "🔗" },
         { name: "Denver Air Connection", logo: "🏔️" },
         { name: "Elite Airways", logo: "👑" },
         { name: "Endeavor Air", logo: "🎯" },
@@ -140,13 +108,13 @@ const Airlines = () => {
         { name: "Ohana by Hawaiian", logo: "🌺" },
         { name: "Piedmont Airlines", logo: "⛰️" },
         { name: "PSA Airlines", logo: "📋" },
-        { name: "Quantum Air", logo: "🔬" },
-        { name: "Raven Alaska", logo: "🐦" },
+        { name: "Quantum Spatial inc. (QSI)", logo: "🔬" },
+        { name: "Ravn Alaska", logo: "🐦" },
         { name: "Republic Airways", logo: "🏛️" },
         { name: "Seaborne Airlines", logo: "🌊" },
         { name: "Silver Airways", logo: "🥈" },
         { name: "SkyWest", logo: "🌤️" },
-        { name: "Star Air", logo: "⭐" },
+        { name: "Star Marianas Air, Inc.", logo: "⭐" },
         { name: "Sterling Airways", logo: "💎" }
       ]
     },
