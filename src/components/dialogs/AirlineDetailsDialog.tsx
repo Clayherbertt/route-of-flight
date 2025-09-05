@@ -634,8 +634,8 @@ export function AirlineDetailsDialog({ open, onOpenChange, airline }: AirlineDet
 
     return (
       <Dialog open={open} onOpenChange={onOpenChange}>
-        <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
-          <DialogHeader>
+        <DialogContent className="max-w-4xl max-h-[90vh] flex flex-col">
+          <DialogHeader className="flex-shrink-0">
             <div className="flex items-center gap-4">
               {airline.logoUrl ? (
                 <img 
@@ -659,7 +659,8 @@ export function AirlineDetailsDialog({ open, onOpenChange, airline }: AirlineDet
             </div>
           </DialogHeader>
 
-        <div className="grid md:grid-cols-2 gap-6">
+        <div className="flex-1 min-h-0">
+          <div className="grid md:grid-cols-2 gap-6 mb-6">
           {/* Company Overview */}
           <Card>
             <CardHeader>
@@ -905,8 +906,9 @@ export function AirlineDetailsDialog({ open, onOpenChange, airline }: AirlineDet
             </div>
           </CardContent>
         </Card>
+        </div>
 
-        <div className="flex justify-end pt-4 border-t">
+        <div className="flex-shrink-0 flex justify-end pt-4 border-t">
           <Button onClick={() => onOpenChange(false)}>Close</Button>
         </div>
       </DialogContent>
