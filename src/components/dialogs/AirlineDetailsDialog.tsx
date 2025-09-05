@@ -331,7 +331,7 @@ const majorAirlinesData: Record<string, AirlineInfo> = {
     phone: "1-800-433-7300",
     email: "pilotrecruiting@aa.com",
     hiring_status: true,
-    pilot_application_url: "https://careers.aa.com/pilots",
+    pilot_application_url: "https://pilots.aa.com/",
     description: "American Airlines is a major US airline headquartered in Fort Worth, Texas. It is the world's largest airline when measured by fleet size, scheduled passengers carried, and revenue passenger mile.",
     hiring_requirements: {
       min_hours: "1,500 ATP minimum",
