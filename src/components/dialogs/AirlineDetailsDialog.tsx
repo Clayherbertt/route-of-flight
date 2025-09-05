@@ -245,15 +245,24 @@ const majorAirlinesData: Record<string, AirlineInfo> = {
       "Education assistance"
     ],
     fleet_types: [
-      "Airbus A220-100/300",
-      "Airbus A319/320/321",
-      "Airbus A330-200/300/900neo",
-      "Airbus A350-900",
-      "Boeing 717-200",
-      "Boeing 737-800/900",
-      "Boeing 757-200/300",
-      "Boeing 767-300/400",
-      "Boeing 777-200LR"
+      "Boeing 777",
+      "Airbus A350",
+      "Boeing 787",
+      "Airbus A330-900/300/200",
+      "Boeing 767-400ER",
+      "Boeing 767-300ER", 
+      "Boeing 767-300/200",
+      "Boeing 757",
+      "Airbus A321N",
+      "Boeing 737-900",
+      "Airbus A321",
+      "Boeing 737-800/700",
+      "Airbus A320/319",
+      "Airbus A220-300",
+      "Airbus A220-100",
+      "Boeing 717",
+      "Embraer EMB-195",
+      "Embraer EMB-190/CRJ-900"
     ],
     bases: [
       "Atlanta (ATL)",
