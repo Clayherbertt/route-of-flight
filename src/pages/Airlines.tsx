@@ -45,6 +45,13 @@ import silverAirwaysLogo from "@/assets/airlines/silver-airways.png";
 import starAirLogo from "@/assets/airlines/star-air.png";
 import sterlingAirwaysLogo from "@/assets/airlines/sterling-airways.png";
 
+// Import fractional carrier logos
+import netjetsLogo from "@/assets/airlines/netjets.png";
+import flexjetLogo from "@/assets/airlines/flexjet.png";
+import wheelsUpLogo from "@/assets/airlines/wheels-up.png";
+import airshareLogo from "@/assets/airlines/airshare.png";
+import xojetLogo from "@/assets/airlines/xojet.png";
+
 const Airlines = () => {
   // Helper function to get airline logo
   const getAirlineLogo = (airlineName: string): string | null => {
@@ -89,7 +96,13 @@ const Airlines = () => {
       "Seaborne Airlines": seaborneAirlinesLogo,
       "Silver Airways": silverAirwaysLogo,
       "Star Air": starAirLogo,
-      "Sterling Airways": sterlingAirwaysLogo
+      "Sterling Airways": sterlingAirwaysLogo,
+      // Fractional carriers
+      "NetJets": netjetsLogo,
+      "Flexjet": flexjetLogo,
+      "Wheels Up": wheelsUpLogo,
+      "Airshare": airshareLogo,
+      "XOJet": xojetLogo
     };
     return logoMap[airlineName] || null;
   };
