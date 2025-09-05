@@ -12,8 +12,10 @@ const Header = () => {
     <header className="border-b border-border bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 sticky top-0 z-50">
       <div className="container flex h-16 items-center justify-between">
         <div className="flex items-center space-x-2">
-          <Plane className="h-8 w-8 text-primary" />
-          <h1 className="text-xl font-bold text-foreground">Route of Flight</h1>
+          <Link to="/" className="flex items-center space-x-2">
+            <Plane className="h-8 w-8 text-primary" />
+            <h1 className="text-xl font-bold text-foreground">Route of Flight</h1>
+          </Link>
         </div>
         
         <nav className="hidden md:flex items-center space-x-6">
@@ -40,13 +42,13 @@ const Header = () => {
               Subscription
             </Link>
           )}
-          <a
-            href="#resume"
-            className="text-sm font-medium text-muted-foreground hover:text-foreground smooth-transition"
-          >
-            <FileText className="inline h-4 w-4 mr-2" />
-            Resume Review
-          </a>
+           <Link
+             to="/profile"
+             className="text-sm font-medium text-muted-foreground hover:text-foreground smooth-transition"
+           >
+             <FileText className="inline h-4 w-4 mr-2" />
+             Resume Review
+           </Link>
         </nav>
 
         <div className="flex items-center space-x-4">

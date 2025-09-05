@@ -1,4 +1,4 @@
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
@@ -332,6 +332,9 @@ export function AirlineDetailsDialog({ open, onOpenChange, airline }: AirlineDet
         <DialogContent className="max-w-md">
           <DialogHeader>
             <DialogTitle>{airline.name}</DialogTitle>
+            <DialogDescription>
+              Airline details and career information
+            </DialogDescription>
           </DialogHeader>
           <div className="py-6">
             <p className="text-muted-foreground text-center">
@@ -346,23 +349,26 @@ export function AirlineDetailsDialog({ open, onOpenChange, airline }: AirlineDet
     );
   }
 
-  return (
-    <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
-        <DialogHeader>
-          <div className="flex items-center gap-4">
-            {airlineData.logo && (
-              <div className="text-4xl">{airlineData.logo}</div>
-            )}
-            <div>
-              <DialogTitle className="text-2xl">{airlineData.name}</DialogTitle>
-              <div className="flex gap-2 mt-1">
-                <Badge variant="secondary">{airlineData.iata}</Badge>
-                <Badge variant="secondary">{airlineData.icao}</Badge>
+    return (
+      <Dialog open={open} onOpenChange={onOpenChange}>
+        <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
+          <DialogHeader>
+            <div className="flex items-center gap-4">
+              {airlineData.logo && (
+                <div className="text-4xl">{airlineData.logo}</div>
+              )}
+              <div>
+                <DialogTitle className="text-2xl">{airlineData.name}</DialogTitle>
+                <DialogDescription>
+                  Complete airline profile with hiring requirements, benefits, and career information
+                </DialogDescription>
+                <div className="flex gap-2 mt-1">
+                  <Badge variant="secondary">{airlineData.iata}</Badge>
+                  <Badge variant="secondary">{airlineData.icao}</Badge>
+                </div>
               </div>
             </div>
-          </div>
-        </DialogHeader>
+          </DialogHeader>
 
         <div className="grid md:grid-cols-2 gap-6">
           {/* Company Overview */}
