@@ -693,7 +693,7 @@ export function AirlineDetailsDialog({ open, onOpenChange, airline }: AirlineDet
 
     return (
       <Dialog open={open} onOpenChange={onOpenChange}>
-        <DialogContent className="max-w-4xl w-[95vw] max-h-[90vh] overflow-y-auto overflow-x-hidden">
+        <DialogContent className="max-w-6xl w-[95vw] max-h-[90vh] overflow-y-auto overflow-x-hidden">
           <div className="min-w-0 w-full">
             <DialogHeader>
               <div className="flex items-center gap-4">
