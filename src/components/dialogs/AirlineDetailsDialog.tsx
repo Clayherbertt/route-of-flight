@@ -651,71 +651,70 @@ export function AirlineDetailsDialog({ open, onOpenChange, airline }: AirlineDet
             </CardHeader>
             <CardContent className="space-y-4">
                {airlineData.detailed_requirements ? (
-                <div className="space-y-6">
-                  <div className="grid md:grid-cols-2 gap-6">
-                    <div>
-                      <h4 className="font-semibold text-sm mb-3 text-green-700 dark:text-green-400">Required</h4>
-                      <div className="space-y-2">
-                        {airlineData.detailed_requirements.required.map((requirement, index) => (
-                          <div key={index} className="flex items-start gap-2">
-                            <div className="h-1.5 w-1.5 bg-green-600 rounded-full mt-2 flex-shrink-0" />
-                            <span className="text-sm">{requirement}</span>
-                          </div>
-                        ))}
-                      </div>
-                    </div>
-                    <div>
-                      <h4 className="font-semibold text-sm mb-3 text-blue-700 dark:text-blue-400">Preferred</h4>
-                      <div className="space-y-2">
-                        {airlineData.detailed_requirements.preferred.map((requirement, index) => (
-                          <div key={index} className="flex items-start gap-2">
-                            <div className="h-1.5 w-1.5 bg-blue-600 rounded-full mt-2 flex-shrink-0" />
-                            <span className="text-sm">{requirement}</span>
-                          </div>
-                        ))}
-                      </div>
-                    </div>
-                  </div>
-                  {airlineData.inside_scoop && (
-                    <div>
-                      <h4 className="font-semibold text-sm mb-3 text-amber-700 dark:text-amber-400">Inside Scoop</h4>
-                      <div className="space-y-2">
-                        {airlineData.inside_scoop.map((tip, index) => (
-                          <div key={index} className="flex items-start gap-2">
-                            <div className="h-1.5 w-1.5 bg-amber-600 rounded-full mt-2 flex-shrink-0" />
-                            <span className="text-sm italic">{tip}</span>
-                          </div>
-                        ))}
-                      </div>
-                    </div>
-                  )}
-                </div>
-              ) : (
-                <div className="space-y-3">
-                  <div className="flex justify-between">
-                    <span className="text-muted-foreground">Minimum Hours:</span>
-                    <span className="font-medium">{airlineData.hiring_requirements.min_hours}</span>
-                  </div>
-                  <div className="flex justify-between">
-                    <span className="text-muted-foreground">Type Rating:</span>
-                    <Badge variant={airlineData.hiring_requirements.type_rating ? "default" : "secondary"}>
-                      {airlineData.hiring_requirements.type_rating ? "Required" : "Not Required"}
-                    </Badge>
-                  </div>
-                  <div className="flex justify-between">
-                    <span className="text-muted-foreground">College Degree:</span>
-                    <Badge variant={airlineData.hiring_requirements.college_degree ? "default" : "secondary"}>
-                      {airlineData.hiring_requirements.college_degree ? "Required" : "Preferred"}
-                    </Badge>
-                  </div>
-                  <div className="flex justify-between">
-                    <span className="text-muted-foreground">Clean Record:</span>
-                    <Badge variant={airlineData.hiring_requirements.clean_record ? "default" : "secondary"}>
-                      {airlineData.hiring_requirements.clean_record ? "Required" : "Not Required"}
-                    </Badge>
-                  </div>
-                </div>
-              )}
+                 <div className="grid md:grid-cols-2 gap-6">
+                   <div>
+                     <h4 className="font-semibold text-sm mb-3 text-green-700 dark:text-green-400">Required</h4>
+                     <div className="space-y-2">
+                       {airlineData.detailed_requirements.required.map((requirement, index) => (
+                         <div key={index} className="flex items-start gap-2">
+                           <div className="h-1.5 w-1.5 bg-green-600 rounded-full mt-2 flex-shrink-0" />
+                           <span className="text-sm">{requirement}</span>
+                         </div>
+                       ))}
+                     </div>
+                   </div>
+                   <div>
+                     <h4 className="font-semibold text-sm mb-3 text-blue-700 dark:text-blue-400">Preferred</h4>
+                     <div className="space-y-2">
+                       {airlineData.detailed_requirements.preferred.map((requirement, index) => (
+                         <div key={index} className="flex items-start gap-2">
+                           <div className="h-1.5 w-1.5 bg-blue-600 rounded-full mt-2 flex-shrink-0" />
+                           <span className="text-sm">{requirement}</span>
+                         </div>
+                       ))}
+                     </div>
+                     
+                     {airlineData.inside_scoop && (
+                       <div className="mt-6">
+                         <h4 className="font-semibold text-sm mb-3 text-amber-700 dark:text-amber-400">Inside Scoop</h4>
+                         <div className="space-y-2">
+                           {airlineData.inside_scoop.map((tip, index) => (
+                             <div key={index} className="flex items-start gap-2">
+                               <div className="h-1.5 w-1.5 bg-amber-600 rounded-full mt-2 flex-shrink-0" />
+                               <span className="text-sm italic">{tip}</span>
+                             </div>
+                           ))}
+                         </div>
+                       </div>
+                     )}
+                   </div>
+                 </div>
+               ) : (
+                 <div className="space-y-3">
+                   <div className="flex justify-between">
+                     <span className="text-muted-foreground">Minimum Hours:</span>
+                     <span className="font-medium">{airlineData.hiring_requirements.min_hours}</span>
+                   </div>
+                   <div className="flex justify-between">
+                     <span className="text-muted-foreground">Type Rating:</span>
+                     <Badge variant={airlineData.hiring_requirements.type_rating ? "default" : "secondary"}>
+                       {airlineData.hiring_requirements.type_rating ? "Required" : "Not Required"}
+                     </Badge>
+                   </div>
+                   <div className="flex justify-between">
+                     <span className="text-muted-foreground">College Degree:</span>
+                     <Badge variant={airlineData.hiring_requirements.college_degree ? "default" : "secondary"}>
+                       {airlineData.hiring_requirements.college_degree ? "Required" : "Preferred"}
+                     </Badge>
+                   </div>
+                   <div className="flex justify-between">
+                     <span className="text-muted-foreground">Clean Record:</span>
+                     <Badge variant={airlineData.hiring_requirements.clean_record ? "default" : "secondary"}>
+                       {airlineData.hiring_requirements.clean_record ? "Required" : "Not Required"}
+                     </Badge>
+                   </div>
+                 </div>
+               )}
             </CardContent>
           </Card>
 
