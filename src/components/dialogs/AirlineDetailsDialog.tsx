@@ -827,36 +827,34 @@ export function AirlineDetailsDialog({ open, onOpenChange, airline }: AirlineDet
               <div>
                 <h4 className="font-semibold text-sm mb-2">First Officer</h4>
                 <div className="space-y-2 text-sm">
-                  <div className="flex justify-between">
-                    <span className="text-muted-foreground">Year 1:</span>
-                    <span className="font-medium">{airlineData.pay_scales.first_officer.year_1}</span>
-                  </div>
-                  <div className="flex justify-between">
-                    <span className="text-muted-foreground">Year 5:</span>
-                    <span className="font-medium">{airlineData.pay_scales.first_officer.year_5}</span>
-                  </div>
-                  <div className="flex justify-between">
-                    <span className="text-muted-foreground">Year 10:</span>
-                    <span className="font-medium">{airlineData.pay_scales.first_officer.year_10}</span>
-                  </div>
+                  {Object.entries(airlineData.pay_scales.first_officer)
+                    .filter(([_, value]) => value) // Only show years with data
+                    .map(([year, salary]) => (
+                      <div key={year} className="flex justify-between">
+                        <span className="text-muted-foreground">
+                          {year.replace('year_', 'Year ')}:
+                        </span>
+                        <span className="font-medium">{salary}</span>
+                      </div>
+                    ))
+                  }
                 </div>
               </div>
               <Separator />
               <div>
                 <h4 className="font-semibold text-sm mb-2">Captain</h4>
                 <div className="space-y-2 text-sm">
-                  <div className="flex justify-between">
-                    <span className="text-muted-foreground">Year 1:</span>
-                    <span className="font-medium">{airlineData.pay_scales.captain.year_1}</span>
-                  </div>
-                  <div className="flex justify-between">
-                    <span className="text-muted-foreground">Year 5:</span>
-                    <span className="font-medium">{airlineData.pay_scales.captain.year_5}</span>
-                  </div>
-                  <div className="flex justify-between">
-                    <span className="text-muted-foreground">Year 10:</span>
-                    <span className="font-medium">{airlineData.pay_scales.captain.year_10}</span>
-                  </div>
+                  {Object.entries(airlineData.pay_scales.captain)
+                    .filter(([_, value]) => value) // Only show years with data
+                    .map(([year, salary]) => (
+                      <div key={year} className="flex justify-between">
+                        <span className="text-muted-foreground">
+                          {year.replace('year_', 'Year ')}:
+                        </span>
+                        <span className="font-medium">{salary}</span>
+                      </div>
+                    ))
+                  }
                 </div>
               </div>
             </CardContent>
