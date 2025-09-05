@@ -1,110 +1,36 @@
 import { useState } from "react";
-import { Building2, Users, MapPin, Clock } from "lucide-react";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
+import { Building2 } from "lucide-react";
+import { Card, CardHeader, CardTitle } from "@/components/ui/card";
 import { AirlineDetailsDialog } from "@/components/dialogs/AirlineDetailsDialog";
-
-// Import airline logos
-import alaskaAirlinesLogo from "@/assets/airlines/alaska-airlines.png";
-import deltaAirlinesLogo from "@/assets/airlines/delta-airlines.png";
-import unitedAirlinesLogo from "@/assets/airlines/united-airlines.png";
-import americanAirlinesLogo from "@/assets/airlines/american-airlines.png";
-import hawaiianAirlinesLogo from "@/assets/airlines/hawaiian-airlines.png";
-import southwestAirlinesLogo from "@/assets/airlines/southwest-airlines.png";
-import frontierAirlinesLogo from "@/assets/airlines/frontier-airlines.png";
-import spiritAirlinesLogo from "@/assets/airlines/spirit-airlines.png";
-import breezeAirwaysLogo from "@/assets/airlines/breeze-airways.png";
-import sunCountryAirlinesLogo from "@/assets/airlines/sun-country-airlines.png";
-import jetblueAirlinesLogo from "@/assets/airlines/jetblue-airlines.png";
-import allegiantAirLogo from "@/assets/airlines/allegiant-air.png";
-import skywestAirlinesLogo from "@/assets/airlines/skywest-airlines.png";
-import mesaAirlinesLogo from "@/assets/airlines/mesa-airlines.png";
-import republicAirwaysLogo from "@/assets/airlines/republic-airways.png";
-import endeavorAirLogo from "@/assets/airlines/endeavor-air.png";
-import envoyAirLogo from "@/assets/airlines/envoy-air.png";
-import psaAirlinesLogo from "@/assets/airlines/psa-airlines.png";
-import piedmontAirlinesLogo from "@/assets/airlines/piedmont-airlines.png";
-import gojetAirlinesLogo from "@/assets/airlines/gojet-airlines.png";
-import airWisconsinLogo from "@/assets/airlines/air-wisconsin.png";
-import commutairLogo from "@/assets/airlines/commutair.png";
-import expressjetAirlinesLogo from "@/assets/airlines/expressjet-airlines.png";
-import transStatesAirlinesLogo from "@/assets/airlines/trans-states-airlines.png";
-import compassAirlinesLogo from "@/assets/airlines/compass-airlines.png";
-import shuttleAmericaLogo from "@/assets/airlines/shuttle-america.png";
-import alaskaSeaplanesLogo from "@/assets/airlines/alaska-seaplanes.png";
-import capeAirLogo from "@/assets/airlines/cape-air.png";
-import contourAirlinesLogo from "@/assets/airlines/contour-airlines.png";
-import denverAirConnectionLogo from "@/assets/airlines/denver-air-connection.png";
-import eliteAirwaysLogo from "@/assets/airlines/elite-airways.png";
-import grantAviationLogo from "@/assets/airlines/grant-aviation.png";
-import greatLakesAirlinesLogo from "@/assets/airlines/great-lakes-airlines.png";
-import horizonAirLogo from "@/assets/airlines/horizon-air.png";
-import ohanaByHawaiianLogo from "@/assets/airlines/ohana-by-hawaiian.png";
-import quantumAirLogo from "@/assets/airlines/quantum-air.png";
-import ravenAlaskaLogo from "@/assets/airlines/raven-alaska.png";
-import seaborneAirlinesLogo from "@/assets/airlines/seaborne-airlines.png";
-import silverAirwaysLogo from "@/assets/airlines/silver-airways.png";
-import starAirLogo from "@/assets/airlines/star-air.png";
-import sterlingAirwaysLogo from "@/assets/airlines/sterling-airways.png";
 
 const Airlines = () => {
   const [selectedAirline, setSelectedAirline] = useState<string | null>(null);
   const [selectedAirlineLogo, setSelectedAirlineLogo] = useState<string | null>(null);
   const [dialogOpen, setDialogOpen] = useState(false);
 
-  // Helper function to get airline logo
-  const getAirlineLogo = (airlineName: string): string | null => {
-    const logoMap: Record<string, string> = {
-      "Alaska Airlines": alaskaAirlinesLogo,
-      "Delta Air Lines": deltaAirlinesLogo,
-      "United Airlines": unitedAirlinesLogo,
-      "American Airlines": americanAirlinesLogo,
-      "Hawaiian Airlines": hawaiianAirlinesLogo,
-      "Southwest Airlines": southwestAirlinesLogo,
-      "Frontier": frontierAirlinesLogo,
-      "Spirit": spiritAirlinesLogo,
-      "Breeze Airways": breezeAirwaysLogo,
-      "Sun Country Airlines": sunCountryAirlinesLogo,
-      "JetBlue Airways": jetblueAirlinesLogo,
-      "Allegiant Air": allegiantAirLogo,
-      "SkyWest": skywestAirlinesLogo,
-      "Mesa Airlines": mesaAirlinesLogo,
-      "Republic Airways": republicAirwaysLogo,
-      "Endeavor Air": endeavorAirLogo,
-      "Envoy Air": envoyAirLogo,
-      "PSA Airlines": psaAirlinesLogo,
-      "Piedmont Airlines": piedmontAirlinesLogo,
-      "GoJet Airlines": gojetAirlinesLogo,
-      "Air Wisconsin": airWisconsinLogo,
-      "CommutAir": commutairLogo,
-      "ExpressJet Airlines": expressjetAirlinesLogo,
-      "Trans States Airlines": transStatesAirlinesLogo,
-      "Compass Airlines": compassAirlinesLogo,
-      "Shuttle America": shuttleAmericaLogo,
-      "Alaska Seaplanes": alaskaSeaplanesLogo,
-      "Cape Air": capeAirLogo,
-      "Contour Airlines": contourAirlinesLogo,
-      "Denver Air Connection": denverAirConnectionLogo,
-      "Elite Airways": eliteAirwaysLogo,
-      "Grant Aviation": grantAviationLogo,
-      "Great Lakes Airlines": greatLakesAirlinesLogo,
-      "Horizon Air": horizonAirLogo,
-      "Ohana by Hawaiian": ohanaByHawaiianLogo,
-      "Quantum Air": quantumAirLogo,
-      "Raven Alaska": ravenAlaskaLogo,
-      "Seaborne Airlines": seaborneAirlinesLogo,
-      "Silver Airways": silverAirwaysLogo,
-      "Star Air": starAirLogo,
-      "Sterling Airways": sterlingAirwaysLogo
+  // For now, we'll use emoji logos until actual logo assets are available
+  const getAirlineEmoji = (airlineName: string): string => {
+    const emojiMap: Record<string, string> = {
+      "Alaska Airlines": "❄️",
+      "Delta Air Lines": "🔺", 
+      "United Airlines": "🌎",
+      "American Airlines": "🦅",
+      "Hawaiian Airlines": "🌺",
+      "Southwest Airlines": "❤️",
+      "Frontier": "🦎",
+      "Spirit": "✈️",
+      "Breeze Airways": "🌊",
+      "Sun Country Airlines": "☀️",
+      "JetBlue Airways": "💙",
+      "Allegiant Air": "🏝️"
     };
-    return logoMap[airlineName] || null;
+    return emojiMap[airlineName] || "✈️";
   };
 
   const handleAirlineClick = (airlineName: string) => {
     console.log("Airline clicked:", airlineName);
-    const logoUrl = getAirlineLogo(airlineName);
     setSelectedAirline(airlineName);
-    setSelectedAirlineLogo(logoUrl);
+    setSelectedAirlineLogo(null); // No logo URLs for now
     setDialogOpen(true);
   };
 
@@ -250,13 +176,9 @@ const Airlines = () => {
                 >
                   <CardHeader className="pb-4">
                     <div className="flex items-center gap-3">
-                      {getAirlineLogo(airline.name) && (
-                        <img 
-                          src={getAirlineLogo(airline.name)!} 
-                          alt={`${airline.name} logo`}
-                          className="w-8 h-8 object-contain"
-                        />
-                      )}
+                      <div className="text-2xl">
+                        {getAirlineEmoji(airline.name)}
+                      </div>
                       <CardTitle className="text-lg leading-tight">{airline.name}</CardTitle>
                     </div>
                   </CardHeader>
