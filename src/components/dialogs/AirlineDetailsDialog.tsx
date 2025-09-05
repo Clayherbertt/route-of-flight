@@ -1116,34 +1116,34 @@ export function AirlineDetailsDialog({ open, onOpenChange, airline }: AirlineDet
                 Schedules/Line Details
               </CardTitle>
             </CardHeader>
-            <CardContent className="space-y-6">
+            <CardContent className="space-y-6 overflow-hidden">
               {/* Line Types */}
               <div>
                 <h4 className="font-semibold text-base mb-3">Line Types</h4>
-                <div className="space-y-2 text-sm">
-                  <div className="flex gap-3">
-                    <span className="font-medium min-w-32">Initial/Adjusted:</span>
-                    <span>Awarded via PBS/DBMS, modified for conflicts.</span>
+                <div className="space-y-3 text-sm">
+                  <div>
+                    <span className="font-medium block mb-1">Initial/Adjusted:</span>
+                    <span className="block pl-4 text-muted-foreground">Awarded via PBS/DBMS, modified for conflicts.</span>
                   </div>
-                  <div className="flex gap-3">
-                    <span className="font-medium min-w-32">Regular:</span>
-                    <span>Includes rotations, vacations, leaves, days off.</span>
+                  <div>
+                    <span className="font-medium block mb-1">Regular:</span>
+                    <span className="block pl-4 text-muted-foreground">Includes rotations, vacations, leaves, days off.</span>
                   </div>
-                  <div className="flex gap-3">
-                    <span className="font-medium min-w-32">Reserve:</span>
-                    <span>Includes on-call days and X-days (off days).</span>
+                  <div>
+                    <span className="font-medium block mb-1">Reserve:</span>
+                    <span className="block pl-4 text-muted-foreground">Includes on-call days and X-days (off days).</span>
                   </div>
-                  <div className="flex gap-3">
-                    <span className="font-medium min-w-32">Blank Regular:</span>
-                    <span>No rotations, no guarantee.</span>
+                  <div>
+                    <span className="font-medium block mb-1">Blank Regular:</span>
+                    <span className="block pl-4 text-muted-foreground">No rotations, no guarantee.</span>
                   </div>
-                  <div className="flex gap-3">
-                    <span className="font-medium min-w-32">RLL:</span>
-                    <span>Reduced Lower Limit Line - Below Line Construction Window (LCW) lower limit, awarded on request.</span>
+                  <div>
+                    <span className="font-medium block mb-1">RLL:</span>
+                    <span className="block pl-4 text-muted-foreground">Reduced Lower Limit Line - Below Line Construction Window (LCW) lower limit, awarded on request.</span>
                   </div>
-                  <div className="flex gap-3">
-                    <span className="font-medium min-w-32">Specially Created:</span>
-                    <span>Post-award reserve line.</span>
+                  <div>
+                    <span className="font-medium block mb-1">Specially Created:</span>
+                    <span className="block pl-4 text-muted-foreground">Post-award reserve line.</span>
                   </div>
                 </div>
               </div>
@@ -1153,18 +1153,18 @@ export function AirlineDetailsDialog({ open, onOpenChange, airline }: AirlineDet
               {/* Key Terms */}
               <div>
                 <h4 className="font-semibold text-base mb-3">Key Terms</h4>
-                <div className="space-y-2 text-sm">
-                  <div className="flex gap-3">
-                    <span className="font-medium min-w-32">Line Adjustment:</span>
-                    <span>Company removes rotations to resolve FAR/PWA conflicts.</span>
+                <div className="space-y-3 text-sm">
+                  <div>
+                    <span className="font-medium block mb-1">Line Adjustment:</span>
+                    <span className="block pl-4 text-muted-foreground">Company removes rotations to resolve FAR/PWA conflicts.</span>
                   </div>
-                  <div className="flex gap-3">
-                    <span className="font-medium min-w-32">Guarantees:</span>
-                    <span>Minimum pay/credit entitlements; pro rata calculations for partial periods.</span>
+                  <div>
+                    <span className="font-medium block mb-1">Guarantees:</span>
+                    <span className="block pl-4 text-muted-foreground">Minimum pay/credit entitlements; pro rata calculations for partial periods.</span>
                   </div>
-                  <div className="flex gap-3">
-                    <span className="font-medium min-w-32">Reserve Day/Share:</span>
-                    <span>On-call or X-day; pro rata share is guarantee divided by on-call days.</span>
+                  <div>
+                    <span className="font-medium block mb-1">Reserve Day/Share:</span>
+                    <span className="block pl-4 text-muted-foreground">On-call or X-day; pro rata share is guarantee divided by on-call days.</span>
                   </div>
                 </div>
               </div>
