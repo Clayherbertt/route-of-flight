@@ -814,77 +814,6 @@ export function AirlineDetailsDialog({ open, onOpenChange, airline }: AirlineDet
             </CardContent>
           </Card>
 
-          {/* Fleet Types */}
-          <Card>
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <Plane className="h-5 w-5" />
-                Fleet Types
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="flex flex-wrap gap-2">
-                {airlineData.fleet_types.map((aircraft, index) => (
-                  <Badge key={index} variant="outline">
-                    {aircraft}
-                  </Badge>
-                ))}
-              </div>
-            </CardContent>
-          </Card>
-
-          {/* Pay Scales */}
-          <Card>
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <DollarSign className="h-5 w-5" />
-                First Officer Hourly Pay Scale
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="overflow-x-auto">
-                <table className="w-full text-sm border-collapse">
-                  <thead>
-                    <tr className="border-b">
-                      <th className="text-left p-2 font-semibold">Aircraft Type</th>
-                      <th className="text-center p-2 font-semibold">1</th>
-                      <th className="text-center p-2 font-semibold">2</th>
-                      <th className="text-center p-2 font-semibold">3</th>
-                      <th className="text-center p-2 font-semibold">4</th>
-                      <th className="text-center p-2 font-semibold">5</th>
-                      <th className="text-center p-2 font-semibold">6</th>
-                      <th className="text-center p-2 font-semibold">7</th>
-                      <th className="text-center p-2 font-semibold">8</th>
-                      <th className="text-center p-2 font-semibold">9</th>
-                      <th className="text-center p-2 font-semibold">10</th>
-                      <th className="text-center p-2 font-semibold">11</th>
-                      <th className="text-center p-2 font-semibold">12</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {airlineData.fleet_types.map((aircraft, index) => (
-                      <tr key={index} className="border-b hover:bg-muted/50">
-                        <td className="p-2 font-medium">{aircraft}</td>
-                        <td className="text-center p-2">{airlineData.pay_scales.first_officer.year_1}</td>
-                        <td className="text-center p-2">{airlineData.pay_scales.first_officer.year_2}</td>
-                        <td className="text-center p-2">{airlineData.pay_scales.first_officer.year_3}</td>
-                        <td className="text-center p-2">{airlineData.pay_scales.first_officer.year_4}</td>
-                        <td className="text-center p-2">{airlineData.pay_scales.first_officer.year_5}</td>
-                        <td className="text-center p-2">{airlineData.pay_scales.first_officer.year_6}</td>
-                        <td className="text-center p-2">{airlineData.pay_scales.first_officer.year_7}</td>
-                        <td className="text-center p-2">{airlineData.pay_scales.first_officer.year_8}</td>
-                        <td className="text-center p-2">{airlineData.pay_scales.first_officer.year_9}</td>
-                        <td className="text-center p-2">{airlineData.pay_scales.first_officer.year_10}</td>
-                        <td className="text-center p-2">{airlineData.pay_scales.first_officer.year_11}</td>
-                        <td className="text-center p-2">{airlineData.pay_scales.first_officer.year_12}</td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
-            </CardContent>
-          </Card>
-
           {/* Operating Bases */}
           <Card>
             <CardHeader>
@@ -904,7 +833,78 @@ export function AirlineDetailsDialog({ open, onOpenChange, airline }: AirlineDet
               </div>
             </CardContent>
           </Card>
+
+          {/* Fleet Types */}
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <Plane className="h-5 w-5" />
+                Fleet Types
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="flex flex-wrap gap-2">
+                {airlineData.fleet_types.map((aircraft, index) => (
+                  <Badge key={index} variant="outline">
+                    {aircraft}
+                  </Badge>
+                ))}
+              </div>
+            </CardContent>
+          </Card>
         </div>
+
+        {/* First Officer Pay Scale - Full Width */}
+        <Card className="mt-6">
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <DollarSign className="h-5 w-5" />
+              First Officer Hourly Pay Scale
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="overflow-x-auto">
+              <table className="w-full text-sm border-collapse">
+                <thead>
+                  <tr className="border-b">
+                    <th className="text-left p-2 font-semibold">Aircraft Type</th>
+                    <th className="text-center p-2 font-semibold">1</th>
+                    <th className="text-center p-2 font-semibold">2</th>
+                    <th className="text-center p-2 font-semibold">3</th>
+                    <th className="text-center p-2 font-semibold">4</th>
+                    <th className="text-center p-2 font-semibold">5</th>
+                    <th className="text-center p-2 font-semibold">6</th>
+                    <th className="text-center p-2 font-semibold">7</th>
+                    <th className="text-center p-2 font-semibold">8</th>
+                    <th className="text-center p-2 font-semibold">9</th>
+                    <th className="text-center p-2 font-semibold">10</th>
+                    <th className="text-center p-2 font-semibold">11</th>
+                    <th className="text-center p-2 font-semibold">12</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {airlineData.fleet_types.map((aircraft, index) => (
+                    <tr key={index} className="border-b hover:bg-muted/50">
+                      <td className="p-2 font-medium">{aircraft}</td>
+                      <td className="text-center p-2">{airlineData.pay_scales.first_officer.year_1}</td>
+                      <td className="text-center p-2">{airlineData.pay_scales.first_officer.year_2}</td>
+                      <td className="text-center p-2">{airlineData.pay_scales.first_officer.year_3}</td>
+                      <td className="text-center p-2">{airlineData.pay_scales.first_officer.year_4}</td>
+                      <td className="text-center p-2">{airlineData.pay_scales.first_officer.year_5}</td>
+                      <td className="text-center p-2">{airlineData.pay_scales.first_officer.year_6}</td>
+                      <td className="text-center p-2">{airlineData.pay_scales.first_officer.year_7}</td>
+                      <td className="text-center p-2">{airlineData.pay_scales.first_officer.year_8}</td>
+                      <td className="text-center p-2">{airlineData.pay_scales.first_officer.year_9}</td>
+                      <td className="text-center p-2">{airlineData.pay_scales.first_officer.year_10}</td>
+                      <td className="text-center p-2">{airlineData.pay_scales.first_officer.year_11}</td>
+                      <td className="text-center p-2">{airlineData.pay_scales.first_officer.year_12}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </CardContent>
+        </Card>
 
         <div className="flex justify-end pt-4 border-t">
           <Button onClick={() => onOpenChange(false)}>Close</Button>
