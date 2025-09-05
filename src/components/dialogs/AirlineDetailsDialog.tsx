@@ -1123,27 +1123,27 @@ export function AirlineDetailsDialog({ open, onOpenChange, airline }: AirlineDet
                 <div className="space-y-3 text-sm">
                   <div>
                     <span className="font-medium block mb-1">Initial/Adjusted:</span>
-                    <span className="block pl-4 text-muted-foreground">Awarded via PBS/DBMS, modified for conflicts.</span>
+                    <span className="block pl-4 text-muted-foreground break-words">Awarded via PBS/DBMS, modified for conflicts.</span>
                   </div>
                   <div>
                     <span className="font-medium block mb-1">Regular:</span>
-                    <span className="block pl-4 text-muted-foreground">Includes rotations, vacations, leaves, days off.</span>
+                    <span className="block pl-4 text-muted-foreground break-words">Includes rotations, vacations, leaves, days off.</span>
                   </div>
                   <div>
                     <span className="font-medium block mb-1">Reserve:</span>
-                    <span className="block pl-4 text-muted-foreground">Includes on-call days and X-days (off days).</span>
+                    <span className="block pl-4 text-muted-foreground break-words">Includes on-call days and X-days (off days).</span>
                   </div>
                   <div>
                     <span className="font-medium block mb-1">Blank Regular:</span>
-                    <span className="block pl-4 text-muted-foreground">No rotations, no guarantee.</span>
+                    <span className="block pl-4 text-muted-foreground break-words">No rotations, no guarantee.</span>
                   </div>
                   <div>
                     <span className="font-medium block mb-1">RLL:</span>
-                    <span className="block pl-4 text-muted-foreground">Reduced Lower Limit Line - Below Line Construction Window (LCW) lower limit, awarded on request.</span>
+                    <span className="block pl-4 text-muted-foreground break-words">Reduced Lower Limit Line - Below Line Construction Window (LCW) lower limit, awarded on request.</span>
                   </div>
                   <div>
                     <span className="font-medium block mb-1">Specially Created:</span>
-                    <span className="block pl-4 text-muted-foreground">Post-award reserve line.</span>
+                    <span className="block pl-4 text-muted-foreground break-words">Post-award reserve line.</span>
                   </div>
                 </div>
               </div>
@@ -1156,17 +1156,125 @@ export function AirlineDetailsDialog({ open, onOpenChange, airline }: AirlineDet
                 <div className="space-y-3 text-sm">
                   <div>
                     <span className="font-medium block mb-1">Line Adjustment:</span>
-                    <span className="block pl-4 text-muted-foreground">Company removes rotations to resolve FAR/PWA conflicts.</span>
+                    <span className="block pl-4 text-muted-foreground break-words">Company removes rotations to resolve FAR/PWA conflicts.</span>
                   </div>
                   <div>
                     <span className="font-medium block mb-1">Guarantees:</span>
-                    <span className="block pl-4 text-muted-foreground">Minimum pay/credit entitlements; pro rata calculations for partial periods.</span>
+                    <span className="block pl-4 text-muted-foreground break-words">Minimum pay/credit entitlements; pro rata calculations for partial periods.</span>
                   </div>
                   <div>
                     <span className="font-medium block mb-1">Reserve Day/Share:</span>
-                    <span className="block pl-4 text-muted-foreground">On-call or X-day; pro rata share is guarantee divided by on-call days.</span>
+                    <span className="block pl-4 text-muted-foreground break-words">On-call or X-day; pro rata share is guarantee divided by on-call days.</span>
                   </div>
                 </div>
+              </div>
+
+              <Separator />
+
+              {/* Regular Line Guarantee */}
+              <div>
+                <h4 className="font-semibold text-base mb-3">Regular Line Guarantee</h4>
+                <div className="space-y-2 text-sm break-words">
+                  <div>
+                    <span className="font-medium">Minimum:</span> Lesser of 65 credit hours or pilot's block hour limit.
+                  </div>
+                  <div>
+                    <span className="font-medium">Exceptions:</span> RLL guarantees LCW lower limit (pilot option); blank lines have no guarantee.
+                  </div>
+                  <div>
+                    <span className="font-medium">Computation:</span> Computed at aircraft model pay rates; prorated for mixed models based on scheduled credit.
+                  </div>
+                  <div>
+                    <span className="font-medium">Reductions:</span> For unpaid leaves/furloughs, line adjustments, or net swap losses.
+                  </div>
+                </div>
+              </div>
+
+              <Separator />
+
+              {/* Reserve Line Guarantee */}
+              <div>
+                <h4 className="font-semibold text-base mb-3">Reserve Line Guarantee</h4>
+                <div className="space-y-2 text-sm break-words">
+                  <div>
+                    <span className="font-medium">Credit:</span> Average Line Value (ALV) minus 2 hours (72–80 hours range).
+                  </div>
+                  <div>
+                    <span className="font-medium">Pay:</span> Complex formula ensuring minimum based on highest-paying aircraft in category:
+                    <div className="ml-4 mt-1 p-2 bg-muted rounded text-xs break-words overflow-wrap-anywhere">
+                      (ALV - 2 hrs, 72–80 range) - accumulated credit, multiplied by highest rate, plus accumulated credit value (at highest rate, plus international/ocean crossing pay).
+                    </div>
+                  </div>
+                  <div>
+                    <span className="font-medium">Adjustments:</span>
+                    <ul className="ml-4 mt-1 space-y-1 break-words">
+                      <li>• Reduced pro rata for vacation/CQ training days or post-award unpaid leaves.</li>
+                      <li>• Increased pro rata for added on-call days or extra short calls (1 hour each).</li>
+                      <li>• Specially created lines: Pro rata for on-call/X-days.</li>
+                    </ul>
+                  </div>
+                </div>
+              </div>
+
+              <Separator />
+
+              {/* Additional Guarantees */}
+              <div>
+                <h4 className="font-semibold text-base mb-3">Additional Guarantees</h4>
+                <div className="space-y-3 text-sm break-words">
+                  <div>
+                    <h5 className="font-medium text-primary mb-1">Unassigned Pilots</h5>
+                    <span className="break-words">Guarantee: Reserve guarantee of lowest-paying revenue aircraft position (per Section 22 B.).</span>
+                  </div>
+                  
+                  <div>
+                    <h5 className="font-medium text-primary mb-1">Company-Removal Guarantee</h5>
+                    <div className="space-y-1 break-words">
+                      <div><span className="font-medium">If removed post-adjustment:</span> Pay/credit for scheduled credit + flown portion, plus international/ocean pay if applicable.</div>
+                      <div><span className="font-medium">Exclusions:</span> <span className="break-all">Pilot-initiated (e.g., sick, vacation, swaps), IROPS, training/OE, prior bid conflicts, asterisk rotations, low-time pairings, reserve conflicts, recovery/reroutes, discipline, document failures, retirement/death/furlough/termination.</span></div>
+                      <div><span className="font-medium">Reserve conflict removal:</span> Greater of removed rotation credit or accumulated reserve credit.</div>
+                    </div>
+                  </div>
+
+                  <div>
+                    <h5 className="font-medium text-primary mb-1">Rotation Guarantee</h5>
+                    <div className="space-y-1 break-words">
+                      <div><span className="font-medium">For IROPS/FAR/PWA conflicts:</span> Greater of scheduled credit or accumulated recovery/reroute credit.</div>
+                      <div><span className="font-medium">Exception:</span> No guarantee if conflict from prior bid white/yellow slip.</div>
+                      <div><span className="font-medium">Application:</span> At completion date; special rules for transition rotations (may shift credit across bid periods, capped at white slip limit).</div>
+                    </div>
+                  </div>
+
+                  <div>
+                    <h5 className="font-medium text-primary mb-1">Mixed Aircraft Model Guarantee</h5>
+                    <div className="space-y-1 break-words">
+                      <div><span className="font-medium">If FAA approves mixing models:</span> Composite hourly rate for reserve guarantee is weighted average by fleet mix, adjusted annually Jan 1.</div>
+                      <div><span className="font-medium">Example:</span> <span className="break-all">A350 and B767-300ER mix yields ~$373.16/hour (12-year captain rate).</span></div>
+                    </div>
+                  </div>
+
+                  <div>
+                    <h5 className="font-medium text-primary mb-1">Suit-Up Pay and Credit</h5>
+                    <div className="space-y-1 break-words">
+                      <div><span className="font-medium">Regular/long-call reserve:</span> 2 hours pay/credit if unacknowledged removal and reports (offset vs. rotation guarantee; waiver requires Crew Scheduling approval).</div>
+                      <div><span className="font-medium">Short-call reserve:</span> 2 hours if notified &lt;2 hours before report.</div>
+                      <div><span className="font-medium">Reserve short call without flying:</span> 1 hour pay (no credit) per completed period (release counts as complete).</div>
+                      <div><span className="font-medium">Reserve on X-day report:</span> 2 hours pay (no credit), released with rest periods.</div>
+                    </div>
+                  </div>
+
+                  <div>
+                    <h5 className="font-medium text-primary mb-1">Miscellaneous Guarantees</h5>
+                    <ul className="space-y-1 break-words">
+                      <li>• <span className="font-medium">Cancelled known absence (non-unpaid):</span> Pay/credit for original value</li>
+                      <li>• <span className="font-medium">Disciplinary/investigatory meeting on day off:</span> Additional pay equal to Average Daily Guarantee (ADG), if not on paid leave</li>
+                    </ul>
+                  </div>
+                </div>
+              </div>
+
+              <div className="bg-muted p-3 rounded-md text-sm break-words">
+                <span className="font-medium">Note:</span> This section protects pilots from pay losses due to company actions or disruptions while allowing reductions for personal choices. Guarantees are tied to bid periods (~monthly schedules) and ensure equitable compensation across roles and aircraft.
               </div>
 
               <Separator />
