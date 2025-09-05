@@ -1,6 +1,8 @@
+import { useState } from "react";
 import { Building2, Users, MapPin, Clock } from "lucide-react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import { AirlineDetailsDialog } from "@/components/dialogs/AirlineDetailsDialog";
 
 // Import airline logos
 import alaskaAirlinesLogo from "@/assets/airlines/alaska-airlines.png";
@@ -46,6 +48,9 @@ import starAirLogo from "@/assets/airlines/star-air.png";
 import sterlingAirwaysLogo from "@/assets/airlines/sterling-airways.png";
 
 const Airlines = () => {
+  const [selectedAirline, setSelectedAirline] = useState<string | null>(null);
+  const [dialogOpen, setDialogOpen] = useState(false);
+
   // Helper function to get airline logo
   const getAirlineLogo = (airlineName: string): string | null => {
     const logoMap: Record<string, string> = {
@@ -92,6 +97,11 @@ const Airlines = () => {
       "Sterling Airways": sterlingAirwaysLogo
     };
     return logoMap[airlineName] || null;
+  };
+
+  const handleAirlineClick = (airlineName: string) => {
+    setSelectedAirline(airlineName);
+    setDialogOpen(true);
   };
 
   const airlineSections = [
@@ -229,7 +239,11 @@ const Airlines = () => {
             <h2 className="text-3xl font-bold mb-8 text-center">{section.title}</h2>
             <div className="grid md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
               {section.airlines.map((airline, index) => (
-                <Card key={index} className="hover:shadow-lg transition-shadow select-none">
+                <Card 
+                  key={index} 
+                  className="hover:shadow-lg transition-shadow select-none cursor-pointer" 
+                  onClick={() => handleAirlineClick(airline.name)}
+                >
                   <CardHeader className="pb-4">
                     <div className="flex items-center gap-3">
                       {getAirlineLogo(airline.name) && (
@@ -248,6 +262,13 @@ const Airlines = () => {
           </div>
         ))}
       </div>
+
+      {/* Airlines Details Dialog */}
+      <AirlineDetailsDialog 
+        open={dialogOpen}
+        onOpenChange={setDialogOpen}
+        airline={selectedAirline ? { name: selectedAirline } : null}
+      />
     </div>
   );
 };
