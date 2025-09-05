@@ -615,6 +615,40 @@ export function AirlineDetailsDialog({ open, onOpenChange, airline }: AirlineDet
   // Use detailed data for major airlines
   const airlineData = airline ? majorAirlinesData[airline.name] : null;
 
+  // Helper function to get First Officer pay by aircraft type
+  const getFirstOfficerPay = (aircraft: string, year: number): string => {
+    if (!airlineData) return "$0";
+    
+    const payScales: { [key: string]: { [key: string]: string } } = {
+      "Boeing 777": { year_1: "$118.31", year_2: "$225.66", year_3: "$264.07", year_4: "$270.46", year_5: "$276.92", year_6: "$283.94", year_7: "$291.83", year_8: "$298.53", year_9: "$301.79", year_10: "$305.88", year_11: "$308.62", year_12: "$311.46" },
+      "Airbus A350": { year_1: "$118.31", year_2: "$225.66", year_3: "$264.07", year_4: "$270.46", year_5: "$276.92", year_6: "$283.94", year_7: "$291.83", year_8: "$298.53", year_9: "$301.79", year_10: "$305.88", year_11: "$308.62", year_12: "$311.46" },
+      "Boeing 787": { year_1: "$118.31", year_2: "$225.66", year_3: "$264.07", year_4: "$270.46", year_5: "$276.92", year_6: "$283.94", year_7: "$291.83", year_8: "$298.53", year_9: "$301.79", year_10: "$305.88", year_11: "$308.62", year_12: "$311.46" },
+      "Airbus A330-900/300/200": { year_1: "$118.31", year_2: "$225.66", year_3: "$264.07", year_4: "$270.46", year_5: "$276.92", year_6: "$283.94", year_7: "$291.83", year_8: "$298.53", year_9: "$301.79", year_10: "$305.88", year_11: "$308.62", year_12: "$311.46" },
+      "Boeing 767-400ER": { year_1: "$118.31", year_2: "$225.66", year_3: "$264.07", year_4: "$270.46", year_5: "$276.92", year_6: "$283.94", year_7: "$291.83", year_8: "$298.53", year_9: "$301.79", year_10: "$305.88", year_11: "$308.62", year_12: "$311.46" },
+      "Boeing 767-300ER": { year_1: "$118.31", year_2: "$187.21", year_3: "$219.08", year_4: "$224.42", year_5: "$229.91", year_6: "$235.66", year_7: "$242.16", year_8: "$247.84", year_9: "$250.35", year_10: "$254.51", year_11: "$257.64", year_12: "$260.68" },
+      "Boeing 767-300/200": { year_1: "$118.31", year_2: "$187.21", year_3: "$219.08", year_4: "$224.42", year_5: "$229.91", year_6: "$235.66", year_7: "$242.16", year_8: "$247.84", year_9: "$250.35", year_10: "$254.51", year_11: "$257.64", year_12: "$260.68" },
+      "Boeing 757": { year_1: "$118.31", year_2: "$187.21", year_3: "$219.08", year_4: "$224.42", year_5: "$229.91", year_6: "$235.66", year_7: "$242.16", year_8: "$247.84", year_9: "$250.35", year_10: "$254.51", year_11: "$257.64", year_12: "$260.68" },
+      "Airbus A321N": { year_1: "$118.31", year_2: "$187.21", year_3: "$219.08", year_4: "$224.42", year_5: "$229.91", year_6: "$235.66", year_7: "$242.16", year_8: "$247.84", year_9: "$250.35", year_10: "$254.51", year_11: "$257.64", year_12: "$260.68" },
+      "Boeing 737-900": { year_1: "$118.31", year_2: "$181.93", year_3: "$212.89", year_4: "$218.04", year_5: "$223.28", year_6: "$228.96", year_7: "$235.37", year_8: "$240.80", year_9: "$243.38", year_10: "$246.70", year_11: "$248.96", year_12: "$251.27" },
+      "Airbus A321": { year_1: "$118.31", year_2: "$181.93", year_3: "$212.89", year_4: "$218.04", year_5: "$223.28", year_6: "$228.96", year_7: "$235.37", year_8: "$240.80", year_9: "$243.38", year_10: "$246.70", year_11: "$248.96", year_12: "$251.27" },
+      "Boeing 737-800/700": { year_1: "$118.31", year_2: "$181.18", year_3: "$211.94", year_4: "$217.10", year_5: "$222.32", year_6: "$227.87", year_7: "$234.24", year_8: "$239.65", year_9: "$242.21", year_10: "$245.48", year_11: "$247.74", year_12: "$249.96" },
+      "Airbus A320/319": { year_1: "$118.31", year_2: "$181.18", year_3: "$211.94", year_4: "$217.10", year_5: "$222.32", year_6: "$227.87", year_7: "$234.24", year_8: "$239.65", year_9: "$242.21", year_10: "$245.48", year_11: "$247.74", year_12: "$249.96" },
+      "Airbus A220-300": { year_1: "$118.31", year_2: "$174.67", year_3: "$204.39", year_4: "$209.34", year_5: "$214.39", year_6: "$219.79", year_7: "$225.95", year_8: "$231.15", year_9: "$233.66", year_10: "$236.86", year_11: "$239.02", year_12: "$241.20" },
+      "Airbus A220-100": { year_1: "$118.31", year_2: "$167.51", year_3: "$196.02", year_4: "$200.75", year_5: "$205.59", year_6: "$210.80", year_7: "$216.69", year_8: "$221.69", year_9: "$224.08", year_10: "$227.15", year_11: "$229.24", year_12: "$231.32" },
+      "Boeing 717": { year_1: "$118.31", year_2: "$162.94", year_3: "$190.69", year_4: "$195.34", year_5: "$199.96", year_6: "$205.08", year_7: "$210.76", year_8: "$215.63", year_9: "$217.92", year_10: "$220.92", year_11: "$223.02", year_12: "$224.91" },
+      "Embraer EMB-195": { year_1: "$118.31", year_2: "$136.81", year_3: "$160.11", year_4: "$164.01", year_5: "$167.92", year_6: "$172.16", year_7: "$176.94", year_8: "$181.02", year_9: "$182.97", year_10: "$185.46", year_11: "$187.19", year_12: "$188.86" },
+      "Embraer EMB-190/CRJ-900": { year_1: "$118.31", year_2: "$118.31", year_3: "$136.21", year_4: "$139.52", year_5: "$142.83", year_6: "$146.45", year_7: "$150.53", year_8: "$154.00", year_9: "$155.65", year_10: "$157.77", year_11: "$159.26", year_12: "$160.64" }
+    };
+    
+    const aircraftPayScale = payScales[aircraft];
+    if (!aircraftPayScale) {
+      // Return default pay if aircraft not found
+      return airlineData.pay_scales?.first_officer?.[`year_${year}` as keyof typeof airlineData.pay_scales.first_officer] || "$0";
+    }
+    
+    return aircraftPayScale[`year_${year}`] || "$0";
+  };
+
   if (!airline) return null;
 
   // If we don't have detailed data, show a placeholder
@@ -895,18 +929,18 @@ export function AirlineDetailsDialog({ open, onOpenChange, airline }: AirlineDet
                   {airlineData.fleet_types.map((aircraft, index) => (
                     <tr key={index} className="border-b hover:bg-muted/50">
                       <td className="p-3 font-medium">{aircraft}</td>
-                      <td className="text-center p-3">{airlineData.pay_scales.first_officer.year_1}</td>
-                      <td className="text-center p-3">{airlineData.pay_scales.first_officer.year_2}</td>
-                      <td className="text-center p-3">{airlineData.pay_scales.first_officer.year_3}</td>
-                      <td className="text-center p-3">{airlineData.pay_scales.first_officer.year_4}</td>
-                      <td className="text-center p-3">{airlineData.pay_scales.first_officer.year_5}</td>
-                      <td className="text-center p-3">{airlineData.pay_scales.first_officer.year_6}</td>
-                      <td className="text-center p-3">{airlineData.pay_scales.first_officer.year_7}</td>
-                      <td className="text-center p-3">{airlineData.pay_scales.first_officer.year_8}</td>
-                      <td className="text-center p-3">{airlineData.pay_scales.first_officer.year_9}</td>
-                      <td className="text-center p-3">{airlineData.pay_scales.first_officer.year_10}</td>
-                      <td className="text-center p-3">{airlineData.pay_scales.first_officer.year_11}</td>
-                      <td className="text-center p-3">{airlineData.pay_scales.first_officer.year_12}</td>
+                      <td className="text-center p-3">{getFirstOfficerPay(aircraft, 1)}</td>
+                      <td className="text-center p-3">{getFirstOfficerPay(aircraft, 2)}</td>
+                      <td className="text-center p-3">{getFirstOfficerPay(aircraft, 3)}</td>
+                      <td className="text-center p-3">{getFirstOfficerPay(aircraft, 4)}</td>
+                      <td className="text-center p-3">{getFirstOfficerPay(aircraft, 5)}</td>
+                      <td className="text-center p-3">{getFirstOfficerPay(aircraft, 6)}</td>
+                      <td className="text-center p-3">{getFirstOfficerPay(aircraft, 7)}</td>
+                      <td className="text-center p-3">{getFirstOfficerPay(aircraft, 8)}</td>
+                      <td className="text-center p-3">{getFirstOfficerPay(aircraft, 9)}</td>
+                      <td className="text-center p-3">{getFirstOfficerPay(aircraft, 10)}</td>
+                      <td className="text-center p-3">{getFirstOfficerPay(aircraft, 11)}</td>
+                      <td className="text-center p-3">{getFirstOfficerPay(aircraft, 12)}</td>
                     </tr>
                   ))}
                 </tbody>
