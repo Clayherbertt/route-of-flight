@@ -110,13 +110,19 @@ const majorAirlinesData: Record<string, AirlineInfo> = {
       ]
     },
     benefits: [
-      "Competitive salary",
+      "Industry-leading pilot contract ratified in 2022",
+      "Top of scale captain rate of $361.29",
+      "First year first officer rate of $119.92", 
+      "Market rate adjustment that keeps pilots in line with peers at other airlines",
+      "Flexibility to build schedules you want with ability to drop and trade",
+      "Stronger job security - pilot group grows as company grows",
       "Medical, dental, vision insurance",
       "401(k) with company match",
       "Travel benefits",
       "Paid time off",
       "Life insurance",
-      "Employee stock purchase plan"
+      "Employee stock purchase plan",
+      "KCM and Cass privileges"
     ],
     fleet_types: [
       "Boeing 737-700",
