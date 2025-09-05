@@ -49,7 +49,20 @@ interface AirlineInfo {
       year_10: string;
       year_11?: string;
       year_12?: string;
-    };
+    } | Record<string, {
+      year_1: string;
+      year_2?: string;
+      year_3?: string;
+      year_4?: string;
+      year_5: string;
+      year_6?: string;
+      year_7?: string;
+      year_8?: string;
+      year_9?: string;
+      year_10: string;
+      year_11?: string;
+      year_12?: string;
+    }>;
     captain: Record<string, {
       year_1: string;
       year_2?: string;
@@ -402,20 +415,6 @@ const majorAirlinesData: Record<string, AirlineInfo> = {
     ],
     pay_scales: {
       first_officer: {
-        year_1: "$125.52",
-        year_2: "$185.31", 
-        year_3: "$216.85",
-        year_4: "$222.09",
-        year_5: "$227.46",
-        year_6: "$233.18",
-        year_7: "$239.72",
-        year_8: "$245.24",
-        year_9: "$247.90",
-        year_10: "$251.29",
-        year_11: "$253.58",
-        year_12: "$255.90"
-      },
-      captain: {
         "A380": { year_1: "$125.52", year_2: "$336.67", year_3: "$393.99", year_4: "$403.58", year_5: "$413.21", year_6: "$423.62", year_7: "$435.47", year_8: "$445.43", year_9: "$450.25", year_10: "$456.36", year_11: "$460.47", year_12: "$464.64" },
         "A350": { year_1: "$125.52", year_2: "$239.41", year_3: "$280.15", year_4: "$286.94", year_5: "$293.79", year_6: "$301.24", year_7: "$309.61", year_8: "$316.72", year_9: "$320.17", year_10: "$324.52", year_11: "$327.42", year_12: "$330.44" },
         "A330": { year_1: "$125.52", year_2: "$239.41", year_3: "$280.15", year_4: "$286.94", year_5: "$293.79", year_6: "$301.24", year_7: "$309.61", year_8: "$316.72", year_9: "$320.17", year_10: "$324.52", year_11: "$327.42", year_12: "$330.44" },
@@ -440,6 +439,13 @@ const majorAirlinesData: Record<string, AirlineInfo> = {
         "A220-100": { year_1: "$125.52", year_2: "$177.71", year_3: "$207.96", year_4: "$212.98", year_5: "$218.11", year_6: "$223.64", year_7: "$229.89", year_8: "$235.20", year_9: "$237.73", year_10: "$240.99", year_11: "$243.21", year_12: "$245.41" },
         "EMB-195/E190": { year_1: "$125.52", year_2: "$145.14", year_3: "$169.86", year_4: "$174.00", year_5: "$178.15", year_6: "$182.65", year_7: "$187.72", year_8: "$192.05", year_9: "$194.12", year_10: "$196.76", year_11: "$198.60", year_12: "$200.36" },
         "CRJ-900": { year_1: "$125.52", year_2: "$125.52", year_3: "$144.51", year_4: "$148.02", year_5: "$151.53", year_6: "$155.37", year_7: "$159.70", year_8: "$163.38", year_9: "$165.14", year_10: "$167.38", year_11: "$168.96", year_12: "$170.43" }
+      },
+      captain: {
+        "default": {
+          year_1: "$198,000",
+          year_5: "$275,000", 
+          year_10: "$335,000"
+        }
       }
     }
   },
@@ -705,10 +711,33 @@ export function AirlineDetailsDialog({ open, onOpenChange, airline }: AirlineDet
     const aircraftPayScale = payScales[aircraft];
     if (!aircraftPayScale) {
       // Return default pay if aircraft not found
-      return airlineData.pay_scales?.first_officer?.[`year_${year}` as keyof typeof airlineData.pay_scales.first_officer] || "$0";
+      return getDisplayFirstOfficerPay(year) || "$0";
     }
     
     return aircraftPayScale[`year_${year}`] || "$0";
+  };
+
+  // Helper function to check if first officer pay scale is aircraft-specific
+  const isAircraftSpecificPayScale = (payScale: any): payScale is Record<string, any> => {
+    return payScale && typeof payScale === 'object' && !payScale.year_1 && Object.keys(payScale).some(key => payScale[key]?.year_1);
+  };
+
+  // Helper function to get first officer pay for display
+  const getDisplayFirstOfficerPay = (year: number, aircraft?: string): string => {
+    if (!airlineData) return "-";
+    const payScale = airlineData.pay_scales.first_officer;
+    if (isAircraftSpecificPayScale(payScale)) {
+      // Aircraft-specific pay scale
+      if (aircraft && payScale[aircraft]) {
+        return payScale[aircraft][`year_${year}`] || "-";
+      }
+      // Return first aircraft's pay if no specific aircraft requested
+      const firstAircraft = Object.keys(payScale)[0];
+      return payScale[firstAircraft]?.[`year_${year}`] || "-";
+    } else {
+      // Simple pay scale structure
+      return (payScale as any)[`year_${year}`] || "-";
+    }
   };
 
   if (!airline) return null;
@@ -1090,18 +1119,18 @@ export function AirlineDetailsDialog({ open, onOpenChange, airline }: AirlineDet
                     </thead>
                     <tbody>
                       {[
-                        { range: "0 to 1", firstOfficer: airlineData.pay_scales.first_officer.year_1, captain: airlineData.pay_scales.captain.default?.year_1 },
-                        { range: "1 to 2", firstOfficer: airlineData.pay_scales.first_officer.year_2, captain: airlineData.pay_scales.captain.default?.year_2 },
-                        { range: "2 to 3", firstOfficer: airlineData.pay_scales.first_officer.year_3, captain: airlineData.pay_scales.captain.default?.year_3 },
-                        { range: "3 to 4", firstOfficer: airlineData.pay_scales.first_officer.year_4, captain: airlineData.pay_scales.captain.default?.year_4 },
-                        { range: "4 to 5", firstOfficer: airlineData.pay_scales.first_officer.year_5, captain: airlineData.pay_scales.captain.default?.year_5 },
-                        { range: "5 to 6", firstOfficer: airlineData.pay_scales.first_officer.year_6, captain: airlineData.pay_scales.captain.default?.year_6 },
-                        { range: "6 to 7", firstOfficer: airlineData.pay_scales.first_officer.year_7, captain: airlineData.pay_scales.captain.default?.year_7 },
-                        { range: "7 to 8", firstOfficer: airlineData.pay_scales.first_officer.year_8, captain: airlineData.pay_scales.captain.default?.year_8 },
-                        { range: "8 to 9", firstOfficer: airlineData.pay_scales.first_officer.year_9, captain: airlineData.pay_scales.captain.default?.year_9 },
-                        { range: "9 to 10", firstOfficer: airlineData.pay_scales.first_officer.year_10, captain: airlineData.pay_scales.captain.default?.year_10 },
-                        { range: "10 to 11", firstOfficer: airlineData.pay_scales.first_officer.year_11, captain: airlineData.pay_scales.captain.default?.year_11 },
-                        { range: "11 and Up", firstOfficer: airlineData.pay_scales.first_officer.year_12, captain: airlineData.pay_scales.captain.default?.year_12 }
+                        { range: "0 to 1", firstOfficer: getDisplayFirstOfficerPay(1), captain: airlineData.pay_scales.captain.default?.year_1 },
+                        { range: "1 to 2", firstOfficer: getDisplayFirstOfficerPay(2), captain: airlineData.pay_scales.captain.default?.year_2 },
+                        { range: "2 to 3", firstOfficer: getDisplayFirstOfficerPay(3), captain: airlineData.pay_scales.captain.default?.year_3 },
+                        { range: "3 to 4", firstOfficer: getDisplayFirstOfficerPay(4), captain: airlineData.pay_scales.captain.default?.year_4 },
+                        { range: "4 to 5", firstOfficer: getDisplayFirstOfficerPay(5), captain: airlineData.pay_scales.captain.default?.year_5 },
+                        { range: "5 to 6", firstOfficer: getDisplayFirstOfficerPay(6), captain: airlineData.pay_scales.captain.default?.year_6 },
+                        { range: "6 to 7", firstOfficer: getDisplayFirstOfficerPay(7), captain: airlineData.pay_scales.captain.default?.year_7 },
+                        { range: "7 to 8", firstOfficer: getDisplayFirstOfficerPay(8), captain: airlineData.pay_scales.captain.default?.year_8 },
+                        { range: "8 to 9", firstOfficer: getDisplayFirstOfficerPay(9), captain: airlineData.pay_scales.captain.default?.year_9 },
+                        { range: "9 to 10", firstOfficer: getDisplayFirstOfficerPay(10), captain: airlineData.pay_scales.captain.default?.year_10 },
+                        { range: "10 to 11", firstOfficer: getDisplayFirstOfficerPay(11), captain: airlineData.pay_scales.captain.default?.year_11 },
+                        { range: "11 and Up", firstOfficer: getDisplayFirstOfficerPay(12), captain: airlineData.pay_scales.captain.default?.year_12 }
                       ].map((yearData, index) => (
                         <tr key={index} className="border-b hover:bg-muted/50">
                           <td className="border border-gray-300 p-3 font-medium">{yearData.range}</td>
@@ -1119,15 +1148,15 @@ export function AirlineDetailsDialog({ open, onOpenChange, airline }: AirlineDet
                     <div className="space-y-2">
                       <div className="flex justify-between">
                         <span className="text-muted-foreground">Year 1:</span>
-                        <span className="font-medium">{airlineData.pay_scales.first_officer.year_1}</span>
+                        <span className="font-medium">{getDisplayFirstOfficerPay(1)}</span>
                       </div>
                       <div className="flex justify-between">
                         <span className="text-muted-foreground">Year 5:</span>
-                        <span className="font-medium">{airlineData.pay_scales.first_officer.year_5}</span>
+                        <span className="font-medium">{getDisplayFirstOfficerPay(5)}</span>
                       </div>
                       <div className="flex justify-between">
                         <span className="text-muted-foreground">Year 10:</span>
-                        <span className="font-medium">{airlineData.pay_scales.first_officer.year_10}</span>
+                        <span className="font-medium">{getDisplayFirstOfficerPay(10)}</span>
                       </div>
                     </div>
                   </div>
