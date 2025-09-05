@@ -9,6 +9,12 @@ import unitedAirlinesLogo from "@/assets/airlines/united-airlines.png";
 import americanAirlinesLogo from "@/assets/airlines/american-airlines.png";
 import hawaiianAirlinesLogo from "@/assets/airlines/hawaiian-airlines.png";
 import southwestAirlinesLogo from "@/assets/airlines/southwest-airlines.png";
+import frontierAirlinesLogo from "@/assets/airlines/frontier-airlines.png";
+import spiritAirlinesLogo from "@/assets/airlines/spirit-airlines.png";
+import breezeAirwaysLogo from "@/assets/airlines/breeze-airways.png";
+import sunCountryAirlinesLogo from "@/assets/airlines/sun-country-airlines.png";
+import jetblueAirlinesLogo from "@/assets/airlines/jetblue-airlines.png";
+import allegiantAirLogo from "@/assets/airlines/allegiant-air.png";
 
 const Airlines = () => {
   // Helper function to get airline logo
@@ -19,7 +25,13 @@ const Airlines = () => {
       "United Airlines": unitedAirlinesLogo,
       "American Airlines": americanAirlinesLogo,
       "Hawaiian Airlines": hawaiianAirlinesLogo,
-      "Southwest Airlines": southwestAirlinesLogo
+      "Southwest Airlines": southwestAirlinesLogo,
+      "Frontier": frontierAirlinesLogo,
+      "Spirit": spiritAirlinesLogo,
+      "Breeze Airways": breezeAirwaysLogo,
+      "Sun Country Airlines": sunCountryAirlinesLogo,
+      "JetBlue Airways": jetblueAirlinesLogo,
+      "Allegiant Air": allegiantAirLogo
     };
     return logoMap[airlineName] || null;
   };
