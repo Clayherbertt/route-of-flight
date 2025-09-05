@@ -24,13 +24,13 @@ const Header = () => {
             <Book className="inline h-4 w-4 mr-2" />
             Logbook
           </Link>
-          <a
-            href="#airlines"
+          <Link
+            to="/airlines"
             className="text-sm font-medium text-muted-foreground hover:text-foreground smooth-transition"
           >
             <Building2 className="inline h-4 w-4 mr-2" />
             Airlines
-          </a>
+          </Link>
           {user && location.pathname === '/profile' && (
             <Link
               to="/subscription"
