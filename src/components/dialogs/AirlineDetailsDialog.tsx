@@ -160,7 +160,7 @@ const majorAirlinesData: Record<string, AirlineInfo> = {
     phone: "1-800-221-1212",
     email: "pilot.recruitment@delta.com",
     hiring_status: true,
-    pilot_application_url: "https://careers.delta.com/pilots",
+    pilot_application_url: "https://www.delta.com/us/en/careers/pilots/hiring-faqs",
     description: "Delta Air Lines is one of the major airlines of the United States and a legacy carrier. Delta is the oldest airline in the United States still operating under its original name.",
     hiring_requirements: {
       min_hours: "1,500 ATP minimum",
