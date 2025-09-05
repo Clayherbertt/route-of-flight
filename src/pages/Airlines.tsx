@@ -2,7 +2,28 @@ import { Building2, Users, MapPin, Clock } from "lucide-react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 
+// Import airline logos
+import alaskaAirlinesLogo from "@/assets/airlines/alaska-airlines.png";
+import deltaAirlinesLogo from "@/assets/airlines/delta-airlines.png";
+import unitedAirlinesLogo from "@/assets/airlines/united-airlines.png";
+import americanAirlinesLogo from "@/assets/airlines/american-airlines.png";
+import hawaiianAirlinesLogo from "@/assets/airlines/hawaiian-airlines.png";
+import southwestAirlinesLogo from "@/assets/airlines/southwest-airlines.png";
+
 const Airlines = () => {
+  // Helper function to get airline logo
+  const getAirlineLogo = (airlineName: string): string | null => {
+    const logoMap: Record<string, string> = {
+      "Alaska Airlines": alaskaAirlinesLogo,
+      "Delta Air Lines": deltaAirlinesLogo,
+      "United Airlines": unitedAirlinesLogo,
+      "American Airlines": americanAirlinesLogo,
+      "Hawaiian Airlines": hawaiianAirlinesLogo,
+      "Southwest Airlines": southwestAirlinesLogo
+    };
+    return logoMap[airlineName] || null;
+  };
+
   const airlineSections = [
     {
       title: "Majors",
@@ -141,7 +162,15 @@ const Airlines = () => {
                 <Card key={index} className="hover:shadow-lg transition-shadow cursor-pointer">
                   <CardHeader className="pb-4">
                     <div className="flex items-center gap-3">
-                      <span className="text-2xl">{airline.logo}</span>
+                      {getAirlineLogo(airline.name) ? (
+                        <img 
+                          src={getAirlineLogo(airline.name)!} 
+                          alt={`${airline.name} logo`}
+                          className="w-8 h-8 object-contain"
+                        />
+                      ) : (
+                        <span className="text-2xl">{airline.logo}</span>
+                      )}
                       <CardTitle className="text-lg leading-tight">{airline.name}</CardTitle>
                     </div>
                   </CardHeader>
