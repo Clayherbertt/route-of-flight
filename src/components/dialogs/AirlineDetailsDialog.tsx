@@ -634,8 +634,8 @@ export function AirlineDetailsDialog({ open, onOpenChange, airline }: AirlineDet
 
     return (
       <Dialog open={open} onOpenChange={onOpenChange}>
-        <DialogContent className="max-w-4xl max-h-[90vh] flex flex-col">
-          <DialogHeader className="flex-shrink-0">
+        <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
+          <DialogHeader>
             <div className="flex items-center gap-4">
               {airline.logoUrl ? (
                 <img 
@@ -659,8 +659,7 @@ export function AirlineDetailsDialog({ open, onOpenChange, airline }: AirlineDet
             </div>
           </DialogHeader>
 
-        <div className="flex-1 min-h-0">
-          <div className="grid md:grid-cols-2 gap-6 mb-6">
+        <div className="grid md:grid-cols-2 gap-6">
           {/* Company Overview */}
           <Card>
             <CardHeader>
@@ -864,51 +863,52 @@ export function AirlineDetailsDialog({ open, onOpenChange, airline }: AirlineDet
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="max-h-60 overflow-y-auto border rounded">
-              <table className="w-full text-sm border-collapse">
-                <thead className="sticky top-0 bg-background border-b">
-                  <tr>
-                    <th className="text-left p-2 font-semibold bg-background">Aircraft Type</th>
-                    <th className="text-center p-2 font-semibold bg-background">1</th>
-                    <th className="text-center p-2 font-semibold bg-background">2</th>
-                    <th className="text-center p-2 font-semibold bg-background">3</th>
-                    <th className="text-center p-2 font-semibold bg-background">4</th>
-                    <th className="text-center p-2 font-semibold bg-background">5</th>
-                    <th className="text-center p-2 font-semibold bg-background">6</th>
-                    <th className="text-center p-2 font-semibold bg-background">7</th>
-                    <th className="text-center p-2 font-semibold bg-background">8</th>
-                    <th className="text-center p-2 font-semibold bg-background">9</th>
-                    <th className="text-center p-2 font-semibold bg-background">10</th>
-                    <th className="text-center p-2 font-semibold bg-background">11</th>
-                    <th className="text-center p-2 font-semibold bg-background">12</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {airlineData.fleet_types.map((aircraft, index) => (
-                    <tr key={index} className="border-b hover:bg-muted/50">
-                      <td className="p-2 font-medium">{aircraft}</td>
-                      <td className="text-center p-2">{airlineData.pay_scales.first_officer.year_1}</td>
-                      <td className="text-center p-2">{airlineData.pay_scales.first_officer.year_2}</td>
-                      <td className="text-center p-2">{airlineData.pay_scales.first_officer.year_3}</td>
-                      <td className="text-center p-2">{airlineData.pay_scales.first_officer.year_4}</td>
-                      <td className="text-center p-2">{airlineData.pay_scales.first_officer.year_5}</td>
-                      <td className="text-center p-2">{airlineData.pay_scales.first_officer.year_6}</td>
-                      <td className="text-center p-2">{airlineData.pay_scales.first_officer.year_7}</td>
-                      <td className="text-center p-2">{airlineData.pay_scales.first_officer.year_8}</td>
-                      <td className="text-center p-2">{airlineData.pay_scales.first_officer.year_9}</td>
-                      <td className="text-center p-2">{airlineData.pay_scales.first_officer.year_10}</td>
-                      <td className="text-center p-2">{airlineData.pay_scales.first_officer.year_11}</td>
-                      <td className="text-center p-2">{airlineData.pay_scales.first_officer.year_12}</td>
+            <div className="overflow-x-auto">
+              <div className="max-h-48 overflow-y-auto">
+                <table className="w-full text-sm border-collapse">
+                  <thead className="sticky top-0 bg-background">
+                    <tr className="border-b">
+                      <th className="text-left p-2 font-semibold bg-background">Aircraft Type</th>
+                      <th className="text-center p-2 font-semibold bg-background">1</th>
+                      <th className="text-center p-2 font-semibold bg-background">2</th>
+                      <th className="text-center p-2 font-semibold bg-background">3</th>
+                      <th className="text-center p-2 font-semibold bg-background">4</th>
+                      <th className="text-center p-2 font-semibold bg-background">5</th>
+                      <th className="text-center p-2 font-semibold bg-background">6</th>
+                      <th className="text-center p-2 font-semibold bg-background">7</th>
+                      <th className="text-center p-2 font-semibold bg-background">8</th>
+                      <th className="text-center p-2 font-semibold bg-background">9</th>
+                      <th className="text-center p-2 font-semibold bg-background">10</th>
+                      <th className="text-center p-2 font-semibold bg-background">11</th>
+                      <th className="text-center p-2 font-semibold bg-background">12</th>
                     </tr>
-                  ))}
-                </tbody>
-              </table>
+                  </thead>
+                  <tbody>
+                    {airlineData.fleet_types.map((aircraft, index) => (
+                      <tr key={index} className="border-b hover:bg-muted/50">
+                        <td className="p-2 font-medium">{aircraft}</td>
+                        <td className="text-center p-2">{airlineData.pay_scales.first_officer.year_1}</td>
+                        <td className="text-center p-2">{airlineData.pay_scales.first_officer.year_2}</td>
+                        <td className="text-center p-2">{airlineData.pay_scales.first_officer.year_3}</td>
+                        <td className="text-center p-2">{airlineData.pay_scales.first_officer.year_4}</td>
+                        <td className="text-center p-2">{airlineData.pay_scales.first_officer.year_5}</td>
+                        <td className="text-center p-2">{airlineData.pay_scales.first_officer.year_6}</td>
+                        <td className="text-center p-2">{airlineData.pay_scales.first_officer.year_7}</td>
+                        <td className="text-center p-2">{airlineData.pay_scales.first_officer.year_8}</td>
+                        <td className="text-center p-2">{airlineData.pay_scales.first_officer.year_9}</td>
+                        <td className="text-center p-2">{airlineData.pay_scales.first_officer.year_10}</td>
+                        <td className="text-center p-2">{airlineData.pay_scales.first_officer.year_11}</td>
+                        <td className="text-center p-2">{airlineData.pay_scales.first_officer.year_12}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
             </div>
           </CardContent>
         </Card>
-        </div>
 
-        <div className="flex-shrink-0 flex justify-end pt-4 border-t">
+        <div className="flex justify-end pt-4 border-t">
           <Button onClick={() => onOpenChange(false)}>Close</Button>
         </div>
       </DialogContent>
