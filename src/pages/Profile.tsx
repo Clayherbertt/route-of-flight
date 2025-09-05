@@ -5,9 +5,11 @@ import { Button } from "@/components/ui/button"
 import { Separator } from "@/components/ui/separator"
 import { User, Mail, Calendar, Shield, CreditCard } from "lucide-react"
 import Header from "@/components/layout/Header"
+import { useNavigate } from "react-router-dom"
 
 export default function Profile() {
   const { user } = useAuth()
+  const navigate = useNavigate()
 
   if (!user) {
     return (
@@ -106,7 +108,11 @@ export default function Profile() {
                   <p className="text-sm text-muted-foreground mb-4">
                     Upgrade to premium to unlock advanced logbook features, analytics, and more.
                   </p>
-                  <Button variant="aviation" className="w-full">
+                  <Button 
+                    variant="aviation" 
+                    className="w-full"
+                    onClick={() => navigate('/subscription')}
+                  >
                     Upgrade to Premium
                   </Button>
                 </div>
