@@ -1031,42 +1031,78 @@ export function AirlineDetailsDialog({ open, onOpenChange, airline }: AirlineDet
               </CardTitle>
             </CardHeader>
             <CardContent>
-              <div className="grid md:grid-cols-2 gap-6">
-                <div>
-                  <h4 className="font-semibold mb-3">First Officer</h4>
-                  <div className="space-y-2">
-                    <div className="flex justify-between">
-                      <span className="text-muted-foreground">Year 1:</span>
-                      <span className="font-medium">{airlineData.pay_scales.first_officer.year_1}</span>
+              {airlineData.name === "Alaska Airlines" ? (
+                <div className="overflow-x-auto">
+                  <table className="w-full border-collapse border border-gray-300">
+                    <thead>
+                      <tr className="bg-muted">
+                        <th className="border border-gray-300 p-3 text-left">Years of Service</th>
+                        <th className="border border-gray-300 p-3 text-center">First Officer</th>
+                        <th className="border border-gray-300 p-3 text-center">Captain</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {[
+                        { range: "0 to 1", firstOfficer: airlineData.pay_scales.first_officer.year_1, captain: airlineData.pay_scales.captain.default?.year_1 },
+                        { range: "1 to 2", firstOfficer: airlineData.pay_scales.first_officer.year_2, captain: airlineData.pay_scales.captain.default?.year_2 },
+                        { range: "2 to 3", firstOfficer: airlineData.pay_scales.first_officer.year_3, captain: airlineData.pay_scales.captain.default?.year_3 },
+                        { range: "3 to 4", firstOfficer: airlineData.pay_scales.first_officer.year_4, captain: airlineData.pay_scales.captain.default?.year_4 },
+                        { range: "4 to 5", firstOfficer: airlineData.pay_scales.first_officer.year_5, captain: airlineData.pay_scales.captain.default?.year_5 },
+                        { range: "5 to 6", firstOfficer: airlineData.pay_scales.first_officer.year_6, captain: airlineData.pay_scales.captain.default?.year_6 },
+                        { range: "6 to 7", firstOfficer: airlineData.pay_scales.first_officer.year_7, captain: airlineData.pay_scales.captain.default?.year_7 },
+                        { range: "7 to 8", firstOfficer: airlineData.pay_scales.first_officer.year_8, captain: airlineData.pay_scales.captain.default?.year_8 },
+                        { range: "8 to 9", firstOfficer: airlineData.pay_scales.first_officer.year_9, captain: airlineData.pay_scales.captain.default?.year_9 },
+                        { range: "9 to 10", firstOfficer: airlineData.pay_scales.first_officer.year_10, captain: airlineData.pay_scales.captain.default?.year_10 },
+                        { range: "10 to 11", firstOfficer: airlineData.pay_scales.first_officer.year_11, captain: airlineData.pay_scales.captain.default?.year_11 },
+                        { range: "11 and Up", firstOfficer: airlineData.pay_scales.first_officer.year_12, captain: airlineData.pay_scales.captain.default?.year_12 }
+                      ].map((yearData, index) => (
+                        <tr key={index} className="border-b hover:bg-muted/50">
+                          <td className="border border-gray-300 p-3 font-medium">{yearData.range}</td>
+                          <td className="border border-gray-300 p-3 text-center">{yearData.firstOfficer || "-"}</td>
+                          <td className="border border-gray-300 p-3 text-center">{yearData.captain || "-"}</td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              ) : (
+                <div className="grid md:grid-cols-2 gap-6">
+                  <div>
+                    <h4 className="font-semibold mb-3">First Officer</h4>
+                    <div className="space-y-2">
+                      <div className="flex justify-between">
+                        <span className="text-muted-foreground">Year 1:</span>
+                        <span className="font-medium">{airlineData.pay_scales.first_officer.year_1}</span>
+                      </div>
+                      <div className="flex justify-between">
+                        <span className="text-muted-foreground">Year 5:</span>
+                        <span className="font-medium">{airlineData.pay_scales.first_officer.year_5}</span>
+                      </div>
+                      <div className="flex justify-between">
+                        <span className="text-muted-foreground">Year 10:</span>
+                        <span className="font-medium">{airlineData.pay_scales.first_officer.year_10}</span>
+                      </div>
                     </div>
-                    <div className="flex justify-between">
-                      <span className="text-muted-foreground">Year 5:</span>
-                      <span className="font-medium">{airlineData.pay_scales.first_officer.year_5}</span>
-                    </div>
-                    <div className="flex justify-between">
-                      <span className="text-muted-foreground">Year 10:</span>
-                      <span className="font-medium">{airlineData.pay_scales.first_officer.year_10}</span>
+                  </div>
+                  <div>
+                    <h4 className="font-semibold mb-3">Captain</h4>
+                    <div className="space-y-2">
+                      <div className="flex justify-between">
+                        <span className="text-muted-foreground">Year 1:</span>
+                        <span className="font-medium">{airlineData.pay_scales.captain.default?.year_1}</span>
+                      </div>
+                      <div className="flex justify-between">
+                        <span className="text-muted-foreground">Year 5:</span>
+                        <span className="font-medium">{airlineData.pay_scales.captain.default?.year_5}</span>
+                      </div>
+                      <div className="flex justify-between">
+                        <span className="text-muted-foreground">Year 10:</span>
+                        <span className="font-medium">{airlineData.pay_scales.captain.default?.year_10}</span>
+                      </div>
                     </div>
                   </div>
                 </div>
-                <div>
-                  <h4 className="font-semibold mb-3">Captain</h4>
-                  <div className="space-y-2">
-                    <div className="flex justify-between">
-                      <span className="text-muted-foreground">Year 1:</span>
-                      <span className="font-medium">{airlineData.pay_scales.captain.default?.year_1}</span>
-                    </div>
-                    <div className="flex justify-between">
-                      <span className="text-muted-foreground">Year 5:</span>
-                      <span className="font-medium">{airlineData.pay_scales.captain.default?.year_5}</span>
-                    </div>
-                    <div className="flex justify-between">
-                      <span className="text-muted-foreground">Year 10:</span>
-                      <span className="font-medium">{airlineData.pay_scales.captain.default?.year_10}</span>
-                    </div>
-                  </div>
-                </div>
-              </div>
+              )}
             </CardContent>
           </Card>
         )}
