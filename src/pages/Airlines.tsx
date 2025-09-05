@@ -232,14 +232,12 @@ const Airlines = () => {
                 <Card key={index} className="hover:shadow-lg transition-shadow cursor-pointer">
                   <CardHeader className="pb-4">
                     <div className="flex items-center gap-3">
-                      {getAirlineLogo(airline.name) ? (
+                      {getAirlineLogo(airline.name) && (
                         <img 
                           src={getAirlineLogo(airline.name)!} 
                           alt={`${airline.name} logo`}
                           className="w-8 h-8 object-contain"
                         />
-                      ) : (
-                        <span className="text-2xl">{airline.logo}</span>
                       )}
                       <CardTitle className="text-lg leading-tight">{airline.name}</CardTitle>
                     </div>
