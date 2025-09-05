@@ -683,10 +683,29 @@ export function AirlineDetailsDialog({ open, onOpenChange, airline }: AirlineDet
   // Use detailed data for major airlines
   const airlineData = airline ? majorAirlinesData[airline.name] : null;
 
-  // Helper function to get First Officer pay by aircraft type (Delta only)
+  // Helper function to get First Officer pay by aircraft type (Delta and United)
   const getFirstOfficerPay = (aircraft: string, year: number): string => {
-    if (!airlineData || airlineData.name !== "Delta Air Lines") return "$0";
+    if (!airlineData || (airlineData.name !== "Delta Air Lines" && airlineData.name !== "United Airlines")) return "$0";
     
+    if (airlineData.name === "United Airlines") {
+      // United Airlines aircraft-specific pay scale
+      const payScale = airlineData.pay_scales.first_officer as Record<string, any>;
+      if (payScale[aircraft]) {
+        return payScale[aircraft][`year_${year}`] || "$0";
+      }
+      // Try to find a close match if exact aircraft name doesn't exist
+      const aircraftKeys = Object.keys(payScale);
+      const matchingKey = aircraftKeys.find(key => 
+        aircraft.includes(key) || key.includes(aircraft) || 
+        aircraft.replace(/[^a-zA-Z0-9]/g, '').toLowerCase() === key.replace(/[^a-zA-Z0-9]/g, '').toLowerCase()
+      );
+      if (matchingKey) {
+        return payScale[matchingKey][`year_${year}`] || "$0";
+      }
+      return "$0";
+    }
+    
+    // Delta Airlines logic (existing)
     const payScales: { [key: string]: { [key: string]: string } } = {
       "Boeing 777": { year_1: "$118.31", year_2: "$225.66", year_3: "$264.07", year_4: "$270.46", year_5: "$276.92", year_6: "$283.94", year_7: "$291.83", year_8: "$298.53", year_9: "$301.79", year_10: "$305.88", year_11: "$308.62", year_12: "$311.46" },
       "Airbus A350": { year_1: "$118.31", year_2: "$225.66", year_3: "$264.07", year_4: "$270.46", year_5: "$276.92", year_6: "$283.94", year_7: "$291.83", year_8: "$298.53", year_9: "$301.79", year_10: "$305.88", year_11: "$308.62", year_12: "$311.46" },
