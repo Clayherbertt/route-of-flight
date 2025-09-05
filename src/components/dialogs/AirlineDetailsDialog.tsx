@@ -18,6 +18,8 @@ interface AirlineInfo {
   website: string;
   phone: string;
   email: string;
+  hiring_status: boolean;
+  pilot_application_url: string;
   description: string;
   hiring_requirements: {
     min_hours: string;
@@ -63,6 +65,8 @@ const majorAirlinesData: Record<string, AirlineInfo> = {
     website: "alaskaair.com",
     phone: "1-800-252-7522",
     email: "careers@alaskaair.com",
+    hiring_status: true,
+    pilot_application_url: "https://careers.alaskaair.com/pilots",
     description: "Alaska Airlines is a major American airline headquartered in SeaTac, Washington, within the Seattle metropolitan area. Known for exceptional customer service and reliability.",
     hiring_requirements: {
       min_hours: "1,500 ATP minimum",
@@ -121,6 +125,8 @@ const majorAirlinesData: Record<string, AirlineInfo> = {
     website: "delta.com",
     phone: "1-800-221-1212",
     email: "pilot.recruitment@delta.com",
+    hiring_status: true,
+    pilot_application_url: "https://careers.delta.com/pilots",
     description: "Delta Air Lines is one of the major airlines of the United States and a legacy carrier. Delta is the oldest airline in the United States still operating under its original name.",
     hiring_requirements: {
       min_hours: "1,500 ATP minimum",
@@ -184,6 +190,8 @@ const majorAirlinesData: Record<string, AirlineInfo> = {
     website: "united.com",
     phone: "1-800-864-8331",
     email: "pilot.jobs@united.com",
+    hiring_status: true,
+    pilot_application_url: "https://careers.united.com/pilots",
     description: "United Airlines is a major American airline headquartered at the Willis Tower in Chicago, Illinois. United operates a large domestic and international route network spanning cities large and small across the United States and all six continents.",
     hiring_requirements: {
       min_hours: "1,500 ATP minimum",
@@ -243,6 +251,8 @@ const majorAirlinesData: Record<string, AirlineInfo> = {
     website: "aa.com",
     phone: "1-800-433-7300",
     email: "pilotrecruiting@aa.com",
+    hiring_status: true,
+    pilot_application_url: "https://careers.aa.com/pilots",
     description: "American Airlines is a major US airline headquartered in Fort Worth, Texas. It is the world's largest airline when measured by fleet size, scheduled passengers carried, and revenue passenger mile.",
     hiring_requirements: {
       min_hours: "1,500 ATP minimum",
@@ -303,6 +313,8 @@ const majorAirlinesData: Record<string, AirlineInfo> = {
     website: "hawaiianairlines.com",
     phone: "1-800-367-5320",
     email: "pilotcareers@hawaiianair.com",
+    hiring_status: false,
+    pilot_application_url: "https://careers.hawaiianairlines.com/pilots",
     description: "Hawaiian Airlines is the largest airline in Hawaii and the 10th-largest commercial airline in the United States. Known for authentic Hawaiian hospitality and connecting the Hawaiian Islands to the world.",
     hiring_requirements: {
       min_hours: "1,500 ATP minimum",
@@ -356,6 +368,8 @@ const majorAirlinesData: Record<string, AirlineInfo> = {
     website: "southwest.com",
     phone: "1-800-435-9792",
     email: "pilotjobs@wnco.com",
+    hiring_status: true,
+    pilot_application_url: "https://careers.southwest.com/pilots",
     description: "Southwest Airlines is a major US low-cost airline based in Dallas, Texas. Known for its point-to-point service model, no baggage fees, and friendly customer service culture.",
     hiring_requirements: {
       min_hours: "1,500 ATP minimum",
@@ -495,30 +509,28 @@ export function AirlineDetailsDialog({ open, onOpenChange, airline }: AirlineDet
             </CardContent>
           </Card>
 
-          {/* Contact Information */}
+          {/* Pilot Application Information */}
           <Card>
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
-                <Phone className="h-5 w-5" />
-                Contact Information
+                <Users className="h-5 w-5" />
+                Pilot Application Information
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-3">
+              <div className="flex justify-between items-center">
+                <span className="text-muted-foreground">Currently Hiring:</span>
+                <Badge variant={airlineData.hiring_status ? "default" : "secondary"}>
+                  {airlineData.hiring_status ? "Yes" : "No"}
+                </Badge>
+              </div>
               <div className="flex items-center gap-3">
                 <ExternalLink className="h-4 w-4 text-muted-foreground" />
                 <Button variant="link" className="p-0 h-auto" asChild>
-                  <a href={`https://${airlineData.website}`} target="_blank" rel="noopener noreferrer">
-                    {airlineData.website}
+                  <a href={airlineData.pilot_application_url} target="_blank" rel="noopener noreferrer">
+                    Apply Now
                   </a>
                 </Button>
-              </div>
-              <div className="flex items-center gap-3">
-                <Phone className="h-4 w-4 text-muted-foreground" />
-                <span>{airlineData.phone}</span>
-              </div>
-              <div className="flex items-center gap-3">
-                <Mail className="h-4 w-4 text-muted-foreground" />
-                <span>{airlineData.email}</span>
               </div>
             </CardContent>
           </Card>
