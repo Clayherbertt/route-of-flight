@@ -7,7 +7,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Button } from '@/components/ui/button'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { Badge } from '@/components/ui/badge'
-import { Settings, Users, Database, Shield, Loader2 } from 'lucide-react'
+import { Settings, Users, Building2, Shield, Loader2, Plane, CreditCard, UserCheck } from 'lucide-react'
 
 export default function Admin() {
   const { user } = useAuth()
@@ -76,20 +76,20 @@ export default function Admin() {
                 <CardContent>
                   <div className="text-2xl font-bold">0</div>
                   <p className="text-xs text-muted-foreground">
-                    Registered users
+                    Registered pilots
                   </p>
                 </CardContent>
               </Card>
 
               <Card>
                 <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                  <CardTitle className="text-sm font-medium">Aircraft Listings</CardTitle>
-                  <Database className="h-4 w-4 text-muted-foreground" />
+                  <CardTitle className="text-sm font-medium">Subscriptions</CardTitle>
+                  <CreditCard className="h-4 w-4 text-muted-foreground" />
                 </CardHeader>
                 <CardContent>
                   <div className="text-2xl font-bold">0</div>
                   <p className="text-xs text-muted-foreground">
-                    Pending approval
+                    Active subscriptions
                   </p>
                 </CardContent>
               </Card>
@@ -97,7 +97,7 @@ export default function Admin() {
               <Card>
                 <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                   <CardTitle className="text-sm font-medium">Flight Entries</CardTitle>
-                  <Settings className="h-4 w-4 text-muted-foreground" />
+                  <Plane className="h-4 w-4 text-muted-foreground" />
                 </CardHeader>
                 <CardContent>
                   <div className="text-2xl font-bold">0</div>
@@ -122,12 +122,12 @@ export default function Admin() {
                     Manage Users
                   </Button>
                   <Button variant="outline" className="justify-start">
-                    <Database className="mr-2 h-4 w-4" />
-                    Review Aircraft Listings
+                    <Building2 className="mr-2 h-4 w-4" />
+                    Manage Airlines
                   </Button>
                   <Button variant="outline" className="justify-start">
-                    <Settings className="mr-2 h-4 w-4" />
-                    System Settings
+                    <CreditCard className="mr-2 h-4 w-4" />
+                    Subscription Management
                   </Button>
                   <Button variant="outline" className="justify-start">
                     <Shield className="mr-2 h-4 w-4" />
@@ -143,11 +143,33 @@ export default function Admin() {
               <CardHeader>
                 <CardTitle>User Management</CardTitle>
                 <CardDescription>
-                  Manage user accounts and permissions
+                  Manage pilot accounts, subscriptions, and permissions
                 </CardDescription>
               </CardHeader>
               <CardContent>
-                <p className="text-muted-foreground">User management features coming soon...</p>
+                <div className="space-y-4">
+                  <div className="flex items-center justify-between">
+                    <h4 className="text-lg font-medium">Registered Pilots</h4>
+                    <Button size="sm">
+                      <UserCheck className="mr-2 h-4 w-4" />
+                      View All Users
+                    </Button>
+                  </div>
+                  <p className="text-muted-foreground">
+                    View and manage pilot accounts, edit user profiles, manage subscription status, 
+                    and handle user permissions. You can also delete accounts and view flight logs.
+                  </p>
+                  <div className="grid gap-4 md:grid-cols-2">
+                    <Button variant="outline" className="justify-start">
+                      <Users className="mr-2 h-4 w-4" />
+                      Edit User Accounts
+                    </Button>
+                    <Button variant="outline" className="justify-start">
+                      <CreditCard className="mr-2 h-4 w-4" />
+                      Manage Subscriptions
+                    </Button>
+                  </div>
+                </div>
               </CardContent>
             </Card>
           </TabsContent>
@@ -155,13 +177,35 @@ export default function Admin() {
           <TabsContent value="content">
             <Card>
               <CardHeader>
-                <CardTitle>Content Management</CardTitle>
+                <CardTitle>Airline Database Management</CardTitle>
                 <CardDescription>
-                  Manage aircraft listings, airline data, and website content
+                  Manage airline profiles, hiring requirements, and company information
                 </CardDescription>
               </CardHeader>
               <CardContent>
-                <p className="text-muted-foreground">Content management features coming soon...</p>
+                <div className="space-y-4">
+                  <div className="flex items-center justify-between">
+                    <h4 className="text-lg font-medium">Airline Profiles</h4>
+                    <Button size="sm">
+                      <Building2 className="mr-2 h-4 w-4" />
+                      View Airlines
+                    </Button>
+                  </div>
+                  <p className="text-muted-foreground">
+                    Update airline profiles displayed on the airlines page including hiring minimums, 
+                    pay scales, fleet information, base locations, and company details.
+                  </p>
+                  <div className="grid gap-4 md:grid-cols-2">
+                    <Button variant="outline" className="justify-start">
+                      <Building2 className="mr-2 h-4 w-4" />
+                      Edit Airline Profiles
+                    </Button>
+                    <Button variant="outline" className="justify-start">
+                      <Settings className="mr-2 h-4 w-4" />
+                      Update Hiring Requirements
+                    </Button>
+                  </div>
+                </div>
               </CardContent>
             </Card>
           </TabsContent>
