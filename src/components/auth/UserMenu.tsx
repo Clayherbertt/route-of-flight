@@ -9,11 +9,13 @@ import {
 } from "@/components/ui/dropdown-menu"
 import { Avatar, AvatarFallback } from "@/components/ui/avatar"
 import { useAuth } from "@/contexts/AuthContext"
-import { User, Settings, LogOut } from "lucide-react"
+import { useIsAdmin } from "@/hooks/useIsAdmin"
+import { User, Settings, LogOut, Shield, CreditCard } from "lucide-react"
 import { useNavigate } from "react-router-dom"
 
 export function UserMenu() {
   const { user, signOut } = useAuth()
+  const { isAdmin } = useIsAdmin()
   const navigate = useNavigate()
 
   const handleSignOut = async () => {
@@ -23,6 +25,14 @@ export function UserMenu() {
 
   const handleProfile = () => {
     navigate("/profile")
+  }
+
+  const handleAdmin = () => {
+    navigate("/admin")
+  }
+
+  const handleSubscription = () => {
+    navigate("/subscription")
   }
 
   if (!user) return null
@@ -45,7 +55,7 @@ export function UserMenu() {
         <DropdownMenuLabel className="font-normal">
           <div className="flex flex-col space-y-1">
             <p className="text-sm font-medium leading-none">
-              {user.user_metadata?.full_name || "Pilot"}
+              {user.user_metadata?.full_name || user.user_metadata?.display_name || "Pilot"}
             </p>
             <p className="text-xs leading-none text-muted-foreground">
               {user.email}
@@ -57,6 +67,16 @@ export function UserMenu() {
           <User className="mr-2 h-4 w-4" />
           <span>Profile</span>
         </DropdownMenuItem>
+        <DropdownMenuItem onClick={handleSubscription}>
+          <CreditCard className="mr-2 h-4 w-4" />
+          <span>Subscription</span>
+        </DropdownMenuItem>
+        {isAdmin && (
+          <DropdownMenuItem onClick={handleAdmin}>
+            <Shield className="mr-2 h-4 w-4" />
+            <span>Admin Dashboard</span>
+          </DropdownMenuItem>
+        )}
         <DropdownMenuItem>
           <Settings className="mr-2 h-4 w-4" />
           <span>Settings</span>
