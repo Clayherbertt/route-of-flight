@@ -1,11 +1,13 @@
 import { Button } from "@/components/ui/button";
-import { Plane, Book, Building2, FileText, Crown } from "lucide-react";
+import { Plane, Book, Building2, FileText, Crown, Shield } from "lucide-react";
 import { Link, useLocation } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
 import { UserMenu } from "@/components/auth/UserMenu";
+import { useIsAdmin } from "@/hooks/useIsAdmin";
 
 const Header = () => {
   const { user, loading } = useAuth();
+  const { isAdmin } = useIsAdmin();
   const location = useLocation();
 
   return (
@@ -33,6 +35,15 @@ const Header = () => {
             <Building2 className="inline h-4 w-4 mr-2" />
             Airlines
           </Link>
+          {user && isAdmin && (
+            <Link
+              to="/admin"
+              className="text-sm font-medium text-muted-foreground hover:text-foreground smooth-transition"
+            >
+              <Shield className="inline h-4 w-4 mr-2" />
+              Admin
+            </Link>
+          )}
           {user && location.pathname === '/profile' && (
             <Link
               to="/subscription"
