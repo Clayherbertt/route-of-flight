@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useAuth } from '@/contexts/AuthContext'
 import { useIsAdmin } from '@/hooks/useIsAdmin'
@@ -13,6 +13,13 @@ export default function Admin() {
   const { user } = useAuth()
   const { isAdmin, loading } = useIsAdmin()
   const navigate = useNavigate()
+
+  // Handle redirect logic in useEffect to avoid render-time navigation
+  useEffect(() => {
+    if (!loading && (!user || !isAdmin)) {
+      navigate('/')
+    }
+  }, [user, isAdmin, loading, navigate])
 
   // Show loading state while checking admin status
   if (loading) {
@@ -31,9 +38,8 @@ export default function Admin() {
     )
   }
 
-  // Redirect if not admin
+  // Return null if not authorized (navigation happens in useEffect)
   if (!user || !isAdmin) {
-    navigate('/')
     return null
   }
 
