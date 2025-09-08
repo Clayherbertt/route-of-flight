@@ -122,7 +122,7 @@ export default function Profile() {
               </div>
               <div>
                 <h2 className="font-semibold text-lg">
-                  {user.user_metadata?.full_name || "Pilot"}
+                  {user.user_metadata?.full_name || user.user_metadata?.display_name || "Pilot"}
                 </h2>
                 <p className="text-sm text-muted-foreground">{user.email}</p>
                 <Badge variant="secondary" className="text-xs mt-1">
@@ -265,7 +265,7 @@ export default function Profile() {
                       <div className="mt-1 p-3 bg-muted/50 rounded-md border">
                         <div className="flex items-center gap-2">
                           <User className="h-4 w-4 text-muted-foreground" />
-                          <span>{user.user_metadata?.full_name || "Not set"}</span>
+                          <span>{user.user_metadata?.full_name || user.user_metadata?.display_name || "Not set"}</span>
                         </div>
                       </div>
                     </div>
