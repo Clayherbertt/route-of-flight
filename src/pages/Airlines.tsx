@@ -2,6 +2,7 @@ import { useState } from "react";
 import { Building2 } from "lucide-react";
 import { Card, CardHeader, CardTitle } from "@/components/ui/card";
 import { AirlineDetailsDialog } from "@/components/dialogs/AirlineDetailsDialog";
+import Header from "@/components/layout/Header";
 
 const Airlines = () => {
   console.log("Airlines component rendering...");
@@ -137,7 +138,9 @@ const Airlines = () => {
 
   return (
     <div className="min-h-screen bg-background">
-      {/* Header */}
+      <Header />
+      
+      {/* Page Header */}
       <div className="bg-card border-b">
         <div className="container mx-auto px-6 py-12">
           <div className="flex items-center gap-3 mb-4">
