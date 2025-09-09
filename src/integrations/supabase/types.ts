@@ -513,6 +513,128 @@ export type Database = {
         }
         Relationships: []
       }
+      route_step_connections: {
+        Row: {
+          created_at: string
+          from_step_id: string
+          id: string
+          to_step_id: string
+        }
+        Insert: {
+          created_at?: string
+          from_step_id: string
+          id?: string
+          to_step_id: string
+        }
+        Update: {
+          created_at?: string
+          from_step_id?: string
+          id?: string
+          to_step_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "route_step_connections_from_step_id_fkey"
+            columns: ["from_step_id"]
+            isOneToOne: false
+            referencedRelation: "route_steps"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "route_step_connections_to_step_id_fkey"
+            columns: ["to_step_id"]
+            isOneToOne: false
+            referencedRelation: "route_steps"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      route_step_details: {
+        Row: {
+          checked: boolean
+          created_at: string
+          description: string
+          flight_hours: number | null
+          id: string
+          order_number: number
+          route_step_id: string
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          checked?: boolean
+          created_at?: string
+          description: string
+          flight_hours?: number | null
+          id?: string
+          order_number?: number
+          route_step_id: string
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          checked?: boolean
+          created_at?: string
+          description?: string
+          flight_hours?: number | null
+          id?: string
+          order_number?: number
+          route_step_id?: string
+          title?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "route_step_details_route_step_id_fkey"
+            columns: ["route_step_id"]
+            isOneToOne: false
+            referencedRelation: "route_steps"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      route_steps: {
+        Row: {
+          allow_customer_reorder: boolean
+          created_at: string
+          description: string
+          icon: string
+          id: string
+          mandatory: boolean
+          order_number: number
+          overview: string
+          status: string
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          allow_customer_reorder?: boolean
+          created_at?: string
+          description: string
+          icon?: string
+          id?: string
+          mandatory?: boolean
+          order_number: number
+          overview?: string
+          status?: string
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          allow_customer_reorder?: boolean
+          created_at?: string
+          description?: string
+          icon?: string
+          id?: string
+          mandatory?: boolean
+          order_number?: number
+          overview?: string
+          status?: string
+          title?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       subscribers: {
         Row: {
           created_at: string
