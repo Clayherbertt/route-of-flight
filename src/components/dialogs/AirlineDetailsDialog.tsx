@@ -381,7 +381,7 @@ const airlinesData: Record<string, AirlineInfo> = {
       "Strong company culture with employee ownership"
     ]
   },
-  "Spirit Airlines": {
+  "Spirit": {
     name: "Spirit Airlines",
     logo: "✈️",
     callSign: "Spirit Wings",
@@ -433,7 +433,7 @@ const airlinesData: Record<string, AirlineInfo> = {
       "Strong operational reliability"
     ]
   },
-  "Frontier Airlines": {
+  "Frontier": {
     name: "Frontier Airlines",
     logo: "✈️",
     callSign: "Frontier Flight",
