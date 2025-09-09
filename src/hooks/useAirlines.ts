@@ -191,6 +191,16 @@ export function useAirlines() {
     fetchAirlines();
   }, []);
 
+  // Add window focus listener to refetch data when user returns to tab
+  useEffect(() => {
+    const handleFocus = () => {
+      fetchAirlines();
+    };
+
+    window.addEventListener('focus', handleFocus);
+    return () => window.removeEventListener('focus', handleFocus);
+  }, []);
+
   return {
     airlines,
     loading,

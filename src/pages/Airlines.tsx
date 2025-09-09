@@ -1,27 +1,37 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Building2, Search, Plane, Users, MapPin } from "lucide-react";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { AirlineDetailsDialog } from "@/components/dialogs/AirlineDetailsDialog";
 import Header from "@/components/layout/Header";
+import { useAirlines } from "@/hooks/useAirlines";
+import type { AirlineData } from "@/hooks/useAirlines";
 
 const Airlines = () => {
   console.log("Airlines component rendering...");
-  const [selectedAirline, setSelectedAirline] = useState<string | null>(null);
-  const [selectedAirlineLogo, setSelectedAirlineLogo] = useState<string | null>(null);
+  const { airlines, loading, refetch } = useAirlines();
+  const [selectedAirline, setSelectedAirline] = useState<AirlineData | null>(null);
   const [dialogOpen, setDialogOpen] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
 
   console.log("Airlines state initialized");
 
-  // Using consistent airplane emoji for all airlines
-  const getAirlineEmoji = (): string => "✈️";
+  // Refetch data when component becomes visible
+  useEffect(() => {
+    const handleVisibilityChange = () => {
+      if (!document.hidden) {
+        refetch();
+      }
+    };
 
-  const handleAirlineClick = (airlineName: string) => {
-    console.log("Airline clicked:", airlineName);
-    setSelectedAirline(airlineName);
-    setSelectedAirlineLogo(null); // No logo URLs for now
+    document.addEventListener('visibilitychange', handleVisibilityChange);
+    return () => document.removeEventListener('visibilitychange', handleVisibilityChange);
+  }, [refetch]);
+
+  const handleAirlineClick = (airline: AirlineData) => {
+    console.log("Airline clicked:", airline.name);
+    setSelectedAirline(airline);
     setDialogOpen(true);
   };
 
@@ -69,115 +79,27 @@ const Airlines = () => {
     }
   };
 
+  // Group airlines by category
   const airlineSections = [
     {
       title: "Majors",
-      airlines: [
-        { name: "Alaska Airlines" },
-        { name: "Delta Air Lines" },
-        { name: "United Airlines" },
-        { name: "American Airlines" },
-        { name: "Hawaiian Airlines" },
-        { name: "Southwest Airlines" }
-      ]
+      airlines: airlines.filter(airline => airline.category === "Majors")
     },
     {
-      title: "Ultra Low Cost Carriers & Large Operators",
-      airlines: [
-        { name: "Frontier" },
-        { name: "Spirit" },
-        { name: "Breeze Airways" },
-        { name: "Sun Country Airlines" },
-        { name: "JetBlue Airways" },
-        { name: "Allegiant Air" }
-      ]
+      title: "Ultra Low Cost Carriers & Large Operators", 
+      airlines: airlines.filter(airline => airline.category === "Ultra Low Cost Carriers & Large Operators")
     },
     {
       title: "Regional Carriers",
-      airlines: [
-        { name: "Air Wisconsin" },
-        { name: "Alaska Seaplanes" },
-        { name: "Cape Air" },
-        { name: "CommutAir" },
-        { name: "Contour Airlines" },
-        { name: "Denver Air Connection" },
-        { name: "Elite Airways" },
-        { name: "Endeavor Air" },
-        { name: "Envoy Air" },
-        { name: "ExpressJet Airlines" },
-        { name: "GoJet Airlines" },
-        { name: "Grant Aviation" },
-        { name: "Great Lakes Airlines" },
-        { name: "Horizon Air" },
-        { name: "Mesa Airlines" },
-        { name: "Ohana by Hawaiian" },
-        { name: "Piedmont Airlines" },
-        { name: "PSA Airlines" },
-        { name: "Quantum Air" },
-        { name: "Raven Alaska" },
-        { name: "Republic Airways" },
-        { name: "Seaborne Airlines" },
-        { name: "Silver Airways" },
-        { name: "SkyWest" },
-        { name: "Star Air" },
-        { name: "Sterling Airways" }
-      ]
+      airlines: airlines.filter(airline => airline.category === "Regional Carriers")
     },
     {
       title: "Fractional Carriers",
-      airlines: [
-        { name: "NetJets" },
-        { name: "Flexjet" },
-        { name: "Flight Options" },
-        { name: "Directional Aviation" },
-        { name: "Executive AirShare" },
-        { name: "PlaneSense" },
-        { name: "XOJet" },
-        { name: "JetSuite" },
-        { name: "Airshare" },
-        { name: "Wheels Up" },
-        { name: "VistaJet" },
-        { name: "Jet Linx" }
-      ]
+      airlines: airlines.filter(airline => airline.category === "Fractional Carriers")
     },
     {
       title: "Cargo",
-      airlines: [
-        { name: "21 Air, LLC" },
-        { name: "ABX Air" },
-        { name: "Air Cargo Carriers" },
-        { name: "Air Transport International" },
-        { name: "Alaska Central Express" },
-        { name: "Aloha Air Cargo" },
-        { name: "Alpine Air" },
-        { name: "Ameriflight" },
-        { name: "Amerijet International" },
-        { name: "Ameristar Air Cargo, Inc." },
-        { name: "Atlas Air" },
-        { name: "Bemidji Aviation Services, Inc." },
-        { name: "CSA Air" },
-        { name: "Empire Airlines" },
-        { name: "Encore Air Cargo" },
-        { name: "Everts Air Cargo" },
-        { name: "FedEx Express" },
-        { name: "Freight Runners Express" },
-        { name: "IFL Group" },
-        { name: "Kalitta Air" },
-        { name: "Kalitta Charters II" },
-        { name: "Key Lime Air" },
-        { name: "Lynden Air Cargo" },
-        { name: "Mountain Air Cargo" },
-        { name: "National Airlines" },
-        { name: "Northern Air Cargo" },
-        { name: "Quest Diagnostics" },
-        { name: "Ryan Air" },
-        { name: "SkyLease Cargo" },
-        { name: "Transair" },
-        { name: "United Parcel Service" },
-        { name: "USA Jet Airlines" },
-        { name: "Western Global Airlines" },
-        { name: "Wiggins Airways" }
-      ]
+      airlines: airlines.filter(airline => airline.category === "Cargo")
     }
   ];
 
@@ -190,6 +112,21 @@ const Airlines = () => {
   })).filter(section => section.airlines.length > 0);
 
   console.log("Airlines data prepared, about to render");
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-background via-background to-muted/20">
+        <Header />
+        <div className="container mx-auto px-6 py-24">
+          <div className="text-center">
+            <Plane className="h-16 w-16 text-muted-foreground/50 mx-auto mb-4 animate-bounce" />
+            <h3 className="text-xl font-semibold text-muted-foreground mb-2">Loading Airlines...</h3>
+            <p className="text-muted-foreground">Please wait while we fetch the latest airline data</p>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-background via-background to-muted/20">
@@ -257,7 +194,7 @@ const Airlines = () => {
                     <Card 
                       key={index}
                       className={`${getSectionColor(section.title)} hover:scale-105 transition-all duration-200 cursor-pointer hover:shadow-lg group`}
-                      onClick={() => handleAirlineClick(airline.name)}
+                      onClick={() => handleAirlineClick(airline)}
                     >
                       <CardContent className="p-6">
                         <div className="flex items-center gap-3">
@@ -301,7 +238,7 @@ const Airlines = () => {
           console.log("Dialog state changing to:", open);
           setDialogOpen(open);
         }}
-        airline={selectedAirline ? { name: selectedAirline, logoUrl: selectedAirlineLogo || undefined } : null}
+        airline={selectedAirline}
       />
     </div>
   );
