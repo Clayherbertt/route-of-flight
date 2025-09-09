@@ -34,12 +34,14 @@ const HeroSectionV2 = () => {
             <span className="text-sm font-medium">Trusted by 10,000+ Professional Pilots</span>
           </div>
 
-          <h1 className="text-6xl md:text-8xl font-bold mb-8 leading-[1.1]">
-            Your Career
-            <span className="block sky-gradient bg-clip-text text-transparent">
-              Takes Flight Here
-            </span>
-          </h1>
+          <div className="pb-4">
+            <h1 className="text-6xl md:text-8xl font-bold mb-8 leading-[1.3]">
+              Your Career
+              <span className="block sky-gradient bg-clip-text text-transparent py-2">
+                Takes Flight Here
+              </span>
+            </h1>
+          </div>
           
           <p className="text-2xl md:text-3xl mb-12 max-w-3xl mx-auto text-muted-foreground font-light">
             The most comprehensive platform for professional pilots to track flights, 
