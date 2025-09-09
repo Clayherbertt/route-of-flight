@@ -11,12 +11,11 @@ import {
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Textarea } from '@/components/ui/textarea'
-import { RichTextEditor } from '@/components/ui/rich-text-editor'
 import { Badge } from '@/components/ui/badge'
 import { Switch } from '@/components/ui/switch'
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
-import { Plus, X, GraduationCap, Stethoscope, Plane, Trophy } from 'lucide-react'
+import { Plus, X, Plane } from 'lucide-react'
 import { Checkbox } from '@/components/ui/checkbox'
+import { Separator } from '@/components/ui/separator'
 
 interface RouteStepDetail {
   id?: string
@@ -50,18 +49,11 @@ interface EditRouteStepDialogProps {
   onSave: (step: RouteStep) => void
 }
 
-const iconOptions = [
-  { value: 'GraduationCap', label: 'Graduation Cap', icon: GraduationCap },
-  { value: 'Stethoscope', label: 'Medical/Stethoscope', icon: Stethoscope },
-  { value: 'Plane', label: 'Airplane', icon: Plane },
-  { value: 'Trophy', label: 'Trophy', icon: Trophy },
-]
-
 export function EditRouteStepDialog({ step, open, onOpenChange, onSave }: EditRouteStepDialogProps) {
   const [editedStep, setEditedStep] = useState<RouteStep | null>(step)
-  const [newDetailTitle, setNewDetailTitle] = useState('')
-  const [newDetailDescription, setNewDetailDescription] = useState('')
-  const [newTaskType, setNewTaskType] = useState<'flight' | 'ground'>('flight')
+  const [newFlightTitle, setNewFlightTitle] = useState('')
+  const [newFlightHours, setNewFlightHours] = useState('')
+  const [newGroundTitle, setNewGroundTitle] = useState('')
 
   // Reset edited step when step prop changes
   useEffect(() => {
@@ -77,22 +69,37 @@ export function EditRouteStepDialog({ step, open, onOpenChange, onSave }: EditRo
     onOpenChange(false)
   }
 
-  const addDetail = () => {
-    if (newDetailTitle.trim()) {
+  const addFlightTask = () => {
+    if (newFlightTitle.trim()) {
       setEditedStep({
         ...editedStep,
         details: [...editedStep.details, {
-          title: newDetailTitle.trim(),
-          description: newDetailDescription.trim(),
+          title: newFlightTitle.trim(),
+          description: '',
           checked: false,
-          flightHours: newTaskType === 'flight' ? undefined : undefined,
+          flightHours: newFlightHours ? parseInt(newFlightHours) : undefined,
           orderNumber: editedStep.details.length,
-          taskType: newTaskType
+          taskType: 'flight'
         }]
       })
-      setNewDetailTitle('')
-      setNewDetailDescription('')
-      setNewTaskType('flight')
+      setNewFlightTitle('')
+      setNewFlightHours('')
+    }
+  }
+
+  const addGroundTask = () => {
+    if (newGroundTitle.trim()) {
+      setEditedStep({
+        ...editedStep,
+        details: [...editedStep.details, {
+          title: newGroundTitle.trim(),
+          description: '',
+          checked: false,
+          orderNumber: editedStep.details.length,
+          taskType: 'ground'
+        }]
+      })
+      setNewGroundTitle('')
     }
   }
 
@@ -103,77 +110,76 @@ export function EditRouteStepDialog({ step, open, onOpenChange, onSave }: EditRo
     })
   }
 
-  const updateDetail = (index: number, field: 'title' | 'description' | 'taskType', value: string) => {
+  const updateTaskTitle = (index: number, title: string) => {
     const newDetails = [...editedStep.details]
-    newDetails[index] = { ...newDetails[index], [field]: value }
+    newDetails[index] = { ...newDetails[index], title }
     setEditedStep({
       ...editedStep,
       details: newDetails
     })
   }
 
+  const updateTaskHours = (index: number, hours: number | undefined) => {
+    const newDetails = [...editedStep.details]
+    newDetails[index] = { ...newDetails[index], flightHours: hours }
+    setEditedStep({
+      ...editedStep,
+      details: newDetails
+    })
+  }
+
+  const toggleTaskCompleted = (index: number, checked: boolean) => {
+    const newDetails = [...editedStep.details]
+    newDetails[index] = { ...newDetails[index], checked }
+    setEditedStep({
+      ...editedStep,
+      details: newDetails
+    })
+  }
+
+  const flightTasks = editedStep.details.filter(detail => detail.taskType === 'flight')
+  const groundTasks = editedStep.details.filter(detail => detail.taskType === 'ground')
+
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-2xl max-h-[80vh] overflow-y-auto">
+      <DialogContent className="max-w-3xl max-h-[85vh] overflow-y-auto">
         <DialogHeader>
-          <DialogTitle>Edit Route Step</DialogTitle>
+          <DialogTitle>Edit Flight Training Template</DialogTitle>
           <DialogDescription>
-            Modify the content and settings for this career path step.
+            Configure the training requirements and tasks for this step.
           </DialogDescription>
         </DialogHeader>
 
         <div className="space-y-6">
           {/* Basic Information */}
           <div className="space-y-4">
-            <div className="grid grid-cols-2 gap-4">
-              <div className="space-y-2">
-                <Label htmlFor="title">Step Title</Label>
-                <Input
-                  id="title"
-                  value={editedStep.title}
-                  onChange={(e) => setEditedStep({ ...editedStep, title: e.target.value })}
-                  placeholder="Enter step title"
-                />
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="order">Order</Label>
-                <Input
-                  id="order"
-                  type="number"
-                  value={editedStep.orderNumber}
-                  onChange={(e) => setEditedStep({ ...editedStep, orderNumber: parseInt(e.target.value) || 1 })}
-                />
-              </div>
+            <div className="space-y-2">
+              <Label htmlFor="title">Task Title</Label>
+              <Input
+                id="title"
+                value={editedStep.title}
+                onChange={(e) => setEditedStep({ ...editedStep, title: e.target.value })}
+                placeholder="Enter task title (e.g., Private Pilot License)"
+                className="text-lg font-medium"
+              />
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="description">Description</Label>
-              <RichTextEditor
+              <Label htmlFor="description">Task Description</Label>
+              <Textarea
+                id="description"
                 value={editedStep.description}
-                onChange={(value) => setEditedStep({ ...editedStep, description: value })}
-                placeholder="Brief description of this step"
-                height="80px"
+                onChange={(e) => setEditedStep({ ...editedStep, description: e.target.value })}
+                placeholder="Describe what this training step involves..."
+                rows={3}
               />
             </div>
 
-            <div className="space-y-2">
-              <Label htmlFor="overview">Overview</Label>
-              <RichTextEditor
-                value={editedStep.overview}
-                onChange={(value) => setEditedStep({ ...editedStep, overview: value })}
-                placeholder="Detailed overview of this step"
-                height="120px"
-              />
-            </div>
-          </div>
-
-          {/* Settings */}
-          <div className="space-y-4">
             <div className="flex items-center justify-between">
               <div className="space-y-0.5">
                 <Label htmlFor="mandatory">Mandatory Step</Label>
                 <div className="text-sm text-muted-foreground">
-                  Required step that cannot be skipped
+                  Required step that cannot be skipped by students
                 </div>
               </div>
               <Switch
@@ -182,208 +188,141 @@ export function EditRouteStepDialog({ step, open, onOpenChange, onSave }: EditRo
                 onCheckedChange={(checked) => setEditedStep({ ...editedStep, mandatory: checked })}
               />
             </div>
+          </div>
 
-            <div className="flex items-center justify-between">
-              <div className="space-y-0.5">
-                <Label htmlFor="allowCustomerReorder">Allow Customer Reordering</Label>
-                <div className="text-sm text-muted-foreground">
-                  Let customers reorder this step's topics
-                </div>
-              </div>
-              <Switch
-                id="allowCustomerReorder"
-                checked={editedStep.allowCustomerReorder}
-                onCheckedChange={(checked) => setEditedStep({ ...editedStep, allowCustomerReorder: checked })}
-              />
+          <Separator />
+
+          {/* Flight Training Requirements */}
+          <div className="space-y-4">
+            <div className="flex items-center gap-2">
+              <Plane className="h-5 w-5" />
+              <h3 className="text-lg font-semibold">Flight Training Requirements</h3>
+              <Badge variant="default">{flightTasks.length} items</Badge>
             </div>
-
-            <div className="grid grid-cols-2 gap-4">
-              <div className="space-y-2">
-                <Label htmlFor="status">Status</Label>
-                <Select
-                  value={editedStep.status}
-                  onValueChange={(value: 'published' | 'draft') => 
-                    setEditedStep({ ...editedStep, status: value })
-                  }
-                >
-                  <SelectTrigger>
-                    <SelectValue placeholder="Select status" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="draft">Draft</SelectItem>
-                    <SelectItem value="published">Published</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-
-              <div className="space-y-2">
-                <Label htmlFor="icon">Icon</Label>
-                <Select
-                  value={editedStep.icon || "GraduationCap"}
-                  onValueChange={(value) => {
-                    setEditedStep({ ...editedStep, icon: value })
-                  }}
-                >
-                  <SelectTrigger>
-                    <SelectValue placeholder="Select icon" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {iconOptions.map((option) => (
-                      <SelectItem key={option.value} value={option.value}>
-                        <div className="flex items-center space-x-2">
-                          <option.icon className="h-4 w-4" />
-                          <span>{option.label}</span>
-                        </div>
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
+            
+            <div className="space-y-3">
+              {flightTasks.map((task, taskIndex) => {
+                const originalIndex = editedStep.details.indexOf(task)
+                return (
+                  <div key={originalIndex} className="border rounded-lg p-4 space-y-3 bg-muted/30">
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center gap-3 flex-1">
+                        <Checkbox
+                          checked={task.checked}
+                          onCheckedChange={(checked) => toggleTaskCompleted(originalIndex, checked as boolean)}
+                        />
+                        <Input
+                          value={task.title}
+                          onChange={(e) => updateTaskTitle(originalIndex, e.target.value)}
+                          placeholder="Flight requirement name"
+                          className="font-medium flex-1"
+                        />
+                      </div>
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => removeDetail(originalIndex)}
+                      >
+                        <X className="h-4 w-4" />
+                      </Button>
+                    </div>
+                    
+                    <div className="flex items-center gap-2 ml-6">
+                      <Label className="text-sm whitespace-nowrap">Required hours:</Label>
+                      <Input
+                        type="number"
+                        value={task.flightHours || ''}
+                        onChange={(e) => updateTaskHours(originalIndex, e.target.value ? parseInt(e.target.value) : undefined)}
+                        placeholder="Optional"
+                        className="w-24"
+                        min="0"
+                      />
+                      <span className="text-sm text-muted-foreground">hours</span>
+                    </div>
+                  </div>
+                )
+              })}
+              
+              <div className="border-2 border-dashed rounded-lg p-4 space-y-3">
+                <h4 className="font-medium text-sm">Add Flight Requirement</h4>
+                <div className="flex items-center gap-2">
+                  <Input
+                    value={newFlightTitle}
+                    onChange={(e) => setNewFlightTitle(e.target.value)}
+                    placeholder="Add flight requirement (e.g., Cross-country solo)"
+                    className="flex-1"
+                  />
+                  <Input
+                    type="number"
+                    value={newFlightHours}
+                    onChange={(e) => setNewFlightHours(e.target.value)}
+                    placeholder="Hours"
+                    className="w-24"
+                    min="0"
+                  />
+                  <Button onClick={addFlightTask} disabled={!newFlightTitle.trim()}>
+                    <Plus className="h-4 w-4" />
+                  </Button>
+                </div>
               </div>
             </div>
           </div>
 
-          {/* Tasks */}
+          <Separator />
+
+          {/* Ground Training Requirements */}
           <div className="space-y-4">
-            <div className="flex items-center justify-between">
-              <Label>Tasks</Label>
-              <Badge variant="secondary">{editedStep.details.length} tasks</Badge>
+            <div className="flex items-center gap-2">
+              <div className="h-5 w-5 rounded-full bg-primary flex items-center justify-center">
+                <span className="text-xs text-primary-foreground font-bold">G</span>
+              </div>
+              <h3 className="text-lg font-semibold">Ground Training Requirements</h3>
+              <Badge variant="secondary">{groundTasks.length} items</Badge>
             </div>
             
-            <div className="space-y-4">
-              {editedStep.details.map((detail, index) => (
-                <div key={index} className="border rounded-lg p-4 space-y-3">
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center gap-2">
-                      <h5 className="font-medium">Task {index + 1}</h5>
-                      <Badge variant={detail.taskType === 'flight' ? 'default' : 'secondary'}>
-                        {detail.taskType === 'flight' ? 'Flight' : 'Ground'}
-                      </Badge>
-                    </div>
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      onClick={() => removeDetail(index)}
-                    >
-                      <X className="h-4 w-4" />
-                    </Button>
-                  </div>
-                  
-                  <div className="space-y-2">
-                    <Label>Task Type</Label>
-                    <Select
-                      value={detail.taskType || 'flight'}
-                      onValueChange={(value: 'flight' | 'ground') => updateDetail(index, 'taskType', value)}
-                    >
-                      <SelectTrigger>
-                        <SelectValue placeholder="Select task type" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="flight">Flight Task</SelectItem>
-                        <SelectItem value="ground">Ground Task</SelectItem>
-                      </SelectContent>
-                    </Select>
-                  </div>
-
-                  <div className="space-y-2">
-                    <Label>Task Title</Label>
-                    <Input
-                      value={detail.title}
-                      onChange={(e) => updateDetail(index, 'title', e.target.value)}
-                      placeholder="Enter task title"
-                    />
-                  </div>
-                  <div className="space-y-2">
-                    <Label>Task Description</Label>
-                    <RichTextEditor
-                      value={detail.description}
-                      onChange={(value) => updateDetail(index, 'description', value)}
-                      placeholder="Enter detailed information about this task"
-                      height="100px"
-                    />
-                  </div>
-                  
-                  <div className={`grid gap-4 ${detail.taskType === 'flight' ? 'grid-cols-2' : 'grid-cols-1'}`}>
-                    <div className="flex items-center space-x-2">
-                      <Checkbox
-                        id={`checkable-${index}`}
-                        checked={detail.checked || false}
-                        onCheckedChange={(checked) => {
-                          const newDetails = [...editedStep.details]
-                          newDetails[index] = { ...newDetails[index], checked: checked as boolean }
-                          setEditedStep({
-                            ...editedStep,
-                            details: newDetails
-                          })
-                        }}
-                      />
-                      <Label htmlFor={`checkable-${index}`}>Mark as completed</Label>
-                    </div>
-                    
-                    {detail.taskType === 'flight' && (
-                      <div className="space-y-2">
-                        <Label>Flight Hours Required</Label>
+            <div className="space-y-3">
+              {groundTasks.map((task, taskIndex) => {
+                const originalIndex = editedStep.details.indexOf(task)
+                return (
+                  <div key={originalIndex} className="border rounded-lg p-4 bg-secondary/30">
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center gap-3 flex-1">
+                        <Checkbox
+                          checked={task.checked}
+                          onCheckedChange={(checked) => toggleTaskCompleted(originalIndex, checked as boolean)}
+                        />
                         <Input
-                          type="number"
-                          value={detail.flightHours || ''}
-                          onChange={(e) => {
-                            const value = e.target.value ? parseInt(e.target.value) : undefined
-                            const newDetails = [...editedStep.details]
-                            newDetails[index] = { ...newDetails[index], flightHours: value }
-                            setEditedStep({
-                              ...editedStep,
-                              details: newDetails
-                            })
-                          }}
-                          placeholder="Hours (optional)"
-                          min="0"
+                          value={task.title}
+                          onChange={(e) => updateTaskTitle(originalIndex, e.target.value)}
+                          placeholder="Ground training requirement"
+                          className="font-medium flex-1"
                         />
                       </div>
-                    )}
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => removeDetail(originalIndex)}
+                      >
+                        <X className="h-4 w-4" />
+                      </Button>
+                    </div>
                   </div>
-                </div>
-              ))}
+                )
+              })}
               
-              <div className="border-2 border-dashed rounded-lg p-4 space-y-3">
-                <h5 className="font-medium">Add New Task</h5>
-                
-                <div className="space-y-2">
-                  <Label>Task Type</Label>
-                  <Select value={newTaskType} onValueChange={(value: 'flight' | 'ground') => setNewTaskType(value)}>
-                    <SelectTrigger>
-                      <SelectValue placeholder="Select task type" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="flight">Flight Task</SelectItem>
-                      <SelectItem value="ground">Ground Task</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>
-
-                <div className="space-y-2">
-                  <Label>Task Title</Label>
+              <div className="border-2 border-dashed rounded-lg p-4">
+                <h4 className="font-medium text-sm mb-3">Add Ground Requirement</h4>
+                <div className="flex items-center gap-2">
                   <Input
-                    value={newDetailTitle}
-                    onChange={(e) => setNewDetailTitle(e.target.value)}
-                    placeholder="Enter task title"
+                    value={newGroundTitle}
+                    onChange={(e) => setNewGroundTitle(e.target.value)}
+                    placeholder="Add ground requirement (e.g., Written exam preparation)"
+                    className="flex-1"
                   />
+                  <Button onClick={addGroundTask} disabled={!newGroundTitle.trim()}>
+                    <Plus className="h-4 w-4" />
+                  </Button>
                 </div>
-                <div className="space-y-2">
-                  <Label>Task Description</Label>
-                  <RichTextEditor
-                    value={newDetailDescription}
-                    onChange={setNewDetailDescription}
-                    placeholder="Enter detailed information"
-                    height="80px"
-                  />
-                </div>
-                <Button
-                  variant="outline"
-                  onClick={addDetail}
-                  className="w-full"
-                >
-                  <Plus className="h-4 w-4 mr-2" />
-                  Add Task
-                </Button>
               </div>
             </div>
           </div>
