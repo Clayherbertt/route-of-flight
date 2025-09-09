@@ -25,6 +25,7 @@ interface RouteStepDetail {
   checked: boolean
   flightHours?: number
   orderNumber: number
+  taskType: 'flight' | 'ground'
 }
 
 interface RouteStep {
@@ -60,6 +61,7 @@ export function EditRouteStepDialog({ step, open, onOpenChange, onSave }: EditRo
   const [editedStep, setEditedStep] = useState<RouteStep | null>(step)
   const [newDetailTitle, setNewDetailTitle] = useState('')
   const [newDetailDescription, setNewDetailDescription] = useState('')
+  const [newTaskType, setNewTaskType] = useState<'flight' | 'ground'>('flight')
 
   // Reset edited step when step prop changes
   useEffect(() => {
@@ -83,12 +85,14 @@ export function EditRouteStepDialog({ step, open, onOpenChange, onSave }: EditRo
           title: newDetailTitle.trim(),
           description: newDetailDescription.trim(),
           checked: false,
-          flightHours: undefined,
-          orderNumber: editedStep.details.length
+          flightHours: newTaskType === 'flight' ? undefined : undefined,
+          orderNumber: editedStep.details.length,
+          taskType: newTaskType
         }]
       })
       setNewDetailTitle('')
       setNewDetailDescription('')
+      setNewTaskType('flight')
     }
   }
 
@@ -99,7 +103,7 @@ export function EditRouteStepDialog({ step, open, onOpenChange, onSave }: EditRo
     })
   }
 
-  const updateDetail = (index: number, field: 'title' | 'description', value: string) => {
+  const updateDetail = (index: number, field: 'title' | 'description' | 'taskType', value: string) => {
     const newDetails = [...editedStep.details]
     newDetails[index] = { ...newDetails[index], [field]: value }
     setEditedStep({
@@ -238,18 +242,23 @@ export function EditRouteStepDialog({ step, open, onOpenChange, onSave }: EditRo
             </div>
           </div>
 
-          {/* Key Topics/Details */}
+          {/* Tasks */}
           <div className="space-y-4">
             <div className="flex items-center justify-between">
-              <Label>Key Topics</Label>
-              <Badge variant="secondary">{editedStep.details.length} topics</Badge>
+              <Label>Tasks</Label>
+              <Badge variant="secondary">{editedStep.details.length} tasks</Badge>
             </div>
             
             <div className="space-y-4">
               {editedStep.details.map((detail, index) => (
                 <div key={index} className="border rounded-lg p-4 space-y-3">
                   <div className="flex items-center justify-between">
-                    <h5 className="font-medium">Topic {index + 1}</h5>
+                    <div className="flex items-center gap-2">
+                      <h5 className="font-medium">Task {index + 1}</h5>
+                      <Badge variant={detail.taskType === 'flight' ? 'default' : 'secondary'}>
+                        {detail.taskType === 'flight' ? 'Flight' : 'Ground'}
+                      </Badge>
+                    </div>
                     <Button
                       variant="outline"
                       size="sm"
@@ -258,24 +267,42 @@ export function EditRouteStepDialog({ step, open, onOpenChange, onSave }: EditRo
                       <X className="h-4 w-4" />
                     </Button>
                   </div>
+                  
                   <div className="space-y-2">
-                    <Label>Topic Title</Label>
+                    <Label>Task Type</Label>
+                    <Select
+                      value={detail.taskType || 'flight'}
+                      onValueChange={(value: 'flight' | 'ground') => updateDetail(index, 'taskType', value)}
+                    >
+                      <SelectTrigger>
+                        <SelectValue placeholder="Select task type" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="flight">Flight Task</SelectItem>
+                        <SelectItem value="ground">Ground Task</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+
+                  <div className="space-y-2">
+                    <Label>Task Title</Label>
                     <Input
                       value={detail.title}
                       onChange={(e) => updateDetail(index, 'title', e.target.value)}
-                      placeholder="Enter topic title"
+                      placeholder="Enter task title"
                     />
                   </div>
                   <div className="space-y-2">
-                    <Label>Topic Description</Label>
+                    <Label>Task Description</Label>
                     <RichTextEditor
                       value={detail.description}
                       onChange={(value) => updateDetail(index, 'description', value)}
-                      placeholder="Enter detailed information about this topic"
+                      placeholder="Enter detailed information about this task"
                       height="100px"
                     />
                   </div>
-                  <div className="grid grid-cols-2 gap-4">
+                  
+                  <div className={`grid gap-4 ${detail.taskType === 'flight' ? 'grid-cols-2' : 'grid-cols-1'}`}>
                     <div className="flex items-center space-x-2">
                       <Checkbox
                         id={`checkable-${index}`}
@@ -289,42 +316,59 @@ export function EditRouteStepDialog({ step, open, onOpenChange, onSave }: EditRo
                           })
                         }}
                       />
-                      <Label htmlFor={`checkable-${index}`}>Checkable item</Label>
+                      <Label htmlFor={`checkable-${index}`}>Mark as completed</Label>
                     </div>
-                    <div className="space-y-2">
-                      <Label>Flight Hours Required</Label>
-                      <Input
-                        type="number"
-                        value={detail.flightHours || ''}
-                        onChange={(e) => {
-                          const value = e.target.value ? parseInt(e.target.value) : undefined
-                          const newDetails = [...editedStep.details]
-                          newDetails[index] = { ...newDetails[index], flightHours: value }
-                          setEditedStep({
-                            ...editedStep,
-                            details: newDetails
-                          })
-                        }}
-                        placeholder="Hours"
-                        min="0"
-                      />
-                    </div>
+                    
+                    {detail.taskType === 'flight' && (
+                      <div className="space-y-2">
+                        <Label>Flight Hours Required</Label>
+                        <Input
+                          type="number"
+                          value={detail.flightHours || ''}
+                          onChange={(e) => {
+                            const value = e.target.value ? parseInt(e.target.value) : undefined
+                            const newDetails = [...editedStep.details]
+                            newDetails[index] = { ...newDetails[index], flightHours: value }
+                            setEditedStep({
+                              ...editedStep,
+                              details: newDetails
+                            })
+                          }}
+                          placeholder="Hours (optional)"
+                          min="0"
+                        />
+                      </div>
+                    )}
                   </div>
                 </div>
               ))}
               
               <div className="border-2 border-dashed rounded-lg p-4 space-y-3">
-                <h5 className="font-medium">Add New Topic</h5>
+                <h5 className="font-medium">Add New Task</h5>
+                
                 <div className="space-y-2">
-                  <Label>Topic Title</Label>
+                  <Label>Task Type</Label>
+                  <Select value={newTaskType} onValueChange={(value: 'flight' | 'ground') => setNewTaskType(value)}>
+                    <SelectTrigger>
+                      <SelectValue placeholder="Select task type" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="flight">Flight Task</SelectItem>
+                      <SelectItem value="ground">Ground Task</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+
+                <div className="space-y-2">
+                  <Label>Task Title</Label>
                   <Input
                     value={newDetailTitle}
                     onChange={(e) => setNewDetailTitle(e.target.value)}
-                    placeholder="Enter topic title"
+                    placeholder="Enter task title"
                   />
                 </div>
                 <div className="space-y-2">
-                  <Label>Topic Description</Label>
+                  <Label>Task Description</Label>
                   <RichTextEditor
                     value={newDetailDescription}
                     onChange={setNewDetailDescription}
@@ -338,7 +382,7 @@ export function EditRouteStepDialog({ step, open, onOpenChange, onSave }: EditRo
                   className="w-full"
                 >
                   <Plus className="h-4 w-4 mr-2" />
-                  Add Topic
+                  Add Task
                 </Button>
               </div>
             </div>

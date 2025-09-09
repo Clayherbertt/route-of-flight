@@ -36,6 +36,7 @@ interface StepTemplate {
       description: string
       checked: boolean
       flightHours?: number
+      taskType?: 'flight' | 'ground'
     }>
   }
 }
@@ -59,19 +60,28 @@ const stepTemplates: StepTemplate[] = [
           title: 'Pre-flight Procedures',
           description: '<p>Learn comprehensive aircraft inspection and preparation procedures</p>',
           checked: false,
-          flightHours: 5
+          flightHours: 5,
+          taskType: 'flight' as const
         },
         {
           title: 'Basic Maneuvers',
           description: '<p>Master fundamental flight maneuvers including turns, climbs, and descents</p>',
           checked: false,
-          flightHours: 10
+          flightHours: 10,
+          taskType: 'flight' as const
         },
         {
           title: 'Solo Flight',
           description: '<p>Complete supervised solo flights to build confidence and skills</p>',
           checked: false,
-          flightHours: 10
+          flightHours: 10,
+          taskType: 'flight' as const
+        },
+        {
+          title: 'Regulations Study',
+          description: '<p>Study Part 61 and Part 91 federal aviation regulations</p>',
+          checked: false,
+          taskType: 'ground' as const
         }
       ]
     }
@@ -94,13 +104,21 @@ const stepTemplates: StepTemplate[] = [
           title: 'Instrument Procedures',
           description: '<p>Learn IFR procedures and navigation techniques</p>',
           checked: false,
-          flightHours: 15
+          flightHours: 15,
+          taskType: 'flight' as const
         },
         {
           title: 'Approach Procedures',
           description: '<p>Master various instrument approach procedures</p>',
           checked: false,
-          flightHours: 20
+          flightHours: 20,
+          taskType: 'flight' as const
+        },
+        {
+          title: 'Instrument Ground School',
+          description: '<p>Study instrument flight regulations and weather theory</p>',
+          checked: false,
+          taskType: 'ground' as const
         }
       ]
     }
@@ -123,13 +141,21 @@ const stepTemplates: StepTemplate[] = [
           title: 'Commercial Maneuvers',
           description: '<p>Master precision maneuvers required for commercial certification</p>',
           checked: false,
-          flightHours: 25
+          flightHours: 25,
+          taskType: 'flight' as const
         },
         {
           title: 'Multi-Engine Training',
           description: '<p>Learn multi-engine aircraft operations and procedures</p>',
           checked: false,
-          flightHours: 15
+          flightHours: 15,
+          taskType: 'flight' as const
+        },
+        {
+          title: 'Commercial Regulations',
+          description: '<p>Study commercial pilot regulations and career preparation</p>',
+          checked: false,
+          taskType: 'ground' as const
         }
       ]
     }
