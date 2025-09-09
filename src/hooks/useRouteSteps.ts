@@ -2,6 +2,14 @@ import { useState, useEffect } from 'react'
 import { supabase } from '@/integrations/supabase/client'
 import { useToast } from '@/hooks/use-toast'
 
+interface RouteStepSubTopic {
+  id?: string
+  title: string
+  checked: boolean
+  flightHours?: number
+  orderNumber: number
+}
+
 interface RouteStepDetail {
   id?: string
   title: string
@@ -9,6 +17,7 @@ interface RouteStepDetail {
   checked: boolean
   flightHours?: number
   orderNumber: number
+  subTopics?: RouteStepSubTopic[]
 }
 
 interface RouteStep {
