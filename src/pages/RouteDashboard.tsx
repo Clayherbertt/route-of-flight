@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom'
 import { useAuth } from '@/contexts/AuthContext'
 import { useIsAdmin } from '@/hooks/useIsAdmin'
 import Header from '@/components/layout/Header'
+import { EditRouteStepDialog } from '@/components/dialogs/EditRouteStepDialog'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
@@ -24,38 +25,11 @@ export default function RouteDashboard() {
   const { user } = useAuth()
   const { isAdmin, loading } = useIsAdmin()
   const navigate = useNavigate()
-
-  // Handle redirect logic in useEffect to avoid render-time navigation
-  useEffect(() => {
-    if (!loading && (!user || !isAdmin)) {
-      navigate('/')
-    }
-  }, [user, isAdmin, loading, navigate])
-
-  // Show loading state while checking admin status
-  if (loading) {
-    return (
-      <div className="min-h-screen bg-background">
-        <Header />
-        <main className="container mx-auto px-4 py-8">
-          <div className="flex items-center justify-center min-h-[400px]">
-            <div className="flex items-center space-x-2">
-              <Loader2 className="h-5 w-5 animate-spin" />
-              <span>Loading dashboard...</span>
-            </div>
-          </div>
-        </main>
-      </div>
-    )
-  }
-
-  // Return null if not authorized (navigation happens in useEffect)
-  if (!user || !isAdmin) {
-    return null
-  }
-
-  // Sample route steps data - this would come from database
-  const routeSteps = [
+  
+  // Edit dialog state
+  const [editDialogOpen, setEditDialogOpen] = useState(false)
+  const [editingStep, setEditingStep] = useState<any>(null)
+  const [routeSteps, setRouteSteps] = useState([
     {
       id: 1,
       title: "School Shopping & Discovery Flight",
@@ -115,7 +89,48 @@ export default function RouteDashboard() {
       status: "draft",
       connectedFrom: [2]
     }
-  ]
+  ])
+
+  // Handle redirect logic in useEffect to avoid render-time navigation
+  useEffect(() => {
+    if (!loading && (!user || !isAdmin)) {
+      navigate('/')
+    }
+  }, [user, isAdmin, loading, navigate])
+
+  // Show loading state while checking admin status
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-background">
+        <Header />
+        <main className="container mx-auto px-4 py-8">
+          <div className="flex items-center justify-center min-h-[400px]">
+            <div className="flex items-center space-x-2">
+              <Loader2 className="h-5 w-5 animate-spin" />
+              <span>Loading dashboard...</span>
+            </div>
+          </div>
+        </main>
+      </div>
+    )
+  }
+
+  // Return null if not authorized (navigation happens in useEffect)
+  if (!user || !isAdmin) {
+    return null
+  }
+
+  // Edit handlers
+  const handleEditStep = (step: any) => {
+    setEditingStep(step)
+    setEditDialogOpen(true)
+  }
+
+  const handleSaveStep = (updatedStep: any) => {
+    setRouteSteps(steps => 
+      steps.map(step => step.id === updatedStep.id ? updatedStep : step)
+    )
+  }
 
   return (
     <div className="min-h-screen bg-background">
@@ -219,7 +234,11 @@ export default function RouteDashboard() {
                         </div>
                       </div>
                       <div className="flex items-center space-x-2">
-                        <Button variant="outline" size="sm">
+                        <Button 
+                          variant="outline" 
+                          size="sm"
+                          onClick={() => handleEditStep(step)}
+                        >
                           <Edit3 className="h-4 w-4 mr-2" />
                           Edit
                         </Button>
@@ -269,6 +288,13 @@ export default function RouteDashboard() {
             ))}
           </div>
         </div>
+
+        <EditRouteStepDialog
+          step={editingStep}
+          open={editDialogOpen}
+          onOpenChange={setEditDialogOpen}
+          onSave={handleSaveStep}
+        />
       </main>
     </div>
   )
