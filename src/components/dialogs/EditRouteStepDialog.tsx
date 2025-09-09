@@ -18,26 +18,28 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Plus, X, GraduationCap, Stethoscope, Plane, Trophy } from 'lucide-react'
 import { Checkbox } from '@/components/ui/checkbox'
 
-interface RouteStep {
-  id: number
+interface RouteStepDetail {
+  id?: string
   title: string
   description: string
-  icon: any
-  order: number
+  checked: boolean
+  flightHours?: number
+  orderNumber: number
+}
+
+interface RouteStep {
+  id: string
+  title: string
+  description: string
+  icon: string
+  orderNumber: number
   mandatory: boolean
   allowCustomerReorder: boolean
-  content: {
-    overview: string
-    details: Array<{
-      title: string
-      description: string
-      checked?: boolean
-      flightHours?: number
-    }>
-  }
-  nextSteps: number[]
-  status: 'published' | 'draft'
-  connectedFrom?: number[]
+  overview: string
+  status: 'draft' | 'published'
+  details: RouteStepDetail[]
+  nextSteps: string[]
+  connectedFrom?: string[]
 }
 
 interface EditRouteStepDialogProps {
@@ -75,15 +77,13 @@ export function EditRouteStepDialog({ step, open, onOpenChange, onSave }: EditRo
     if (newDetailTitle.trim()) {
       setEditedStep({
         ...editedStep,
-        content: {
-          ...editedStep.content,
-          details: [...editedStep.content.details, {
-            title: newDetailTitle.trim(),
-            description: newDetailDescription.trim(),
-            checked: false,
-            flightHours: undefined
-          }]
-        }
+        details: [...editedStep.details, {
+          title: newDetailTitle.trim(),
+          description: newDetailDescription.trim(),
+          checked: false,
+          flightHours: undefined,
+          orderNumber: editedStep.details.length
+        }]
       })
       setNewDetailTitle('')
       setNewDetailDescription('')
@@ -93,22 +93,16 @@ export function EditRouteStepDialog({ step, open, onOpenChange, onSave }: EditRo
   const removeDetail = (index: number) => {
     setEditedStep({
       ...editedStep,
-      content: {
-        ...editedStep.content,
-        details: editedStep.content.details.filter((_, i) => i !== index)
-      }
+      details: editedStep.details.filter((_, i) => i !== index)
     })
   }
 
   const updateDetail = (index: number, field: 'title' | 'description', value: string) => {
-    const newDetails = [...editedStep.content.details]
+    const newDetails = [...editedStep.details]
     newDetails[index] = { ...newDetails[index], [field]: value }
     setEditedStep({
       ...editedStep,
-      content: {
-        ...editedStep.content,
-        details: newDetails
-      }
+      details: newDetails
     })
   }
 
@@ -140,8 +134,8 @@ export function EditRouteStepDialog({ step, open, onOpenChange, onSave }: EditRo
                 <Input
                   id="order"
                   type="number"
-                  value={editedStep.order}
-                  onChange={(e) => setEditedStep({ ...editedStep, order: parseInt(e.target.value) || 1 })}
+                  value={editedStep.orderNumber}
+                  onChange={(e) => setEditedStep({ ...editedStep, orderNumber: parseInt(e.target.value) || 1 })}
                 />
               </div>
             </div>
@@ -159,11 +153,8 @@ export function EditRouteStepDialog({ step, open, onOpenChange, onSave }: EditRo
             <div className="space-y-2">
               <Label htmlFor="overview">Overview</Label>
               <RichTextEditor
-                value={editedStep.content.overview}
-                onChange={(value) => setEditedStep({
-                  ...editedStep,
-                  content: { ...editedStep.content, overview: value }
-                })}
+                value={editedStep.overview}
+                onChange={(value) => setEditedStep({ ...editedStep, overview: value })}
                 placeholder="Detailed overview of this step"
                 height="120px"
               />
@@ -222,12 +213,9 @@ export function EditRouteStepDialog({ step, open, onOpenChange, onSave }: EditRo
               <div className="space-y-2">
                 <Label htmlFor="icon">Icon</Label>
                 <Select
-                  value="GraduationCap" // This would need to be properly mapped
+                  value={editedStep.icon || "GraduationCap"}
                   onValueChange={(value) => {
-                    const selectedIcon = iconOptions.find(opt => opt.value === value)
-                    if (selectedIcon) {
-                      setEditedStep({ ...editedStep, icon: selectedIcon.icon })
-                    }
+                    setEditedStep({ ...editedStep, icon: value })
                   }}
                 >
                   <SelectTrigger>
@@ -252,11 +240,11 @@ export function EditRouteStepDialog({ step, open, onOpenChange, onSave }: EditRo
           <div className="space-y-4">
             <div className="flex items-center justify-between">
               <Label>Key Topics</Label>
-              <Badge variant="secondary">{editedStep.content.details.length} topics</Badge>
+              <Badge variant="secondary">{editedStep.details.length} topics</Badge>
             </div>
             
             <div className="space-y-4">
-              {editedStep.content.details.map((detail, index) => (
+              {editedStep.details.map((detail, index) => (
                 <div key={index} className="border rounded-lg p-4 space-y-3">
                   <div className="flex items-center justify-between">
                     <h5 className="font-medium">Topic {index + 1}</h5>
@@ -291,11 +279,11 @@ export function EditRouteStepDialog({ step, open, onOpenChange, onSave }: EditRo
                         id={`checkable-${index}`}
                         checked={detail.checked || false}
                         onCheckedChange={(checked) => {
-                          const newDetails = [...editedStep.content.details]
+                          const newDetails = [...editedStep.details]
                           newDetails[index] = { ...newDetails[index], checked: checked as boolean }
                           setEditedStep({
                             ...editedStep,
-                            content: { ...editedStep.content, details: newDetails }
+                            details: newDetails
                           })
                         }}
                       />
@@ -308,11 +296,11 @@ export function EditRouteStepDialog({ step, open, onOpenChange, onSave }: EditRo
                         value={detail.flightHours || ''}
                         onChange={(e) => {
                           const value = e.target.value ? parseInt(e.target.value) : undefined
-                          const newDetails = [...editedStep.content.details]
+                          const newDetails = [...editedStep.details]
                           newDetails[index] = { ...newDetails[index], flightHours: value }
                           setEditedStep({
                             ...editedStep,
-                            content: { ...editedStep.content, details: newDetails }
+                            details: newDetails
                           })
                         }}
                         placeholder="Hours"

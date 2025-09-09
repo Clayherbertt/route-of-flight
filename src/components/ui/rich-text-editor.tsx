@@ -32,38 +32,38 @@ export function RichTextEditor({
   ]
 
   useEffect(() => {
-    // Inject custom CSS for the editor styling
-    const style = document.createElement('style')
-    style.textContent = `
-      .ql-editor {
-        min-height: ${height};
-        font-family: inherit;
-        font-size: 0.875rem;
-        line-height: 1.25rem;
-      }
-      .ql-toolbar {
-        border-top: 1px solid hsl(var(--border));
-        border-left: 1px solid hsl(var(--border));
-        border-right: 1px solid hsl(var(--border));
-        border-radius: 0.375rem 0.375rem 0 0;
-      }
-      .ql-container {
-        border-bottom: 1px solid hsl(var(--border));
-        border-left: 1px solid hsl(var(--border));
-        border-right: 1px solid hsl(var(--border));
-        border-radius: 0 0 0.375rem 0.375rem;
-      }
-      .ql-editor.ql-blank::before {
-        color: hsl(var(--muted-foreground));
-        font-style: normal;
-      }
-    `
-    document.head.appendChild(style)
-    
-    return () => {
-      document.head.removeChild(style)
+    // Only inject styles once
+    const existingStyle = document.getElementById('quill-custom-styles')
+    if (!existingStyle) {
+      const style = document.createElement('style')
+      style.id = 'quill-custom-styles'
+      style.textContent = `
+        .ql-editor {
+          min-height: 80px;
+          font-family: inherit;
+          font-size: 0.875rem;
+          line-height: 1.25rem;
+        }
+        .ql-toolbar {
+          border-top: 1px solid hsl(var(--border));
+          border-left: 1px solid hsl(var(--border));
+          border-right: 1px solid hsl(var(--border));
+          border-radius: 0.375rem 0.375rem 0 0;
+        }
+        .ql-container {
+          border-bottom: 1px solid hsl(var(--border));
+          border-left: 1px solid hsl(var(--border));
+          border-right: 1px solid hsl(var(--border));
+          border-radius: 0 0 0.375rem 0.375rem;
+        }
+        .ql-editor.ql-blank::before {
+          color: hsl(var(--muted-foreground));
+          font-style: normal;
+        }
+      `
+      document.head.appendChild(style)
     }
-  }, [height])
+  }, [])
 
   return (
     <div className={cn("rich-text-editor", className)}>

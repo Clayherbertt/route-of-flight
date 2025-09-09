@@ -79,57 +79,13 @@ export default function RouteDashboard() {
 
   // Edit handlers
   const handleEditStep = (step: any) => {
-    // Convert to the format expected by the dialog
-    const dialogStep = {
-      id: step.id,
-      title: step.title,
-      description: step.description,
-      icon: iconMap[step.icon as keyof typeof iconMap] || GraduationCap,
-      order: step.orderNumber,
-      mandatory: step.mandatory,
-      allowCustomerReorder: step.allowCustomerReorder,
-      content: {
-        overview: step.overview,
-        details: step.details.map((detail: any) => ({
-          title: detail.title,
-          description: detail.description,
-          checked: detail.checked,
-          flightHours: detail.flightHours
-        }))
-      },
-      nextSteps: step.nextSteps,
-      status: step.status,
-      connectedFrom: step.connectedFrom
-    }
-    setEditingStep(dialogStep)
+    setEditingStep(step)
     setEditDialogOpen(true)
   }
 
   const handleSaveStep = async (updatedStep: any) => {
     try {
-      // Convert back to database format
-      const dbStep = {
-        id: updatedStep.id,
-        title: updatedStep.title,
-        description: updatedStep.description,
-        icon: Object.keys(iconMap).find(key => iconMap[key as keyof typeof iconMap] === updatedStep.icon) || 'GraduationCap',
-        orderNumber: updatedStep.order,
-        mandatory: updatedStep.mandatory,
-        allowCustomerReorder: updatedStep.allowCustomerReorder,
-        overview: updatedStep.content.overview,
-        status: updatedStep.status,
-        details: updatedStep.content.details.map((detail: any, index: number) => ({
-          title: detail.title,
-          description: detail.description,
-          checked: detail.checked || false,
-          flightHours: detail.flightHours,
-          orderNumber: index
-        })),
-        nextSteps: updatedStep.nextSteps || [],
-        connectedFrom: updatedStep.connectedFrom
-      }
-      
-      await saveRouteStep(dbStep)
+      await saveRouteStep(updatedStep)
     } catch (error) {
       console.error('Error saving step:', error)
     }
