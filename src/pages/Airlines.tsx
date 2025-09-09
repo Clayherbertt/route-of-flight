@@ -16,6 +16,11 @@ const Airlines = () => {
   const [searchTerm, setSearchTerm] = useState("");
 
   console.log("Airlines state initialized", { airlineCount: airlines.length });
+  console.log("📊 Current airlines data:", airlines);
+  
+  // Check specifically for Alaska Airlines in the component
+  const alaskaAirline = airlines.find(airline => airline.name === "Alaska Airlines");
+  console.log("🔍 Alaska Airlines in component:", alaskaAirline);
 
   // Force refresh on component mount to ensure fresh data
   useEffect(() => {

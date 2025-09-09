@@ -76,6 +76,7 @@ export function useAirlines() {
   const { toast } = useToast();
 
   const fetchAirlines = async () => {
+    console.log("🔄 Starting fetchAirlines...");
     try {
       setLoading(true);
       const { data, error } = await supabase
@@ -84,8 +85,22 @@ export function useAirlines() {
         .eq('active', true)
         .order('name');
 
-      if (error) throw error;
-      setAirlines((data || []).map(transformDatabaseAirline));
+      if (error) {
+        console.error("❌ Error fetching airlines:", error);
+        throw error;
+      }
+
+      console.log("✅ Raw airline data from database:", data);
+      
+      const transformedData = (data || []).map(transformDatabaseAirline);
+      console.log("🔄 Transformed airline data:", transformedData);
+      
+      // Check specifically for Alaska Airlines
+      const alaskaData = transformedData.find(airline => airline.name === "Alaska Airlines");
+      console.log("🔍 Alaska Airlines data:", alaskaData);
+      
+      setAirlines(transformedData);
+      console.log("✅ Airlines state updated, count:", transformedData.length);
     } catch (error) {
       console.error('Error fetching airlines:', error);
       toast({
