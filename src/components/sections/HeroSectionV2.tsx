@@ -34,7 +34,7 @@ const HeroSectionV2 = () => {
             <span className="text-sm font-medium">Trusted by 10,000+ Professional Pilots</span>
           </div>
 
-          <h1 className="text-6xl md:text-8xl font-bold mb-8 leading-tight">
+          <h1 className="text-6xl md:text-8xl font-bold mb-8 leading-[1.1]">
             Your Career
             <span className="block sky-gradient bg-clip-text text-transparent">
               Takes Flight Here
