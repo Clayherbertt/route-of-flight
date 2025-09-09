@@ -214,6 +214,172 @@ const airlinesData: Record<string, AirlineInfo> = {
       "Competitive profit sharing program",
       "Extensive training facilities"
     ]
+  },
+  "American Airlines": {
+    name: "American Airlines",
+    logo: "✈️",
+    callSign: "American",
+    pilotGroupSize: "15,500+",
+    fleetSize: 875,
+    description: "World's largest airline by fleet size and passengers carried, serving destinations across six continents from its hubs throughout the United States.",
+    pilotUnion: "APA (Allied Pilots Association)",
+    fleetInfo: [
+      { type: "Boeing 777", quantity: 47 },
+      { type: "Boeing 787", quantity: 51 },
+      { type: "Airbus A330", quantity: 24 },
+      { type: "Boeing 767", quantity: 24 },
+      { type: "Boeing 757", quantity: 34 },
+      { type: "Airbus A321", quantity: 219 },
+      { type: "Boeing 737", quantity: 304 },
+      { type: "Airbus A320/319", quantity: 132 },
+      { type: "Embraer E175", quantity: 40 }
+    ],
+    bases: ["Dallas (DFW)", "Charlotte (CLT)", "Miami (MIA)", "Phoenix (PHX)", "Philadelphia (PHL)", "Chicago (ORD)", "Los Angeles (LAX)", "New York (LGA)", "Washington DC (DCA)"],
+    hiring: {
+      isHiring: true,
+      applicationUrl: "https://careers.aa.com/pilots",
+      requiredQualifications: [
+        "ATP Certificate or meet ATP requirements",
+        "Current First Class Medical",
+        "Minimum 1,500 hours total time",
+        "Multi-engine land rating",
+        "Current passport valid for international travel",
+        "Must be 23+ years old",
+        "High school diploma or equivalent"
+      ],
+      preferredQualifications: [
+        "Bachelor's degree from accredited institution",
+        "1,000+ hours turbine time",
+        "500+ hours turbine PIC time",
+        "100+ hours flight time in last 12 months"
+      ],
+      insideScoop: [
+        "Largest airline in the world by fleet and revenue",
+        "Strong domestic and international route network",
+        "Competitive compensation and benefits package"
+      ]
+    },
+    seniority: {
+      mostJuniorBase: "Miami (MIA)",
+      mostJuniorCaptainHireDate: "February 2018",
+      retirementsIn2025: 520
+    },
+    payScale: {
+      firstOfficer: { year1: "$115.75/hr", year5: "$264.18/hr", year10: "$291.19/hr" },
+      captain: { year1: "$384.25/hr", year5: "$398.45/hr", year10: "$412.89/hr" }
+    },
+    additionalInfo: [
+      "World's largest airline with extensive global network",
+      "Strong profit sharing and 401(k) matching",
+      "Modern fleet with ongoing aircraft deliveries"
+    ]
+  },
+  "Hawaiian Airlines": {
+    name: "Hawaiian Airlines",
+    logo: "✈️",
+    callSign: "Hawaiian",
+    pilotGroupSize: "800+",
+    fleetSize: 61,
+    description: "Hawaii's largest and longest-serving airline, connecting the Hawaiian Islands with destinations across the Pacific and mainland United States.",
+    pilotUnion: "ALPA (Air Line Pilots Association)",
+    fleetInfo: [
+      { type: "Airbus A330", quantity: 24 },
+      { type: "Airbus A321neo", quantity: 18 },
+      { type: "Boeing 787", quantity: 8 },
+      { type: "Boeing 717", quantity: 20 },
+      { type: "ATR 72", quantity: 8 }
+    ],
+    bases: ["Honolulu (HNL)", "Kahului (OGG)", "Kona (KOA)", "Lihue (LIH)"],
+    hiring: {
+      isHiring: true,
+      applicationUrl: "https://careers.hawaiianairlines.com/pilots",
+      requiredQualifications: [
+        "ATP Certificate",
+        "Current First Class Medical",
+        "Minimum 1,500 hours total time",
+        "500 hours multi-engine time",
+        "Current passport with 6+ months validity",
+        "Must be 21+ years old"
+      ],
+      preferredQualifications: [
+        "Bachelor's degree",
+        "1,000+ hours turbine time",
+        "International flying experience",
+        "Pacific route experience"
+      ],
+      insideScoop: [
+        "Unique island-based operations",
+        "Excellent quality of life in Hawaii",
+        "Strong company culture and employee satisfaction"
+      ]
+    },
+    seniority: {
+      mostJuniorBase: "Honolulu (HNL)",
+      mostJuniorCaptainHireDate: "June 2019",
+      retirementsIn2025: 35
+    },
+    payScale: {
+      firstOfficer: { year1: "$98.50/hr", year5: "$185.75/hr", year10: "$208.25/hr" },
+      captain: { year1: "$275.80/hr", year5: "$285.90/hr", year10: "$298.45/hr" }
+    },
+    additionalInfo: [
+      "Living in paradise with island-based operations",
+      "Strong local community involvement",
+      "Unique inter-island and trans-Pacific routes"
+    ]
+  },
+  "Southwest Airlines": {
+    name: "Southwest Airlines",
+    logo: "✈️",
+    callSign: "Southwest",
+    pilotGroupSize: "10,000+",
+    fleetSize: 817,
+    description: "Low-cost carrier known for point-to-point service, no-frills approach, and strong company culture. Operates exclusively Boeing 737 aircraft.",
+    pilotUnion: "SWAPA (Southwest Airlines Pilots' Association)",
+    fleetInfo: [
+      { type: "Boeing 737-700", quantity: 215 },
+      { type: "Boeing 737-800", quantity: 207 },
+      { type: "Boeing 737 MAX 7", quantity: 30 },
+      { type: "Boeing 737 MAX 8", quantity: 365 }
+    ],
+    bases: ["Dallas (DAL)", "Houston (HOU)", "Phoenix (PHX)", "Las Vegas (LAS)", "Chicago (MDW)", "Baltimore (BWI)", "Denver (DEN)", "Oakland (OAK)", "Orlando (MCO)", "Atlanta (ATL)"],
+    hiring: {
+      isHiring: true,
+      applicationUrl: "https://careers.southwest.com/pilots",
+      requiredQualifications: [
+        "ATP Certificate",
+        "Current First Class Medical",
+        "Minimum 1,500 hours total time",
+        "Boeing 737 type rating preferred",
+        "Current passport",
+        "Must be 23+ years old"
+      ],
+      preferredQualifications: [
+        "Bachelor's degree",
+        "1,000+ hours turbine time",
+        "Part 121 experience",
+        "Boeing 737 experience"
+      ],
+      insideScoop: [
+        "Strong company culture and employee-friendly policies",
+        "Single aircraft type simplifies operations",
+        "Known for excellent work-life balance"
+      ]
+    },
+    seniority: {
+      mostJuniorBase: "Atlanta (ATL)",
+      mostJuniorCaptainHireDate: "April 2019",
+      retirementsIn2025: 295
+    },
+    payScale: {
+      firstOfficer: { year1: "$102.35/hr", year5: "$238.85/hr", year10: "$263.75/hr" },
+      captain: { year1: "$325.40/hr", year5: "$338.90/hr", year10: "$354.20/hr" }
+    },
+    additionalInfo: [
+      "Profit sharing program with strong payouts",
+      "Single fleet type reduces training complexity",
+      "Strong company culture with employee ownership"
+    ]
   }
 };
 
