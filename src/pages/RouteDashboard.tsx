@@ -4,54 +4,48 @@ import { useAuth } from '@/contexts/AuthContext'
 import { useIsAdmin } from '@/hooks/useIsAdmin'
 import { useUserFlightHours } from '@/hooks/useUserFlightHours'
 import { useRouteSteps } from '@/hooks/useRouteSteps'
+import { 
+  DndContext, 
+  DragEndEvent, 
+  closestCenter,
+  KeyboardSensor,
+  PointerSensor,
+  useSensor,
+  useSensors
+} from '@dnd-kit/core'
+import {
+  arrayMove,
+  SortableContext,
+  sortableKeyboardCoordinates,
+  verticalListSortingStrategy
+} from '@dnd-kit/sortable'
 import Header from '@/components/layout/Header'
+import { SortableRouteStepCard } from '@/components/SortableRouteStepCard'
 import { EditRouteStepDialog } from '@/components/dialogs/EditRouteStepDialog'
 import { StepTemplateSelectionDialog } from '@/components/dialogs/StepTemplateSelectionDialog'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
-import { Checkbox } from '@/components/ui/checkbox'
-import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-  AlertDialogTrigger,
-} from "@/components/ui/alert-dialog"
 import { 
   Route, 
   Plus, 
-  Edit3, 
-  ArrowRight,
+  ArrowDown,
   Loader2,
-  GraduationCap,
-  Stethoscope,
-  Plane,
   Trophy,
-  MapPin,
-  Settings,
-  ChevronDown,
-  ChevronUp,
-  Trash2
+  Settings
 } from 'lucide-react'
-
-// Icon mapping
-const iconMap = {
-  GraduationCap,
-  Stethoscope,
-  Plane,
-  Trophy
-}
+import * as icons from 'lucide-react'
 
 export default function RouteDashboard() {
   const { user } = useAuth()
   const { isAdmin, loading } = useIsAdmin()
-  const { totalHours } = useUserFlightHours()
-  const { routeSteps, loading: stepsLoading, saveRouteStep, updateStepDetailChecked, deleteRouteStep } = useRouteSteps()
+  const { 
+    routeSteps, 
+    loading: stepsLoading, 
+    saveRouteStep, 
+    deleteRouteStep, 
+    reorderRouteSteps 
+  } = useRouteSteps()
   const navigate = useNavigate()
   
   // Edit dialog state
@@ -62,7 +56,27 @@ export default function RouteDashboard() {
   const [templateDialogOpen, setTemplateDialogOpen] = useState(false)
   
   // Expansion state for cards
-  const [expandedCards, setExpandedCards] = useState<Set<string>>(new Set())
+  const [expandedCards, setExpandedCards] = useState<Record<string, boolean>>({})
+
+  // Drag and drop sensors
+  const sensors = useSensors(
+    useSensor(PointerSensor),
+    useSensor(KeyboardSensor, {
+      coordinateGetter: sortableKeyboardCoordinates,
+    })
+  )
+
+  const handleDragEnd = (event: DragEndEvent) => {
+    const { active, over } = event
+
+    if (active.id !== over?.id) {
+      const oldIndex = routeSteps.findIndex(step => step.id === active.id)
+      const newIndex = routeSteps.findIndex(step => step.id === over?.id)
+      
+      const newOrder = arrayMove(routeSteps, oldIndex, newIndex).map(step => step.id!)
+      reorderRouteSteps(newOrder)
+    }
+  }
 
   // Handle redirect logic in useEffect to avoid render-time navigation
   useEffect(() => {
@@ -133,24 +147,16 @@ export default function RouteDashboard() {
   }
 
   const handleDeleteStep = async (stepId: string) => {
-    try {
+    if (window.confirm('Are you sure you want to delete this route step? This action cannot be undone.')) {
       await deleteRouteStep(stepId)
-    } catch (error) {
-      console.error('Error deleting step:', error)
     }
   }
 
   const toggleCardExpansion = (stepId: string) => {
-    if (!stepId) return
-    setExpandedCards(prev => {
-      const newSet = new Set(prev)
-      if (newSet.has(stepId)) {
-        newSet.delete(stepId)
-      } else {
-        newSet.add(stepId)
-      }
-      return newSet
-    })
+    setExpandedCards(prev => ({
+      ...prev,
+      [stepId]: !prev[stepId]
+    }))
   }
 
   return (
@@ -227,173 +233,42 @@ export default function RouteDashboard() {
             </div>
           </div>
 
-          <div className="space-y-4">
-            {routeSteps.map((step, index) => {
-              const IconComponent = iconMap[step.icon as keyof typeof iconMap] || GraduationCap
-              if (!step.id) return null // Skip steps without IDs
-              
-              return (
-                <div key={step.id} className="relative">
-                  <Card className={`transition-all hover:shadow-md ${
-                    step.status === 'published' ? 'border-green-200 bg-green-50/50' : 'border-yellow-200 bg-yellow-50/50'
-                  }`}>
-                    <CardHeader>
-                      <div className="flex items-center justify-between">
-                        <div className="flex items-center space-x-4">
-                          <div className="flex items-center justify-center w-12 h-12 rounded-full bg-primary/10">
-                            <IconComponent className="h-6 w-6 text-primary" />
-                          </div>
-                          <div className="flex-1">
-                            <div className="flex items-center space-x-2 mb-1">
-                              <CardTitle className="text-lg">{step.title}</CardTitle>
-                              {step.mandatory && (
-                                <Badge variant="destructive" className="text-xs">
-                                  Mandatory
-                                </Badge>
-                              )}
-                              <Badge variant={step.status === 'published' ? 'default' : 'secondary'}>
-                                {step.status}
-                              </Badge>
-                            </div>
-                            <CardDescription>
-                              <div 
-                                dangerouslySetInnerHTML={{ __html: step.description }}
-                              />
-                            </CardDescription>
+          <DndContext 
+            sensors={sensors}
+            collisionDetection={closestCenter}
+            onDragEnd={handleDragEnd}
+          >
+            <SortableContext 
+              items={routeSteps.map(step => step.id!).filter(Boolean)} 
+              strategy={verticalListSortingStrategy}
+            >
+              <div className="space-y-4">
+                {routeSteps.map((step, index) => {
+                  if (!step.id) return null // Skip steps without IDs
+                  
+                  return (
+                    <div key={step.id}>
+                      <SortableRouteStepCard
+                        step={step}
+                        isExpanded={expandedCards[step.id] || false}
+                        onToggleExpansion={() => toggleCardExpansion(step.id!)}
+                        onEdit={() => handleEditStep(step)}
+                        onDelete={() => handleDeleteStep(step.id!)}
+                      />
+                      
+                      {index < routeSteps.length - 1 && (
+                        <div className="flex justify-center py-2">
+                          <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center">
+                            <ArrowDown className="h-4 w-4 text-primary" />
                           </div>
                         </div>
-                         <div className="flex items-center space-x-2">
-                           <Button 
-                             variant="ghost" 
-                             size="sm"
-                             onClick={() => toggleCardExpansion(step.id)}
-                           >
-                             {expandedCards.has(step.id) ? (
-                               <ChevronUp className="h-4 w-4" />
-                             ) : (
-                               <ChevronDown className="h-4 w-4" />
-                             )}
-                           </Button>
-                           <Button 
-                             variant="outline" 
-                             size="sm"
-                             onClick={() => handleEditStep(step)}
-                           >
-                             <Edit3 className="h-4 w-4 mr-2" />
-                             Edit
-                           </Button>
-                           <AlertDialog>
-                             <AlertDialogTrigger asChild>
-                               <Button variant="outline" size="sm" className="text-destructive hover:text-destructive">
-                                 <Trash2 className="h-4 w-4" />
-                               </Button>
-                             </AlertDialogTrigger>
-                             <AlertDialogContent>
-                               <AlertDialogHeader>
-                                 <AlertDialogTitle>Delete Route Step</AlertDialogTitle>
-                                 <AlertDialogDescription>
-                                   Are you sure you want to delete "{step.title}"? This action cannot be undone and will remove all associated topics and connections.
-                                 </AlertDialogDescription>
-                               </AlertDialogHeader>
-                               <AlertDialogFooter>
-                                 <AlertDialogCancel>Cancel</AlertDialogCancel>
-                                 <AlertDialogAction 
-                                   onClick={() => handleDeleteStep(step.id)}
-                                   className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
-                                 >
-                                   Delete
-                                 </AlertDialogAction>
-                               </AlertDialogFooter>
-                             </AlertDialogContent>
-                           </AlertDialog>
-                         </div>
-                      </div>
-                    </CardHeader>
-                    
-                    {expandedCards.has(step.id) && (
-                      <CardContent>
-                         <div className="space-y-4">
-                           <div>
-                             <h4 className="font-medium mb-2">Tasks ({step.details.length})</h4>
-                            <div className="grid grid-cols-1 gap-3">
-                                 {step.details.map((detail, idx) => {
-                                  const remainingHours = detail.flightHours ? Math.max(0, detail.flightHours - totalHours) : null
-                                  return (
-                                    <div key={`${step.id}-${idx}`} className="text-sm bg-background/50 p-3 rounded border">
-                                      <div className="flex items-start space-x-3">
-                                        <Checkbox 
-                                          className="mt-0.5"
-                                          checked={detail.checked}
-                                          onCheckedChange={(checked) => {
-                                            if (step.id) {
-                                              updateStepDetailChecked(step.id, idx, checked as boolean)
-                                            }
-                                          }}
-                                        />
-                                      <div className="flex-1">
-                                        <div className="font-medium text-foreground mb-1">{detail.title}</div>
-                                        <div 
-                                          className="text-muted-foreground text-xs mb-2 prose prose-xs" 
-                                          dangerouslySetInnerHTML={{ __html: detail.description }}
-                                        />
-                                        {detail.flightHours && (
-                                          <div className="flex items-center space-x-2">
-                                            <Badge variant="outline" className="text-xs">
-                                              {detail.flightHours} hours required
-                                            </Badge>
-                                            {remainingHours !== null && (
-                                              <Badge variant={remainingHours === 0 ? "default" : "secondary"} className="text-xs">
-                                                {remainingHours === 0 ? "Complete!" : `${remainingHours} hours remaining`}
-                                              </Badge>
-                                            )}
-                                          </div>
-                                        )}
-                                        {step.allowCustomerReorder && (
-                                          <Badge variant="outline" className="mt-2 text-xs">
-                                            Customer can reorder
-                                          </Badge>
-                                        )}
-                                      </div>
-                                    </div>
-                                   </div>
-                                 )
-                               })}
-                             </div>
-                           </div>
-
-                          {step.connectedFrom && step.connectedFrom.length > 0 && (
-                            <div className="flex items-center space-x-2 pt-2 border-t">
-                              <span className="text-sm font-medium">Connected from:</span>
-                              <Badge variant="outline">
-                                Step {step.connectedFrom[0]}
-                              </Badge>
-                            </div>
-                          )}
-                        </div>
-                      </CardContent>
-                    )}
-                    
-                    {!expandedCards.has(step.id) && (
-                      <CardContent className="pt-0">
-                        <div className="text-sm text-muted-foreground">
-                          {step.details.length} key topics • Click to expand
-                        </div>
-                      </CardContent>
-                    )}
-                  </Card>
-
-                  {/* Connection Arrow */}
-                  {index < routeSteps.length - 1 && (
-                    <div className="flex justify-center py-4">
-                      <div className="flex items-center justify-center w-8 h-8 rounded-full bg-primary/10">
-                        <ArrowRight className="h-4 w-4 text-primary" />
-                      </div>
+                      )}
                     </div>
-                  )}
-                </div>
-              )
-            })}
-          </div>
+                  )
+                })}
+              </div>
+            </SortableContext>
+          </DndContext>
         </div>
 
         <EditRouteStepDialog

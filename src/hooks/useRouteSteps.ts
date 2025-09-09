@@ -273,12 +273,48 @@ export function useRouteSteps() {
     }
   }
 
+  const reorderRouteSteps = async (newOrder: string[]) => {
+    try {
+      // Update order_number for each step based on new order
+      const updates = newOrder.map((stepId, index) => ({
+        id: stepId,
+        order_number: index
+      }))
+
+      // Update each step's order in the database
+      for (const update of updates) {
+        const { error } = await supabase
+          .from('route_steps')
+          .update({ order_number: update.order_number })
+          .eq('id', update.id)
+
+        if (error) throw error
+      }
+
+      // Refresh data to reflect new order
+      await fetchRouteSteps()
+
+      toast({
+        title: "Success",
+        description: "Route steps reordered successfully"
+      })
+    } catch (error) {
+      console.error('Error reordering route steps:', error)
+      toast({
+        title: "Error",
+        description: "Failed to reorder route steps",
+        variant: "destructive"
+      })
+    }
+  }
+
   return {
     routeSteps,
     loading,
     saveRouteStep,
     updateStepDetailChecked,
     deleteRouteStep,
+    reorderRouteSteps,
     refetch: fetchRouteSteps
   }
 }
