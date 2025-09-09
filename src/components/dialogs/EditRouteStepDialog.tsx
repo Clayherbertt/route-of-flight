@@ -10,6 +10,7 @@ import { Plus, X, Plane } from 'lucide-react';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Separator } from '@/components/ui/separator';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { RichTextEditor } from '@/components/ui/rich-text-editor';
 const CATEGORIES = ['Initial Tasks', 'Primary Training', 'Cadet Programs', 'Flight Instructing', 'Other Time Builders', 'Regional Requirements', 'Major Requirements'];
 interface RouteStepDetail {
   id?: string;
@@ -283,7 +284,12 @@ export function EditRouteStepDialog({
                     </div>
                     
                     <div className="ml-6 space-y-3">
-                      <Textarea value={task.description} onChange={e => updateTaskDescription(taskIndex, e.target.value)} placeholder="Task description..." rows={2} />
+                      <RichTextEditor 
+                        value={task.description} 
+                        onChange={(value) => updateTaskDescription(taskIndex, value)} 
+                        placeholder="Task description..." 
+                        height="120px"
+                      />
                       
                       <div className="flex items-center gap-4">
                         <div className="flex items-center gap-2">
