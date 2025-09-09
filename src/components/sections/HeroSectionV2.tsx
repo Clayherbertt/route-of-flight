@@ -70,7 +70,7 @@ const HeroSectionV2 = () => {
               <div className="text-sm text-muted-foreground">Flight Hours Tracked</div>
             </div>
             <div className="bg-card/80 backdrop-blur-sm rounded-xl p-6 card-shadow">
-              <div className="text-3xl font-bold text-primary mb-2">500+</div>
+              <div className="text-3xl font-bold text-primary mb-2">80+</div>
               <div className="text-sm text-muted-foreground">Airlines Listed</div>
             </div>
             <div className="bg-card/80 backdrop-blur-sm rounded-xl p-6 card-shadow">
