@@ -19,7 +19,7 @@ export function AirlineDetailsDialog({ open, onOpenChange, airline }: AirlineDet
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
+      <DialogContent className="max-w-6xl w-[95vw] max-h-[90vh] overflow-y-auto">
         <DialogHeader>
           <div className="flex items-center gap-3">
             <div className="text-3xl">{airline.logo}</div>
