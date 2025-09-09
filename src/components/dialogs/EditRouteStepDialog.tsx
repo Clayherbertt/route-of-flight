@@ -23,9 +23,13 @@ interface RouteStep {
   icon: any
   order: number
   mandatory: boolean
+  allowCustomerReorder: boolean
   content: {
     overview: string
-    details: string[]
+    details: Array<{
+      title: string
+      description: string
+    }>
   }
   nextSteps: number[]
   status: 'published' | 'draft'
@@ -48,7 +52,8 @@ const iconOptions = [
 
 export function EditRouteStepDialog({ step, open, onOpenChange, onSave }: EditRouteStepDialogProps) {
   const [editedStep, setEditedStep] = useState<RouteStep | null>(step)
-  const [newDetail, setNewDetail] = useState('')
+  const [newDetailTitle, setNewDetailTitle] = useState('')
+  const [newDetailDescription, setNewDetailDescription] = useState('')
 
   // Reset edited step when step prop changes
   useEffect(() => {
@@ -63,15 +68,19 @@ export function EditRouteStepDialog({ step, open, onOpenChange, onSave }: EditRo
   }
 
   const addDetail = () => {
-    if (newDetail.trim()) {
+    if (newDetailTitle.trim()) {
       setEditedStep({
         ...editedStep,
         content: {
           ...editedStep.content,
-          details: [...editedStep.content.details, newDetail.trim()]
+          details: [...editedStep.content.details, {
+            title: newDetailTitle.trim(),
+            description: newDetailDescription.trim()
+          }]
         }
       })
-      setNewDetail('')
+      setNewDetailTitle('')
+      setNewDetailDescription('')
     }
   }
 
@@ -85,9 +94,9 @@ export function EditRouteStepDialog({ step, open, onOpenChange, onSave }: EditRo
     })
   }
 
-  const updateDetail = (index: number, value: string) => {
+  const updateDetail = (index: number, field: 'title' | 'description', value: string) => {
     const newDetails = [...editedStep.content.details]
-    newDetails[index] = value
+    newDetails[index] = { ...newDetails[index], [field]: value }
     setEditedStep({
       ...editedStep,
       content: {
@@ -173,6 +182,20 @@ export function EditRouteStepDialog({ step, open, onOpenChange, onSave }: EditRo
               />
             </div>
 
+            <div className="flex items-center justify-between">
+              <div className="space-y-0.5">
+                <Label htmlFor="allowCustomerReorder">Allow Customer Reordering</Label>
+                <div className="text-sm text-muted-foreground">
+                  Let customers reorder this step's topics
+                </div>
+              </div>
+              <Switch
+                id="allowCustomerReorder"
+                checked={editedStep.allowCustomerReorder}
+                onCheckedChange={(checked) => setEditedStep({ ...editedStep, allowCustomerReorder: checked })}
+              />
+            </div>
+
             <div className="grid grid-cols-2 gap-4">
               <div className="space-y-2">
                 <Label htmlFor="status">Status</Label>
@@ -228,37 +251,65 @@ export function EditRouteStepDialog({ step, open, onOpenChange, onSave }: EditRo
               <Badge variant="secondary">{editedStep.content.details.length} topics</Badge>
             </div>
             
-            <div className="space-y-2">
+            <div className="space-y-4">
               {editedStep.content.details.map((detail, index) => (
-                <div key={index} className="flex items-center space-x-2">
-                  <Input
-                    value={detail}
-                    onChange={(e) => updateDetail(index, e.target.value)}
-                    placeholder="Enter topic"
-                  />
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={() => removeDetail(index)}
-                  >
-                    <X className="h-4 w-4" />
-                  </Button>
+                <div key={index} className="border rounded-lg p-4 space-y-3">
+                  <div className="flex items-center justify-between">
+                    <h5 className="font-medium">Topic {index + 1}</h5>
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => removeDetail(index)}
+                    >
+                      <X className="h-4 w-4" />
+                    </Button>
+                  </div>
+                  <div className="space-y-2">
+                    <Label>Topic Title</Label>
+                    <Input
+                      value={detail.title}
+                      onChange={(e) => updateDetail(index, 'title', e.target.value)}
+                      placeholder="Enter topic title"
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label>Topic Description</Label>
+                    <Textarea
+                      value={detail.description}
+                      onChange={(e) => updateDetail(index, 'description', e.target.value)}
+                      placeholder="Enter detailed information about this topic"
+                      rows={3}
+                    />
+                  </div>
                 </div>
               ))}
               
-              <div className="flex items-center space-x-2">
-                <Input
-                  value={newDetail}
-                  onChange={(e) => setNewDetail(e.target.value)}
-                  placeholder="Add new topic"
-                  onKeyPress={(e) => e.key === 'Enter' && addDetail()}
-                />
+              <div className="border-2 border-dashed rounded-lg p-4 space-y-3">
+                <h5 className="font-medium">Add New Topic</h5>
+                <div className="space-y-2">
+                  <Label>Topic Title</Label>
+                  <Input
+                    value={newDetailTitle}
+                    onChange={(e) => setNewDetailTitle(e.target.value)}
+                    placeholder="Enter topic title"
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label>Topic Description</Label>
+                  <Textarea
+                    value={newDetailDescription}
+                    onChange={(e) => setNewDetailDescription(e.target.value)}
+                    placeholder="Enter detailed information"
+                    rows={2}
+                  />
+                </div>
                 <Button
                   variant="outline"
-                  size="sm" 
                   onClick={addDetail}
+                  className="w-full"
                 >
-                  <Plus className="h-4 w-4" />
+                  <Plus className="h-4 w-4 mr-2" />
+                  Add Topic
                 </Button>
               </div>
             </div>

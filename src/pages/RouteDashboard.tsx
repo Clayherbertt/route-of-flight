@@ -37,13 +37,26 @@ export default function RouteDashboard() {
       icon: GraduationCap,
       order: 1,
       mandatory: true,
+      allowCustomerReorder: false,
       content: {
         overview: "Learn about different types of flight schools and take your first discovery flight",
         details: [
-          "Part 61 vs Part 141 schools",
-          "University programs vs flight academies", 
-          "What to expect in a discovery flight",
-          "Questions to ask during school visits"
+          {
+            title: "Part 61 vs Part 141 schools",
+            description: "Understand the differences between Part 61 and Part 141 flight training programs, including their structure, requirements, and which might be best for your goals."
+          },
+          {
+            title: "University programs vs flight academies",
+            description: "Compare collegiate aviation programs with dedicated flight academies, considering factors like cost, timeline, and career preparation."
+          },
+          {
+            title: "What to expect in a discovery flight",
+            description: "Learn what happens during your first flight lesson, how to prepare, and what questions to ask your instructor."
+          },
+          {
+            title: "Questions to ask during school visits",
+            description: "Essential questions about aircraft condition, instructor qualifications, safety records, and financing options."
+          }
         ]
       },
       nextSteps: [2],
@@ -56,13 +69,26 @@ export default function RouteDashboard() {
       icon: Stethoscope,
       order: 2,
       mandatory: true,
+      allowCustomerReorder: true,
       content: {
         overview: "Get your medical certificate from an FAA-approved Aviation Medical Examiner",
         details: [
-          "Finding an Aviation Medical Examiner (AME)",
-          "Required medical documentation",
-          "Common medical disqualifiers",
-          "Special issuance process if needed"
+          {
+            title: "Finding an Aviation Medical Examiner (AME)",
+            description: "Locate FAA-authorized doctors in your area and understand the examination process."
+          },
+          {
+            title: "Required medical documentation",
+            description: "Gather necessary medical records, prescriptions, and documentation before your exam."
+          },
+          {
+            title: "Common medical disqualifiers",
+            description: "Learn about conditions that might affect your medical certificate and potential solutions."
+          },
+          {
+            title: "Special issuance process if needed",
+            description: "Understand the special issuance process for conditions requiring additional FAA review."
+          }
         ]
       },
       nextSteps: [3],
@@ -76,13 +102,26 @@ export default function RouteDashboard() {
       icon: Plane,
       order: 3,
       mandatory: true,
+      allowCustomerReorder: false,
       content: {
         overview: "Start your PPL training with ground school and flight lessons",
         details: [
-          "Ground school requirements",
-          "Flight training minimums", 
-          "Written exam preparation",
-          "Checkride preparation"
+          {
+            title: "Ground school requirements",
+            description: "Complete the theoretical knowledge portion of pilot training covering aerodynamics, weather, navigation, and regulations."
+          },
+          {
+            title: "Flight training minimums",
+            description: "Understanding minimum flight hour requirements and what skills you'll develop during training."
+          },
+          {
+            title: "Written exam preparation",
+            description: "Prepare for the FAA knowledge test with study materials, practice tests, and test-taking strategies."
+          },
+          {
+            title: "Checkride preparation",
+            description: "Get ready for your practical exam with oral preparation and flight test requirements."
+          }
         ]
       },
       nextSteps: [],
@@ -255,10 +294,16 @@ export default function RouteDashboard() {
                       
                       <div>
                         <h4 className="font-medium mb-2">Key Topics ({step.content.details.length})</h4>
-                        <div className="grid grid-cols-2 gap-2">
+                        <div className="grid grid-cols-1 gap-3">
                           {step.content.details.map((detail, idx) => (
-                            <div key={idx} className="text-sm text-muted-foreground bg-background/50 p-2 rounded border">
-                              {detail}
+                            <div key={idx} className="text-sm bg-background/50 p-3 rounded border">
+                              <div className="font-medium text-foreground mb-1">{detail.title}</div>
+                              <div className="text-muted-foreground text-xs">{detail.description}</div>
+                              {step.allowCustomerReorder && (
+                                <Badge variant="outline" className="mt-2 text-xs">
+                                  Customer can reorder
+                                </Badge>
+                              )}
                             </div>
                           ))}
                         </div>
