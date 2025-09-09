@@ -27,10 +27,10 @@ interface StepTemplate {
   defaultStructure: {
     title: string
     description: string
-    overview: string
     mandatory: boolean
     allowCustomerReorder: boolean
     status: 'draft' | 'published'
+    category: string
     details: Array<{
       title: string
       description: string
@@ -51,10 +51,10 @@ const stepTemplates: StepTemplate[] = [
     defaultStructure: {
       title: 'Private Pilot License Training',
       description: 'Complete your private pilot license with structured flight training',
-      overview: '<p>This training phase focuses on developing core flying skills and meeting FAA requirements for private pilot certification.</p>',
       mandatory: true,
       allowCustomerReorder: false,
       status: 'draft' as const,
+      category: 'Primary Training',
       details: [
         {
           title: 'Pre-flight Procedures',
@@ -80,80 +80,6 @@ const stepTemplates: StepTemplate[] = [
         {
           title: 'Regulations Study',
           description: '<p>Study Part 61 and Part 91 federal aviation regulations</p>',
-          checked: false,
-          taskType: 'ground' as const
-        }
-      ]
-    }
-  },
-  {
-    id: 'instrument-training',
-    title: 'Instrument Training',
-    description: 'Instrument flight rules training and certification',
-    icon: 'GraduationCap',
-    category: 'Advanced Training',
-    defaultStructure: {
-      title: 'Instrument Rating Training',
-      description: 'Master instrument flight procedures and regulations',
-      overview: '<p>Advanced training to fly safely in instrument meteorological conditions.</p>',
-      mandatory: false,
-      allowCustomerReorder: true,
-      status: 'draft' as const,
-      details: [
-        {
-          title: 'Instrument Procedures',
-          description: '<p>Learn IFR procedures and navigation techniques</p>',
-          checked: false,
-          flightHours: 15,
-          taskType: 'flight' as const
-        },
-        {
-          title: 'Approach Procedures',
-          description: '<p>Master various instrument approach procedures</p>',
-          checked: false,
-          flightHours: 20,
-          taskType: 'flight' as const
-        },
-        {
-          title: 'Instrument Ground School',
-          description: '<p>Study instrument flight regulations and weather theory</p>',
-          checked: false,
-          taskType: 'ground' as const
-        }
-      ]
-    }
-  },
-  {
-    id: 'commercial-prep',
-    title: 'Commercial Preparation',
-    description: 'Commercial pilot license preparation and training',
-    icon: 'Trophy',
-    category: 'Professional',
-    defaultStructure: {
-      title: 'Commercial Pilot Preparation',
-      description: 'Prepare for commercial pilot certification and career opportunities',
-      overview: '<p>Advanced training for commercial aviation career preparation.</p>',
-      mandatory: false,
-      allowCustomerReorder: true,
-      status: 'draft' as const,
-      details: [
-        {
-          title: 'Commercial Maneuvers',
-          description: '<p>Master precision maneuvers required for commercial certification</p>',
-          checked: false,
-          flightHours: 25,
-          taskType: 'flight' as const
-        },
-        {
-          title: 'Multi-Engine Training',
-          description: '<p>Learn multi-engine aircraft operations and procedures</p>',
-          checked: false,
-          flightHours: 15,
-          taskType: 'flight' as const
-        },
-        {
-          title: 'Commercial Regulations',
-          description: '<p>Study commercial pilot regulations and career preparation</p>',
           checked: false,
           taskType: 'ground' as const
         }
