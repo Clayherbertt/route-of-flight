@@ -142,17 +142,18 @@ export function EditRouteStepDialog({ step, open, onOpenChange, onSave }: EditRo
 
             <div className="space-y-2">
               <Label htmlFor="description">Description</Label>
-              <Input
+              <Textarea
                 id="description"
                 value={editedStep.description}
                 onChange={(e) => setEditedStep({ ...editedStep, description: e.target.value })}
                 placeholder="Brief description of this step"
+                rows={2}
               />
             </div>
 
             <div className="space-y-2">
               <Label htmlFor="overview">Overview</Label>
-              <Input
+              <Textarea
                 id="overview"
                 value={editedStep.content.overview}
                 onChange={(e) => setEditedStep({
@@ -160,6 +161,7 @@ export function EditRouteStepDialog({ step, open, onOpenChange, onSave }: EditRo
                   content: { ...editedStep.content, overview: e.target.value }
                 })}
                 placeholder="Detailed overview of this step"
+                rows={3}
               />
             </div>
           </div>
@@ -272,10 +274,11 @@ export function EditRouteStepDialog({ step, open, onOpenChange, onSave }: EditRo
                   </div>
                   <div className="space-y-2">
                     <Label>Topic Description</Label>
-                    <Input
+                    <Textarea
                       value={detail.description}
                       onChange={(e) => updateDetail(index, 'description', e.target.value)}
                       placeholder="Enter detailed information about this topic"
+                      rows={3}
                     />
                   </div>
                 </div>
@@ -293,10 +296,11 @@ export function EditRouteStepDialog({ step, open, onOpenChange, onSave }: EditRo
                 </div>
                 <div className="space-y-2">
                   <Label>Topic Description</Label>
-                  <Input
+                  <Textarea
                     value={newDetailDescription}
                     onChange={(e) => setNewDetailDescription(e.target.value)}
                     placeholder="Enter detailed information"
+                    rows={2}
                   />
                 </div>
                 <Button
