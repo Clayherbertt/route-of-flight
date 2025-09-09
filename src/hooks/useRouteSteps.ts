@@ -22,6 +22,7 @@ interface RouteStep {
   allowCustomerReorder: boolean
   overview: string
   status: 'draft' | 'published'
+  category: string
   details: RouteStepDetail[]
   nextSteps: string[]
   connectedFrom?: string[]
@@ -75,6 +76,7 @@ export function useRouteSteps() {
           allowCustomerReorder: step.allow_customer_reorder,
           overview: step.overview,
           status: step.status as 'draft' | 'published',
+          category: step.category || 'Primary Training',
           details: stepDetails.map(detail => ({
             id: detail.id,
             title: detail.title,
@@ -118,7 +120,8 @@ export function useRouteSteps() {
             mandatory: step.mandatory,
             allow_customer_reorder: step.allowCustomerReorder,
             overview: step.overview,
-            status: step.status
+            status: step.status,
+            category: step.category
           })
           .select()
           .single()
@@ -137,7 +140,8 @@ export function useRouteSteps() {
             mandatory: step.mandatory,
             allow_customer_reorder: step.allowCustomerReorder,
             overview: step.overview,
-            status: step.status
+            status: step.status,
+            category: step.category
           })
           .eq('id', step.id)
 

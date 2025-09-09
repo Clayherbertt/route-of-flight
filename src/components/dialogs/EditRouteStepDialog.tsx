@@ -16,6 +16,17 @@ import { Switch } from '@/components/ui/switch'
 import { Plus, X, Plane } from 'lucide-react'
 import { Checkbox } from '@/components/ui/checkbox'
 import { Separator } from '@/components/ui/separator'
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
+
+const CATEGORIES = [
+  'Initial Tasks',
+  'Primary Training', 
+  'Cadet Programs',
+  'Flight Instructing',
+  'Other Time Builders',
+  'Regional Requirements',
+  'Major Requirements'
+]
 
 interface RouteStepDetail {
   id?: string
@@ -37,6 +48,7 @@ interface RouteStep {
   allowCustomerReorder: boolean
   overview: string
   status: 'draft' | 'published'
+  category: string
   details: RouteStepDetail[]
   nextSteps: string[]
   connectedFrom?: string[]
@@ -71,6 +83,7 @@ export function EditRouteStepDialog({ step, open, onOpenChange, onSave }: EditRo
       title: editedStep.title.trim(),
       description: editedStep.description.trim(),
       overview: editedStep.overview || '',
+      category: editedStep.category || 'Primary Training',
       details: editedStep.details.map((detail, index) => ({
         ...detail,
         title: detail.title.trim(),
@@ -197,6 +210,25 @@ export function EditRouteStepDialog({ step, open, onOpenChange, onSave }: EditRo
                 placeholder="Brief overview of this training step..."
                 rows={2}
               />
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="category">Category</Label>
+              <Select
+                value={editedStep.category}
+                onValueChange={(value) => setEditedStep({ ...editedStep, category: value })}
+              >
+                <SelectTrigger>
+                  <SelectValue placeholder="Select a category" />
+                </SelectTrigger>
+                <SelectContent className="bg-background border z-50">
+                  {CATEGORIES.map((category) => (
+                    <SelectItem key={category} value={category}>
+                      {category}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
             </div>
 
             <div className="flex items-center justify-between">

@@ -632,6 +632,7 @@ export type Database = {
       route_steps: {
         Row: {
           allow_customer_reorder: boolean
+          category: string | null
           created_at: string
           description: string
           icon: string
@@ -645,6 +646,7 @@ export type Database = {
         }
         Insert: {
           allow_customer_reorder?: boolean
+          category?: string | null
           created_at?: string
           description: string
           icon?: string
@@ -658,6 +660,7 @@ export type Database = {
         }
         Update: {
           allow_customer_reorder?: boolean
+          category?: string | null
           created_at?: string
           description?: string
           icon?: string
