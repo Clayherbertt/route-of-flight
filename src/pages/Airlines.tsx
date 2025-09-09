@@ -162,21 +162,6 @@ const Airlines = () => {
               and current openings at major US carriers, regional airlines, and cargo operators.
             </p>
             
-            {/* Debug info and refresh button */}
-            <div className="flex items-center justify-center gap-4 mb-6">
-              <Badge variant="outline" className="bg-muted/50">
-                {airlines.length} Airlines Loaded
-              </Badge>
-              <button 
-                onClick={() => {
-                  console.log("Manual refresh triggered");
-                  refetch();
-                }}
-                className="px-4 py-2 bg-primary/10 hover:bg-primary/20 rounded-lg text-sm font-medium transition-colors"
-              >
-                Refresh Data
-              </button>
-            </div>
             
             {/* Search Bar */}
             <div className="relative max-w-md mx-auto">
