@@ -65,7 +65,20 @@ export function EditRouteStepDialog({ step, open, onOpenChange, onSave }: EditRo
   if (!editedStep) return null
 
   const handleSave = () => {
-    onSave(editedStep)
+    // Ensure all data is properly formatted before saving
+    const stepToSave: RouteStep = {
+      ...editedStep,
+      title: editedStep.title.trim(),
+      description: editedStep.description.trim(),
+      overview: editedStep.overview || '',
+      details: editedStep.details.map((detail, index) => ({
+        ...detail,
+        title: detail.title.trim(),
+        orderNumber: index,
+        taskType: detail.taskType || 'flight'
+      }))
+    }
+    onSave(stepToSave)
     onOpenChange(false)
   }
 
@@ -172,6 +185,17 @@ export function EditRouteStepDialog({ step, open, onOpenChange, onSave }: EditRo
                 onChange={(e) => setEditedStep({ ...editedStep, description: e.target.value })}
                 placeholder="Describe what this training step involves..."
                 rows={3}
+              />
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="overview">Overview</Label>
+              <Textarea
+                id="overview"
+                value={editedStep.overview || ''}
+                onChange={(e) => setEditedStep({ ...editedStep, overview: e.target.value })}
+                placeholder="Brief overview of this training step..."
+                rows={2}
               />
             </div>
 
