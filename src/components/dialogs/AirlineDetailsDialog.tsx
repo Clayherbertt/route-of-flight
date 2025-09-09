@@ -3,81 +3,35 @@ import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
 import { Button } from "@/components/ui/button";
-import { MapPin, Users, Clock, Plane, Building2, ExternalLink, Phone, Mail, DollarSign } from "lucide-react";
+import { MapPin, Users, Clock, Plane, Building2, ExternalLink, Phone, Mail, DollarSign, CalendarDays, Briefcase } from "lucide-react";
 
 interface AirlineInfo {
   name: string;
   logo: string;
-  iata: string;
-  icao: string;
-  headquarters: string;
-  founded: string;
-  fleet_size: number;
-  destinations: number;
-  employees: string;
-  website: string;
-  phone: string;
-  email: string;
-  hiring_status: boolean;
-  pilot_application_url: string;
+  callSign: string;
+  pilotGroupSize: string;
+  fleetSize: number;
   description: string;
-  hiring_requirements: {
-    min_hours: string;
-    type_rating: boolean;
-    college_degree: boolean;
-    clean_record: boolean;
-  };
-  detailed_requirements?: {
-    required: string[];
-    preferred: string[];
-  };
-  inside_scoop?: string[];
-  benefits: string[];
-  fleet_types: string[];
+  pilotUnion: string;
+  fleetInfo: { type: string; quantity: number }[];
   bases: string[];
-  pay_scales: {
-    first_officer: {
-      year_1: string;
-      year_2?: string;
-      year_3?: string;
-      year_4?: string;
-      year_5: string;
-      year_6?: string;
-      year_7?: string;
-      year_8?: string;
-      year_9?: string;
-      year_10: string;
-      year_11?: string;
-      year_12?: string;
-    } | Record<string, {
-      year_1: string;
-      year_2?: string;
-      year_3?: string;
-      year_4?: string;
-      year_5: string;
-      year_6?: string;
-      year_7?: string;
-      year_8?: string;
-      year_9?: string;
-      year_10: string;
-      year_11?: string;
-      year_12?: string;
-    }>;
-    captain: Record<string, {
-      year_1: string;
-      year_2?: string;
-      year_3?: string;
-      year_4?: string;
-      year_5: string;
-      year_6?: string;
-      year_7?: string;
-      year_8?: string;
-      year_9?: string;
-      year_10: string;
-      year_11?: string;
-      year_12?: string;
-    }>;
+  hiring: {
+    isHiring: boolean;
+    applicationUrl: string;
+    requiredQualifications: string[];
+    preferredQualifications: string[];
+    insideScoop?: string[];
   };
+  seniority: {
+    mostJuniorBase: string;
+    mostJuniorCaptainHireDate: string;
+    retirementsIn2025: number;
+  };
+  payScale: {
+    firstOfficer: { year1: string; year5: string; year10: string; };
+    captain: { year1: string; year5: string; year10: string; };
+  };
+  additionalInfo?: string[];
 }
 
 interface AirlineDetailsDialogProps {
@@ -86,717 +40,210 @@ interface AirlineDetailsDialogProps {
   airline: { name: string; logoUrl?: string } | null;
 }
 
-// Sample data for major airlines
-const majorAirlinesData: Record<string, AirlineInfo> = {
+// Sample data for airlines with new structure
+const airlinesData: Record<string, AirlineInfo> = {
   "Alaska Airlines": {
     name: "Alaska Airlines",
     logo: "✈️",
-    iata: "AS",
-    icao: "ASA",
-    headquarters: "Seattle, Washington",
-    founded: "1932",
-    fleet_size: 314,
-    destinations: 115,
-    employees: "23,000+",
-    website: "alaskaair.com",
-    phone: "1-800-252-7522",
-    email: "careers@alaskaair.com",
-    hiring_status: true,
-    pilot_application_url: "https://careers.alaskaair.com/pilots",
-    description: "Alaska Airlines is a major American airline headquartered in SeaTac, Washington, within the Seattle metropolitan area. Known for exceptional customer service and reliability.",
-    hiring_requirements: {
-      min_hours: "1,500 ATP minimum",
-      type_rating: false,
-      college_degree: false,
-      clean_record: true
-    },
-    detailed_requirements: {
-      required: [
-        "Minimum of 1,500 hours of total documented flight time",
-        "A current First Class FAA Medical Certificate",
-        "Minimum of 500 hours of fixed wing turbine time (airplane and powered lift combined)",
-        "Must possess and/or obtain a current passport with unlimited access in and out of the United States and have at least six months of validity remaining at time of employment. Employees with non-U.S. passports also will need any appropriate travel documentation",
-        "Ability to travel immediately and repeatedly to any location, domestic or international, where Alaska Airlines and Hawaiian Airlines flies",
-        "FAA Commercial Pilot Certificate with Instrument-Airplane",
-        "All aeronautical experience requirements for an ATP, Airplane category rating, as set forth in 14 CFR §61.159",
-        "Current ATP written exam",
-        "Strong written and verbal communication skills in English",
-        "Must possess a valid Driver's License issued by a US state or US territory",
-        "Must be comfortable with a domicile in Seattle, WA; Los Angeles, CA; Anchorage, AK; Portland, OR; San Francisco, CA",
-        "Excellent judgement, leadership skills, demonstrated commandability and maturity",
-        "Professional demeanor and appearance",
-        "Ability to use sound judgement in decision making",
-        "Ability to maintain composure under pressure",
-        "Minimum 23 years of age",
-        "Must be Authorized to work in the U.S.",
+    callSign: "Alaska",
+    pilotGroupSize: "3,200+",
+    fleetSize: 314,
+    description: "Alaska Airlines is a major American airline known for exceptional customer service and reliability, serving the West Coast and Alaska.",
+    pilotUnion: "ALPA (Air Line Pilots Association)",
+    fleetInfo: [
+      { type: "Boeing 737-700", quantity: 32 },
+      { type: "Boeing 737-800", quantity: 61 },
+      { type: "Boeing 737-900", quantity: 76 },
+      { type: "Boeing 737 MAX 8", quantity: 45 },
+      { type: "Boeing 737 MAX 9", quantity: 67 },
+      { type: "Airbus A320", quantity: 12 },
+      { type: "Airbus A321neo", quantity: 21 }
+    ],
+    bases: ["Seattle (SEA)", "Anchorage (ANC)", "Los Angeles (LAX)", "San Francisco (SFO)", "Portland (PDX)"],
+    hiring: {
+      isHiring: true,
+      applicationUrl: "https://careers.alaskaair.com/pilots",
+      requiredQualifications: [
+        "Minimum 1,500 hours total time",
+        "ATP Certificate or meet ATP requirements",
+        "Current First Class Medical",
+        "500 hours fixed wing turbine time",
+        "Current passport with 6+ months validity",
+        "Must be 23+ years old",
         "High school diploma or equivalent"
       ],
-      preferred: [
-        "Four-year degree from an accredited university",
-        "An FAA Airline Transport Pilot (ATP) certificate",
-        "500 hours of multi-engine airplane time",
-        "Minimum of 50 hours of flight time within the last 12 months",
-        "500 hours of turbine PIC time",
-        "Turbojet/ turbo prop experience in a complex flying environment"
+      preferredQualifications: [
+        "Bachelor's degree",
+        "500 hours turbine PIC time",
+        "50+ hours flight time in last 12 months",
+        "Multi-engine experience"
+      ],
+      insideScoop: [
+        "Known for excellent work-life balance",
+        "Strong company culture and employee satisfaction",
+        "Growing route network with Hawaiian acquisition"
       ]
     },
-    benefits: [
+    seniority: {
+      mostJuniorBase: "Seattle (SEA)",
+      mostJuniorCaptainHireDate: "March 2019",
+      retirementsIn2025: 85
+    },
+    payScale: {
+      firstOfficer: { year1: "$108.16/hr", year5: "$201.45/hr", year10: "$224.41/hr" },
+      captain: { year1: "$300.31/hr", year5: "$311.31/hr", year10: "$325.31/hr" }
+    },
+    additionalInfo: [
       "Industry-leading pilot contract ratified in 2022",
-      "Top of scale captain rate of $361.29",
-      "First year first officer rate of $119.92", 
-      "Market rate adjustment that keeps pilots in line with peers at other airlines",
-      "Flexibility to build schedules you want with ability to drop and trade",
-      "Stronger job security - pilot group grows as company grows",
-      "Medical, dental, vision insurance",
-      "401(k) with company match",
-      "Travel benefits",
-      "Paid time off",
-      "Life insurance",
-      "Employee stock purchase plan",
-      "KCM and Cass privileges"
-    ],
-    fleet_types: [
-      "Boeing 737-700",
-      "Boeing 737-800",
-      "Boeing 737-900",
-      "Boeing 737 MAX 8",
-      "Boeing 737 MAX 9",
-      "Airbus A320",
-      "Airbus A321neo"
-    ],
-    bases: [
-      "Seattle (SEA)",
-      "Anchorage (ANC)",
-      "Los Angeles (LAX)",
-      "San Francisco (SFO)",
-      "Portland (PDX)"
-    ],
-    pay_scales: {
-      first_officer: {
-        year_1: "$108.16",
-        year_2: "$160.67",
-        year_3: "$186.06",
-        year_4: "$193.69",
-        year_5: "$201.45",
-        year_6: "$207.45",
-        year_7: "$213.20",
-        year_8: "$218.32",
-        year_9: "$220.73",
-        year_10: "$224.41",
-        year_11: "$226.60",
-        year_12: "$228.80"
-      },
-      captain: {
-        "default": {
-          year_1: "$300.31",
-          year_2: "$303.01",
-          year_3: "$305.76",
-          year_4: "$308.56",
-          year_5: "$311.31",
-          year_6: "$314.17",
-          year_7: "$316.95",
-          year_8: "$319.73",
-          year_9: "$322.56",
-          year_10: "$325.31",
-          year_11: "$328.16",
-          year_12: "$330.97"
-        }
-      }
-    }
+      "Market rate adjustment keeps pilots competitive",
+      "Strong job security with growth opportunities"
+    ]
   },
   "Delta Air Lines": {
     name: "Delta Air Lines",
     logo: "✈️",
-    iata: "DL",
-    icao: "DAL",
-    headquarters: "Atlanta, Georgia",
-    founded: "1924",
-    fleet_size: 865,
-    destinations: 325,
-    employees: "95,000+",
-    website: "delta.com",
-    phone: "1-800-221-1212",
-    email: "pilot.recruitment@delta.com",
-    hiring_status: true,
-    pilot_application_url: "https://www.delta.com/us/en/careers/pilots/hiring-faqs",
-    description: "Delta Air Lines is one of the major airlines of the United States and a legacy carrier. Delta is the oldest airline in the United States still operating under its original name.",
-    hiring_requirements: {
-      min_hours: "1,500 ATP minimum",
-      type_rating: false,
-      college_degree: true,
-      clean_record: true
-    },
-    detailed_requirements: {
-      required: [
-        "At least 23 years of age",
-        "Must be legally authorized to work in the US without sponsorship currently and not require future sponsorship for employment",
-        "Current passport or other travel documents enabling the bearer to freely exit and re-enter the U.S. (multiple reentry status)",
-        "High school diploma or GED equivalent",
-        "Graduate of a four-year degree program from a college or university accredited by a U.S. Dept. of Education recognized accrediting organization is preferred",
-        "FAA Commercial Pilot Certificate with Instrument - Airplane",
-        "Current FAA First Class Medical Certificate",
-        "All aeronautical experience requirements for an ATP, Airplane category rating, as set forth in 14 CFR §61.159",
-        "Current ATP written exam",
-        "Minimum of 1,500 hours of total documented flight time",
-        "Minimum of 250 hours PIC or SIC as defined in 14 CFR §61.159(a)(5) in an airplane category",
-        "Minimum of 50 hours of multi-engine airplane time",
-        "FCC Radiotelephone Operator's Permit",
-        "DOT required pre-employment drug test",
-        "International Certificate of Vaccination (Yellow Card) for Yellow Fever prior to starting indoctrination training",
-        "TSA required fingerprint based Criminal History Records Check and a Delta background check"
+    callSign: "Delta",
+    pilotGroupSize: "15,000+",
+    fleetSize: 865,
+    description: "One of the major legacy carriers in the United States, known for premium service and global network.",
+    pilotUnion: "ALPA (Air Line Pilots Association)",
+    fleetInfo: [
+      { type: "Boeing 777", quantity: 25 },
+      { type: "Airbus A350", quantity: 28 },
+      { type: "Boeing 787", quantity: 31 },
+      { type: "Airbus A330", quantity: 36 },
+      { type: "Boeing 767", quantity: 44 },
+      { type: "Boeing 757", quantity: 111 },
+      { type: "Airbus A321", quantity: 127 },
+      { type: "Boeing 737", quantity: 255 },
+      { type: "Airbus A320/319", quantity: 108 },
+      { type: "Airbus A220", quantity: 95 }
+    ],
+    bases: ["Atlanta (ATL)", "Detroit (DTW)", "Minneapolis (MSP)", "New York JFK (JFK)", "Los Angeles (LAX)", "Seattle (SEA)", "Salt Lake City (SLC)", "Boston (BOS)"],
+    hiring: {
+      isHiring: true,
+      applicationUrl: "https://careers.delta.com/pilots",
+      requiredQualifications: [
+        "ATP Certificate",
+        "Current First Class Medical",
+        "Minimum 1,500 hours total time",
+        "250 hours PIC or SIC",
+        "50 hours multi-engine time",
+        "Bachelor's degree preferred",
+        "Current passport"
       ],
-      preferred: [
-        "1,000 hours of fixed-wing turbine time preferred (A minimum of 500 turbine hours must be in a non-powered lift airplane)",
-        "Degrees obtained from a non-U.S. institution must be evaluated for equivalency to U.S. degrees by a member organization of the National Association of Credential Evaluation Services (NACES)"
+      preferredQualifications: [
+        "1,000+ hours turbine time",
+        "Bachelor's degree from accredited university",
+        "100+ hours flight time in last 12 months"
+      ],
+      insideScoop: [
+        "Highly selective hiring process",
+        "Excellent benefits and profit sharing",
+        "Premium airline with global destinations"
       ]
     },
-    benefits: [
-      "Industry-leading compensation",
-      "Comprehensive health benefits",
-      "401(k) with 16% company contribution",
-      "Profit sharing program",
-      "Travel privileges worldwide",
-      "Life and disability insurance",
-      "Education assistance"
-    ],
-    fleet_types: [
-      "Boeing 777",
-      "Airbus A350",
-      "Boeing 787",
-      "Airbus A330-900/300/200",
-      "Boeing 767-400ER",
-      "Boeing 767-300ER", 
-      "Boeing 767-300/200",
-      "Boeing 757",
-      "Airbus A321N",
-      "Boeing 737-900",
-      "Airbus A321",
-      "Boeing 737-800/700",
-      "Airbus A320/319",
-      "Airbus A220-300",
-      "Airbus A220-100",
-      "Boeing 717",
-      "Embraer EMB-195",
-      "Embraer EMB-190/CRJ-900"
-    ],
-    bases: [
-      "Atlanta (ATL)",
-      "Detroit (DTW)",
-      "Minneapolis (MSP)",
-      "New York JFK (JFK)",
-      "Los Angeles (LAX)",
-      "Seattle (SEA)",
-      "Salt Lake City (SLC)",
-      "Boston (BOS)"
-    ],
-    pay_scales: {
-      first_officer: {
-        year_1: "$118.31",
-        year_2: "$225.66", 
-        year_3: "$264.07",
-        year_4: "$270.46",
-        year_5: "$276.92",
-        year_6: "$283.94",
-        year_7: "$291.83", 
-        year_8: "$298.53",
-        year_9: "$301.79",
-        year_10: "$305.88",
-        year_11: "$308.62",
-        year_12: "$311.46"
-      },
-      captain: {
-        "B-777": { year_1: "$418.37", year_2: "$421.76", year_3: "$425.21", year_4: "$428.64", year_5: "$432.08", year_6: "$435.47", year_7: "$438.90", year_8: "$442.28", year_9: "$445.71", year_10: "$449.11", year_11: "$452.52", year_12: "$455.96" },
-        "A-350": { year_1: "$418.37", year_2: "$421.76", year_3: "$425.21", year_4: "$428.64", year_5: "$432.08", year_6: "$435.47", year_7: "$438.90", year_8: "$442.28", year_9: "$445.71", year_10: "$449.11", year_11: "$452.52", year_12: "$455.96" },
-        "B-787": { year_1: "$418.37", year_2: "$421.76", year_3: "$425.21", year_4: "$428.64", year_5: "$432.08", year_6: "$435.47", year_7: "$438.90", year_8: "$442.28", year_9: "$445.71", year_10: "$449.11", year_11: "$452.52", year_12: "$455.96" },
-        "A-330-900/300/200": { year_1: "$418.37", year_2: "$421.76", year_3: "$425.21", year_4: "$428.64", year_5: "$432.08", year_6: "$435.47", year_7: "$438.90", year_8: "$442.28", year_9: "$445.71", year_10: "$449.11", year_11: "$452.52", year_12: "$455.96" },
-        "B-767-400ER": { year_1: "$418.37", year_2: "$421.76", year_3: "$425.21", year_4: "$428.64", year_5: "$432.08", year_6: "$435.47", year_7: "$438.90", year_8: "$442.28", year_9: "$445.71", year_10: "$449.11", year_11: "$452.52", year_12: "$455.96" },
-        "B-767-300ER": { year_1: "$347.00", year_2: "$349.94", year_3: "$352.78", year_4: "$355.64", year_5: "$358.66", year_6: "$361.46", year_7: "$364.14", year_8: "$367.15", year_9: "$369.76", year_10: "$373.73", year_11: "$377.76", year_12: "$381.66" },
-        "B-767-300/200": { year_1: "$347.00", year_2: "$349.94", year_3: "$352.78", year_4: "$355.64", year_5: "$358.66", year_6: "$361.46", year_7: "$364.14", year_8: "$367.15", year_9: "$369.76", year_10: "$373.73", year_11: "$377.76", year_12: "$381.66" },
-        "B-757": { year_1: "$347.00", year_2: "$349.94", year_3: "$352.78", year_4: "$355.64", year_5: "$358.66", year_6: "$361.46", year_7: "$364.14", year_8: "$367.15", year_9: "$369.76", year_10: "$373.73", year_11: "$377.76", year_12: "$381.66" },
-        "A-321N": { year_1: "$347.00", year_2: "$349.94", year_3: "$352.78", year_4: "$355.64", year_5: "$358.66", year_6: "$361.46", year_7: "$364.14", year_8: "$367.15", year_9: "$369.76", year_10: "$373.73", year_11: "$377.76", year_12: "$381.66" },
-        "B-737-900": { year_1: "$337.46", year_2: "$340.11", year_3: "$342.78", year_4: "$345.56", year_5: "$348.37", year_6: "$351.16", year_7: "$353.92", year_8: "$356.69", year_9: "$359.53", year_10: "$362.20", year_11: "$365.04", year_12: "$367.88" },
-        "A-321": { year_1: "$337.46", year_2: "$340.11", year_3: "$342.78", year_4: "$345.56", year_5: "$348.37", year_6: "$351.16", year_7: "$353.92", year_8: "$356.69", year_9: "$359.53", year_10: "$362.20", year_11: "$365.04", year_12: "$367.88" },
-        "B-737-800/700": { year_1: "$335.99", year_2: "$338.61", year_3: "$341.28", year_4: "$344.04", year_5: "$346.82", year_6: "$349.55", year_7: "$352.27", year_8: "$355.02", year_9: "$357.79", year_10: "$360.51", year_11: "$363.27", year_12: "$365.97" },
-        "A-320/319": { year_1: "$335.99", year_2: "$338.61", year_3: "$341.28", year_4: "$344.04", year_5: "$346.82", year_6: "$349.55", year_7: "$352.27", year_8: "$355.02", year_9: "$357.79", year_10: "$360.51", year_11: "$363.27", year_12: "$365.97" },
-        "A-220-300": { year_1: "$323.79", year_2: "$326.47", year_3: "$329.10", year_4: "$331.76", year_5: "$334.44", year_6: "$337.15", year_7: "$339.80", year_8: "$342.45", year_9: "$345.09", year_10: "$347.77", year_11: "$350.47", year_12: "$353.14" },
-        "A-220-100": { year_1: "$310.53", year_2: "$313.11", year_3: "$315.62", year_4: "$318.19", year_5: "$320.76", year_6: "$323.35", year_7: "$325.87", year_8: "$328.43", year_9: "$330.96", year_10: "$333.53", year_11: "$336.12", year_12: "$338.69" },
-        "B-717": { year_1: "$302.38", year_2: "$304.61", year_3: "$307.10", year_4: "$309.60", year_5: "$311.97", year_6: "$314.55", year_7: "$316.94", year_8: "$319.43", year_9: "$321.90", year_10: "$324.41", year_11: "$326.94", year_12: "$329.32" },
-        "EMB-195": { year_1: "$253.83", year_2: "$255.72", year_3: "$257.81", year_4: "$259.95", year_5: "$261.92", year_6: "$264.06", year_7: "$266.07", year_8: "$268.16", year_9: "$270.24", year_10: "$272.33", year_11: "$274.47", year_12: "$276.48" },
-        "EMB-190/CRJ-900": { year_1: "$215.96", year_2: "$217.56", year_3: "$219.39", year_4: "$221.15", year_5: "$222.82", year_6: "$224.61", year_7: "$226.38", year_8: "$228.16", year_9: "$229.91", year_10: "$231.71", year_11: "$233.49", year_12: "$235.23" }
-      }
-    }
+    seniority: {
+      mostJuniorBase: "New York JFK (JFK)",
+      mostJuniorCaptainHireDate: "January 2018",
+      retirementsIn2025: 450
+    },
+    payScale: {
+      firstOfficer: { year1: "$118.31/hr", year5: "$276.92/hr", year10: "$305.88/hr" },
+      captain: { year1: "$418.37/hr", year5: "$432.08/hr", year10: "$449.11/hr" }
+    },
+    additionalInfo: [
+      "Industry-leading compensation packages",
+      "16% company contribution to 401(k)",
+      "Extensive profit sharing program"
+    ]
   },
   "United Airlines": {
     name: "United Airlines",
     logo: "✈️",
-    iata: "UA",
-    icao: "UAL",
-    headquarters: "Chicago, Illinois",
-    founded: "1926",
-    fleet_size: 830,
-    destinations: 342,
-    employees: "96,000+",
-    website: "united.com",
-    phone: "1-800-864-8331",
-    email: "pilot.jobs@united.com",
-    hiring_status: true,
-    pilot_application_url: "https://careers.united.com/pilots",
-    description: "United Airlines is a major American airline headquartered at the Willis Tower in Chicago, Illinois. United operates a large domestic and international route network spanning cities large and small across the United States and all six continents.",
-    hiring_requirements: {
-      min_hours: "1,500 ATP minimum",
-      type_rating: false,
-      college_degree: true,
-      clean_record: true
-    },
-    detailed_requirements: {
-      required: [
-        "Unrestricted FAA Airline Transport Pilot (ATP) certificate with airplane multiengine class rating",
-        "Current FAA first-class medical certificate",
-        "FCC Restricted Radiotelephone Operator Permit (RR)",
-        "Minimum of 1,500 hours of total time",
-        "Current passport with at least six-months of validity remaining at time of employment",
-        "Legal right to work in the United States without sponsorship",
-        "Must be able to travel freely within the United States and without restriction to all countries United serves",
-        "High school diploma or GED equivalent",
-        "International Certificate of Vaccination for Yellow Fever (Yellow Card) must be presented on the first day of employment",
-        "Reliable, punctual attendance is an essential function of the position",
-        "Availability without any planned absences during the first twelve weeks of employment"
+    callSign: "United",
+    pilotGroupSize: "13,500+",
+    fleetSize: 830,
+    description: "Major American airline with extensive domestic and international route network across six continents.",
+    pilotUnion: "ALPA (Air Line Pilots Association)",
+    fleetInfo: [
+      { type: "Boeing 777", quantity: 96 },
+      { type: "Boeing 787", quantity: 55 },
+      { type: "Airbus A350", quantity: 45 },
+      { type: "Boeing 767", quantity: 38 },
+      { type: "Boeing 757", quantity: 21 },
+      { type: "Airbus A321", quantity: 158 },
+      { type: "Boeing 737", quantity: 247 },
+      { type: "Airbus A320/319", quantity: 99 },
+      { type: "Embraer E175", quantity: 71 }
+    ],
+    bases: ["Chicago (ORD)", "Denver (DEN)", "Houston (IAH)", "Los Angeles (LAX)", "Newark (EWR)", "San Francisco (SFO)", "Washington DC (IAD)"],
+    hiring: {
+      isHiring: true,
+      applicationUrl: "https://careers.united.com/pilots",
+      requiredQualifications: [
+        "Unrestricted ATP Certificate",
+        "Current First Class Medical",
+        "Minimum 1,500 hours total time",
+        "Current passport with 6+ months validity",
+        "Legal right to work in US",
+        "High school diploma or GED"
       ],
-      preferred: [
-        "Bachelor's degree from accredited college or university",
-        "1,000 hours of fixed wing turbine time",
-        "Minimum of 100 hours of flight time within the last 12 months",
-        "All foreign transcripts need to be evaluated for equivalency to U.S. degrees by a member organization of the National Association of Credential Evaluation Services (NACES)"
+      preferredQualifications: [
+        "Bachelor's degree",
+        "1,000+ hours turbine time",
+        "100+ hours flight time in last 12 months"
+      ],
+      insideScoop: [
+        "Large fleet expansion planned",
+        "Good career progression opportunities",
+        "Strong international route network"
       ]
     },
-    benefits: [
-      "Competitive salary packages",
-      "Medical, dental, vision coverage",
-      "401(k) with company match",
-      "Profit sharing",
-      "Travel benefits for family",
-      "Flexible spending accounts",
-      "Employee assistance program"
-    ],
-    fleet_types: [
-      "Airbus A380",
-      "Airbus A350",
-      "Airbus A330",
-      "Boeing 777",
-      "Boeing 787",
-      "Boeing 767-400",
-      "Boeing 767-200/300",
-      "Boeing 757-300",
-      "Boeing 757-200",
-      "Airbus A321neo/A321XLR",
-      "Airbus A321",
-      "Boeing 737-MAX 10",
-      "Boeing 737-MAX 9",
-      "Boeing 737-900",
-      "Boeing 737-MAX 8",
-      "Boeing 737-800",
-      "Airbus A320/A320neo",
-      "Airbus A319/A319neo",
-      "Boeing 737-500/700",
-      "Boeing 737-MAX 7",
-      "Airbus A220-300",
-      "Airbus A220-100",
-      "Embraer EMB-195/E190",
-      "Bombardier CRJ-900"
-    ],
-    bases: [
-      "Chicago O'Hare (ORD)",
-      "Denver (DEN)",
-      "Houston (IAH)",
-      "Los Angeles (LAX)",
-      "Newark (EWR)",
-      "San Francisco (SFO)",
-      "Washington Dulles (IAD)"
-    ],
-    pay_scales: {
-      first_officer: {
-        "A380": { year_1: "$125.52", year_2: "$336.67", year_3: "$393.99", year_4: "$403.58", year_5: "$413.21", year_6: "$423.62", year_7: "$435.47", year_8: "$445.43", year_9: "$450.25", year_10: "$456.36", year_11: "$460.47", year_12: "$464.64" },
-        "A350": { year_1: "$125.52", year_2: "$239.41", year_3: "$280.15", year_4: "$286.94", year_5: "$293.79", year_6: "$301.24", year_7: "$309.61", year_8: "$316.72", year_9: "$320.17", year_10: "$324.52", year_11: "$327.42", year_12: "$330.44" },
-        "A330": { year_1: "$125.52", year_2: "$239.41", year_3: "$280.15", year_4: "$286.94", year_5: "$293.79", year_6: "$301.24", year_7: "$309.61", year_8: "$316.72", year_9: "$320.17", year_10: "$324.52", year_11: "$327.42", year_12: "$330.44" },
-        "777": { year_1: "$125.52", year_2: "$239.41", year_3: "$280.15", year_4: "$286.94", year_5: "$293.79", year_6: "$301.24", year_7: "$309.61", year_8: "$316.72", year_9: "$320.17", year_10: "$324.52", year_11: "$327.42", year_12: "$330.44" },
-        "787": { year_1: "$125.52", year_2: "$239.41", year_3: "$280.15", year_4: "$286.94", year_5: "$293.79", year_6: "$301.24", year_7: "$309.61", year_8: "$316.72", year_9: "$320.17", year_10: "$324.52", year_11: "$327.42", year_12: "$330.44" },
-        "767-400": { year_1: "$125.52", year_2: "$239.41", year_3: "$280.15", year_4: "$286.94", year_5: "$293.79", year_6: "$301.24", year_7: "$309.61", year_8: "$316.72", year_9: "$320.17", year_10: "$324.52", year_11: "$327.42", year_12: "$330.44" },
-        "767-200/300": { year_1: "$125.52", year_2: "$198.62", year_3: "$232.42", year_4: "$238.10", year_5: "$243.92", year_6: "$250.02", year_7: "$256.92", year_8: "$262.94", year_9: "$265.60", year_10: "$270.01", year_11: "$273.34", year_12: "$276.56" },
-        "757-300": { year_1: "$125.52", year_2: "$198.62", year_3: "$232.42", year_4: "$238.10", year_5: "$243.92", year_6: "$250.02", year_7: "$256.92", year_8: "$262.94", year_9: "$265.60", year_10: "$270.01", year_11: "$273.34", year_12: "$276.56" },
-        "757-200": { year_1: "$125.52", year_2: "$198.62", year_3: "$232.42", year_4: "$238.10", year_5: "$243.92", year_6: "$250.02", year_7: "$256.92", year_8: "$262.94", year_9: "$265.60", year_10: "$270.01", year_11: "$273.34", year_12: "$276.56" },
-        "A321neo/A321XLR": { year_1: "$125.52", year_2: "$198.62", year_3: "$232.42", year_4: "$238.10", year_5: "$243.92", year_6: "$250.02", year_7: "$256.92", year_8: "$262.94", year_9: "$265.60", year_10: "$270.01", year_11: "$273.34", year_12: "$276.56" },
-        "A321": { year_1: "$125.52", year_2: "$193.02", year_3: "$225.86", year_4: "$231.32", year_5: "$236.88", year_6: "$242.91", year_7: "$249.70", year_8: "$255.47", year_9: "$258.21", year_10: "$261.73", year_11: "$264.13", year_12: "$266.58" },
-        "737-MAX 10": { year_1: "$125.52", year_2: "$193.02", year_3: "$225.86", year_4: "$231.32", year_5: "$236.88", year_6: "$242.91", year_7: "$249.70", year_8: "$255.47", year_9: "$258.21", year_10: "$261.73", year_11: "$264.13", year_12: "$266.58" },
-        "737-MAX 9": { year_1: "$125.52", year_2: "$193.02", year_3: "$225.86", year_4: "$231.32", year_5: "$236.88", year_6: "$242.91", year_7: "$249.70", year_8: "$255.47", year_9: "$258.21", year_10: "$261.73", year_11: "$264.13", year_12: "$266.58" },
-        "737-900": { year_1: "$125.52", year_2: "$193.02", year_3: "$225.86", year_4: "$231.32", year_5: "$236.88", year_6: "$242.91", year_7: "$249.70", year_8: "$255.47", year_9: "$258.21", year_10: "$261.73", year_11: "$264.13", year_12: "$266.58" },
-        "737-MAX 8": { year_1: "$125.52", year_2: "$192.22", year_3: "$224.85", year_4: "$230.32", year_5: "$235.86", year_6: "$241.75", year_7: "$248.51", year_8: "$254.25", year_9: "$256.97", year_10: "$260.44", year_11: "$262.83", year_12: "$265.19" },
-        "737-800": { year_1: "$125.52", year_2: "$192.22", year_3: "$224.85", year_4: "$230.32", year_5: "$235.86", year_6: "$241.75", year_7: "$248.51", year_8: "$254.25", year_9: "$256.97", year_10: "$260.44", year_11: "$262.83", year_12: "$265.19" },
-        "A320/A320neo": { year_1: "$125.52", year_2: "$192.22", year_3: "$224.85", year_4: "$230.32", year_5: "$235.86", year_6: "$241.75", year_7: "$248.51", year_8: "$254.25", year_9: "$256.97", year_10: "$260.44", year_11: "$262.83", year_12: "$265.19" },
-        "A319/A319neo": { year_1: "$125.52", year_2: "$192.22", year_3: "$224.85", year_4: "$230.32", year_5: "$235.86", year_6: "$241.75", year_7: "$248.51", year_8: "$254.25", year_9: "$256.97", year_10: "$260.44", year_11: "$262.83", year_12: "$265.19" },
-        "737-500/700": { year_1: "$125.52", year_2: "$192.22", year_3: "$224.85", year_4: "$230.32", year_5: "$235.86", year_6: "$241.75", year_7: "$248.51", year_8: "$254.25", year_9: "$256.97", year_10: "$260.44", year_11: "$262.83", year_12: "$265.19" },
-        "737-MAX 7": { year_1: "$125.52", year_2: "$192.22", year_3: "$224.85", year_4: "$230.32", year_5: "$235.86", year_6: "$241.75", year_7: "$248.51", year_8: "$254.25", year_9: "$256.97", year_10: "$260.44", year_11: "$262.83", year_12: "$265.19" },
-        "A220-300": { year_1: "$125.52", year_2: "$185.31", year_3: "$216.85", year_4: "$222.09", year_5: "$227.46", year_6: "$233.18", year_7: "$239.72", year_8: "$245.24", year_9: "$247.90", year_10: "$251.29", year_11: "$253.58", year_12: "$255.90" },
-        "A220-100": { year_1: "$125.52", year_2: "$177.71", year_3: "$207.96", year_4: "$212.98", year_5: "$218.11", year_6: "$223.64", year_7: "$229.89", year_8: "$235.20", year_9: "$237.73", year_10: "$240.99", year_11: "$243.21", year_12: "$245.41" },
-        "EMB-195/E190": { year_1: "$125.52", year_2: "$145.14", year_3: "$169.86", year_4: "$174.00", year_5: "$178.15", year_6: "$182.65", year_7: "$187.72", year_8: "$192.05", year_9: "$194.12", year_10: "$196.76", year_11: "$198.60", year_12: "$200.36" },
-        "CRJ-900": { year_1: "$125.52", year_2: "$125.52", year_3: "$144.51", year_4: "$148.02", year_5: "$151.53", year_6: "$155.37", year_7: "$159.70", year_8: "$163.38", year_9: "$165.14", year_10: "$167.38", year_11: "$168.96", year_12: "$170.43" }
-      },
-      captain: {
-        "A380": { year_1: "$624.21", year_2: "$629.24", year_3: "$634.40", year_4: "$639.52", year_5: "$644.66", year_6: "$649.73", year_7: "$654.87", year_8: "$659.90", year_9: "$665.03", year_10: "$670.03", year_11: "$675.17", year_12: "$680.31" },
-        "A350": { year_1: "$443.85", year_2: "$447.45", year_3: "$451.12", year_4: "$454.76", year_5: "$458.40", year_6: "$462.00", year_7: "$465.64", year_8: "$469.22", year_9: "$472.87", year_10: "$476.47", year_11: "$480.09", year_12: "$483.74" },
-        "A330": { year_1: "$443.85", year_2: "$447.45", year_3: "$451.12", year_4: "$454.76", year_5: "$458.40", year_6: "$462.00", year_7: "$465.64", year_8: "$469.22", year_9: "$472.87", year_10: "$476.47", year_11: "$480.09", year_12: "$483.74" },
-        "777": { year_1: "$443.85", year_2: "$447.45", year_3: "$451.12", year_4: "$454.76", year_5: "$458.40", year_6: "$462.00", year_7: "$465.64", year_8: "$469.22", year_9: "$472.87", year_10: "$476.47", year_11: "$480.09", year_12: "$483.74" },
-        "787": { year_1: "$443.85", year_2: "$447.45", year_3: "$451.12", year_4: "$454.76", year_5: "$458.40", year_6: "$462.00", year_7: "$465.64", year_8: "$469.22", year_9: "$472.87", year_10: "$476.47", year_11: "$480.09", year_12: "$483.74" },
-        "767-400": { year_1: "$443.85", year_2: "$447.45", year_3: "$451.12", year_4: "$454.76", year_5: "$458.40", year_6: "$462.00", year_7: "$465.64", year_8: "$469.22", year_9: "$472.87", year_10: "$476.47", year_11: "$480.09", year_12: "$483.74" },
-        "767-200/300": { year_1: "$368.14", year_2: "$371.26", year_3: "$374.27", year_4: "$377.31", year_5: "$380.51", year_6: "$383.48", year_7: "$386.33", year_8: "$389.52", year_9: "$392.29", year_10: "$396.50", year_11: "$400.77", year_12: "$404.92" },
-        "757-300": { year_1: "$368.14", year_2: "$371.26", year_3: "$374.27", year_4: "$377.31", year_5: "$380.51", year_6: "$383.48", year_7: "$386.33", year_8: "$389.52", year_9: "$392.29", year_10: "$396.50", year_11: "$400.77", year_12: "$404.92" },
-        "757-200": { year_1: "$368.14", year_2: "$371.26", year_3: "$374.27", year_4: "$377.31", year_5: "$380.51", year_6: "$383.48", year_7: "$386.33", year_8: "$389.52", year_9: "$392.29", year_10: "$396.50", year_11: "$400.77", year_12: "$404.92" },
-        "A321neo/A321XLR": { year_1: "$368.14", year_2: "$371.26", year_3: "$374.27", year_4: "$377.31", year_5: "$380.51", year_6: "$383.48", year_7: "$386.33", year_8: "$389.52", year_9: "$392.29", year_10: "$396.50", year_11: "$400.77", year_12: "$404.92" },
-        "A321": { year_1: "$358.02", year_2: "$360.83", year_3: "$363.66", year_4: "$366.61", year_5: "$369.59", year_6: "$372.56", year_7: "$375.48", year_8: "$378.42", year_9: "$381.43", year_10: "$384.27", year_11: "$387.28", year_12: "$390.30" },
-        "737-MAX 10": { year_1: "$358.02", year_2: "$360.83", year_3: "$363.66", year_4: "$366.61", year_5: "$369.59", year_6: "$372.56", year_7: "$375.48", year_8: "$378.42", year_9: "$381.43", year_10: "$384.27", year_11: "$387.28", year_12: "$390.30" },
-        "737-MAX 9": { year_1: "$358.02", year_2: "$360.83", year_3: "$363.66", year_4: "$366.61", year_5: "$369.59", year_6: "$372.56", year_7: "$375.48", year_8: "$378.42", year_9: "$381.43", year_10: "$384.27", year_11: "$387.28", year_12: "$390.30" },
-        "737-900": { year_1: "$358.02", year_2: "$360.83", year_3: "$363.66", year_4: "$366.61", year_5: "$369.59", year_6: "$372.56", year_7: "$375.48", year_8: "$378.42", year_9: "$381.43", year_10: "$384.27", year_11: "$387.28", year_12: "$390.30" },
-        "737-MAX 8": { year_1: "$356.46", year_2: "$359.23", year_3: "$362.07", year_4: "$365.00", year_5: "$367.95", year_6: "$370.84", year_7: "$373.73", year_8: "$376.65", year_9: "$379.59", year_10: "$382.47", year_11: "$385.40", year_12: "$388.27" },
-        "737-800": { year_1: "$356.46", year_2: "$359.23", year_3: "$362.07", year_4: "$365.00", year_5: "$367.95", year_6: "$370.84", year_7: "$373.73", year_8: "$376.65", year_9: "$379.59", year_10: "$382.47", year_11: "$385.40", year_12: "$388.27" },
-        "A320/A320neo": { year_1: "$356.46", year_2: "$359.23", year_3: "$362.07", year_4: "$365.00", year_5: "$367.95", year_6: "$370.84", year_7: "$373.73", year_8: "$376.65", year_9: "$379.59", year_10: "$382.47", year_11: "$385.40", year_12: "$388.27" },
-        "A319/A319neo": { year_1: "$356.46", year_2: "$359.23", year_3: "$362.07", year_4: "$365.00", year_5: "$367.95", year_6: "$370.84", year_7: "$373.73", year_8: "$376.65", year_9: "$379.59", year_10: "$382.47", year_11: "$385.40", year_12: "$388.27" },
-        "737-500/700": { year_1: "$356.46", year_2: "$359.23", year_3: "$362.07", year_4: "$365.00", year_5: "$367.95", year_6: "$370.84", year_7: "$373.73", year_8: "$376.65", year_9: "$379.59", year_10: "$382.47", year_11: "$385.40", year_12: "$388.27" },
-        "737-MAX 7": { year_1: "$356.46", year_2: "$359.23", year_3: "$362.07", year_4: "$365.00", year_5: "$367.95", year_6: "$370.84", year_7: "$373.73", year_8: "$376.65", year_9: "$379.59", year_10: "$382.47", year_11: "$385.40", year_12: "$388.27" },
-        "A220-300": { year_1: "$343.51", year_2: "$346.36", year_3: "$349.15", year_4: "$351.97", year_5: "$354.82", year_6: "$357.69", year_7: "$360.50", year_8: "$363.31", year_9: "$366.11", year_10: "$368.96", year_11: "$371.82", year_12: "$374.66" },
-        "A220-100": { year_1: "$329.45", year_2: "$332.18", year_3: "$334.84", year_4: "$337.58", year_5: "$340.30", year_6: "$343.05", year_7: "$345.72", year_8: "$348.44", year_9: "$351.12", year_10: "$353.85", year_11: "$356.59", year_12: "$359.33" },
-        "EMB-195/E190": { year_1: "$269.29", year_2: "$271.30", year_3: "$273.51", year_4: "$275.79", year_5: "$277.88", year_6: "$280.14", year_7: "$282.28", year_8: "$284.50", year_9: "$286.70", year_10: "$288.92", year_11: "$291.19", year_12: "$293.32" },
-        "CRJ-900": { year_1: "$229.12", year_2: "$230.81", year_3: "$232.76", year_4: "$234.63", year_5: "$236.39", year_6: "$238.29", year_7: "$240.18", year_8: "$242.06", year_9: "$243.92", year_10: "$245.83", year_11: "$247.72", year_12: "$249.56" }
-      }
-    }
-  },
-  "American Airlines": {
-    name: "American Airlines",
-    logo: "✈️",
-    iata: "AA",
-    icao: "AAL",
-    headquarters: "Fort Worth, Texas",
-    founded: "1930",
-    fleet_size: 950,
-    destinations: 350,
-    employees: "130,000+",
-    website: "aa.com",
-    phone: "1-800-433-7300",
-    email: "pilotrecruiting@aa.com",
-    hiring_status: true,
-    pilot_application_url: "https://pilots.aa.com/",
-    description: "American Airlines is a major US airline headquartered in Fort Worth, Texas. It is the world's largest airline when measured by fleet size, scheduled passengers carried, and revenue passenger mile.",
-    hiring_requirements: {
-      min_hours: "1,500 ATP minimum",
-      type_rating: false,
-      college_degree: true,
-      clean_record: true
+    seniority: {
+      mostJuniorBase: "Newark (EWR)",
+      mostJuniorCaptainHireDate: "May 2018",
+      retirementsIn2025: 380
     },
-    detailed_requirements: {
-      required: [
-        "Unrestricted FAA Airline Transport Pilot (ATP) certificate with airplane multiengine class rating",
-        "Current FAA first-class medical certificate",
-        "FCC Restricted Radiotelephone Operator Permit (RR)",
-        "Minimum of 1,500 hours of total time",
-        "Current passport with at least six-months of validity remaining at time of employment",
-        "Legal right to work in the United States without sponsorship",
-        "Must be able to travel freely within the United States and without restriction to all countries United serves",
-        "High school diploma or GED equivalent",
-        "International Certificate of Vaccination for Yellow Fever (Yellow Card) must be presented on the first day of employment",
-        "Reliable, punctual attendance is an essential function of the position",
-        "Availability without any planned absences during the first twelve weeks of employment"
-      ],
-      preferred: [
-        "Bachelor's degree from accredited college or university",
-        "1,000 hours of fixed wing turbine time",
-        "Minimum of 100 hours of flight time within the last 12 months",
-        "150 - 250 Turbine PIC"
-      ]
+    payScale: {
+      firstOfficer: { year1: "$106.92/hr", year5: "$255.33/hr", year10: "$279.85/hr" },
+      captain: { year1: "$357.74/hr", year5: "$371.58/hr", year10: "$385.39/hr" }
     },
-    inside_scoop: [
-      "Will get you looked at:",
-      "3000 TT",
-      "1500 Turbine"
-    ],
-    benefits: [
-      "Competitive compensation",
-      "Comprehensive medical benefits",
-      "401(k) with company match",
-      "Profit sharing program",
-      "Travel privileges",
-      "Life insurance coverage",
-      "Tuition reimbursement"
-    ],
-    fleet_types: [
-      "Airbus A319/320/321",
-      "Boeing 737-800/MAX 8",
-      "Boeing 757-200",
-      "Boeing 767-300",
-      "Boeing 777-200/300",
-      "Boeing 787-8/9"
-    ],
-    bases: [
-      "Charlotte (CLT)",
-      "Dallas/Fort Worth (DFW)",
-      "Los Angeles (LAX)",
-      "Miami (MIA)",
-      "New York JFK (JFK)",
-      "Philadelphia (PHL)",
-      "Phoenix (PHX)",
-      "Washington (DCA)"
-    ],
-    pay_scales: {
-      first_officer: {
-        year_1: "$90,000",
-        year_5: "$152,000",
-        year_10: "$190,000"
-      },
-      captain: {
-        "default": {
-          year_1: "$200,000",
-          year_5: "$280,000",
-          year_10: "$340,000"
-        }
-      }
-    }
-  },
-  "Hawaiian Airlines": {
-    name: "Hawaiian Airlines",
-    logo: "✈️",
-    iata: "HA",
-    icao: "HAL",
-    headquarters: "Honolulu, Hawaii",
-    founded: "1929",
-    fleet_size: 61,
-    destinations: 30,
-    employees: "7,000+",
-    website: "hawaiianairlines.com",
-    phone: "1-800-367-5320",
-    email: "pilotcareers@hawaiianair.com",
-    hiring_status: false,
-    pilot_application_url: "https://www.hawaiianairlines.com/careers/first-officer",
-    description: "Hawaiian Airlines is the largest airline in Hawaii and the 10th-largest commercial airline in the United States. Known for authentic Hawaiian hospitality and connecting the Hawaiian Islands to the world.",
-    hiring_requirements: {
-      min_hours: "1,500 ATP minimum",
-      type_rating: false,
-      college_degree: false,
-      clean_record: true
-    },
-    detailed_requirements: {
-      required: [
-        "FAA ATP certified, Airplane Multiengine Land with English proficient endorsement",
-        "First Class FAA Medical Certificate",
-        "1,500 total flight hours",
-        "Minimum of 1,000 fixed wing hours",
-        "FCC Restricted Radiotelephone Operator Permit",
-        "High school diploma or its equivalent",
-        "Eligible to work in the United States"
-      ],
-      preferred: [
-        "1,000 hours turbine as PIC (as defined by FAR Part 1)",
-        "Turbojet/turbo prop experience in complex flying environments",
-        "College degree"
-      ]
-    },
-    benefits: [
-      "Comprehensive medical plan benefits at excellent rates",
-      "Dental coverage", 
-      "Flexible spending accounts for health care and dependent care",
-      "401(k) retirement plan with company contributions",
-      "Life and accidental death and dismemberment insurance",
-      "Long-term disability",
-      "Paid vacation time",
-      "Exceptional travel privileges",
-      "Employee discounts from various stores and companies",
-      "KCM and Cass privileges"
-    ],
-    fleet_types: [
-      "Airbus A321neo",
-      "Airbus A330-200",
-      "Boeing 717-200"
-    ],
-    bases: [
-      "Honolulu (HNL)",
-      "Kahului (OGG)",
-      "Kona (KOA)",
-      "Lihue (LIH)"
-    ],
-    pay_scales: {
-      first_officer: {
-        year_1: "$82,000",
-        year_5: "$128,000",
-        year_10: "$165,000"
-      },
-      captain: {
-        "default": {
-          year_1: "$175,000",
-          year_5: "$225,000",
-          year_10: "$275,000"
-        }
-      }
-    }
-  },
-  "Southwest Airlines": {
-    name: "Southwest Airlines",
-    logo: "✈️",
-    iata: "WN",
-    icao: "SWA",
-    headquarters: "Dallas, Texas",
-    founded: "1967",
-    fleet_size: 817,
-    destinations: 121,
-    employees: "66,000+",
-    website: "southwest.com",
-    phone: "1-800-435-9792",
-    email: "pilotjobs@wnco.com",
-    hiring_status: true,
-    pilot_application_url: "https://careers.southwest.com/pilots",
-    description: "Southwest Airlines is a major US low-cost airline based in Dallas, Texas. Known for its point-to-point service model, no baggage fees, and friendly customer service culture.",
-    hiring_requirements: {
-      min_hours: "1,500 ATP minimum",
-      type_rating: false,
-      college_degree: false,
-      clean_record: true
-    },
-    benefits: [
-      "Profit sharing program",
-      "Medical, dental, vision insurance",
-      "401(k) with company match",
-      "Free flights for employees and family",
-      "Paid time off",
-      "Adoption assistance",
-      "Employee stock purchase plan"
-    ],
-    fleet_types: [
-      "Boeing 737-700",
-      "Boeing 737-800",
-      "Boeing 737 MAX 7",
-      "Boeing 737 MAX 8"
-    ],
-    bases: [
-      "Atlanta (ATL)",
-      "Baltimore (BWI)",
-      "Chicago Midway (MDW)",
-      "Dallas Love Field (DAL)",
-      "Denver (DEN)",
-      "Las Vegas (LAS)",
-      "Orlando (MCO)",
-      "Phoenix (PHX)"
-    ],
-    pay_scales: {
-      first_officer: {
-        year_1: "$79,000",
-        year_5: "$135,000",
-        year_10: "$170,000"
-      },
-      captain: {
-        "default": {
-          year_1: "$189,000",
-          year_5: "$245,000",
-          year_10: "$295,000"
-        }
-      }
-    }
+    additionalInfo: [
+      "Major fleet renewal with new aircraft orders",
+      "Competitive profit sharing program",
+      "Extensive training facilities"
+    ]
   }
 };
 
 export function AirlineDetailsDialog({ open, onOpenChange, airline }: AirlineDetailsDialogProps) {
-  // Use detailed data for major airlines
-  const airlineData = airline ? majorAirlinesData[airline.name] : null;
-
-  // Helper function to get First Officer pay by aircraft type (Delta and United)
-  const getFirstOfficerPay = (aircraft: string, year: number): string => {
-    if (!airlineData || (airlineData.name !== "Delta Air Lines" && airlineData.name !== "United Airlines")) return "$0";
-    
-    if (airlineData.name === "United Airlines") {
-      // United Airlines aircraft-specific pay scale
-      const payScale = airlineData.pay_scales.first_officer as Record<string, any>;
-      if (payScale[aircraft]) {
-        return payScale[aircraft][`year_${year}`] || "$0";
-      }
-      // Try to find a close match if exact aircraft name doesn't exist
-      const aircraftKeys = Object.keys(payScale);
-      const matchingKey = aircraftKeys.find(key => 
-        aircraft.includes(key) || key.includes(aircraft) || 
-        aircraft.replace(/[^a-zA-Z0-9]/g, '').toLowerCase() === key.replace(/[^a-zA-Z0-9]/g, '').toLowerCase()
-      );
-      if (matchingKey) {
-        return payScale[matchingKey][`year_${year}`] || "$0";
-      }
-      return "$0";
-    }
-    
-    // Delta Airlines logic (existing)
-    const payScales: { [key: string]: { [key: string]: string } } = {
-      "Boeing 777": { year_1: "$118.31", year_2: "$225.66", year_3: "$264.07", year_4: "$270.46", year_5: "$276.92", year_6: "$283.94", year_7: "$291.83", year_8: "$298.53", year_9: "$301.79", year_10: "$305.88", year_11: "$308.62", year_12: "$311.46" },
-      "Airbus A350": { year_1: "$118.31", year_2: "$225.66", year_3: "$264.07", year_4: "$270.46", year_5: "$276.92", year_6: "$283.94", year_7: "$291.83", year_8: "$298.53", year_9: "$301.79", year_10: "$305.88", year_11: "$308.62", year_12: "$311.46" },
-      "Boeing 787": { year_1: "$118.31", year_2: "$225.66", year_3: "$264.07", year_4: "$270.46", year_5: "$276.92", year_6: "$283.94", year_7: "$291.83", year_8: "$298.53", year_9: "$301.79", year_10: "$305.88", year_11: "$308.62", year_12: "$311.46" },
-      "Airbus A330-900/300/200": { year_1: "$118.31", year_2: "$225.66", year_3: "$264.07", year_4: "$270.46", year_5: "$276.92", year_6: "$283.94", year_7: "$291.83", year_8: "$298.53", year_9: "$301.79", year_10: "$305.88", year_11: "$308.62", year_12: "$311.46" },
-      "Boeing 767-400ER": { year_1: "$118.31", year_2: "$225.66", year_3: "$264.07", year_4: "$270.46", year_5: "$276.92", year_6: "$283.94", year_7: "$291.83", year_8: "$298.53", year_9: "$301.79", year_10: "$305.88", year_11: "$308.62", year_12: "$311.46" },
-      "Boeing 767-300ER": { year_1: "$118.31", year_2: "$187.21", year_3: "$219.08", year_4: "$224.42", year_5: "$229.91", year_6: "$235.66", year_7: "$242.16", year_8: "$247.84", year_9: "$250.35", year_10: "$254.51", year_11: "$257.64", year_12: "$260.68" },
-      "Boeing 767-300/200": { year_1: "$118.31", year_2: "$187.21", year_3: "$219.08", year_4: "$224.42", year_5: "$229.91", year_6: "$235.66", year_7: "$242.16", year_8: "$247.84", year_9: "$250.35", year_10: "$254.51", year_11: "$257.64", year_12: "$260.68" },
-      "Boeing 757": { year_1: "$118.31", year_2: "$187.21", year_3: "$219.08", year_4: "$224.42", year_5: "$229.91", year_6: "$235.66", year_7: "$242.16", year_8: "$247.84", year_9: "$250.35", year_10: "$254.51", year_11: "$257.64", year_12: "$260.68" },
-      "Airbus A321N": { year_1: "$118.31", year_2: "$187.21", year_3: "$219.08", year_4: "$224.42", year_5: "$229.91", year_6: "$235.66", year_7: "$242.16", year_8: "$247.84", year_9: "$250.35", year_10: "$254.51", year_11: "$257.64", year_12: "$260.68" },
-      "Boeing 737-900": { year_1: "$118.31", year_2: "$181.93", year_3: "$212.89", year_4: "$218.04", year_5: "$223.28", year_6: "$228.96", year_7: "$235.37", year_8: "$240.80", year_9: "$243.38", year_10: "$246.70", year_11: "$248.96", year_12: "$251.27" },
-      "Airbus A321": { year_1: "$118.31", year_2: "$181.93", year_3: "$212.89", year_4: "$218.04", year_5: "$223.28", year_6: "$228.96", year_7: "$235.37", year_8: "$240.80", year_9: "$243.38", year_10: "$246.70", year_11: "$248.96", year_12: "$251.27" },
-      "Boeing 737-800/700": { year_1: "$118.31", year_2: "$181.18", year_3: "$211.94", year_4: "$217.10", year_5: "$222.32", year_6: "$227.87", year_7: "$234.24", year_8: "$239.65", year_9: "$242.21", year_10: "$245.48", year_11: "$247.74", year_12: "$249.96" },
-      "Airbus A320/319": { year_1: "$118.31", year_2: "$181.18", year_3: "$211.94", year_4: "$217.10", year_5: "$222.32", year_6: "$227.87", year_7: "$234.24", year_8: "$239.65", year_9: "$242.21", year_10: "$245.48", year_11: "$247.74", year_12: "$249.96" },
-      "Airbus A220-300": { year_1: "$118.31", year_2: "$174.67", year_3: "$204.39", year_4: "$209.34", year_5: "$214.39", year_6: "$219.79", year_7: "$225.95", year_8: "$231.15", year_9: "$233.66", year_10: "$236.86", year_11: "$239.02", year_12: "$241.20" },
-      "Airbus A220-100": { year_1: "$118.31", year_2: "$167.51", year_3: "$196.02", year_4: "$200.75", year_5: "$205.59", year_6: "$210.80", year_7: "$216.69", year_8: "$221.69", year_9: "$224.08", year_10: "$227.15", year_11: "$229.24", year_12: "$231.32" },
-      "Boeing 717": { year_1: "$118.31", year_2: "$162.94", year_3: "$190.69", year_4: "$195.34", year_5: "$199.96", year_6: "$205.08", year_7: "$210.76", year_8: "$215.63", year_9: "$217.92", year_10: "$220.92", year_11: "$223.02", year_12: "$224.91" },
-      "Embraer EMB-195": { year_1: "$118.31", year_2: "$136.81", year_3: "$160.11", year_4: "$164.01", year_5: "$167.92", year_6: "$172.16", year_7: "$176.94", year_8: "$181.02", year_9: "$182.97", year_10: "$185.46", year_11: "$187.19", year_12: "$188.86" },
-      "Embraer EMB-190/CRJ-900": { year_1: "$118.31", year_2: "$118.31", year_3: "$136.21", year_4: "$139.52", year_5: "$142.83", year_6: "$146.45", year_7: "$150.53", year_8: "$154.00", year_9: "$155.65", year_10: "$157.77", year_11: "$159.26", year_12: "$160.64" }
-    };
-    
-    const aircraftPayScale = payScales[aircraft];
-    if (!aircraftPayScale) {
-      // Return default pay if aircraft not found
-      return getDisplayFirstOfficerPay(year) || "$0";
-    }
-    
-    return aircraftPayScale[`year_${year}`] || "$0";
-  };
-
-  // Helper function to check if first officer pay scale is aircraft-specific
-  const isAircraftSpecificPayScale = (payScale: any): payScale is Record<string, any> => {
-    return payScale && typeof payScale === 'object' && !payScale.year_1 && Object.keys(payScale).some(key => payScale[key]?.year_1);
-  };
-
-  // Helper function to get first officer pay for display
-  const getDisplayFirstOfficerPay = (year: number, aircraft?: string): string => {
-    if (!airlineData) return "-";
-    const payScale = airlineData.pay_scales.first_officer;
-    if (isAircraftSpecificPayScale(payScale)) {
-      // Aircraft-specific pay scale
-      if (aircraft && payScale[aircraft]) {
-        return payScale[aircraft][`year_${year}`] || "-";
-      }
-      // Return first aircraft's pay if no specific aircraft requested
-      const firstAircraft = Object.keys(payScale)[0];
-      return payScale[firstAircraft]?.[`year_${year}`] || "-";
-    } else {
-      // Simple pay scale structure
-      return (payScale as any)[`year_${year}`] || "-";
-    }
-  };
-
   if (!airline) return null;
 
-  // If we don't have detailed data, show a placeholder
+  const airlineData = airlinesData[airline.name];
+
   if (!airlineData) {
     return (
       <Dialog open={open} onOpenChange={onOpenChange}>
-        <DialogContent className="max-w-md">
+        <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
           <DialogHeader>
-            <DialogTitle>{airline.name}</DialogTitle>
+            <DialogTitle className="flex items-center gap-3">
+              <Plane className="h-6 w-6 text-primary" />
+              {airline.name}
+            </DialogTitle>
             <DialogDescription>
-              Airline details and career information
+              Detailed information not available for this airline yet.
             </DialogDescription>
           </DialogHeader>
+          
           <div className="py-6">
-            <p className="text-muted-foreground text-center">
-              Detailed information for {airline.name} is coming soon.
+            <p className="text-muted-foreground">
+              We're working on adding detailed information for {airline.name}. 
+              Please check back later or contact us for specific information about this carrier.
             </p>
           </div>
-          <div className="flex justify-end">
+
+          <div className="flex justify-end pt-4 border-t">
             <Button onClick={() => onOpenChange(false)}>Close</Button>
           </div>
         </DialogContent>
@@ -804,35 +251,26 @@ export function AirlineDetailsDialog({ open, onOpenChange, airline }: AirlineDet
     );
   }
 
-    return (
-      <Dialog open={open} onOpenChange={onOpenChange}>
-        <DialogContent className="max-w-6xl w-[95vw] max-h-[90vh] overflow-y-auto overflow-x-hidden">
-          <div className="min-w-0 w-full">
-            <DialogHeader>
-              <div className="flex items-center gap-4">
-                {airline.logoUrl ? (
-                  <img 
-                    src={airline.logoUrl} 
-                    alt={`${airline.name} logo`}
-                    className="w-12 h-12 object-contain flex-shrink-0"
-                  />
-                ) : airlineData?.logo && (
-                  <div className="text-4xl flex-shrink-0">{airlineData.logo}</div>
-                )}
-                <div className="min-w-0 flex-1">
-                  <DialogTitle className="text-2xl break-words">{airlineData.name}</DialogTitle>
-                  <DialogDescription className="break-words">
-                    Complete airline profile with hiring requirements, benefits, and career information
-                  </DialogDescription>
-                  <div className="flex gap-2 mt-1 flex-wrap">
-                    <Badge variant="secondary">{airlineData.iata}</Badge>
-                    <Badge variant="secondary">{airlineData.icao}</Badge>
-                  </div>
-                </div>
+  return (
+    <Dialog open={open} onOpenChange={onOpenChange}>
+      <DialogContent className="max-w-6xl max-h-[90vh] overflow-y-auto">
+        <DialogHeader>
+          <DialogTitle className="flex items-center gap-3">
+            <div className="text-3xl">{airlineData.logo}</div>
+            <div>
+              <h2 className="text-2xl font-bold">{airlineData.name}</h2>
+              <div className="flex items-center gap-4 text-sm text-muted-foreground mt-1">
+                <span>Call Sign: {airlineData.callSign}</span>
+                <span>•</span>
+                <Badge variant={airlineData.hiring.isHiring ? "default" : "secondary"}>
+                  {airlineData.hiring.isHiring ? "Hiring" : "Not Hiring"}
+                </Badge>
               </div>
-            </DialogHeader>
+            </div>
+          </DialogTitle>
+        </DialogHeader>
 
-        <div className="grid md:grid-cols-2 gap-6">
+        <div className="space-y-6 py-4">
           {/* Company Overview */}
           <Card>
             <CardHeader>
@@ -841,146 +279,50 @@ export function AirlineDetailsDialog({ open, onOpenChange, airline }: AirlineDet
                 Company Overview
               </CardTitle>
             </CardHeader>
-            <CardContent className="space-y-3">
-              <div className="flex justify-between">
-                <span className="text-muted-foreground">Headquarters:</span>
-                <span className="font-medium">{airlineData.headquarters}</span>
+            <CardContent>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div className="space-y-4">
+                  <div>
+                    <span className="text-sm font-medium text-muted-foreground">Call Sign</span>
+                    <p className="text-base font-medium">{airlineData.callSign}</p>
+                  </div>
+                  <div>
+                    <span className="text-sm font-medium text-muted-foreground">Pilot Group Size</span>
+                    <p className="text-base font-medium">{airlineData.pilotGroupSize}</p>
+                  </div>
+                  <div>
+                    <span className="text-sm font-medium text-muted-foreground">Fleet Size</span>
+                    <p className="text-base font-medium">{airlineData.fleetSize} aircraft</p>
+                  </div>
+                </div>
+                <div className="space-y-4">
+                  <div>
+                    <span className="text-sm font-medium text-muted-foreground">Description</span>
+                    <p className="text-base">{airlineData.description}</p>
+                  </div>
+                  <div>
+                    <span className="text-sm font-medium text-muted-foreground">Pilot Union Group</span>
+                    <p className="text-base font-medium">{airlineData.pilotUnion}</p>
+                  </div>
+                </div>
               </div>
-              <div className="flex justify-between">
-                <span className="text-muted-foreground">Founded:</span>
-                <span className="font-medium">{airlineData.founded}</span>
-              </div>
-              <div className="flex justify-between">
-                <span className="text-muted-foreground">Fleet Size:</span>
-                <span className="font-medium">{airlineData.fleet_size} aircraft</span>
-              </div>
-              <div className="flex justify-between">
-                <span className="text-muted-foreground">Destinations:</span>
-                <span className="font-medium">{airlineData.destinations}</span>
-              </div>
-              <div className="flex justify-between">
-                <span className="text-muted-foreground">Employees:</span>
-                <span className="font-medium">{airlineData.employees}</span>
-              </div>
-              <Separator />
-              <p className="text-sm text-muted-foreground">{airlineData.description}</p>
             </CardContent>
           </Card>
 
-          {/* Pilot Application Information */}
+          {/* Fleet Information */}
           <Card>
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
-                <Users className="h-5 w-5" />
-                Pilot Application Information
+                <Plane className="h-5 w-5" />
+                Fleet Information
               </CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-3">
-              <div className="flex justify-between items-center">
-                <span className="text-muted-foreground">Currently Hiring:</span>
-                <Badge variant={airlineData.hiring_status ? "default" : "secondary"}>
-                  {airlineData.hiring_status ? "Yes" : "No"}
-                </Badge>
-              </div>
-              <div className="flex items-center gap-3">
-                <ExternalLink className="h-4 w-4 text-muted-foreground" />
-                <Button variant="link" className="p-0 h-auto" asChild>
-                  <a href={airlineData.pilot_application_url} target="_blank" rel="noopener noreferrer">
-                    Apply Now
-                  </a>
-                </Button>
-              </div>
-            </CardContent>
-          </Card>
-
-          {/* Hiring Requirements */}
-          <Card className={airlineData.detailed_requirements ? "md:col-span-2" : ""}>
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <Users className="h-5 w-5" />
-                Hiring Requirements
-              </CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-4">
-               {airlineData.detailed_requirements ? (
-                 <div className="grid md:grid-cols-2 gap-6">
-                   <div>
-                     <h4 className="font-semibold text-sm mb-3 text-green-700 dark:text-green-400">Required</h4>
-                     <div className="space-y-2">
-                       {airlineData.detailed_requirements.required.map((requirement, index) => (
-                         <div key={index} className="flex items-start gap-2">
-                           <div className="h-1.5 w-1.5 bg-green-600 rounded-full mt-2 flex-shrink-0" />
-                           <span className="text-sm">{requirement}</span>
-                         </div>
-                       ))}
-                     </div>
-                   </div>
-                   <div>
-                     <h4 className="font-semibold text-sm mb-3 text-blue-700 dark:text-blue-400">Preferred</h4>
-                     <div className="space-y-2">
-                       {airlineData.detailed_requirements.preferred.map((requirement, index) => (
-                         <div key={index} className="flex items-start gap-2">
-                           <div className="h-1.5 w-1.5 bg-blue-600 rounded-full mt-2 flex-shrink-0" />
-                           <span className="text-sm">{requirement}</span>
-                         </div>
-                       ))}
-                     </div>
-                     
-                     {airlineData.inside_scoop && (
-                       <div className="mt-6">
-                         <h4 className="font-semibold text-sm mb-3 text-amber-700 dark:text-amber-400">Inside Scoop</h4>
-                         <div className="space-y-2">
-                           {airlineData.inside_scoop.map((tip, index) => (
-                             <div key={index} className="flex items-start gap-2">
-                               <div className="h-1.5 w-1.5 bg-amber-600 rounded-full mt-2 flex-shrink-0" />
-                               <span className="text-sm italic">{tip}</span>
-                             </div>
-                           ))}
-                         </div>
-                       </div>
-                     )}
-                   </div>
-                 </div>
-               ) : (
-                 <div className="space-y-3">
-                   <div className="flex justify-between">
-                     <span className="text-muted-foreground">Minimum Hours:</span>
-                     <span className="font-medium">{airlineData.hiring_requirements.min_hours}</span>
-                   </div>
-                   <div className="flex justify-between">
-                     <span className="text-muted-foreground">Type Rating:</span>
-                     <Badge variant={airlineData.hiring_requirements.type_rating ? "default" : "secondary"}>
-                       {airlineData.hiring_requirements.type_rating ? "Required" : "Not Required"}
-                     </Badge>
-                   </div>
-                   <div className="flex justify-between">
-                     <span className="text-muted-foreground">College Degree:</span>
-                     <Badge variant={airlineData.hiring_requirements.college_degree ? "default" : "secondary"}>
-                       {airlineData.hiring_requirements.college_degree ? "Required" : "Preferred"}
-                     </Badge>
-                   </div>
-                   <div className="flex justify-between">
-                     <span className="text-muted-foreground">Clean Record:</span>
-                     <Badge variant={airlineData.hiring_requirements.clean_record ? "default" : "secondary"}>
-                       {airlineData.hiring_requirements.clean_record ? "Required" : "Not Required"}
-                     </Badge>
-                   </div>
-                 </div>
-               )}
-            </CardContent>
-          </Card>
-
-          {/* Benefits */}
-          <Card>
-            <CardHeader>
-              <CardTitle>Benefits Package</CardTitle>
             </CardHeader>
             <CardContent>
-              <div className="grid gap-2">
-                {airlineData.benefits.map((benefit, index) => (
-                  <div key={index} className="flex items-center gap-2">
-                    <div className="h-1.5 w-1.5 bg-primary rounded-full" />
-                    <span className="text-sm">{benefit}</span>
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
+                {airlineData.fleetInfo.map((aircraft, index) => (
+                  <div key={index} className="flex items-center justify-between p-3 bg-muted/50 rounded-lg">
+                    <span className="font-medium">{aircraft.type}</span>
+                    <Badge variant="outline">{aircraft.quantity}</Badge>
                   </div>
                 ))}
               </div>
@@ -996,517 +338,188 @@ export function AirlineDetailsDialog({ open, onOpenChange, airline }: AirlineDet
               </CardTitle>
             </CardHeader>
             <CardContent>
-              <div className="grid gap-2">
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
                 {airlineData.bases.map((base, index) => (
-                  <div key={index} className="flex items-center gap-2">
-                    <MapPin className="h-3 w-3 text-muted-foreground" />
-                    <span className="text-sm">{base}</span>
+                  <div key={index} className="flex items-center gap-2 p-3 bg-muted/50 rounded-lg">
+                    <MapPin className="h-4 w-4 text-muted-foreground" />
+                    <span>{base}</span>
                   </div>
                 ))}
               </div>
             </CardContent>
           </Card>
 
-          {/* Fleet Types */}
-          <Card className="md:col-span-2">
+          {/* Hiring Information */}
+          <Card>
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
-                <Plane className="h-5 w-5" />
-                Fleet Types
+                <Users className="h-5 w-5" />
+                Hiring Information
               </CardTitle>
             </CardHeader>
-            <CardContent>
-              <div className="flex flex-wrap gap-2">
-                {airlineData.fleet_types.map((aircraft, index) => (
-                  <Badge key={index} variant="outline">
-                    {aircraft}
-                  </Badge>
-                ))}
+            <CardContent className="space-y-4">
+              <div className="flex items-center justify-between">
+                <span className="font-medium">Current Hiring Status:</span>
+                <Badge variant={airlineData.hiring.isHiring ? "default" : "secondary"}>
+                  {airlineData.hiring.isHiring ? "✓ Actively Hiring" : "✗ Not Currently Hiring"}
+                </Badge>
               </div>
-            </CardContent>
-          </Card>
-        </div>
-
-        {/* First Officer Pay Scale - Full Width (Delta and United only) */}
-        {(airlineData.name === "Delta Air Lines" || airlineData.name === "United Airlines") && (
-          <Card className="mt-6">
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <DollarSign className="h-5 w-5" />
-                First Officer Hourly Pay Scale
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="max-h-80 overflow-y-auto border rounded-md">
-                <table className="w-full text-sm">
-                  <thead className="sticky top-0 bg-background">
-                    <tr className="border-b">
-                      <th className="text-left p-3 font-semibold">Aircraft Type</th>
-                      <th className="text-center p-3 font-semibold">1</th>
-                      <th className="text-center p-3 font-semibold">2</th>
-                      <th className="text-center p-3 font-semibold">3</th>
-                      <th className="text-center p-3 font-semibold">4</th>
-                      <th className="text-center p-3 font-semibold">5</th>
-                      <th className="text-center p-3 font-semibold">6</th>
-                      <th className="text-center p-3 font-semibold">7</th>
-                      <th className="text-center p-3 font-semibold">8</th>
-                      <th className="text-center p-3 font-semibold">9</th>
-                      <th className="text-center p-3 font-semibold">10</th>
-                      <th className="text-center p-3 font-semibold">11</th>
-                      <th className="text-center p-3 font-semibold">12</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {airlineData.fleet_types.map((aircraft, index) => (
-                      <tr key={index} className="border-b hover:bg-muted/50">
-                        <td className="p-3 font-medium">{aircraft}</td>
-                        <td className="text-center p-3">{getFirstOfficerPay(aircraft, 1)}</td>
-                        <td className="text-center p-3">{getFirstOfficerPay(aircraft, 2)}</td>
-                        <td className="text-center p-3">{getFirstOfficerPay(aircraft, 3)}</td>
-                        <td className="text-center p-3">{getFirstOfficerPay(aircraft, 4)}</td>
-                        <td className="text-center p-3">{getFirstOfficerPay(aircraft, 5)}</td>
-                        <td className="text-center p-3">{getFirstOfficerPay(aircraft, 6)}</td>
-                        <td className="text-center p-3">{getFirstOfficerPay(aircraft, 7)}</td>
-                        <td className="text-center p-3">{getFirstOfficerPay(aircraft, 8)}</td>
-                        <td className="text-center p-3">{getFirstOfficerPay(aircraft, 9)}</td>
-                        <td className="text-center p-3">{getFirstOfficerPay(aircraft, 10)}</td>
-                        <td className="text-center p-3">{getFirstOfficerPay(aircraft, 11)}</td>
-                        <td className="text-center p-3">{getFirstOfficerPay(aircraft, 12)}</td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
-            </CardContent>
-          </Card>
-        )}
-
-        {/* Captain Pay Scale - Full Width (Delta and United only) */}
-        {(airlineData.name === "Delta Air Lines" || airlineData.name === "United Airlines") && (
-          <Card className="mt-6">
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <DollarSign className="h-5 w-5" />
-                Captain Hourly Pay Scale
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="max-h-80 overflow-y-auto border rounded-md">
-                <table className="w-full text-sm">
-                  <thead className="sticky top-0 bg-background">
-                    <tr className="border-b">
-                      <th className="text-left p-3 font-semibold">Aircraft Type</th>
-                      <th className="text-center p-3 font-semibold">1</th>
-                      <th className="text-center p-3 font-semibold">2</th>
-                      <th className="text-center p-3 font-semibold">3</th>
-                      <th className="text-center p-3 font-semibold">4</th>
-                      <th className="text-center p-3 font-semibold">5</th>
-                      <th className="text-center p-3 font-semibold">6</th>
-                      <th className="text-center p-3 font-semibold">7</th>
-                      <th className="text-center p-3 font-semibold">8</th>
-                      <th className="text-center p-3 font-semibold">9</th>
-                      <th className="text-center p-3 font-semibold">10</th>
-                      <th className="text-center p-3 font-semibold">11</th>
-                      <th className="text-center p-3 font-semibold">12</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {Object.entries(airlineData.pay_scales.captain).map(([aircraft, payScale]) => (
-                      <tr key={aircraft} className="border-b hover:bg-muted/50">
-                        <td className="p-3 font-medium">{aircraft === "default" ? "All Aircraft" : aircraft}</td>
-                        <td className="text-center p-3">{payScale.year_1 || "-"}</td>
-                        <td className="text-center p-3">{payScale.year_2 || "-"}</td>
-                        <td className="text-center p-3">{payScale.year_3 || "-"}</td>
-                        <td className="text-center p-3">{payScale.year_4 || "-"}</td>
-                        <td className="text-center p-3">{payScale.year_5 || "-"}</td>
-                        <td className="text-center p-3">{payScale.year_6 || "-"}</td>
-                        <td className="text-center p-3">{payScale.year_7 || "-"}</td>
-                        <td className="text-center p-3">{payScale.year_8 || "-"}</td>
-                        <td className="text-center p-3">{payScale.year_9 || "-"}</td>
-                        <td className="text-center p-3">{payScale.year_10 || "-"}</td>
-                        <td className="text-center p-3">{payScale.year_11 || "-"}</td>
-                        <td className="text-center p-3">{payScale.year_12 || "-"}</td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
-            </CardContent>
-          </Card>
-        )}
-
-        {/* Basic Pay Scale for non-Delta airlines */}
-        {airlineData.name !== "Delta Air Lines" && (
-          <Card className="mt-6">
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <DollarSign className="h-5 w-5" />
-                Pay Scale (Estimated Annual)
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              {airlineData.name === "Alaska Airlines" ? (
-                <div className="overflow-x-auto">
-                  <table className="w-full border-collapse border border-gray-300">
-                    <thead>
-                      <tr className="bg-muted">
-                        <th className="border border-gray-300 p-3 text-left">Years of Service</th>
-                        <th className="border border-gray-300 p-3 text-center">First Officer</th>
-                        <th className="border border-gray-300 p-3 text-center">Captain</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {[
-                        { range: "0 to 1", firstOfficer: getDisplayFirstOfficerPay(1), captain: airlineData.pay_scales.captain.default?.year_1 },
-                        { range: "1 to 2", firstOfficer: getDisplayFirstOfficerPay(2), captain: airlineData.pay_scales.captain.default?.year_2 },
-                        { range: "2 to 3", firstOfficer: getDisplayFirstOfficerPay(3), captain: airlineData.pay_scales.captain.default?.year_3 },
-                        { range: "3 to 4", firstOfficer: getDisplayFirstOfficerPay(4), captain: airlineData.pay_scales.captain.default?.year_4 },
-                        { range: "4 to 5", firstOfficer: getDisplayFirstOfficerPay(5), captain: airlineData.pay_scales.captain.default?.year_5 },
-                        { range: "5 to 6", firstOfficer: getDisplayFirstOfficerPay(6), captain: airlineData.pay_scales.captain.default?.year_6 },
-                        { range: "6 to 7", firstOfficer: getDisplayFirstOfficerPay(7), captain: airlineData.pay_scales.captain.default?.year_7 },
-                        { range: "7 to 8", firstOfficer: getDisplayFirstOfficerPay(8), captain: airlineData.pay_scales.captain.default?.year_8 },
-                        { range: "8 to 9", firstOfficer: getDisplayFirstOfficerPay(9), captain: airlineData.pay_scales.captain.default?.year_9 },
-                        { range: "9 to 10", firstOfficer: getDisplayFirstOfficerPay(10), captain: airlineData.pay_scales.captain.default?.year_10 },
-                        { range: "10 to 11", firstOfficer: getDisplayFirstOfficerPay(11), captain: airlineData.pay_scales.captain.default?.year_11 },
-                        { range: "11 and Up", firstOfficer: getDisplayFirstOfficerPay(12), captain: airlineData.pay_scales.captain.default?.year_12 }
-                      ].map((yearData, index) => (
-                        <tr key={index} className="border-b hover:bg-muted/50">
-                          <td className="border border-gray-300 p-3 font-medium">{yearData.range}</td>
-                          <td className="border border-gray-300 p-3 text-center">{yearData.firstOfficer || "-"}</td>
-                          <td className="border border-gray-300 p-3 text-center">{yearData.captain || "-"}</td>
-                        </tr>
-                      ))}
-                    </tbody>
-                  </table>
+              
+              {airlineData.hiring.isHiring && (
+                <div>
+                  <Button asChild className="w-full">
+                    <a href={airlineData.hiring.applicationUrl} target="_blank" rel="noopener noreferrer">
+                      Apply Now <ExternalLink className="ml-2 h-4 w-4" />
+                    </a>
+                  </Button>
                 </div>
-              ) : (
-                <div className="grid md:grid-cols-2 gap-6">
-                  <div>
-                    <h4 className="font-semibold mb-3">First Officer</h4>
-                    <div className="space-y-2">
-                      <div className="flex justify-between">
-                        <span className="text-muted-foreground">Year 1:</span>
-                        <span className="font-medium">{getDisplayFirstOfficerPay(1)}</span>
-                      </div>
-                      <div className="flex justify-between">
-                        <span className="text-muted-foreground">Year 5:</span>
-                        <span className="font-medium">{getDisplayFirstOfficerPay(5)}</span>
-                      </div>
-                      <div className="flex justify-between">
-                        <span className="text-muted-foreground">Year 10:</span>
-                        <span className="font-medium">{getDisplayFirstOfficerPay(10)}</span>
-                      </div>
-                    </div>
-                  </div>
-                  <div>
-                    <h4 className="font-semibold mb-3">Captain</h4>
-                    <div className="space-y-2">
-                      <div className="flex justify-between">
-                        <span className="text-muted-foreground">Year 1:</span>
-                        <span className="font-medium">{airlineData.pay_scales.captain.default?.year_1}</span>
-                      </div>
-                      <div className="flex justify-between">
-                        <span className="text-muted-foreground">Year 5:</span>
-                        <span className="font-medium">{airlineData.pay_scales.captain.default?.year_5}</span>
-                      </div>
-                      <div className="flex justify-between">
-                        <span className="text-muted-foreground">Year 10:</span>
-                        <span className="font-medium">{airlineData.pay_scales.captain.default?.year_10}</span>
-                      </div>
-                    </div>
-                  </div>
+              )}
+
+              <Separator />
+              
+              <div>
+                <h4 className="font-semibold mb-3">Required Qualifications</h4>
+                <ul className="space-y-2 text-sm">
+                  {airlineData.hiring.requiredQualifications.map((req, index) => (
+                    <li key={index} className="flex items-start gap-2">
+                      <span className="text-primary mt-1 text-xs">✓</span>
+                      <span>{req}</span>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+
+              <div>
+                <h4 className="font-semibold mb-3">Preferred Qualifications</h4>
+                <ul className="space-y-2 text-sm">
+                  {airlineData.hiring.preferredQualifications.map((pref, index) => (
+                    <li key={index} className="flex items-start gap-2">
+                      <span className="text-muted-foreground mt-1 text-xs">◦</span>
+                      <span>{pref}</span>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+
+              {airlineData.hiring.insideScoop && airlineData.hiring.insideScoop.length > 0 && (
+                <div className="bg-primary/5 border border-primary/20 p-4 rounded-lg">
+                  <h4 className="font-semibold mb-2 text-primary flex items-center gap-2">
+                    <span>💡</span>
+                    Inside Scoop
+                  </h4>
+                  <ul className="space-y-1 text-sm">
+                    {airlineData.hiring.insideScoop.map((tip, index) => (
+                      <li key={index} className="flex items-start gap-2">
+                        <span className="text-primary mt-1">•</span>
+                        <span>{tip}</span>
+                      </li>
+                    ))}
+                  </ul>
                 </div>
               )}
             </CardContent>
           </Card>
-        )}
 
-        {/* Schedules/Line Details (Delta only) */}
-        {airlineData.name === "Delta Air Lines" && (
-          <Card className="mt-6">
+          {/* Seniority Information */}
+          <Card>
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
-                <Clock className="h-5 w-5" />
-                Schedules/Line Details
+                <CalendarDays className="h-5 w-5" />
+                Seniority Information
               </CardTitle>
             </CardHeader>
-            <CardContent className="space-y-6 overflow-hidden">
-              {/* Line Types */}
-              <div>
-                <h4 className="font-semibold text-base mb-3">Line Types</h4>
-                <div className="space-y-3 text-sm">
-                  <div>
-                    <span className="font-medium block mb-1">Initial/Adjusted:</span>
-                    <span className="block pl-4 text-muted-foreground break-words">Awarded via PBS/DBMS, modified for conflicts.</span>
-                  </div>
-                  <div>
-                    <span className="font-medium block mb-1">Regular:</span>
-                    <span className="block pl-4 text-muted-foreground break-words">Includes rotations, vacations, leaves, days off.</span>
-                  </div>
-                  <div>
-                    <span className="font-medium block mb-1">Reserve:</span>
-                    <span className="block pl-4 text-muted-foreground break-words">Includes on-call days and X-days (off days).</span>
-                  </div>
-                  <div>
-                    <span className="font-medium block mb-1">Blank Regular:</span>
-                    <span className="block pl-4 text-muted-foreground break-words">No rotations, no guarantee.</span>
-                  </div>
-                  <div>
-                    <span className="font-medium block mb-1">RLL:</span>
-                    <span className="block pl-4 text-muted-foreground break-words">Reduced Lower Limit Line - Below Line Construction Window (LCW) lower limit, awarded on request.</span>
-                  </div>
-                  <div>
-                    <span className="font-medium block mb-1">Specially Created:</span>
-                    <span className="block pl-4 text-muted-foreground break-words">Post-award reserve line.</span>
-                  </div>
+            <CardContent>
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <div className="text-center p-4 bg-muted/50 rounded-lg">
+                  <div className="text-sm font-medium text-muted-foreground mb-1">Most Junior Base</div>
+                  <div className="text-lg font-bold">{airlineData.seniority.mostJuniorBase}</div>
                 </div>
-              </div>
-
-              <Separator />
-
-              {/* Key Terms */}
-              <div>
-                <h4 className="font-semibold text-base mb-3">Key Terms</h4>
-                <div className="space-y-3 text-sm">
-                  <div>
-                    <span className="font-medium block mb-1">Line Adjustment:</span>
-                    <span className="block pl-4 text-muted-foreground break-words">Company removes rotations to resolve FAR/PWA conflicts.</span>
-                  </div>
-                  <div>
-                    <span className="font-medium block mb-1">Guarantees:</span>
-                    <span className="block pl-4 text-muted-foreground break-words">Minimum pay/credit entitlements; pro rata calculations for partial periods.</span>
-                  </div>
-                  <div>
-                    <span className="font-medium block mb-1">Reserve Day/Share:</span>
-                    <span className="block pl-4 text-muted-foreground break-words">On-call or X-day; pro rata share is guarantee divided by on-call days.</span>
-                  </div>
+                <div className="text-center p-4 bg-muted/50 rounded-lg">
+                  <div className="text-sm font-medium text-muted-foreground mb-1">Most Jr Captain Hire Date</div>
+                  <div className="text-lg font-bold">{airlineData.seniority.mostJuniorCaptainHireDate}</div>
                 </div>
-              </div>
-
-              <Separator />
-
-              {/* Regular Line Guarantee */}
-              <div>
-                <h4 className="font-semibold text-base mb-3">Regular Line Guarantee</h4>
-                <div className="space-y-2 text-sm break-words">
-                  <div>
-                    <span className="font-medium">Minimum:</span> Lesser of 65 credit hours or pilot's block hour limit.
-                  </div>
-                  <div>
-                    <span className="font-medium">Exceptions:</span> RLL guarantees LCW lower limit (pilot option); blank lines have no guarantee.
-                  </div>
-                  <div>
-                    <span className="font-medium">Computation:</span> Computed at aircraft model pay rates; prorated for mixed models based on scheduled credit.
-                  </div>
-                  <div>
-                    <span className="font-medium">Reductions:</span> For unpaid leaves/furloughs, line adjustments, or net swap losses.
-                  </div>
+                <div className="text-center p-4 bg-muted/50 rounded-lg">
+                  <div className="text-sm font-medium text-muted-foreground mb-1">Retirements in 2025</div>
+                  <div className="text-lg font-bold">{airlineData.seniority.retirementsIn2025}</div>
                 </div>
-              </div>
-
-              <Separator />
-
-              {/* Reserve Line Guarantee */}
-              <div>
-                <h4 className="font-semibold text-base mb-3">Reserve Line Guarantee</h4>
-                <div className="space-y-2 text-sm break-words">
-                  <div>
-                    <span className="font-medium">Credit:</span> Average Line Value (ALV) minus 2 hours (72–80 hours range).
-                  </div>
-                  <div>
-                    <span className="font-medium">Pay:</span> Complex formula ensuring minimum based on highest-paying aircraft in category:
-                    <div className="ml-4 mt-1 p-2 bg-muted rounded text-xs break-words overflow-wrap-anywhere">
-                      (ALV - 2 hrs, 72–80 range) - accumulated credit, multiplied by highest rate, plus accumulated credit value (at highest rate, plus international/ocean crossing pay).
-                    </div>
-                  </div>
-                  <div>
-                    <span className="font-medium">Adjustments:</span>
-                    <ul className="ml-4 mt-1 space-y-1 break-words">
-                      <li>• Reduced pro rata for vacation/CQ training days or post-award unpaid leaves.</li>
-                      <li>• Increased pro rata for added on-call days or extra short calls (1 hour each).</li>
-                      <li>• Specially created lines: Pro rata for on-call/X-days.</li>
-                    </ul>
-                  </div>
-                </div>
-              </div>
-
-              <Separator />
-
-              {/* Additional Guarantees */}
-              <div>
-                <h4 className="font-semibold text-base mb-3">Additional Guarantees</h4>
-                <div className="space-y-3 text-sm break-words">
-                  <div>
-                    <h5 className="font-medium text-primary mb-1">Unassigned Pilots</h5>
-                    <span className="break-words">Guarantee: Reserve guarantee of lowest-paying revenue aircraft position (per Section 22 B.).</span>
-                  </div>
-                  
-                  <div>
-                    <h5 className="font-medium text-primary mb-1">Company-Removal Guarantee</h5>
-                    <div className="space-y-1 break-words">
-                      <div><span className="font-medium">If removed post-adjustment:</span> Pay/credit for scheduled credit + flown portion, plus international/ocean pay if applicable.</div>
-                      <div><span className="font-medium">Exclusions:</span> <span className="break-all">Pilot-initiated (e.g., sick, vacation, swaps), IROPS, training/OE, prior bid conflicts, asterisk rotations, low-time pairings, reserve conflicts, recovery/reroutes, discipline, document failures, retirement/death/furlough/termination.</span></div>
-                      <div><span className="font-medium">Reserve conflict removal:</span> Greater of removed rotation credit or accumulated reserve credit.</div>
-                    </div>
-                  </div>
-
-                  <div>
-                    <h5 className="font-medium text-primary mb-1">Rotation Guarantee</h5>
-                    <div className="space-y-1 break-words">
-                      <div><span className="font-medium">For IROPS/FAR/PWA conflicts:</span> Greater of scheduled credit or accumulated recovery/reroute credit.</div>
-                      <div><span className="font-medium">Exception:</span> No guarantee if conflict from prior bid white/yellow slip.</div>
-                      <div><span className="font-medium">Application:</span> At completion date; special rules for transition rotations (may shift credit across bid periods, capped at white slip limit).</div>
-                    </div>
-                  </div>
-
-                  <div>
-                    <h5 className="font-medium text-primary mb-1">Mixed Aircraft Model Guarantee</h5>
-                    <div className="space-y-1 break-words">
-                      <div><span className="font-medium">If FAA approves mixing models:</span> Composite hourly rate for reserve guarantee is weighted average by fleet mix, adjusted annually Jan 1.</div>
-                      <div><span className="font-medium">Example:</span> <span className="break-all">A350 and B767-300ER mix yields ~$373.16/hour (12-year captain rate).</span></div>
-                    </div>
-                  </div>
-
-                  <div>
-                    <h5 className="font-medium text-primary mb-1">Suit-Up Pay and Credit</h5>
-                    <div className="space-y-1 break-words">
-                      <div><span className="font-medium">Regular/long-call reserve:</span> 2 hours pay/credit if unacknowledged removal and reports (offset vs. rotation guarantee; waiver requires Crew Scheduling approval).</div>
-                      <div><span className="font-medium">Short-call reserve:</span> 2 hours if notified &lt;2 hours before report.</div>
-                      <div><span className="font-medium">Reserve short call without flying:</span> 1 hour pay (no credit) per completed period (release counts as complete).</div>
-                      <div><span className="font-medium">Reserve on X-day report:</span> 2 hours pay (no credit), released with rest periods.</div>
-                    </div>
-                  </div>
-
-                  <div>
-                    <h5 className="font-medium text-primary mb-1">Miscellaneous Guarantees</h5>
-                    <ul className="space-y-1 break-words">
-                      <li>• <span className="font-medium">Cancelled known absence (non-unpaid):</span> Pay/credit for original value</li>
-                      <li>• <span className="font-medium">Disciplinary/investigatory meeting on day off:</span> Additional pay equal to Average Daily Guarantee (ADG), if not on paid leave</li>
-                    </ul>
-                  </div>
-                </div>
-              </div>
-
-              <div className="bg-muted p-3 rounded-md text-sm break-words">
-                <span className="font-medium">Note:</span> This section protects pilots from pay losses due to company actions or disruptions while allowing reductions for personal choices. Guarantees are tied to bid periods (~monthly schedules) and ensure equitable compensation across roles and aircraft.
-              </div>
-
-              <Separator />
-
-              {/* Regular Line Guarantee */}
-              <div>
-                <h4 className="font-semibold text-base mb-3">Regular Line Guarantee</h4>
-                <div className="space-y-2 text-sm">
-                  <div>
-                    <span className="font-medium">Minimum:</span> Lesser of 65 credit hours or pilot's block hour limit.
-                  </div>
-                  <div>
-                    <span className="font-medium">Exceptions:</span> RLL guarantees LCW lower limit (pilot option); blank lines have no guarantee.
-                  </div>
-                  <div>
-                    <span className="font-medium">Computation:</span> Computed at aircraft model pay rates; prorated for mixed models based on scheduled credit.
-                  </div>
-                  <div>
-                    <span className="font-medium">Reductions:</span> For unpaid leaves/furloughs, line adjustments, or net swap losses.
-                  </div>
-                </div>
-              </div>
-
-              <Separator />
-
-              {/* Reserve Line Guarantee */}
-              <div>
-                <h4 className="font-semibold text-base mb-3">Reserve Line Guarantee</h4>
-                <div className="space-y-2 text-sm">
-                  <div>
-                    <span className="font-medium">Credit:</span> Average Line Value (ALV) minus 2 hours (72–80 hours range).
-                  </div>
-                  <div>
-                    <span className="font-medium">Pay:</span> Complex formula ensuring minimum based on highest-paying aircraft in category:
-                    <div className="ml-4 mt-1 p-2 bg-muted rounded text-xs">
-                      (ALV - 2 hrs, 72–80 range) - accumulated credit, multiplied by highest rate, plus accumulated credit value (at highest rate, plus international/ocean crossing pay).
-                    </div>
-                  </div>
-                  <div>
-                    <span className="font-medium">Adjustments:</span>
-                    <ul className="ml-4 mt-1 space-y-1">
-                      <li>• Reduced pro rata for vacation/CQ training days or post-award unpaid leaves.</li>
-                      <li>• Increased pro rata for added on-call days or extra short calls (1 hour each).</li>
-                      <li>• Specially created lines: Pro rata for on-call/X-days.</li>
-                    </ul>
-                  </div>
-                </div>
-              </div>
-
-              <Separator />
-
-              {/* Additional Guarantees */}
-              <div>
-                <h4 className="font-semibold text-base mb-3">Additional Guarantees</h4>
-                <div className="space-y-3 text-sm">
-                  <div>
-                    <h5 className="font-medium text-primary mb-1">Unassigned Pilots</h5>
-                    <span>Guarantee: Reserve guarantee of lowest-paying revenue aircraft position (per Section 22 B.).</span>
-                  </div>
-                  
-                  <div>
-                    <h5 className="font-medium text-primary mb-1">Company-Removal Guarantee</h5>
-                    <div className="space-y-1">
-                      <div><span className="font-medium">If removed post-adjustment:</span> Pay/credit for scheduled credit + flown portion, plus international/ocean pay if applicable.</div>
-                      <div><span className="font-medium">Exclusions:</span> Pilot-initiated (e.g., sick, vacation, swaps), IROPS, training/OE, prior bid conflicts, asterisk rotations, low-time pairings, reserve conflicts, recovery/reroutes, discipline, document failures, retirement/death/furlough/termination.</div>
-                      <div><span className="font-medium">Reserve conflict removal:</span> Greater of removed rotation credit or accumulated reserve credit.</div>
-                    </div>
-                  </div>
-
-                  <div>
-                    <h5 className="font-medium text-primary mb-1">Rotation Guarantee</h5>
-                    <div className="space-y-1">
-                      <div><span className="font-medium">For IROPS/FAR/PWA conflicts:</span> Greater of scheduled credit or accumulated recovery/reroute credit.</div>
-                      <div><span className="font-medium">Exception:</span> No guarantee if conflict from prior bid white/yellow slip.</div>
-                      <div><span className="font-medium">Application:</span> At completion date; special rules for transition rotations (may shift credit across bid periods, capped at white slip limit).</div>
-                    </div>
-                  </div>
-
-                  <div>
-                    <h5 className="font-medium text-primary mb-1">Mixed Aircraft Model Guarantee</h5>
-                    <div className="space-y-1">
-                      <div>If FAA approves mixing models in types: Composite hourly rate for reserve guarantee is weighted average by fleet mix, adjusted annually Jan 1.</div>
-                      <div className="text-muted-foreground italic">Example: A350 and B767-300ER mix yields ~$373.16/hour (12-year captain rate).</div>
-                    </div>
-                  </div>
-
-                  <div>
-                    <h5 className="font-medium text-primary mb-1">Suit-Up Pay and Credit</h5>
-                    <ul className="space-y-1">
-                      <li>• <span className="font-medium">Regular/long-call reserve:</span> 2 hours pay/credit if unacknowledged removal and reports</li>
-                      <li>• <span className="font-medium">Short-call reserve:</span> 2 hours if notified &lt;2 hours before report</li>
-                      <li>• <span className="font-medium">Reserve short call without flying:</span> 1 hour pay (no credit) per completed period</li>
-                      <li>• <span className="font-medium">Reserve on X-day report:</span> 2 hours pay (no credit), released with rest periods</li>
-                    </ul>
-                  </div>
-
-                  <div>
-                    <h5 className="font-medium text-primary mb-1">Miscellaneous Guarantees</h5>
-                    <ul className="space-y-1">
-                      <li>• <span className="font-medium">Cancelled known absence (non-unpaid):</span> Pay/credit for original value</li>
-                      <li>• <span className="font-medium">Disciplinary/investigatory meeting on day off:</span> Additional pay equal to Average Daily Guarantee (ADG), if not on paid leave</li>
-                    </ul>
-                  </div>
-                </div>
-              </div>
-
-              <div className="bg-muted p-3 rounded-md text-sm">
-                <span className="font-medium">Note:</span> This section protects pilots from pay losses due to company actions or disruptions while allowing reductions for personal choices. Guarantees are tied to bid periods (~monthly schedules) and ensure equitable compensation across roles and aircraft.
               </div>
             </CardContent>
           </Card>
-        )}
+
+          {/* Pay Scale */}
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <DollarSign className="h-5 w-5" />
+                Pay Scale
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-6">
+              <div>
+                <h4 className="font-semibold mb-3">First Officer Pay</h4>
+                <div className="grid grid-cols-3 gap-4">
+                  <div className="text-center p-3 bg-muted/50 rounded-lg">
+                    <div className="text-sm text-muted-foreground">Year 1</div>
+                    <div className="text-lg font-bold">{airlineData.payScale.firstOfficer.year1}</div>
+                  </div>
+                  <div className="text-center p-3 bg-muted/50 rounded-lg">
+                    <div className="text-sm text-muted-foreground">Year 5</div>
+                    <div className="text-lg font-bold">{airlineData.payScale.firstOfficer.year5}</div>
+                  </div>
+                  <div className="text-center p-3 bg-muted/50 rounded-lg">
+                    <div className="text-sm text-muted-foreground">Year 10</div>
+                    <div className="text-lg font-bold">{airlineData.payScale.firstOfficer.year10}</div>
+                  </div>
+                </div>
+              </div>
+
+              <div>
+                <h4 className="font-semibold mb-3">Captain Pay</h4>
+                <div className="grid grid-cols-3 gap-4">
+                  <div className="text-center p-3 bg-muted/50 rounded-lg">
+                    <div className="text-sm text-muted-foreground">Year 1</div>
+                    <div className="text-lg font-bold">{airlineData.payScale.captain.year1}</div>
+                  </div>
+                  <div className="text-center p-3 bg-muted/50 rounded-lg">
+                    <div className="text-sm text-muted-foreground">Year 5</div>
+                    <div className="text-lg font-bold">{airlineData.payScale.captain.year5}</div>
+                  </div>
+                  <div className="text-center p-3 bg-muted/50 rounded-lg">
+                    <div className="text-sm text-muted-foreground">Year 10</div>
+                    <div className="text-lg font-bold">{airlineData.payScale.captain.year10}</div>
+                  </div>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* Additional Information */}
+          {airlineData.additionalInfo && airlineData.additionalInfo.length > 0 && (
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <Briefcase className="h-5 w-5" />
+                  Additional Information
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <ul className="space-y-2">
+                  {airlineData.additionalInfo.map((info, index) => (
+                    <li key={index} className="flex items-start gap-2 text-sm">
+                      <span className="text-primary mt-1">•</span>
+                      <span>{info}</span>
+                    </li>
+                  ))}
+                </ul>
+              </CardContent>
+            </Card>
+          )}
+        </div>
 
         <div className="flex justify-end pt-4 border-t">
           <Button onClick={() => onOpenChange(false)}>Close</Button>
         </div>
-          </div>
-        </DialogContent>
+      </DialogContent>
     </Dialog>
   );
 }
