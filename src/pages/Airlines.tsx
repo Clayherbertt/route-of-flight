@@ -202,7 +202,7 @@ const Airlines = () => {
                   </div>
                 </div>
                 
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
                   {section.airlines.map((airline, index) => (
                     <Card 
                       key={index}
@@ -210,79 +210,19 @@ const Airlines = () => {
                       onClick={() => handleAirlineClick(airline)}
                     >
                       <CardContent className="p-6">
-                        <div className="space-y-4">
-                          {/* Header with name and call sign */}
-                          <div className="flex items-start justify-between">
-                            <div className="min-w-0 flex-1">
-                              <h3 className="font-bold text-lg text-foreground leading-tight group-hover:text-primary transition-colors">
-                                {airline.name}
-                              </h3>
-                              <p className="text-sm text-muted-foreground font-medium">{airline.call_sign}</p>
-                            </div>
-                            <div className="flex-shrink-0">
-                              <Badge variant={airline.is_hiring ? "default" : "secondary"} className="text-xs">
-                                {airline.is_hiring ? "Hiring" : "Not Hiring"}
-                              </Badge>
+                        <div className="flex items-center gap-3">
+                          <div className="flex-shrink-0 p-2 rounded-full bg-background/50 group-hover:bg-background/80 transition-colors">
+                            <Plane className="h-5 w-5 text-primary" />
+                          </div>
+                          <div className="min-w-0 flex-1">
+                            <h3 className="font-semibold text-foreground leading-tight group-hover:text-primary transition-colors">
+                              {airline.name}
+                            </h3>
+                            <div className="flex items-center gap-2 mt-2 text-sm text-muted-foreground">
+                              <Users className="h-3 w-3" />
+                              <span>View Details</span>
                             </div>
                           </div>
-
-                          {/* Fleet and Pilot stats */}
-                          <div className="grid grid-cols-2 gap-4 py-3 border-y border-border/50">
-                            <div className="text-center">
-                              <div className="text-xl font-bold text-primary">{airline.fleet_size}</div>
-                              <div className="text-xs text-muted-foreground">Aircraft</div>
-                            </div>
-                            <div className="text-center">
-                              <div className="text-xl font-bold text-primary">{airline.pilot_group_size}</div>
-                              <div className="text-xs text-muted-foreground">Pilots</div>
-                            </div>
-                          </div>
-
-                          {/* Pay Information */}
-                          {airline.fo_pay_year_1 && (
-                            <div className="space-y-1">
-                              <div className="flex items-center justify-between text-sm">
-                                <span className="text-muted-foreground">F/O Year 1:</span>
-                                <span className="font-semibold text-primary">{airline.fo_pay_year_1}</span>
-                              </div>
-                              {airline.captain_pay_year_1 && (
-                                <div className="flex items-center justify-between text-sm">
-                                  <span className="text-muted-foreground">Captain:</span>
-                                  <span className="font-semibold text-primary">{airline.captain_pay_year_1}</span>
-                                </div>
-                              )}
-                            </div>
-                          )}
-
-                          {/* Crew Bases */}
-                          {airline.bases && airline.bases.length > 0 && (
-                            <div className="space-y-2">
-                              <div className="flex items-center gap-1 text-sm font-medium text-muted-foreground">
-                                <MapPin className="h-3 w-3" />
-                                <span>Crew Bases</span>
-                              </div>
-                              <div className="flex flex-wrap gap-1">
-                                {airline.bases.slice(0, 3).map((base, idx) => (
-                                  <Badge key={idx} variant="outline" className="text-xs px-2 py-0.5">
-                                    {base.split(' ')[0]} {/* Show just city name */}
-                                  </Badge>
-                                ))}
-                                {airline.bases.length > 3 && (
-                                  <Badge variant="outline" className="text-xs px-2 py-0.5 text-muted-foreground">
-                                    +{airline.bases.length - 3} more
-                                  </Badge>
-                                )}
-                              </div>
-                            </div>
-                          )}
-
-                          {/* Most Junior Base */}
-                          {airline.most_junior_base && (
-                            <div className="text-sm">
-                              <span className="text-muted-foreground">Most Junior: </span>
-                              <span className="font-medium text-foreground">{airline.most_junior_base}</span>
-                            </div>
-                          )}
                         </div>
                       </CardContent>
                     </Card>
