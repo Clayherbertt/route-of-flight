@@ -25,19 +25,9 @@ const HeroSectionV2 = () => {
   };
 
   return (
-    <section className="relative min-h-screen flex items-center justify-center overflow-hidden">
-      {/* Background Image */}
-      <div className="absolute inset-0 z-0">
-        <img 
-          src={aviationHero} 
-          alt="Aviation background" 
-          className="w-full h-full object-cover"
-        />
-        <div className="absolute inset-0 bg-background/80 backdrop-blur-sm"></div>
-      </div>
-
+    <section className="relative min-h-screen flex items-center justify-center">
       {/* Content */}
-      <div className="relative z-10 container mx-auto px-6 text-center">
+      <div className="container mx-auto px-6 text-center">
         <div className="max-w-4xl mx-auto">
           <div className="inline-flex items-center bg-primary/10 border border-primary/20 rounded-full px-6 py-2 mb-8">
             <div className="w-2 h-2 bg-primary rounded-full mr-3 animate-pulse"></div>
