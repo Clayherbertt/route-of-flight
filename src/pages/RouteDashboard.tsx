@@ -2,11 +2,13 @@ import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useAuth } from '@/contexts/AuthContext'
 import { useIsAdmin } from '@/hooks/useIsAdmin'
+import { useUserFlightHours } from '@/hooks/useUserFlightHours'
 import Header from '@/components/layout/Header'
 import { EditRouteStepDialog } from '@/components/dialogs/EditRouteStepDialog'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
+import { Checkbox } from '@/components/ui/checkbox'
 import { 
   Route, 
   Plus, 
@@ -26,6 +28,7 @@ import {
 export default function RouteDashboard() {
   const { user } = useAuth()
   const { isAdmin, loading } = useIsAdmin()
+  const { totalHours } = useUserFlightHours()
   const navigate = useNavigate()
   
   // Edit dialog state
@@ -48,19 +51,23 @@ export default function RouteDashboard() {
         details: [
           {
             title: "Part 61 vs Part 141 schools",
-            description: "Understand the differences between Part 61 and Part 141 flight training programs, including their structure, requirements, and which might be best for your goals."
+            description: "Understand the differences between Part 61 and Part 141 flight training programs, including their structure, requirements, and which might be best for your goals.",
+            checked: false
           },
           {
-            title: "University programs vs flight academies",
-            description: "Compare collegiate aviation programs with dedicated flight academies, considering factors like cost, timeline, and career preparation."
+            title: "University programs vs flight academies", 
+            description: "Compare collegiate aviation programs with dedicated flight academies, considering factors like cost, timeline, and career preparation.",
+            checked: false
           },
           {
             title: "What to expect in a discovery flight",
-            description: "Learn what happens during your first flight lesson, how to prepare, and what questions to ask your instructor."
+            description: "Learn what happens during your first flight lesson, how to prepare, and what questions to ask your instructor.",
+            checked: false
           },
           {
             title: "Questions to ask during school visits",
-            description: "Essential questions about aircraft condition, instructor qualifications, safety records, and financing options."
+            description: "Essential questions about aircraft condition, instructor qualifications, safety records, and financing options.",
+            checked: false
           }
         ]
       },
@@ -80,19 +87,23 @@ export default function RouteDashboard() {
         details: [
           {
             title: "Finding an Aviation Medical Examiner (AME)",
-            description: "Locate FAA-authorized doctors in your area and understand the examination process."
+            description: "Locate FAA-authorized doctors in your area and understand the examination process.",
+            checked: false
           },
           {
             title: "Required medical documentation",
-            description: "Gather necessary medical records, prescriptions, and documentation before your exam."
+            description: "Gather necessary medical records, prescriptions, and documentation before your exam.",
+            checked: false
           },
           {
             title: "Common medical disqualifiers",
-            description: "Learn about conditions that might affect your medical certificate and potential solutions."
+            description: "Learn about conditions that might affect your medical certificate and potential solutions.",
+            checked: false
           },
           {
             title: "Special issuance process if needed",
-            description: "Understand the special issuance process for conditions requiring additional FAA review."
+            description: "Understand the special issuance process for conditions requiring additional FAA review.",
+            checked: false
           }
         ]
       },
@@ -113,19 +124,24 @@ export default function RouteDashboard() {
         details: [
           {
             title: "Ground school requirements",
-            description: "Complete the theoretical knowledge portion of pilot training covering aerodynamics, weather, navigation, and regulations."
+            description: "Complete the theoretical knowledge portion of pilot training covering aerodynamics, weather, navigation, and regulations.",
+            checked: false
           },
           {
             title: "Flight training minimums",
-            description: "Understanding minimum flight hour requirements and what skills you'll develop during training."
+            description: "Understanding minimum flight hour requirements and what skills you'll develop during training.",
+            checked: false,
+            flightHours: 40
           },
           {
-            title: "Written exam preparation",
-            description: "Prepare for the FAA knowledge test with study materials, practice tests, and test-taking strategies."
+            title: "Written exam preparation", 
+            description: "Prepare for the FAA knowledge test with study materials, practice tests, and test-taking strategies.",
+            checked: false
           },
           {
             title: "Checkride preparation",
-            description: "Get ready for your practical exam with oral preparation and flight test requirements."
+            description: "Get ready for your practical exam with oral preparation and flight test requirements.",
+            checked: false
           }
         ]
       },
@@ -324,17 +340,57 @@ export default function RouteDashboard() {
                         <div>
                           <h4 className="font-medium mb-2">Key Topics ({step.content.details.length})</h4>
                           <div className="grid grid-cols-1 gap-3">
-                            {step.content.details.map((detail, idx) => (
-                              <div key={idx} className="text-sm bg-background/50 p-3 rounded border">
-                                <div className="font-medium text-foreground mb-1">{detail.title}</div>
-                                <div className="text-muted-foreground text-xs">{detail.description}</div>
-                                {step.allowCustomerReorder && (
-                                  <Badge variant="outline" className="mt-2 text-xs">
-                                    Customer can reorder
-                                  </Badge>
-                                )}
-                              </div>
-                            ))}
+                            {step.content.details.map((detail, idx) => {
+                              const remainingHours = detail.flightHours ? Math.max(0, detail.flightHours - totalHours) : null
+                              return (
+                                <div key={idx} className="text-sm bg-background/50 p-3 rounded border">
+                                  <div className="flex items-start space-x-3">
+                                    {detail.checked !== undefined && (
+                                      <Checkbox 
+                                        className="mt-0.5"
+                                        checked={detail.checked}
+                                        onCheckedChange={() => {
+                                          // Update checkbox state
+                                          const updatedSteps = routeSteps.map(s => 
+                                            s.id === step.id ? {
+                                              ...s,
+                                              content: {
+                                                ...s.content,
+                                                details: s.content.details.map((d, i) => 
+                                                  i === idx ? { ...d, checked: !d.checked } : d
+                                                )
+                                              }
+                                            } : s
+                                          )
+                                          setRouteSteps(updatedSteps)
+                                        }}
+                                      />
+                                    )}
+                                    <div className="flex-1">
+                                      <div className="font-medium text-foreground mb-1">{detail.title}</div>
+                                      <div className="text-muted-foreground text-xs mb-2">{detail.description}</div>
+                                      {detail.flightHours && (
+                                        <div className="flex items-center space-x-2">
+                                          <Badge variant="outline" className="text-xs">
+                                            {detail.flightHours} hours required
+                                          </Badge>
+                                          {remainingHours !== null && (
+                                            <Badge variant={remainingHours === 0 ? "default" : "secondary"} className="text-xs">
+                                              {remainingHours === 0 ? "Complete!" : `${remainingHours} hours remaining`}
+                                            </Badge>
+                                          )}
+                                        </div>
+                                      )}
+                                      {step.allowCustomerReorder && (
+                                        <Badge variant="outline" className="mt-2 text-xs">
+                                          Customer can reorder
+                                        </Badge>
+                                      )}
+                                    </div>
+                                  </div>
+                                </div>
+                              )
+                            })}
                           </div>
                         </div>
 

@@ -15,6 +15,7 @@ import { Badge } from '@/components/ui/badge'
 import { Switch } from '@/components/ui/switch'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { Plus, X, GraduationCap, Stethoscope, Plane, Trophy } from 'lucide-react'
+import { Checkbox } from '@/components/ui/checkbox'
 
 interface RouteStep {
   id: number
@@ -29,6 +30,8 @@ interface RouteStep {
     details: Array<{
       title: string
       description: string
+      checked?: boolean
+      flightHours?: number
     }>
   }
   nextSteps: number[]
@@ -75,7 +78,9 @@ export function EditRouteStepDialog({ step, open, onOpenChange, onSave }: EditRo
           ...editedStep.content,
           details: [...editedStep.content.details, {
             title: newDetailTitle.trim(),
-            description: newDetailDescription.trim()
+            description: newDetailDescription.trim(),
+            checked: false,
+            flightHours: undefined
           }]
         }
       })
@@ -280,6 +285,41 @@ export function EditRouteStepDialog({ step, open, onOpenChange, onSave }: EditRo
                       placeholder="Enter detailed information about this topic"
                       rows={3}
                     />
+                  </div>
+                  <div className="grid grid-cols-2 gap-4">
+                    <div className="flex items-center space-x-2">
+                      <Checkbox
+                        id={`checkable-${index}`}
+                        checked={detail.checked || false}
+                        onCheckedChange={(checked) => {
+                          const newDetails = [...editedStep.content.details]
+                          newDetails[index] = { ...newDetails[index], checked: checked as boolean }
+                          setEditedStep({
+                            ...editedStep,
+                            content: { ...editedStep.content, details: newDetails }
+                          })
+                        }}
+                      />
+                      <Label htmlFor={`checkable-${index}`}>Checkable item</Label>
+                    </div>
+                    <div className="space-y-2">
+                      <Label>Flight Hours Required</Label>
+                      <Input
+                        type="number"
+                        value={detail.flightHours || ''}
+                        onChange={(e) => {
+                          const value = e.target.value ? parseInt(e.target.value) : undefined
+                          const newDetails = [...editedStep.content.details]
+                          newDetails[index] = { ...newDetails[index], flightHours: value }
+                          setEditedStep({
+                            ...editedStep,
+                            content: { ...editedStep.content, details: newDetails }
+                          })
+                        }}
+                        placeholder="Hours"
+                        min="0"
+                      />
+                    </div>
                   </div>
                 </div>
               ))}
