@@ -302,7 +302,11 @@ export default function RouteDashboard() {
                               {step.status}
                             </Badge>
                           </div>
-                          <CardDescription>{step.description}</CardDescription>
+                          <CardDescription>
+                            <div 
+                              dangerouslySetInnerHTML={{ __html: step.description }}
+                            />
+                          </CardDescription>
                         </div>
                       </div>
                        <div className="flex items-center space-x-2">
@@ -332,10 +336,13 @@ export default function RouteDashboard() {
                   {expandedCards.has(step.id) && (
                     <CardContent>
                       <div className="space-y-4">
-                        <div>
-                          <h4 className="font-medium mb-2">Overview</h4>
-                          <p className="text-sm text-muted-foreground">{step.content.overview}</p>
-                        </div>
+                          <div>
+                            <h4 className="font-medium mb-2">Overview</h4>
+                            <div 
+                              className="text-sm text-muted-foreground prose prose-sm" 
+                              dangerouslySetInnerHTML={{ __html: step.content.overview }}
+                            />
+                          </div>
                         
                         <div>
                           <h4 className="font-medium mb-2">Key Topics ({step.content.details.length})</h4>
@@ -368,7 +375,10 @@ export default function RouteDashboard() {
                                     )}
                                     <div className="flex-1">
                                       <div className="font-medium text-foreground mb-1">{detail.title}</div>
-                                      <div className="text-muted-foreground text-xs mb-2">{detail.description}</div>
+                                      <div 
+                                        className="text-muted-foreground text-xs mb-2 prose prose-xs" 
+                                        dangerouslySetInnerHTML={{ __html: detail.description }}
+                                      />
                                       {detail.flightHours && (
                                         <div className="flex items-center space-x-2">
                                           <Badge variant="outline" className="text-xs">

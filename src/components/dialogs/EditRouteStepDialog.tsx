@@ -11,6 +11,7 @@ import {
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Textarea } from '@/components/ui/textarea'
+import { RichTextEditor } from '@/components/ui/rich-text-editor'
 import { Badge } from '@/components/ui/badge'
 import { Switch } from '@/components/ui/switch'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
@@ -147,28 +148,24 @@ export function EditRouteStepDialog({ step, open, onOpenChange, onSave }: EditRo
 
             <div className="space-y-2">
               <Label htmlFor="description">Description</Label>
-              <Textarea
-                id="description"
+              <RichTextEditor
                 value={editedStep.description}
-                onChange={(e) => setEditedStep({ ...editedStep, description: e.target.value })}
+                onChange={(value) => setEditedStep({ ...editedStep, description: value })}
                 placeholder="Brief description of this step"
-                rows={2}
-                preserveFormatting
+                height="80px"
               />
             </div>
 
             <div className="space-y-2">
               <Label htmlFor="overview">Overview</Label>
-              <Textarea
-                id="overview"
+              <RichTextEditor
                 value={editedStep.content.overview}
-                onChange={(e) => setEditedStep({
+                onChange={(value) => setEditedStep({
                   ...editedStep,
-                  content: { ...editedStep.content, overview: e.target.value }
+                  content: { ...editedStep.content, overview: value }
                 })}
                 placeholder="Detailed overview of this step"
-                rows={3}
-                preserveFormatting
+                height="120px"
               />
             </div>
           </div>
@@ -281,12 +278,11 @@ export function EditRouteStepDialog({ step, open, onOpenChange, onSave }: EditRo
                   </div>
                   <div className="space-y-2">
                     <Label>Topic Description</Label>
-                    <Textarea
+                    <RichTextEditor
                       value={detail.description}
-                      onChange={(e) => updateDetail(index, 'description', e.target.value)}
+                      onChange={(value) => updateDetail(index, 'description', value)}
                       placeholder="Enter detailed information about this topic"
-                      rows={3}
-                      preserveFormatting
+                      height="100px"
                     />
                   </div>
                   <div className="grid grid-cols-2 gap-4">
@@ -339,12 +335,11 @@ export function EditRouteStepDialog({ step, open, onOpenChange, onSave }: EditRo
                 </div>
                 <div className="space-y-2">
                   <Label>Topic Description</Label>
-                  <Textarea
+                  <RichTextEditor
                     value={newDetailDescription}
-                    onChange={(e) => setNewDetailDescription(e.target.value)}
+                    onChange={setNewDetailDescription}
                     placeholder="Enter detailed information"
-                    rows={2}
-                    preserveFormatting
+                    height="80px"
                   />
                 </div>
                 <Button
