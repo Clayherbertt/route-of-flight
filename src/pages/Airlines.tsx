@@ -29,7 +29,7 @@ const Airlines = () => {
     switch (title) {
       case "Majors": return null; // Will use image instead
       case "Ultra Low Cost Carriers & Large Operators": return null; // Will use image instead
-      case "Regional Carriers": return "🗺️";
+      case "Regional Carriers": return null; // Will use image instead
       case "Fractional Carriers": return "✨";
       case "Cargo": return "📋";
       default: return "✈️";
@@ -40,6 +40,7 @@ const Airlines = () => {
     switch (title) {
       case "Majors": return "/lovable-uploads/e536b000-3a4f-403c-b132-c459660fe41d.png";
       case "Ultra Low Cost Carriers & Large Operators": return "/lovable-uploads/e536b000-3a4f-403c-b132-c459660fe41d.png";
+      case "Regional Carriers": return "/lovable-uploads/8f6a895d-390c-4dda-a132-a08e4852d21e.png";
       default: return null;
     }
   };
