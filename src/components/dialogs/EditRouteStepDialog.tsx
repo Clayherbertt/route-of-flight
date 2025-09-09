@@ -63,10 +63,10 @@ export function EditRouteStepDialog({ step, open, onOpenChange, onSave }: EditRo
 
   // Reset edited step when step prop changes
   useEffect(() => {
-    if (step && JSON.stringify(step) !== JSON.stringify(editedStep)) {
+    if (step) {
       setEditedStep(step)
     }
-  }, [step, editedStep])
+  }, [step])
 
   if (!editedStep) return null
 
