@@ -122,7 +122,9 @@ export function EditRouteStepDialog({ step, open, onOpenChange, onSave }: EditRo
           description: '',
           checked: false,
           orderNumber: editedStep.details.length,
-          taskType: 'ground'
+          taskType: 'ground',
+          mandatory: editedStep.category === 'Initial Tasks' ? false : undefined,
+          published: editedStep.category === 'Initial Tasks' ? true : undefined
         }]
       })
       setNewGroundTitle('')
@@ -148,6 +150,24 @@ export function EditRouteStepDialog({ step, open, onOpenChange, onSave }: EditRo
   const updateTaskHours = (index: number, hours: number | undefined) => {
     const newDetails = [...editedStep.details]
     newDetails[index] = { ...newDetails[index], flightHours: hours }
+    setEditedStep({
+      ...editedStep,
+      details: newDetails
+    })
+  }
+
+  const updateTaskPublished = (index: number, published: boolean) => {
+    const newDetails = [...editedStep.details]
+    newDetails[index] = { ...newDetails[index], published }
+    setEditedStep({
+      ...editedStep,
+      details: newDetails
+    })
+  }
+
+  const updateTaskMandatory = (index: number, mandatory: boolean) => {
+    const newDetails = [...editedStep.details]
+    newDetails[index] = { ...newDetails[index], mandatory }
     setEditedStep({
       ...editedStep,
       details: newDetails
@@ -347,27 +367,46 @@ export function EditRouteStepDialog({ step, open, onOpenChange, onSave }: EditRo
                 const originalIndex = editedStep.details.indexOf(task)
                 return (
                   <div key={originalIndex} className="border rounded-lg p-4 bg-secondary/30">
-                    <div className="flex items-center justify-between">
-                      <div className="flex items-center gap-3 flex-1">
-                        <Checkbox
-                          checked={task.checked}
-                          onCheckedChange={(checked) => toggleTaskCompleted(originalIndex, checked as boolean)}
-                        />
-                        <Input
-                          value={task.title}
-                          onChange={(e) => updateTaskTitle(originalIndex, e.target.value)}
-                          placeholder="Ground training requirement"
-                          className="font-medium flex-1"
-                        />
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center gap-3 flex-1">
+                          <Checkbox
+                            checked={task.checked}
+                            onCheckedChange={(checked) => toggleTaskCompleted(originalIndex, checked as boolean)}
+                          />
+                          <Input
+                            value={task.title}
+                            onChange={(e) => updateTaskTitle(originalIndex, e.target.value)}
+                            placeholder="Ground training requirement"
+                            className="font-medium flex-1"
+                          />
+                        </div>
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          onClick={() => removeDetail(originalIndex)}
+                        >
+                          <X className="h-4 w-4" />
+                        </Button>
                       </div>
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        onClick={() => removeDetail(originalIndex)}
-                      >
-                        <X className="h-4 w-4" />
-                      </Button>
-                    </div>
+                      
+                      {editedStep.category === 'Initial Tasks' && (
+                        <div className="ml-6 flex items-center gap-4">
+                          <div className="flex items-center gap-2">
+                            <Switch
+                              checked={task.mandatory || false}
+                              onCheckedChange={(checked) => updateTaskMandatory(originalIndex, checked)}
+                            />
+                            <Label className="text-sm">Mandatory</Label>
+                          </div>
+                          <div className="flex items-center gap-2">
+                            <Switch
+                              checked={task.published !== undefined ? task.published : true}
+                              onCheckedChange={(checked) => updateTaskPublished(originalIndex, checked)}
+                            />
+                            <Label className="text-sm">Published</Label>
+                          </div>
+                        </div>
+                      )}
                   </div>
                 )
               })}

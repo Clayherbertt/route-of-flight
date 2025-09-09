@@ -556,7 +556,9 @@ export type Database = {
           description: string
           flight_hours: number | null
           id: string
+          mandatory: boolean | null
           order_number: number
+          published: boolean | null
           route_step_id: string
           task_type: string
           title: string
@@ -568,7 +570,9 @@ export type Database = {
           description: string
           flight_hours?: number | null
           id?: string
+          mandatory?: boolean | null
           order_number?: number
+          published?: boolean | null
           route_step_id: string
           task_type?: string
           title: string
@@ -580,7 +584,9 @@ export type Database = {
           description?: string
           flight_hours?: number | null
           id?: string
+          mandatory?: boolean | null
           order_number?: number
+          published?: boolean | null
           route_step_id?: string
           task_type?: string
           title?: string

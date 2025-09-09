@@ -85,8 +85,8 @@ export function useRouteSteps() {
             flightHours: detail.flight_hours || undefined,
             orderNumber: detail.order_number,
             taskType: (detail.task_type as 'flight' | 'ground') || 'flight',
-            mandatory: detail.mandatory || false,
-            published: detail.published || false
+            mandatory: (detail as any).mandatory || false,
+            published: (detail as any).published !== undefined ? (detail as any).published : true
           })),
           nextSteps,
           connectedFrom: connectedFrom.length > 0 ? connectedFrom : undefined
