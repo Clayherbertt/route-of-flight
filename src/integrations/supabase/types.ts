@@ -639,7 +639,6 @@ export type Database = {
           id: string
           mandatory: boolean
           order_number: number
-          overview: string
           status: string
           title: string
           updated_at: string
@@ -653,7 +652,6 @@ export type Database = {
           id?: string
           mandatory?: boolean
           order_number: number
-          overview?: string
           status?: string
           title: string
           updated_at?: string
@@ -667,7 +665,6 @@ export type Database = {
           id?: string
           mandatory?: boolean
           order_number?: number
-          overview?: string
           status?: string
           title?: string
           updated_at?: string

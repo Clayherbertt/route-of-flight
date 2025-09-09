@@ -312,17 +312,9 @@ export default function RouteDashboard() {
                     
                     {expandedCards.has(step.id) && (
                       <CardContent>
-                        <div className="space-y-4">
-                          <div>
-                            <h4 className="font-medium mb-2">Overview</h4>
-                            <div 
-                              className="text-sm text-muted-foreground prose prose-sm" 
-                              dangerouslySetInnerHTML={{ __html: step.overview }}
-                            />
-                          </div>
-                          
-                          <div>
-                            <h4 className="font-medium mb-2">Key Topics ({step.details.length})</h4>
+                         <div className="space-y-4">
+                           <div>
+                             <h4 className="font-medium mb-2">Tasks ({step.details.length})</h4>
                             <div className="grid grid-cols-1 gap-3">
                                  {step.details.map((detail, idx) => {
                                   const remainingHours = detail.flightHours ? Math.max(0, detail.flightHours - totalHours) : null

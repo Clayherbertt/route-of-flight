@@ -46,7 +46,6 @@ interface RouteStep {
   orderNumber: number
   mandatory: boolean
   allowCustomerReorder: boolean
-  overview: string
   status: 'draft' | 'published'
   category: string
   details: RouteStepDetail[]
@@ -82,7 +81,6 @@ export function EditRouteStepDialog({ step, open, onOpenChange, onSave }: EditRo
       ...editedStep,
       title: editedStep.title.trim(),
       description: editedStep.description.trim(),
-      overview: editedStep.overview || '',
       category: editedStep.category || 'Primary Training',
       details: editedStep.details.map((detail, index) => ({
         ...detail,
@@ -198,17 +196,6 @@ export function EditRouteStepDialog({ step, open, onOpenChange, onSave }: EditRo
                 onChange={(e) => setEditedStep({ ...editedStep, description: e.target.value })}
                 placeholder="Describe what this training step involves..."
                 rows={3}
-              />
-            </div>
-
-            <div className="space-y-2">
-              <Label htmlFor="overview">Overview</Label>
-              <Textarea
-                id="overview"
-                value={editedStep.overview || ''}
-                onChange={(e) => setEditedStep({ ...editedStep, overview: e.target.value })}
-                placeholder="Brief overview of this training step..."
-                rows={2}
               />
             </div>
 
