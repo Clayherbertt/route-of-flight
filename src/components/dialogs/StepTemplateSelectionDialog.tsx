@@ -95,46 +95,13 @@ const stepTemplates: StepTemplate[] = [
     icon: 'BookOpen',
     category: 'Preparation',
     defaultStructure: {
-      title: 'Initial Training Preparation',
-      description: 'Essential tasks to complete before beginning flight training',
+      title: '',
+      description: '',
       mandatory: true,
       allowCustomerReorder: false,
       status: 'draft' as const,
       category: 'Initial Tasks',
-      details: [
-        {
-          title: 'Medical Certificate',
-          description: 'Obtain FAA medical certificate appropriate for your training goals',
-          checked: false,
-          taskType: 'ground' as const,
-          mandatory: true,
-          published: true
-        },
-        {
-          title: 'Student Pilot Certificate',
-          description: 'Apply for and receive student pilot certificate',
-          checked: false,
-          taskType: 'ground' as const,
-          mandatory: true,
-          published: true
-        },
-        {
-          title: 'Ground School Enrollment',
-          description: 'Enroll in ground school or online training program',
-          checked: false,
-          taskType: 'ground' as const,
-          mandatory: false,
-          published: true
-        },
-        {
-          title: 'Flight Training Research',
-          description: 'Research and select certified flight instructor and training aircraft',
-          checked: false,
-          taskType: 'ground' as const,
-          mandatory: false,
-          published: true
-        }
-      ]
+      details: []
     }
   }
 ]
