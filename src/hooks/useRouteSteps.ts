@@ -12,7 +12,7 @@ interface RouteStepDetail {
 }
 
 interface RouteStep {
-  id: string
+  id?: string
   title: string
   description: string
   icon: string
@@ -102,38 +102,61 @@ export function useRouteSteps() {
 
   const saveRouteStep = async (step: RouteStep) => {
     try {
-      // Update the main step
-      const { error: stepError } = await supabase
-        .from('route_steps')
-        .update({
-          title: step.title,
-          description: step.description,
-          icon: step.icon,
-          order_number: step.orderNumber,
-          mandatory: step.mandatory,
-          allow_customer_reorder: step.allowCustomerReorder,
-          overview: step.overview,
-          status: step.status
-        })
-        .eq('id', step.id)
+      let stepId = step.id;
 
-      if (stepError) throw stepError
+      if (!stepId) {
+        // Create new step
+        const { data: newStep, error: createError } = await supabase
+          .from('route_steps')
+          .insert({
+            title: step.title,
+            description: step.description,
+            icon: step.icon,
+            order_number: step.orderNumber,
+            mandatory: step.mandatory,
+            allow_customer_reorder: step.allowCustomerReorder,
+            overview: step.overview,
+            status: step.status
+          })
+          .select()
+          .single()
 
-      // Delete existing details
-      const { error: deleteError } = await supabase
-        .from('route_step_details')
-        .delete()
-        .eq('route_step_id', step.id)
+        if (createError) throw createError
+        stepId = newStep.id
+      } else {
+        // Update existing step
+        const { error: stepError } = await supabase
+          .from('route_steps')
+          .update({
+            title: step.title,
+            description: step.description,
+            icon: step.icon,
+            order_number: step.orderNumber,
+            mandatory: step.mandatory,
+            allow_customer_reorder: step.allowCustomerReorder,
+            overview: step.overview,
+            status: step.status
+          })
+          .eq('id', step.id)
 
-      if (deleteError) throw deleteError
+        if (stepError) throw stepError
 
-      // Insert updated details
+        // Delete existing details for updates
+        const { error: deleteError } = await supabase
+          .from('route_step_details')
+          .delete()
+          .eq('route_step_id', step.id)
+
+        if (deleteError) throw deleteError
+      }
+
+      // Insert details
       if (step.details.length > 0) {
         const { error: detailsError } = await supabase
           .from('route_step_details')
           .insert(
             step.details.map((detail, index) => ({
-              route_step_id: step.id,
+              route_step_id: stepId,
               title: detail.title,
               description: detail.description,
               checked: detail.checked,
@@ -150,7 +173,7 @@ export function useRouteSteps() {
 
       toast({
         title: "Success",
-        description: "Route step saved successfully"
+        description: step.id ? "Route step updated successfully" : "Route step created successfully"
       })
     } catch (error) {
       console.error('Error saving route step:', error)
@@ -200,11 +223,53 @@ export function useRouteSteps() {
     fetchRouteSteps()
   }, [])
 
+  const deleteRouteStep = async (stepId: string) => {
+    try {
+      // Delete route step details first
+      const { error: detailsError } = await supabase
+        .from('route_step_details')
+        .delete()
+        .eq('route_step_id', stepId)
+
+      if (detailsError) throw detailsError
+
+      // Delete route step connections
+      const { error: connectionsError } = await supabase
+        .from('route_step_connections')
+        .delete()
+        .or(`from_step_id.eq.${stepId},to_step_id.eq.${stepId}`)
+
+      if (connectionsError) throw connectionsError
+
+      // Delete the route step itself
+      const { error: stepError } = await supabase
+        .from('route_steps')
+        .delete()
+        .eq('id', stepId)
+
+      if (stepError) throw stepError
+
+      toast({
+        title: "Success",
+        description: "Route step deleted successfully"
+      })
+      await fetchRouteSteps()
+    } catch (error) {
+      console.error('Error deleting route step:', error)
+      toast({
+        title: "Error", 
+        description: "Failed to delete route step",
+        variant: "destructive"
+      })
+    }
+  }
+
   return {
     routeSteps,
     loading,
     saveRouteStep,
     updateStepDetailChecked,
+    deleteRouteStep,
     refetch: fetchRouteSteps
   }
 }

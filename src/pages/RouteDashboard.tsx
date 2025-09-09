@@ -11,6 +11,17 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
 import { Checkbox } from '@/components/ui/checkbox'
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog"
 import { 
   Route, 
   Plus, 
@@ -24,7 +35,8 @@ import {
   MapPin,
   Settings,
   ChevronDown,
-  ChevronUp
+  ChevronUp,
+  Trash2
 } from 'lucide-react'
 
 // Icon mapping
@@ -39,7 +51,7 @@ export default function RouteDashboard() {
   const { user } = useAuth()
   const { isAdmin, loading } = useIsAdmin()
   const { totalHours } = useUserFlightHours()
-  const { routeSteps, loading: stepsLoading, saveRouteStep, updateStepDetailChecked } = useRouteSteps()
+  const { routeSteps, loading: stepsLoading, saveRouteStep, updateStepDetailChecked, deleteRouteStep } = useRouteSteps()
   const navigate = useNavigate()
   
   // Edit dialog state
@@ -120,7 +132,16 @@ export default function RouteDashboard() {
     }
   }
 
+  const handleDeleteStep = async (stepId: string) => {
+    try {
+      await deleteRouteStep(stepId)
+    } catch (error) {
+      console.error('Error deleting step:', error)
+    }
+  }
+
   const toggleCardExpansion = (stepId: string) => {
+    if (!stepId) return
     setExpandedCards(prev => {
       const newSet = new Set(prev)
       if (newSet.has(stepId)) {
@@ -209,6 +230,8 @@ export default function RouteDashboard() {
           <div className="space-y-4">
             {routeSteps.map((step, index) => {
               const IconComponent = iconMap[step.icon as keyof typeof iconMap] || GraduationCap
+              if (!step.id) return null // Skip steps without IDs
+              
               return (
                 <div key={step.id} className="relative">
                   <Card className={`transition-all hover:shadow-md ${
@@ -259,6 +282,30 @@ export default function RouteDashboard() {
                              <Edit3 className="h-4 w-4 mr-2" />
                              Edit
                            </Button>
+                           <AlertDialog>
+                             <AlertDialogTrigger asChild>
+                               <Button variant="outline" size="sm" className="text-destructive hover:text-destructive">
+                                 <Trash2 className="h-4 w-4" />
+                               </Button>
+                             </AlertDialogTrigger>
+                             <AlertDialogContent>
+                               <AlertDialogHeader>
+                                 <AlertDialogTitle>Delete Route Step</AlertDialogTitle>
+                                 <AlertDialogDescription>
+                                   Are you sure you want to delete "{step.title}"? This action cannot be undone and will remove all associated topics and connections.
+                                 </AlertDialogDescription>
+                               </AlertDialogHeader>
+                               <AlertDialogFooter>
+                                 <AlertDialogCancel>Cancel</AlertDialogCancel>
+                                 <AlertDialogAction 
+                                   onClick={() => handleDeleteStep(step.id)}
+                                   className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+                                 >
+                                   Delete
+                                 </AlertDialogAction>
+                               </AlertDialogFooter>
+                             </AlertDialogContent>
+                           </AlertDialog>
                          </div>
                       </div>
                     </CardHeader>
@@ -277,18 +324,20 @@ export default function RouteDashboard() {
                           <div>
                             <h4 className="font-medium mb-2">Key Topics ({step.details.length})</h4>
                             <div className="grid grid-cols-1 gap-3">
-                              {step.details.map((detail, idx) => {
-                                const remainingHours = detail.flightHours ? Math.max(0, detail.flightHours - totalHours) : null
-                                return (
-                                  <div key={`${step.id}-${idx}`} className="text-sm bg-background/50 p-3 rounded border">
-                                    <div className="flex items-start space-x-3">
-                                      <Checkbox 
-                                        className="mt-0.5"
-                                        checked={detail.checked}
-                                        onCheckedChange={(checked) => {
-                                          updateStepDetailChecked(step.id, idx, checked as boolean)
-                                        }}
-                                      />
+                                 {step.details.map((detail, idx) => {
+                                  const remainingHours = detail.flightHours ? Math.max(0, detail.flightHours - totalHours) : null
+                                  return (
+                                    <div key={`${step.id}-${idx}`} className="text-sm bg-background/50 p-3 rounded border">
+                                      <div className="flex items-start space-x-3">
+                                        <Checkbox 
+                                          className="mt-0.5"
+                                          checked={detail.checked}
+                                          onCheckedChange={(checked) => {
+                                            if (step.id) {
+                                              updateStepDetailChecked(step.id, idx, checked as boolean)
+                                            }
+                                          }}
+                                        />
                                       <div className="flex-1">
                                         <div className="font-medium text-foreground mb-1">{detail.title}</div>
                                         <div 
@@ -314,11 +363,11 @@ export default function RouteDashboard() {
                                         )}
                                       </div>
                                     </div>
-                                  </div>
-                                )
-                              })}
-                            </div>
-                          </div>
+                                   </div>
+                                 )
+                               })}
+                             </div>
+                           </div>
 
                           {step.connectedFrom && step.connectedFrom.length > 0 && (
                             <div className="flex items-center space-x-2 pt-2 border-t">
