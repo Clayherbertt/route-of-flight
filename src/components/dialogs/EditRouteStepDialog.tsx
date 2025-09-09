@@ -18,6 +18,14 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Plus, X, GraduationCap, Stethoscope, Plane, Trophy } from 'lucide-react'
 import { Checkbox } from '@/components/ui/checkbox'
 
+interface RouteStepSubTopic {
+  id?: string
+  title: string
+  checked: boolean
+  flightHours?: number
+  orderNumber: number
+}
+
 interface RouteStepDetail {
   id?: string
   title: string
@@ -25,6 +33,7 @@ interface RouteStepDetail {
   checked: boolean
   flightHours?: number
   orderNumber: number
+  subTopics?: RouteStepSubTopic[]
 }
 
 interface RouteStep {
@@ -37,9 +46,19 @@ interface RouteStep {
   allowCustomerReorder: boolean
   overview: string
   status: 'draft' | 'published'
-  details: RouteStepDetail[]
+  details: RouteStepDetailWithSubTopics[]
   nextSteps: string[]
   connectedFrom?: string[]
+}
+
+interface RouteStepDetailWithSubTopics {
+  id?: string
+  title: string
+  description: string
+  checked: boolean
+  flightHours?: number
+  orderNumber: number
+  subTopics?: RouteStepSubTopic[]
 }
 
 interface EditRouteStepDialogProps {
@@ -84,7 +103,8 @@ export function EditRouteStepDialog({ step, open, onOpenChange, onSave }: EditRo
           description: newDetailDescription.trim(),
           checked: false,
           flightHours: undefined,
-          orderNumber: editedStep.details.length
+          orderNumber: editedStep.details.length,
+          subTopics: []
         }]
       })
       setNewDetailTitle('')
@@ -309,6 +329,122 @@ export function EditRouteStepDialog({ step, open, onOpenChange, onSave }: EditRo
                         min="0"
                       />
                     </div>
+                  </div>
+                  
+                  {/* Sub-topics section */}
+                  <div className="mt-4 space-y-3">
+                    <div className="flex items-center justify-between">
+                      <Label className="text-sm font-medium">Sub-topics</Label>
+                      <Badge variant="secondary" className="text-xs">
+                        {detail.subTopics?.length || 0} items
+                      </Badge>
+                    </div>
+                    
+                    {detail.subTopics?.map((subTopic, subIndex) => (
+                      <div key={subIndex} className="ml-4 p-3 border rounded-md bg-muted/30">
+                        <div className="flex items-center justify-between mb-2">
+                          <span className="text-sm font-medium">Sub-topic {subIndex + 1}</span>
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            onClick={() => {
+                              const newDetails = [...editedStep.details]
+                              const newSubTopics = [...(newDetails[index].subTopics || [])]
+                              newSubTopics.splice(subIndex, 1)
+                              newDetails[index] = { ...newDetails[index], subTopics: newSubTopics }
+                              setEditedStep({
+                                ...editedStep,
+                                details: newDetails
+                              })
+                            }}
+                          >
+                            <X className="h-4 w-4" />
+                          </Button>
+                        </div>
+                        <div className="space-y-2">
+                          <Input
+                            value={subTopic.title}
+                            onChange={(e) => {
+                              const newDetails = [...editedStep.details]
+                              const newSubTopics = [...(newDetails[index].subTopics || [])]
+                              newSubTopics[subIndex] = { ...newSubTopics[subIndex], title: e.target.value }
+                              newDetails[index] = { ...newDetails[index], subTopics: newSubTopics }
+                              setEditedStep({
+                                ...editedStep,
+                                details: newDetails
+                              })
+                            }}
+                            placeholder="Sub-topic title"
+                          />
+                          <div className="flex items-center space-x-4">
+                            <div className="flex items-center space-x-2">
+                              <Checkbox
+                                checked={subTopic.checked}
+                                onCheckedChange={(checked) => {
+                                  const newDetails = [...editedStep.details]
+                                  const newSubTopics = [...(newDetails[index].subTopics || [])]
+                                  newSubTopics[subIndex] = { ...newSubTopics[subIndex], checked: checked as boolean }
+                                  newDetails[index] = { ...newDetails[index], subTopics: newSubTopics }
+                                  setEditedStep({
+                                    ...editedStep,
+                                    details: newDetails
+                                  })
+                                }}
+                              />
+                              <Label className="text-xs">Checkable</Label>
+                            </div>
+                            <div className="flex-1">
+                              <Input
+                                type="number"
+                                value={subTopic.flightHours || ''}
+                                onChange={(e) => {
+                                  const value = e.target.value ? parseInt(e.target.value) : undefined
+                                  const newDetails = [...editedStep.details]
+                                  const newSubTopics = [...(newDetails[index].subTopics || [])]
+                                  newSubTopics[subIndex] = { ...newSubTopics[subIndex], flightHours: value }
+                                  newDetails[index] = { ...newDetails[index], subTopics: newSubTopics }
+                                  setEditedStep({
+                                    ...editedStep,
+                                    details: newDetails
+                                  })
+                                }}
+                                placeholder="Hours"
+                                min="0"
+                              />
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    ))}
+                    
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => {
+                        const newDetails = [...editedStep.details]
+                        const currentSubTopics = newDetails[index].subTopics || []
+                        newDetails[index] = { 
+                          ...newDetails[index], 
+                          subTopics: [
+                            ...currentSubTopics,
+                            {
+                              title: '',
+                              checked: false,
+                              flightHours: undefined,
+                              orderNumber: currentSubTopics.length
+                            }
+                          ]
+                        }
+                        setEditedStep({
+                          ...editedStep,
+                          details: newDetails
+                        })
+                      }}
+                      className="w-full"
+                    >
+                      <Plus className="h-4 w-4 mr-2" />
+                      Add Sub-topic
+                    </Button>
                   </div>
                 </div>
               ))}

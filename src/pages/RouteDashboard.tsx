@@ -324,45 +324,73 @@ export default function RouteDashboard() {
                           <div>
                             <h4 className="font-medium mb-2">Key Topics ({step.details.length})</h4>
                             <div className="grid grid-cols-1 gap-3">
-                                 {step.details.map((detail, idx) => {
-                                  const remainingHours = detail.flightHours ? Math.max(0, detail.flightHours - totalHours) : null
-                                  return (
-                                    <div key={`${step.id}-${idx}`} className="text-sm bg-background/50 p-3 rounded border">
-                                      <div className="flex items-start space-x-3">
-                                        <Checkbox 
-                                          className="mt-0.5"
-                                          checked={detail.checked}
-                                          onCheckedChange={(checked) => {
-                                            if (step.id) {
-                                              updateStepDetailChecked(step.id, idx, checked as boolean)
-                                            }
-                                          }}
-                                        />
-                                      <div className="flex-1">
-                                        <div className="font-medium text-foreground mb-1">{detail.title}</div>
-                                        <div 
-                                          className="text-muted-foreground text-xs mb-2 prose prose-xs" 
-                                          dangerouslySetInnerHTML={{ __html: detail.description }}
-                                        />
-                                        {detail.flightHours && (
-                                          <div className="flex items-center space-x-2">
-                                            <Badge variant="outline" className="text-xs">
-                                              {detail.flightHours} hours required
-                                            </Badge>
-                                            {remainingHours !== null && (
-                                              <Badge variant={remainingHours === 0 ? "default" : "secondary"} className="text-xs">
-                                                {remainingHours === 0 ? "Complete!" : `${remainingHours} hours remaining`}
-                                              </Badge>
-                                            )}
-                                          </div>
-                                        )}
-                                        {step.allowCustomerReorder && (
-                                          <Badge variant="outline" className="mt-2 text-xs">
-                                            Customer can reorder
-                                          </Badge>
-                                        )}
-                                      </div>
-                                    </div>
+                               {step.details.map((detail, idx) => {
+                                 const totalTopicHours = (detail.flightHours || 0) + (detail.subTopics?.reduce((sum, sub) => sum + (sub.flightHours || 0), 0) || 0)
+                                 const remainingHours = totalTopicHours ? Math.max(0, totalTopicHours - totalHours) : null
+                                 return (
+                                   <div key={`${step.id}-${idx}`} className="text-sm bg-background/50 p-3 rounded border">
+                                     <div className="flex items-start space-x-3">
+                                       <Checkbox 
+                                         className="mt-0.5"
+                                         checked={detail.checked}
+                                         onCheckedChange={(checked) => {
+                                           if (step.id) {
+                                             updateStepDetailChecked(step.id, idx, checked as boolean)
+                                           }
+                                         }}
+                                       />
+                                       <div className="flex-1">
+                                         <div className="font-medium text-foreground mb-1">{detail.title}</div>
+                                         <div 
+                                           className="text-muted-foreground text-xs mb-2 prose prose-xs" 
+                                           dangerouslySetInnerHTML={{ __html: detail.description }}
+                                         />
+                                         {(detail.flightHours || (detail.subTopics && detail.subTopics.length > 0)) && (
+                                           <div className="flex items-center space-x-2 mb-2">
+                                             {detail.flightHours && (
+                                               <Badge variant="outline" className="text-xs">
+                                                 {detail.flightHours} hours required
+                                               </Badge>
+                                             )}
+                                             {remainingHours !== null && (
+                                               <Badge variant={remainingHours === 0 ? "default" : "secondary"} className="text-xs">
+                                                 {remainingHours === 0 ? "Complete!" : `${remainingHours} hours remaining`}
+                                               </Badge>
+                                             )}
+                                           </div>
+                                         )}
+                                         
+                                         {/* Sub-topics */}
+                                         {detail.subTopics && detail.subTopics.length > 0 && (
+                                           <div className="ml-4 mt-2 space-y-1">
+                                             <div className="text-xs text-muted-foreground mb-1">Sub-topics:</div>
+                                             {detail.subTopics.map((subTopic, subIdx) => (
+                                               <div key={`${step.id}-${idx}-${subIdx}`} className="flex items-center space-x-2 text-xs">
+                                                 <Checkbox
+                                                   checked={subTopic.checked}
+                                                   onCheckedChange={() => {
+                                                     // TODO: Add handler for sub-topic updates
+                                                   }}
+                                                   className="h-3 w-3"
+                                                 />
+                                                 <span className="flex-1">{subTopic.title}</span>
+                                                 {subTopic.flightHours && (
+                                                   <Badge variant="outline" className="text-xs">
+                                                     {subTopic.flightHours}h
+                                                   </Badge>
+                                                 )}
+                                               </div>
+                                             ))}
+                                           </div>
+                                         )}
+                                         
+                                         {step.allowCustomerReorder && (
+                                           <Badge variant="outline" className="mt-2 text-xs">
+                                             Customer can reorder
+                                           </Badge>
+                                         )}
+                                       </div>
+                                     </div>
                                    </div>
                                  )
                                })}

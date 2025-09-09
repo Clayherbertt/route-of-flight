@@ -36,6 +36,12 @@ interface StepTemplate {
       description: string
       checked: boolean
       flightHours?: number
+      subTopics?: Array<{
+        title: string
+        checked: boolean
+        flightHours?: number
+        orderNumber: number
+      }>
     }>
   }
 }
@@ -59,19 +65,79 @@ const stepTemplates: StepTemplate[] = [
           title: 'Pre-flight Procedures',
           description: '<p>Learn comprehensive aircraft inspection and preparation procedures</p>',
           checked: false,
-          flightHours: 5
+          flightHours: 5,
+          subTopics: [
+            {
+              title: 'Aircraft Exterior Inspection',
+              checked: false,
+              flightHours: 2,
+              orderNumber: 0
+            },
+            {
+              title: 'Engine and Propeller Check',
+              checked: false,
+              flightHours: 2,
+              orderNumber: 1
+            },
+            {
+              title: 'Interior Systems Verification',
+              checked: false,
+              flightHours: 1,
+              orderNumber: 2
+            }
+          ]
         },
         {
           title: 'Basic Maneuvers',
           description: '<p>Master fundamental flight maneuvers including turns, climbs, and descents</p>',
           checked: false,
-          flightHours: 10
+          flightHours: 10,
+          subTopics: [
+            {
+              title: 'Straight and Level Flight',
+              checked: false,
+              flightHours: 3,
+              orderNumber: 0
+            },
+            {
+              title: 'Turns and Banking',
+              checked: false,
+              flightHours: 4,
+              orderNumber: 1
+            },
+            {
+              title: 'Climbs and Descents',
+              checked: false,
+              flightHours: 3,
+              orderNumber: 2
+            }
+          ]
         },
         {
           title: 'Solo Flight',
           description: '<p>Complete supervised solo flights to build confidence and skills</p>',
           checked: false,
-          flightHours: 10
+          flightHours: 10,
+          subTopics: [
+            {
+              title: 'First Solo Flight',
+              checked: false,
+              flightHours: 1,
+              orderNumber: 0
+            },
+            {
+              title: 'Solo Pattern Work',
+              checked: false,
+              flightHours: 5,
+              orderNumber: 1
+            },
+            {
+              title: 'Solo Cross Country',
+              checked: false,
+              flightHours: 4,
+              orderNumber: 2
+            }
+          ]
         }
       ]
     }
