@@ -7,7 +7,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Button } from '@/components/ui/button'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { Badge } from '@/components/ui/badge'
-import { Settings, Users, Building2, Shield, Loader2, Plane, CreditCard, UserCheck } from 'lucide-react'
+import { Settings, Users, Building2, Route, Loader2, Plane, CreditCard, UserCheck } from 'lucide-react'
 
 export default function Admin() {
   const { user } = useAuth()
@@ -49,7 +49,7 @@ export default function Admin() {
       <main className="container mx-auto px-4 py-8">
         <div className="mb-8">
           <div className="flex items-center space-x-2 mb-4">
-            <Shield className="h-6 w-6 text-primary" />
+            <Settings className="h-6 w-6 text-primary" />
             <h1 className="text-3xl font-bold">Admin Dashboard</h1>
             <Badge variant="secondary">Administrator</Badge>
           </div>
@@ -129,9 +129,9 @@ export default function Admin() {
                     <CreditCard className="mr-2 h-4 w-4" />
                     Subscription Management
                   </Button>
-                  <Button variant="outline" className="justify-start">
-                    <Shield className="mr-2 h-4 w-4" />
-                    Security Settings
+                  <Button variant="outline" className="justify-start" onClick={() => navigate('/admin/routes')}>
+                    <Route className="mr-2 h-4 w-4" />
+                    Route Dashboard
                   </Button>
                 </div>
               </CardContent>
