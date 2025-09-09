@@ -27,11 +27,11 @@ const Airlines = () => {
 
   const getSectionIcon = (title: string) => {
     switch (title) {
-      case "Majors": return "🏢";
-      case "Ultra Low Cost Carriers & Large Operators": return "💰";
-      case "Regional Carriers": return "🌍";
-      case "Fractional Carriers": return "💎";
-      case "Cargo": return "📦";
+      case "Majors": return "🛫";
+      case "Ultra Low Cost Carriers & Large Operators": return "🎯";
+      case "Regional Carriers": return "🗺️";
+      case "Fractional Carriers": return "✨";
+      case "Cargo": return "📋";
       default: return "✈️";
     }
   };
