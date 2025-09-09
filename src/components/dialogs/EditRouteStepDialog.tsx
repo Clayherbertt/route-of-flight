@@ -36,6 +36,8 @@ interface RouteStepDetail {
   flightHours?: number
   orderNumber: number
   taskType: 'flight' | 'ground'
+  mandatory?: boolean
+  published?: boolean
 }
 
 interface RouteStep {

@@ -37,6 +37,8 @@ interface StepTemplate {
       checked: boolean
       flightHours?: number
       taskType?: 'flight' | 'ground'
+      mandatory?: boolean
+      published?: boolean
     }>
   }
 }
@@ -58,30 +60,79 @@ const stepTemplates: StepTemplate[] = [
       details: [
         {
           title: 'Pre-flight Procedures',
-          description: '<p>Learn comprehensive aircraft inspection and preparation procedures</p>',
+          description: 'Learn comprehensive aircraft inspection and preparation procedures',
           checked: false,
           flightHours: 5,
           taskType: 'flight' as const
         },
         {
           title: 'Basic Maneuvers',
-          description: '<p>Master fundamental flight maneuvers including turns, climbs, and descents</p>',
+          description: 'Master fundamental flight maneuvers including turns, climbs, and descents',
           checked: false,
           flightHours: 10,
           taskType: 'flight' as const
         },
         {
           title: 'Solo Flight',
-          description: '<p>Complete supervised solo flights to build confidence and skills</p>',
+          description: 'Complete supervised solo flights to build confidence and skills',
           checked: false,
           flightHours: 10,
           taskType: 'flight' as const
         },
         {
           title: 'Regulations Study',
-          description: '<p>Study Part 61 and Part 91 federal aviation regulations</p>',
+          description: 'Study Part 61 and Part 91 federal aviation regulations',
           checked: false,
           taskType: 'ground' as const
+        }
+      ]
+    }
+  },
+  {
+    id: 'initial-tasks',
+    title: 'Initial Tasks',
+    description: 'Pre-training preparation and administrative tasks',
+    icon: 'BookOpen',
+    category: 'Preparation',
+    defaultStructure: {
+      title: 'Initial Training Preparation',
+      description: 'Essential tasks to complete before beginning flight training',
+      mandatory: true,
+      allowCustomerReorder: false,
+      status: 'draft' as const,
+      category: 'Initial Tasks',
+      details: [
+        {
+          title: 'Medical Certificate',
+          description: 'Obtain FAA medical certificate appropriate for your training goals',
+          checked: false,
+          taskType: 'ground' as const,
+          mandatory: true,
+          published: true
+        },
+        {
+          title: 'Student Pilot Certificate',
+          description: 'Apply for and receive student pilot certificate',
+          checked: false,
+          taskType: 'ground' as const,
+          mandatory: true,
+          published: true
+        },
+        {
+          title: 'Ground School Enrollment',
+          description: 'Enroll in ground school or online training program',
+          checked: false,
+          taskType: 'ground' as const,
+          mandatory: false,
+          published: true
+        },
+        {
+          title: 'Flight Training Research',
+          description: 'Research and select certified flight instructor and training aircraft',
+          checked: false,
+          taskType: 'ground' as const,
+          mandatory: false,
+          published: true
         }
       ]
     }

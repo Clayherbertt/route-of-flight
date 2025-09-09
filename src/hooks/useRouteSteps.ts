@@ -10,6 +10,8 @@ interface RouteStepDetail {
   flightHours?: number
   orderNumber: number
   taskType?: 'flight' | 'ground'
+  mandatory?: boolean
+  published?: boolean
 }
 
 interface RouteStep {
@@ -82,7 +84,9 @@ export function useRouteSteps() {
             checked: detail.checked,
             flightHours: detail.flight_hours || undefined,
             orderNumber: detail.order_number,
-            taskType: (detail.task_type as 'flight' | 'ground') || 'flight'
+            taskType: (detail.task_type as 'flight' | 'ground') || 'flight',
+            mandatory: detail.mandatory || false,
+            published: detail.published || false
           })),
           nextSteps,
           connectedFrom: connectedFrom.length > 0 ? connectedFrom : undefined
@@ -164,7 +168,9 @@ export function useRouteSteps() {
               checked: detail.checked,
               flight_hours: detail.flightHours || null,
               order_number: index,
-              task_type: detail.taskType || 'flight'
+              task_type: detail.taskType || 'flight',
+              mandatory: detail.mandatory || false,
+              published: detail.published || false
             }))
           )
 
