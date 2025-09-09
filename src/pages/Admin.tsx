@@ -121,7 +121,7 @@ export default function Admin() {
                     <Users className="mr-2 h-4 w-4" />
                     Manage Users
                   </Button>
-                  <Button variant="outline" className="justify-start">
+                  <Button variant="outline" className="justify-start" onClick={() => navigate('/admin/airlines')}>
                     <Building2 className="mr-2 h-4 w-4" />
                     Manage Airlines
                   </Button>

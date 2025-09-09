@@ -258,6 +258,102 @@ export type Database = {
           },
         ]
       }
+      airlines: {
+        Row: {
+          active: boolean | null
+          additional_info: string[] | null
+          application_url: string | null
+          bases: string[] | null
+          call_sign: string
+          captain_pay_year_1: string | null
+          captain_pay_year_10: string | null
+          captain_pay_year_5: string | null
+          category: string | null
+          created_at: string
+          description: string
+          fleet_info: Json | null
+          fleet_size: number
+          fo_pay_year_1: string | null
+          fo_pay_year_10: string | null
+          fo_pay_year_5: string | null
+          id: string
+          inside_scoop: string[] | null
+          is_hiring: boolean | null
+          logo: string | null
+          most_junior_base: string | null
+          most_junior_captain_hire_date: string | null
+          name: string
+          pilot_group_size: string
+          pilot_union: string
+          preferred_qualifications: string[] | null
+          required_qualifications: string[] | null
+          retirements_in_2025: number | null
+          updated_at: string
+        }
+        Insert: {
+          active?: boolean | null
+          additional_info?: string[] | null
+          application_url?: string | null
+          bases?: string[] | null
+          call_sign: string
+          captain_pay_year_1?: string | null
+          captain_pay_year_10?: string | null
+          captain_pay_year_5?: string | null
+          category?: string | null
+          created_at?: string
+          description: string
+          fleet_info?: Json | null
+          fleet_size?: number
+          fo_pay_year_1?: string | null
+          fo_pay_year_10?: string | null
+          fo_pay_year_5?: string | null
+          id?: string
+          inside_scoop?: string[] | null
+          is_hiring?: boolean | null
+          logo?: string | null
+          most_junior_base?: string | null
+          most_junior_captain_hire_date?: string | null
+          name: string
+          pilot_group_size: string
+          pilot_union: string
+          preferred_qualifications?: string[] | null
+          required_qualifications?: string[] | null
+          retirements_in_2025?: number | null
+          updated_at?: string
+        }
+        Update: {
+          active?: boolean | null
+          additional_info?: string[] | null
+          application_url?: string | null
+          bases?: string[] | null
+          call_sign?: string
+          captain_pay_year_1?: string | null
+          captain_pay_year_10?: string | null
+          captain_pay_year_5?: string | null
+          category?: string | null
+          created_at?: string
+          description?: string
+          fleet_info?: Json | null
+          fleet_size?: number
+          fo_pay_year_1?: string | null
+          fo_pay_year_10?: string | null
+          fo_pay_year_5?: string | null
+          id?: string
+          inside_scoop?: string[] | null
+          is_hiring?: boolean | null
+          logo?: string | null
+          most_junior_base?: string | null
+          most_junior_captain_hire_date?: string | null
+          name?: string
+          pilot_group_size?: string
+          pilot_union?: string
+          preferred_qualifications?: string[] | null
+          required_qualifications?: string[] | null
+          retirements_in_2025?: number | null
+          updated_at?: string
+        }
+        Relationships: []
+      }
       flight_entries: {
         Row: {
           actual_instrument: number | null
