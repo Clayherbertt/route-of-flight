@@ -199,7 +199,7 @@ export function EditRouteStepDialog({ step, open, onOpenChange, onSave }: EditRo
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="max-w-3xl max-h-[85vh] overflow-y-auto">
         <DialogHeader>
-          <DialogTitle>Edit Flight Training Template</DialogTitle>
+          <DialogTitle>Edit Task Template</DialogTitle>
           <DialogDescription>
             Configure the training requirements and tasks for this step.
           </DialogDescription>
