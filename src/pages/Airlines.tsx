@@ -147,17 +147,17 @@ const Airlines = () => {
       {/* Hero Section */}
       <div className="relative overflow-hidden bg-gradient-to-br from-primary/5 via-background to-primary/10 border-b">
         <div className="absolute inset-0 bg-grid-pattern opacity-5"></div>
-        <div className="relative container mx-auto px-6 py-16">
+        <div className="relative container mx-auto px-4 sm:px-6 py-12 sm:py-16">
           <div className="max-w-4xl mx-auto text-center">
             <div className="flex items-center justify-center gap-3 mb-6">
               <div className="p-3 rounded-full bg-primary/10">
                 <Plane className="h-8 w-8 text-primary" />
               </div>
-              <h1 className="text-5xl font-bold bg-gradient-to-r from-primary to-primary/70 bg-clip-text text-transparent">
+              <h1 className="text-4xl sm:text-5xl font-bold bg-gradient-to-r from-primary to-primary/70 bg-clip-text text-transparent">
                 Airlines Database
               </h1>
             </div>
-            <p className="text-xl text-muted-foreground mb-8 leading-relaxed">
+            <p className="text-lg sm:text-xl text-muted-foreground mb-6 sm:mb-8 leading-relaxed px-4">
               Discover your next career opportunity. Explore hiring requirements, minimum hours, 
               and current openings at major US carriers, regional airlines, and cargo operators.
             </p>
@@ -193,8 +193,8 @@ const Airlines = () => {
       </div>
 
       {/* Airlines Sections */}
-      <div className="container mx-auto px-6 py-12">
-        <div className="space-y-12">
+      <div className="container mx-auto px-4 sm:px-6 py-8 sm:py-12">
+        <div className="space-y-8 sm:space-y-12">
           {filteredSections.map((section, sectionIndex) => {
             console.log(`Rendering section: ${section.title}`);
             return (
