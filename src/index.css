@@ -108,12 +108,57 @@
 @layer base {
   * {
     @apply border-border;
-    caret-color: transparent;
   }
 
   body {
     @apply bg-background text-foreground font-sans antialiased;
-    caret-color: transparent;
+  }
+  
+  /* Ensure text cursor is visible in all input fields */
+  input[type="text"],
+  input[type="email"],
+  input[type="password"],
+  input[type="number"],
+  input[type="url"],
+  input[type="search"],
+  textarea,
+  [contenteditable="true"] {
+    caret-color: hsl(var(--foreground));
+    cursor: text;
+  }
+  
+  input[type="text"]:focus,
+  input[type="email"]:focus,
+  input[type="password"]:focus,
+  input[type="number"]:focus,
+  input[type="url"]:focus,
+  input[type="search"]:focus,
+  textarea:focus,
+  [contenteditable="true"]:focus {
+    caret-color: hsl(var(--primary));
+  }
+  
+  /* Ensure cursor is visible in dark mode */
+  .dark input[type="text"],
+  .dark input[type="email"],
+  .dark input[type="password"],
+  .dark input[type="number"],
+  .dark input[type="url"],
+  .dark input[type="search"],
+  .dark textarea,
+  .dark [contenteditable="true"] {
+    caret-color: hsl(var(--foreground));
+  }
+  
+  .dark input[type="text"]:focus,
+  .dark input[type="email"]:focus,
+  .dark input[type="password"]:focus,
+  .dark input[type="number"]:focus,
+  .dark input[type="url"]:focus,
+  .dark input[type="search"]:focus,
+  .dark textarea:focus,
+  .dark [contenteditable="true"]:focus {
+    caret-color: hsl(var(--primary));
   }
 }
 
