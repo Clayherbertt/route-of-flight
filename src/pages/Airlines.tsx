@@ -27,12 +27,19 @@ const Airlines = () => {
 
   const getSectionIcon = (title: string) => {
     switch (title) {
-      case "Majors": return "🛫";
+      case "Majors": return null; // Will use image instead
       case "Ultra Low Cost Carriers & Large Operators": return "🎯";
       case "Regional Carriers": return "🗺️";
       case "Fractional Carriers": return "✨";
       case "Cargo": return "📋";
       default: return "✈️";
+    }
+  };
+
+  const getSectionImage = (title: string) => {
+    switch (title) {
+      case "Majors": return "/lovable-uploads/bb3a6e69-698a-405f-94ad-1cb53d1cc647.png";
+      default: return null;
     }
   };
 
@@ -224,7 +231,15 @@ const Airlines = () => {
             return (
               <div key={sectionIndex} className="space-y-6">
                 <div className="flex items-center gap-4">
-                  <div className="text-3xl">{getSectionIcon(section.title)}</div>
+                  {getSectionImage(section.title) ? (
+                    <img 
+                      src={getSectionImage(section.title)!} 
+                      alt={section.title}
+                      className="w-12 h-12 object-contain"
+                    />
+                  ) : (
+                    <div className="text-3xl">{getSectionIcon(section.title)}</div>
+                  )}
                   <div>
                     <h2 className="text-3xl font-bold text-foreground">{section.title}</h2>
                     <Badge variant="outline" className={getSectionBadgeColor(section.title)}>
