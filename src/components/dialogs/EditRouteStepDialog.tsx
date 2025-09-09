@@ -156,6 +156,15 @@ export function EditRouteStepDialog({ step, open, onOpenChange, onSave }: EditRo
     })
   }
 
+  const updateTaskDescription = (index: number, description: string) => {
+    const newDetails = [...editedStep.details]
+    newDetails[index] = { ...newDetails[index], description }
+    setEditedStep({
+      ...editedStep,
+      details: newDetails
+    })
+  }
+
   const updateTaskPublished = (index: number, published: boolean) => {
     const newDetails = [...editedStep.details]
     newDetails[index] = { ...newDetails[index], published }
@@ -274,159 +283,226 @@ export function EditRouteStepDialog({ step, open, onOpenChange, onSave }: EditRo
 
           <Separator />
 
-          {/* Flight Training Requirements */}
-          <div className="space-y-4">
-            <div className="flex items-center gap-2">
-              <Plane className="h-5 w-5" />
-              <h3 className="text-lg font-semibold">Flight Training Requirements</h3>
-              <Badge variant="default">{flightTasks.length} items</Badge>
-            </div>
-            
-            <div className="space-y-3">
-              {flightTasks.map((task, taskIndex) => {
-                const originalIndex = editedStep.details.indexOf(task)
-                return (
-                  <div key={originalIndex} className="border rounded-lg p-4 space-y-3 bg-muted/30">
+          {/* Conditional rendering based on category */}
+          {editedStep.category === 'Initial Tasks' ? (
+            /* Initial Tasks Template - Simple task list */
+            <div className="space-y-4">
+              <div className="flex items-center gap-2">
+                <div className="h-5 w-5 rounded-full bg-primary flex items-center justify-center">
+                  <span className="text-xs text-primary-foreground font-bold">T</span>
+                </div>
+                <h3 className="text-lg font-semibold">Task Items</h3>
+                <Badge variant="default">{editedStep.details.length} items</Badge>
+              </div>
+              
+              <div className="space-y-3">
+                {editedStep.details.map((task, taskIndex) => (
+                  <div key={taskIndex} className="border rounded-lg p-4 space-y-3 bg-muted/30">
                     <div className="flex items-center justify-between">
                       <div className="flex items-center gap-3 flex-1">
                         <Checkbox
                           checked={task.checked}
-                          onCheckedChange={(checked) => toggleTaskCompleted(originalIndex, checked as boolean)}
+                          onCheckedChange={(checked) => toggleTaskCompleted(taskIndex, checked as boolean)}
                         />
                         <Input
                           value={task.title}
-                          onChange={(e) => updateTaskTitle(originalIndex, e.target.value)}
-                          placeholder="Flight requirement name"
+                          onChange={(e) => updateTaskTitle(taskIndex, e.target.value)}
+                          placeholder="Task name"
                           className="font-medium flex-1"
                         />
                       </div>
                       <Button
                         variant="outline"
                         size="sm"
-                        onClick={() => removeDetail(originalIndex)}
+                        onClick={() => removeDetail(taskIndex)}
                       >
                         <X className="h-4 w-4" />
                       </Button>
                     </div>
                     
-                    <div className="flex items-center gap-2 ml-6">
-                      <Label className="text-sm whitespace-nowrap">Required hours:</Label>
+                    <div className="ml-6 space-y-3">
+                      <Textarea
+                        value={task.description}
+                        onChange={(e) => updateTaskDescription(taskIndex, e.target.value)}
+                        placeholder="Task description..."
+                        rows={2}
+                      />
+                      
+                      <div className="flex items-center gap-4">
+                        <div className="flex items-center gap-2">
+                          <Switch
+                            checked={task.mandatory || false}
+                            onCheckedChange={(checked) => updateTaskMandatory(taskIndex, checked)}
+                          />
+                          <Label className="text-sm">Mandatory</Label>
+                        </div>
+                        <div className="flex items-center gap-2">
+                          <Switch
+                            checked={task.published !== undefined ? task.published : true}
+                            onCheckedChange={(checked) => updateTaskPublished(taskIndex, checked)}
+                          />
+                          <Label className="text-sm">Published</Label>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+                
+                <div className="border-2 border-dashed rounded-lg p-4">
+                  <h4 className="font-medium text-sm mb-3">Add New Task</h4>
+                  <div className="flex items-center gap-2">
+                    <Input
+                      value={newGroundTitle}
+                      onChange={(e) => setNewGroundTitle(e.target.value)}
+                      placeholder="Add task item"
+                      className="flex-1"
+                    />
+                    <Button onClick={addGroundTask} disabled={!newGroundTitle.trim()}>
+                      <Plus className="h-4 w-4" />
+                    </Button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          ) : (
+            /* Flight Training Template - Flight and Ground sections */
+            <>
+              {/* Flight Training Requirements */}
+              <div className="space-y-4">
+                <div className="flex items-center gap-2">
+                  <Plane className="h-5 w-5" />
+                  <h3 className="text-lg font-semibold">Flight Training Requirements</h3>
+                  <Badge variant="default">{flightTasks.length} items</Badge>
+                </div>
+                
+                <div className="space-y-3">
+                  {flightTasks.map((task, taskIndex) => {
+                    const originalIndex = editedStep.details.indexOf(task)
+                    return (
+                      <div key={originalIndex} className="border rounded-lg p-4 space-y-3 bg-muted/30">
+                        <div className="flex items-center justify-between">
+                          <div className="flex items-center gap-3 flex-1">
+                            <Checkbox
+                              checked={task.checked}
+                              onCheckedChange={(checked) => toggleTaskCompleted(originalIndex, checked as boolean)}
+                            />
+                            <Input
+                              value={task.title}
+                              onChange={(e) => updateTaskTitle(originalIndex, e.target.value)}
+                              placeholder="Flight requirement name"
+                              className="font-medium flex-1"
+                            />
+                          </div>
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            onClick={() => removeDetail(originalIndex)}
+                          >
+                            <X className="h-4 w-4" />
+                          </Button>
+                        </div>
+                        
+                        <div className="flex items-center gap-2 ml-6">
+                          <Label className="text-sm whitespace-nowrap">Required hours:</Label>
+                          <Input
+                            type="number"
+                            value={task.flightHours || ''}
+                            onChange={(e) => updateTaskHours(originalIndex, e.target.value ? parseInt(e.target.value) : undefined)}
+                            placeholder="Optional"
+                            className="w-24"
+                            min="0"
+                          />
+                          <span className="text-sm text-muted-foreground">hours</span>
+                        </div>
+                      </div>
+                    )
+                  })}
+                  
+                  <div className="border-2 border-dashed rounded-lg p-4 space-y-3">
+                    <h4 className="font-medium text-sm">Add Flight Requirement</h4>
+                    <div className="flex items-center gap-2">
+                      <Input
+                        value={newFlightTitle}
+                        onChange={(e) => setNewFlightTitle(e.target.value)}
+                        placeholder="Add flight requirement (e.g., Cross-country solo)"
+                        className="flex-1"
+                      />
                       <Input
                         type="number"
-                        value={task.flightHours || ''}
-                        onChange={(e) => updateTaskHours(originalIndex, e.target.value ? parseInt(e.target.value) : undefined)}
-                        placeholder="Optional"
+                        value={newFlightHours}
+                        onChange={(e) => setNewFlightHours(e.target.value)}
+                        placeholder="Hours"
                         className="w-24"
                         min="0"
                       />
-                      <span className="text-sm text-muted-foreground">hours</span>
+                      <Button onClick={addFlightTask} disabled={!newFlightTitle.trim()}>
+                        <Plus className="h-4 w-4" />
+                      </Button>
                     </div>
                   </div>
-                )
-              })}
-              
-              <div className="border-2 border-dashed rounded-lg p-4 space-y-3">
-                <h4 className="font-medium text-sm">Add Flight Requirement</h4>
-                <div className="flex items-center gap-2">
-                  <Input
-                    value={newFlightTitle}
-                    onChange={(e) => setNewFlightTitle(e.target.value)}
-                    placeholder="Add flight requirement (e.g., Cross-country solo)"
-                    className="flex-1"
-                  />
-                  <Input
-                    type="number"
-                    value={newFlightHours}
-                    onChange={(e) => setNewFlightHours(e.target.value)}
-                    placeholder="Hours"
-                    className="w-24"
-                    min="0"
-                  />
-                  <Button onClick={addFlightTask} disabled={!newFlightTitle.trim()}>
-                    <Plus className="h-4 w-4" />
-                  </Button>
                 </div>
               </div>
-            </div>
-          </div>
 
-          <Separator />
+              <Separator />
 
-          {/* Ground Training Requirements */}
-          <div className="space-y-4">
-            <div className="flex items-center gap-2">
-              <div className="h-5 w-5 rounded-full bg-primary flex items-center justify-center">
-                <span className="text-xs text-primary-foreground font-bold">G</span>
-              </div>
-              <h3 className="text-lg font-semibold">Ground Training Requirements</h3>
-              <Badge variant="secondary">{groundTasks.length} items</Badge>
-            </div>
-            
-            <div className="space-y-3">
-              {groundTasks.map((task, taskIndex) => {
-                const originalIndex = editedStep.details.indexOf(task)
-                return (
-                  <div key={originalIndex} className="border rounded-lg p-4 bg-secondary/30">
-                      <div className="flex items-center justify-between">
-                        <div className="flex items-center gap-3 flex-1">
-                          <Checkbox
-                            checked={task.checked}
-                            onCheckedChange={(checked) => toggleTaskCompleted(originalIndex, checked as boolean)}
-                          />
-                          <Input
-                            value={task.title}
-                            onChange={(e) => updateTaskTitle(originalIndex, e.target.value)}
-                            placeholder="Ground training requirement"
-                            className="font-medium flex-1"
-                          />
-                        </div>
-                        <Button
-                          variant="outline"
-                          size="sm"
-                          onClick={() => removeDetail(originalIndex)}
-                        >
-                          <X className="h-4 w-4" />
-                        </Button>
-                      </div>
-                      
-                      {editedStep.category === 'Initial Tasks' && (
-                        <div className="ml-6 flex items-center gap-4">
-                          <div className="flex items-center gap-2">
-                            <Switch
-                              checked={task.mandatory || false}
-                              onCheckedChange={(checked) => updateTaskMandatory(originalIndex, checked)}
-                            />
-                            <Label className="text-sm">Mandatory</Label>
-                          </div>
-                          <div className="flex items-center gap-2">
-                            <Switch
-                              checked={task.published !== undefined ? task.published : true}
-                              onCheckedChange={(checked) => updateTaskPublished(originalIndex, checked)}
-                            />
-                            <Label className="text-sm">Published</Label>
-                          </div>
-                        </div>
-                      )}
+              {/* Ground Training Requirements */}
+              <div className="space-y-4">
+                <div className="flex items-center gap-2">
+                  <div className="h-5 w-5 rounded-full bg-primary flex items-center justify-center">
+                    <span className="text-xs text-primary-foreground font-bold">G</span>
                   </div>
-                )
-              })}
-              
-              <div className="border-2 border-dashed rounded-lg p-4">
-                <h4 className="font-medium text-sm mb-3">Add Ground Requirement</h4>
-                <div className="flex items-center gap-2">
-                  <Input
-                    value={newGroundTitle}
-                    onChange={(e) => setNewGroundTitle(e.target.value)}
-                    placeholder="Add ground requirement (e.g., Written exam preparation)"
-                    className="flex-1"
-                  />
-                  <Button onClick={addGroundTask} disabled={!newGroundTitle.trim()}>
-                    <Plus className="h-4 w-4" />
-                  </Button>
+                  <h3 className="text-lg font-semibold">Ground Training Requirements</h3>
+                  <Badge variant="secondary">{groundTasks.length} items</Badge>
+                </div>
+                
+                <div className="space-y-3">
+                  {groundTasks.map((task, taskIndex) => {
+                    const originalIndex = editedStep.details.indexOf(task)
+                    return (
+                      <div key={originalIndex} className="border rounded-lg p-4 bg-secondary/30">
+                        <div className="flex items-center justify-between">
+                          <div className="flex items-center gap-3 flex-1">
+                            <Checkbox
+                              checked={task.checked}
+                              onCheckedChange={(checked) => toggleTaskCompleted(originalIndex, checked as boolean)}
+                            />
+                            <Input
+                              value={task.title}
+                              onChange={(e) => updateTaskTitle(originalIndex, e.target.value)}
+                              placeholder="Ground training requirement"
+                              className="font-medium flex-1"
+                            />
+                          </div>
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            onClick={() => removeDetail(originalIndex)}
+                          >
+                            <X className="h-4 w-4" />
+                          </Button>
+                        </div>
+                      </div>
+                    )
+                  })}
+                  
+                  <div className="border-2 border-dashed rounded-lg p-4">
+                    <h4 className="font-medium text-sm mb-3">Add Ground Requirement</h4>
+                    <div className="flex items-center gap-2">
+                      <Input
+                        value={newGroundTitle}
+                        onChange={(e) => setNewGroundTitle(e.target.value)}
+                        placeholder="Add ground requirement (e.g., Written exam preparation)"
+                        className="flex-1"
+                      />
+                      <Button onClick={addGroundTask} disabled={!newGroundTitle.trim()}>
+                        <Plus className="h-4 w-4" />
+                      </Button>
+                    </div>
+                  </div>
                 </div>
               </div>
-            </div>
-          </div>
+            </>
+          )}
         </div>
 
         <DialogFooter>
