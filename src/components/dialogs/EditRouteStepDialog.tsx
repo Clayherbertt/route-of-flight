@@ -212,6 +212,23 @@ export function EditRouteStepDialog({ step, open, onOpenChange, onSave }: EditRo
                 onCheckedChange={(checked) => setEditedStep({ ...editedStep, mandatory: checked })}
               />
             </div>
+
+            <div className="flex items-center justify-between">
+              <div className="space-y-0.5">
+                <Label htmlFor="published">Publish Task</Label>
+                <div className="text-sm text-muted-foreground">
+                  Make this task visible to students
+                </div>
+              </div>
+              <Switch
+                id="published"
+                checked={editedStep.status === 'published'}
+                onCheckedChange={(checked) => setEditedStep({ 
+                  ...editedStep, 
+                  status: checked ? 'published' : 'draft' 
+                })}
+              />
+            </div>
           </div>
 
           <Separator />
