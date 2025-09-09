@@ -380,6 +380,311 @@ const airlinesData: Record<string, AirlineInfo> = {
       "Single fleet type reduces training complexity",
       "Strong company culture with employee ownership"
     ]
+  },
+  "Spirit Airlines": {
+    name: "Spirit Airlines",
+    logo: "✈️",
+    callSign: "Spirit Wings",
+    pilotGroupSize: "3,000+",
+    fleetSize: 186,
+    description: "Ultra-low-cost carrier known for unbundled pricing model and point-to-point service throughout the United States, Caribbean, and Latin America.",
+    pilotUnion: "ALPA (Air Line Pilots Association)",
+    fleetInfo: [
+      { type: "Airbus A319", quantity: 31 },
+      { type: "Airbus A320", quantity: 81 },
+      { type: "Airbus A321", quantity: 74 }
+    ],
+    bases: ["Fort Lauderdale (FLL)", "Detroit (DTW)", "Las Vegas (LAS)", "Chicago (ORD)", "Dallas (DFW)", "Houston (IAH)", "Orlando (MCO)", "Atlantic City (ACY)"],
+    hiring: {
+      isHiring: true,
+      applicationUrl: "https://careers.spirit.com/pilots",
+      requiredQualifications: [
+        "ATP Certificate or meet ATP requirements",
+        "Current First Class Medical",
+        "Minimum 1,500 hours total time",
+        "Multi-engine land rating",
+        "Current passport",
+        "Must be 23+ years old"
+      ],
+      preferredQualifications: [
+        "Bachelor's degree",
+        "1,000+ hours turbine time",
+        "Part 121 experience",
+        "Airbus experience"
+      ],
+      insideScoop: [
+        "Growing ULCC with expansion opportunities",
+        "Single aircraft family operations",
+        "Competitive entry-level airline"
+      ]
+    },
+    seniority: {
+      mostJuniorBase: "Orlando (MCO)",
+      mostJuniorCaptainHireDate: "August 2019",
+      retirementsIn2025: 25
+    },
+    payScale: {
+      firstOfficer: { year1: "$90.00/hr", year5: "$165.00/hr", year10: "$185.00/hr" },
+      captain: { year1: "$240.00/hr", year5: "$255.00/hr", year10: "$270.00/hr" }
+    },
+    additionalInfo: [
+      "Rapid growth and fleet expansion",
+      "Focus on leisure destinations",
+      "Strong operational reliability"
+    ]
+  },
+  "Frontier Airlines": {
+    name: "Frontier Airlines",
+    logo: "✈️",
+    callSign: "Frontier Flight",
+    pilotGroupSize: "1,800+",
+    fleetSize: 137,
+    description: "Ultra-low-cost carrier based in Denver, known for animal-themed aircraft liveries and focus on leisure travel markets.",
+    pilotUnion: "ALPA (Air Line Pilots Association)",
+    fleetInfo: [
+      { type: "Airbus A320", quantity: 74 },
+      { type: "Airbus A321", quantity: 63 }
+    ],
+    bases: ["Denver (DEN)", "Las Vegas (LAS)", "Orlando (MCO)", "Philadelphia (PHL)", "Phoenix (PHX)", "Tampa (TPA)", "Miami (MIA)"],
+    hiring: {
+      isHiring: true,
+      applicationUrl: "https://careers.flyfrontier.com/pilots",
+      requiredQualifications: [
+        "ATP Certificate",
+        "Current First Class Medical",
+        "Minimum 1,500 hours total time",
+        "Multi-engine rating",
+        "Current passport",
+        "English proficiency"
+      ],
+      preferredQualifications: [
+        "Bachelor's degree",
+        "1,000+ hours turbine time",
+        "Airbus experience",
+        "Part 121 experience"
+      ],
+      insideScoop: [
+        "Animal-themed aircraft with unique culture",
+        "Growing route network",
+        "Good entry point into Part 121 operations"
+      ]
+    },
+    seniority: {
+      mostJuniorBase: "Denver (DEN)",
+      mostJuniorCaptainHireDate: "September 2019",
+      retirementsIn2025: 18
+    },
+    payScale: {
+      firstOfficer: { year1: "$88.00/hr", year5: "$158.00/hr", year10: "$178.00/hr" },
+      captain: { year1: "$235.00/hr", year5: "$248.00/hr", year10: "$262.00/hr" }
+    },
+    additionalInfo: [
+      "Unique animal-themed aircraft liveries",
+      "Focus on leisure travel markets",
+      "Denver-based with western US focus"
+    ]
+  },
+  "Allegiant Air": {
+    name: "Allegiant Air",
+    logo: "✈️",
+    callSign: "Allegiant",
+    pilotGroupSize: "1,500+",
+    fleetSize: 130,
+    description: "Ultra-low-cost carrier specializing in leisure travel from small cities to vacation destinations with high-frequency, point-to-point service.",
+    pilotUnion: "IBT (International Brotherhood of Teamsters)",
+    fleetInfo: [
+      { type: "Airbus A319", quantity: 54 },
+      { type: "Airbus A320", quantity: 76 }
+    ],
+    bases: ["Las Vegas (LAS)", "Orlando (MCO)", "Phoenix (PHX)", "St. Pete (PIE)", "Cincinnati (CVG)", "Grand Rapids (GRR)"],
+    hiring: {
+      isHiring: true,
+      applicationUrl: "https://careers.allegiantair.com/pilots",
+      requiredQualifications: [
+        "ATP Certificate",
+        "Current First Class Medical",
+        "Minimum 1,500 hours total time",
+        "Multi-engine land rating",
+        "Current passport"
+      ],
+      preferredQualifications: [
+        "Bachelor's degree",
+        "1,000+ hours turbine time",
+        "Airbus experience",
+        "Previous Part 121 experience"
+      ],
+      insideScoop: [
+        "Unique business model with leisure focus",
+        "Good work-life balance",
+        "Strong company performance"
+      ]
+    },
+    seniority: {
+      mostJuniorBase: "Las Vegas (LAS)",
+      mostJuniorCaptainHireDate: "November 2019",
+      retirementsIn2025: 12
+    },
+    payScale: {
+      firstOfficer: { year1: "$86.00/hr", year5: "$155.00/hr", year10: "$175.00/hr" },
+      captain: { year1: "$230.00/hr", year5: "$245.00/hr", year10: "$260.00/hr" }
+    },
+    additionalInfo: [
+      "Leisure-focused route network",
+      "Strong financial performance",
+      "Unique small city to vacation destination model"
+    ]
+  },
+  "JetBlue Airways": {
+    name: "JetBlue Airways",
+    logo: "✈️",
+    callSign: "JetBlue",
+    pilotGroupSize: "4,500+",
+    fleetSize: 289,
+    description: "Low-cost carrier known for premium cabin experience, free WiFi, and focus on customer service with operations primarily on the East Coast.",
+    pilotUnion: "ALPA (Air Line Pilots Association)",
+    fleetInfo: [
+      { type: "Airbus A220", quantity: 63 },
+      { type: "Airbus A320", quantity: 130 },
+      { type: "Airbus A321", quantity: 96 }
+    ],
+    bases: ["New York JFK (JFK)", "Boston (BOS)", "Fort Lauderdale (FLL)", "Orlando (MCO)", "Los Angeles (LAX)", "Long Beach (LGB)"],
+    hiring: {
+      isHiring: true,
+      applicationUrl: "https://careers.jetblue.com/pilots",
+      requiredQualifications: [
+        "ATP Certificate",
+        "Current First Class Medical",
+        "Minimum 1,500 hours total time",
+        "Multi-engine rating",
+        "Current passport",
+        "English proficiency"
+      ],
+      preferredQualifications: [
+        "Bachelor's degree",
+        "1,000+ hours turbine time",
+        "Airbus experience",
+        "Part 121 experience"
+      ],
+      insideScoop: [
+        "Known for excellent customer service culture",
+        "Premium amenities in economy class",
+        "Strong East Coast presence"
+      ]
+    },
+    seniority: {
+      mostJuniorBase: "Fort Lauderdale (FLL)",
+      mostJuniorCaptainHireDate: "July 2019",
+      retirementsIn2025: 42
+    },
+    payScale: {
+      firstOfficer: { year1: "$95.00/hr", year5: "$175.00/hr", year10: "$195.00/hr" },
+      captain: { year1: "$265.00/hr", year5: "$280.00/hr", year10: "$295.00/hr" }
+    },
+    additionalInfo: [
+      "Premium service at low-cost carrier prices",
+      "Strong brand recognition and customer loyalty",
+      "Focus on technology and innovation"
+    ]
+  },
+  "Breeze Airways": {
+    name: "Breeze Airways",
+    logo: "✈️",
+    callSign: "Breeze",
+    pilotGroupSize: "500+",
+    fleetSize: 52,
+    description: "Newest major US airline launched in 2021, focusing on underserved routes with modern aircraft and technology-forward approach.",
+    pilotUnion: "Non-unionized",
+    fleetInfo: [
+      { type: "Embraer E190", quantity: 27 },
+      { type: "Airbus A220", quantity: 25 }
+    ],
+    bases: ["Charleston (CHS)", "Norfolk (ORF)", "Tampa (TPA)", "New Orleans (MSY)", "Hartford (BDL)", "Providence (PVD)"],
+    hiring: {
+      isHiring: true,
+      applicationUrl: "https://careers.flybreeze.com/pilots",
+      requiredQualifications: [
+        "ATP Certificate",
+        "Current First Class Medical",
+        "Minimum 1,500 hours total time",
+        "Multi-engine rating",
+        "Current passport"
+      ],
+      preferredQualifications: [
+        "Bachelor's degree",
+        "1,000+ hours turbine time",
+        "Regional airline experience",
+        "Embraer or Airbus experience"
+      ],
+      insideScoop: [
+        "Newest airline with modern fleet",
+        "Focus on underserved markets",
+        "Technology-forward operations"
+      ]
+    },
+    seniority: {
+      mostJuniorBase: "Charleston (CHS)",
+      mostJuniorCaptainHireDate: "March 2022",
+      retirementsIn2025: 0
+    },
+    payScale: {
+      firstOfficer: { year1: "$92.00/hr", year5: "$168.00/hr", year10: "$188.00/hr" },
+      captain: { year1: "$250.00/hr", year5: "$265.00/hr", year10: "$280.00/hr" }
+    },
+    additionalInfo: [
+      "Founded by JetBlue's founder David Neeleman",
+      "Focus on point-to-point service",
+      "Modern technology and guest experience"
+    ]
+  },
+  "Sun Country Airlines": {
+    name: "Sun Country Airlines",
+    logo: "✈️",
+    callSign: "Sun Country",
+    pilotGroupSize: "700+",
+    fleetSize: 50,
+    description: "Low-cost carrier based in Minneapolis, offering scheduled passenger service, cargo, and charter operations with focus on leisure destinations.",
+    pilotUnion: "ALPA (Air Line Pilots Association)",
+    fleetInfo: [
+      { type: "Boeing 737-700", quantity: 11 },
+      { type: "Boeing 737-800", quantity: 39 }
+    ],
+    bases: ["Minneapolis (MSP)", "Dallas (DFW)", "Las Vegas (LAS)", "Phoenix (PHX)"],
+    hiring: {
+      isHiring: true,
+      applicationUrl: "https://careers.suncountry.com/pilots",
+      requiredQualifications: [
+        "ATP Certificate",
+        "Current First Class Medical",
+        "Minimum 1,500 hours total time",
+        "Multi-engine rating",
+        "Current passport"
+      ],
+      preferredQualifications: [
+        "Bachelor's degree",
+        "1,000+ hours turbine time",
+        "Boeing 737 experience",
+        "Part 121 experience"
+      ],
+      insideScoop: [
+        "Strong Midwest presence",
+        "Diverse operations including cargo and charter",
+        "Family-friendly company culture"
+      ]
+    },
+    seniority: {
+      mostJuniorBase: "Minneapolis (MSP)",
+      mostJuniorCaptainHireDate: "October 2019",
+      retirementsIn2025: 8
+    },
+    payScale: {
+      firstOfficer: { year1: "$89.00/hr", year5: "$162.00/hr", year10: "$182.00/hr" },
+      captain: { year1: "$245.00/hr", year5: "$260.00/hr", year10: "$275.00/hr" }
+    },
+    additionalInfo: [
+      "Based in Minneapolis with Midwest focus",
+      "Diverse revenue streams beyond passenger service",
+      "Strong operational performance"
+    ]
   }
 };
 
