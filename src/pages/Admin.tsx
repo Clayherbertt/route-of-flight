@@ -117,7 +117,7 @@ export default function Admin() {
               </CardHeader>
               <CardContent className="space-y-4">
                 <div className="grid gap-4 md:grid-cols-2">
-                  <Button variant="outline" className="justify-start">
+                  <Button variant="outline" className="justify-start" onClick={() => navigate('/admin/users')}>
                     <Users className="mr-2 h-4 w-4" />
                     Manage Users
                   </Button>
@@ -150,7 +150,7 @@ export default function Admin() {
                 <div className="space-y-4">
                   <div className="flex items-center justify-between">
                     <h4 className="text-lg font-medium">Registered Pilots</h4>
-                    <Button size="sm">
+                    <Button size="sm" onClick={() => navigate('/admin/users')}>
                       <UserCheck className="mr-2 h-4 w-4" />
                       View All Users
                     </Button>

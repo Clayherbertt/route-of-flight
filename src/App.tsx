@@ -12,6 +12,7 @@ import Logbook from "./pages/Logbook";
 import Subscription from "./pages/Subscription";
 import SubscriptionSuccess from "./pages/SubscriptionSuccess";
 import Admin from "./pages/Admin";
+import UserManagement from "./pages/UserManagement";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -32,6 +33,7 @@ const App = () => (
             <Route path="/subscription" element={<Subscription />} />
             <Route path="/subscription-success" element={<SubscriptionSuccess />} />
             <Route path="/admin" element={<Admin />} />
+            <Route path="/admin/users" element={<UserManagement />} />
             <Route path="*" element={<NotFound />} />
           </Routes>
         </BrowserRouter>
