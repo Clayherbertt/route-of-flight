@@ -189,6 +189,28 @@ export function useAirlines() {
 
   useEffect(() => {
     fetchAirlines();
+
+    // Set up realtime subscription for airlines table
+    const channel = supabase
+      .channel('airlines-changes')
+      .on(
+        'postgres_changes',
+        {
+          event: '*', // Listen to all events (INSERT, UPDATE, DELETE)
+          schema: 'public',
+          table: 'airlines'
+        },
+        (payload) => {
+          console.log('Airlines table changed:', payload);
+          // Refetch data when any change occurs
+          fetchAirlines();
+        }
+      )
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(channel);
+    };
   }, []);
 
   // Add window focus listener to refetch data when user returns to tab
