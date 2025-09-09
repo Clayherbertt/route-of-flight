@@ -153,6 +153,7 @@ export function EditRouteStepDialog({ step, open, onOpenChange, onSave }: EditRo
                 onChange={(e) => setEditedStep({ ...editedStep, description: e.target.value })}
                 placeholder="Brief description of this step"
                 rows={2}
+                preserveFormatting
               />
             </div>
 
@@ -167,6 +168,7 @@ export function EditRouteStepDialog({ step, open, onOpenChange, onSave }: EditRo
                 })}
                 placeholder="Detailed overview of this step"
                 rows={3}
+                preserveFormatting
               />
             </div>
           </div>
@@ -284,6 +286,7 @@ export function EditRouteStepDialog({ step, open, onOpenChange, onSave }: EditRo
                       onChange={(e) => updateDetail(index, 'description', e.target.value)}
                       placeholder="Enter detailed information about this topic"
                       rows={3}
+                      preserveFormatting
                     />
                   </div>
                   <div className="grid grid-cols-2 gap-4">
@@ -341,6 +344,7 @@ export function EditRouteStepDialog({ step, open, onOpenChange, onSave }: EditRo
                     onChange={(e) => setNewDetailDescription(e.target.value)}
                     placeholder="Enter detailed information"
                     rows={2}
+                    preserveFormatting
                   />
                 </div>
                 <Button

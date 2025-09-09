@@ -3,10 +3,39 @@ import * as React from "react"
 import { cn } from "@/lib/utils"
 
 export interface TextareaProps
-  extends React.TextareaHTMLAttributes<HTMLTextAreaElement> {}
+  extends React.TextareaHTMLAttributes<HTMLTextAreaElement> {
+  preserveFormatting?: boolean
+}
 
 const Textarea = React.forwardRef<HTMLTextAreaElement, TextareaProps>(
-  ({ className, ...props }, ref) => {
+  ({ className, preserveFormatting = false, onPaste, ...props }, ref) => {
+    const handlePaste = React.useCallback((e: React.ClipboardEvent<HTMLTextAreaElement>) => {
+      if (preserveFormatting) {
+        e.preventDefault()
+        const paste = e.clipboardData.getData('text')
+        const target = e.target as HTMLTextAreaElement
+        const start = target.selectionStart
+        const end = target.selectionEnd
+        const value = target.value
+        
+        // Preserve the formatting by keeping line breaks and spacing
+        const newValue = value.substring(0, start) + paste + value.substring(end)
+        
+        // Update the value
+        target.value = newValue
+        
+        // Set cursor position after the pasted content
+        const newCursorPos = start + paste.length
+        target.setSelectionRange(newCursorPos, newCursorPos)
+        
+        // Trigger onChange event
+        const event = new Event('input', { bubbles: true })
+        target.dispatchEvent(event)
+      }
+      
+      onPaste?.(e)
+    }, [preserveFormatting, onPaste])
+
     return (
       <textarea
         className={cn(
@@ -14,6 +43,7 @@ const Textarea = React.forwardRef<HTMLTextAreaElement, TextareaProps>(
           className
         )}
         ref={ref}
+        onPaste={handlePaste}
         {...props}
       />
     )
