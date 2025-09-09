@@ -18,7 +18,9 @@ import {
   Plane,
   Trophy,
   MapPin,
-  Settings
+  Settings,
+  ChevronDown,
+  ChevronUp
 } from 'lucide-react'
 
 export default function RouteDashboard() {
@@ -29,6 +31,9 @@ export default function RouteDashboard() {
   // Edit dialog state
   const [editDialogOpen, setEditDialogOpen] = useState(false)
   const [editingStep, setEditingStep] = useState<any>(null)
+  
+  // Expansion state for cards
+  const [expandedCards, setExpandedCards] = useState<Set<number>>(new Set())
   const [routeSteps, setRouteSteps] = useState([
     {
       id: 1,
@@ -171,6 +176,18 @@ export default function RouteDashboard() {
     )
   }
 
+  const toggleCardExpansion = (stepId: number) => {
+    setExpandedCards(prev => {
+      const newSet = new Set(prev)
+      if (newSet.has(stepId)) {
+        newSet.delete(stepId)
+      } else {
+        newSet.add(stepId)
+      }
+      return newSet
+    })
+  }
+
   return (
     <div className="min-h-screen bg-background">
       <Header />
@@ -272,53 +289,74 @@ export default function RouteDashboard() {
                           <CardDescription>{step.description}</CardDescription>
                         </div>
                       </div>
-                      <div className="flex items-center space-x-2">
-                        <Button 
-                          variant="outline" 
-                          size="sm"
-                          onClick={() => handleEditStep(step)}
-                        >
-                          <Edit3 className="h-4 w-4 mr-2" />
-                          Edit
-                        </Button>
-                      </div>
+                       <div className="flex items-center space-x-2">
+                         <Button 
+                           variant="ghost" 
+                           size="sm"
+                           onClick={() => toggleCardExpansion(step.id)}
+                         >
+                           {expandedCards.has(step.id) ? (
+                             <ChevronUp className="h-4 w-4" />
+                           ) : (
+                             <ChevronDown className="h-4 w-4" />
+                           )}
+                         </Button>
+                         <Button 
+                           variant="outline" 
+                           size="sm"
+                           onClick={() => handleEditStep(step)}
+                         >
+                           <Edit3 className="h-4 w-4 mr-2" />
+                           Edit
+                         </Button>
+                       </div>
                     </div>
                   </CardHeader>
                   
-                  <CardContent>
-                    <div className="space-y-4">
-                      <div>
-                        <h4 className="font-medium mb-2">Overview</h4>
-                        <p className="text-sm text-muted-foreground">{step.content.overview}</p>
-                      </div>
-                      
-                      <div>
-                        <h4 className="font-medium mb-2">Key Topics ({step.content.details.length})</h4>
-                        <div className="grid grid-cols-1 gap-3">
-                          {step.content.details.map((detail, idx) => (
-                            <div key={idx} className="text-sm bg-background/50 p-3 rounded border">
-                              <div className="font-medium text-foreground mb-1">{detail.title}</div>
-                              <div className="text-muted-foreground text-xs">{detail.description}</div>
-                              {step.allowCustomerReorder && (
-                                <Badge variant="outline" className="mt-2 text-xs">
-                                  Customer can reorder
-                                </Badge>
-                              )}
-                            </div>
-                          ))}
+                  {expandedCards.has(step.id) && (
+                    <CardContent>
+                      <div className="space-y-4">
+                        <div>
+                          <h4 className="font-medium mb-2">Overview</h4>
+                          <p className="text-sm text-muted-foreground">{step.content.overview}</p>
                         </div>
-                      </div>
+                        
+                        <div>
+                          <h4 className="font-medium mb-2">Key Topics ({step.content.details.length})</h4>
+                          <div className="grid grid-cols-1 gap-3">
+                            {step.content.details.map((detail, idx) => (
+                              <div key={idx} className="text-sm bg-background/50 p-3 rounded border">
+                                <div className="font-medium text-foreground mb-1">{detail.title}</div>
+                                <div className="text-muted-foreground text-xs">{detail.description}</div>
+                                {step.allowCustomerReorder && (
+                                  <Badge variant="outline" className="mt-2 text-xs">
+                                    Customer can reorder
+                                  </Badge>
+                                )}
+                              </div>
+                            ))}
+                          </div>
+                        </div>
 
-                      {step.connectedFrom && step.connectedFrom.length > 0 && (
-                        <div className="flex items-center space-x-2 pt-2 border-t">
-                          <span className="text-sm font-medium">Connected from:</span>
-                          <Badge variant="outline">
-                            Step {step.connectedFrom[0]}
-                          </Badge>
-                        </div>
-                      )}
-                    </div>
-                  </CardContent>
+                        {step.connectedFrom && step.connectedFrom.length > 0 && (
+                          <div className="flex items-center space-x-2 pt-2 border-t">
+                            <span className="text-sm font-medium">Connected from:</span>
+                            <Badge variant="outline">
+                              Step {step.connectedFrom[0]}
+                            </Badge>
+                          </div>
+                        )}
+                      </div>
+                    </CardContent>
+                  )}
+                  
+                  {!expandedCards.has(step.id) && (
+                    <CardContent className="pt-0">
+                      <div className="text-sm text-muted-foreground">
+                        {step.content.details.length} key topics • Click to expand
+                      </div>
+                    </CardContent>
+                  )}
                 </Card>
 
                 {/* Connection Arrow */}
