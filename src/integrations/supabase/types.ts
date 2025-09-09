@@ -593,39 +593,6 @@ export type Database = {
           },
         ]
       }
-      route_step_sub_topics: {
-        Row: {
-          checked: boolean
-          created_at: string
-          flight_hours: number | null
-          id: string
-          order_number: number
-          route_step_detail_id: string
-          title: string
-          updated_at: string
-        }
-        Insert: {
-          checked?: boolean
-          created_at?: string
-          flight_hours?: number | null
-          id?: string
-          order_number?: number
-          route_step_detail_id: string
-          title: string
-          updated_at?: string
-        }
-        Update: {
-          checked?: boolean
-          created_at?: string
-          flight_hours?: number | null
-          id?: string
-          order_number?: number
-          route_step_detail_id?: string
-          title?: string
-          updated_at?: string
-        }
-        Relationships: []
-      }
       route_steps: {
         Row: {
           allow_customer_reorder: boolean

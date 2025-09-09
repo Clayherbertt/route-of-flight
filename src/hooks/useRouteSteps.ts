@@ -2,14 +2,6 @@ import { useState, useEffect } from 'react'
 import { supabase } from '@/integrations/supabase/client'
 import { useToast } from '@/hooks/use-toast'
 
-interface RouteStepSubTopic {
-  id?: string
-  title: string
-  checked: boolean
-  flightHours?: number
-  orderNumber: number
-}
-
 interface RouteStepDetail {
   id?: string
   title: string
@@ -17,7 +9,6 @@ interface RouteStepDetail {
   checked: boolean
   flightHours?: number
   orderNumber: number
-  subTopics?: RouteStepSubTopic[]
 }
 
 interface RouteStep {
@@ -60,14 +51,6 @@ export function useRouteSteps() {
 
       if (detailsError) throw detailsError
 
-      // Fetch sub topics
-      const { data: subTopics, error: subTopicsError } = await supabase
-        .from('route_step_sub_topics')
-        .select('*')
-        .order('order_number')
-
-      if (subTopicsError) throw subTopicsError
-
       // Fetch connections
       const { data: connections, error: connectionsError } = await supabase
         .from('route_step_connections')
@@ -91,24 +74,14 @@ export function useRouteSteps() {
           allowCustomerReorder: step.allow_customer_reorder,
           overview: step.overview,
           status: step.status as 'draft' | 'published',
-          details: stepDetails.map(detail => {
-            const detailSubTopics = subTopics?.filter(subTopic => subTopic.route_step_detail_id === detail.id) || []
-            return {
-              id: detail.id,
-              title: detail.title,
-              description: detail.description,
-              checked: detail.checked,
-              flightHours: detail.flight_hours || undefined,
-              orderNumber: detail.order_number,
-              subTopics: detailSubTopics.map(subTopic => ({
-                id: subTopic.id,
-                title: subTopic.title,
-                checked: subTopic.checked,
-                flightHours: subTopic.flight_hours || undefined,
-                orderNumber: subTopic.order_number
-              }))
-            }
-          }),
+          details: stepDetails.map(detail => ({
+            id: detail.id,
+            title: detail.title,
+            description: detail.description,
+            checked: detail.checked,
+            flightHours: detail.flight_hours || undefined,
+            orderNumber: detail.order_number
+          })),
           nextSteps,
           connectedFrom: connectedFrom.length > 0 ? connectedFrom : undefined
         }
@@ -168,20 +141,18 @@ export function useRouteSteps() {
 
         if (stepError) throw stepError
 
-        // Delete existing details and sub-topics for updates
+        // Delete existing details for updates
         const { error: deleteError } = await supabase
           .from('route_step_details')
           .delete()
           .eq('route_step_id', step.id)
 
         if (deleteError) throw deleteError
-
-        // Sub-topics will be automatically deleted due to cascade
       }
 
-      // Insert details and sub-topics
+      // Insert details
       if (step.details.length > 0) {
-        const { data: insertedDetails, error: detailsError } = await supabase
+        const { error: detailsError } = await supabase
           .from('route_step_details')
           .insert(
             step.details.map((detail, index) => ({
@@ -193,31 +164,8 @@ export function useRouteSteps() {
               order_number: index
             }))
           )
-          .select()
 
         if (detailsError) throw detailsError
-
-        // Insert sub-topics for each detail
-        for (let i = 0; i < step.details.length; i++) {
-          const detail = step.details[i]
-          const insertedDetail = insertedDetails[i]
-          
-          if (detail.subTopics && detail.subTopics.length > 0) {
-            const { error: subTopicsError } = await supabase
-              .from('route_step_sub_topics')
-              .insert(
-                detail.subTopics.map((subTopic, subIndex) => ({
-                  route_step_detail_id: insertedDetail.id,
-                  title: subTopic.title,
-                  checked: subTopic.checked,
-                  flight_hours: subTopic.flightHours || null,
-                  order_number: subIndex
-                }))
-              )
-
-            if (subTopicsError) throw subTopicsError
-          }
-        }
       }
 
       // Refresh data
@@ -277,25 +225,7 @@ export function useRouteSteps() {
 
   const deleteRouteStep = async (stepId: string) => {
     try {
-      // First get all detail IDs for this step
-      const { data: detailIds, error: detailIdsError } = await supabase
-        .from('route_step_details')
-        .select('id')
-        .eq('route_step_id', stepId)
-
-      if (detailIdsError) throw detailIdsError
-
-      // Delete sub-topics for all details
-      if (detailIds && detailIds.length > 0) {
-        const { error: subTopicsError } = await supabase
-          .from('route_step_sub_topics')
-          .delete()
-          .in('route_step_detail_id', detailIds.map(d => d.id))
-
-        if (subTopicsError) throw subTopicsError
-      }
-
-      // Delete route step details
+      // Delete route step details first
       const { error: detailsError } = await supabase
         .from('route_step_details')
         .delete()
