@@ -33,47 +33,7 @@ const AnimatedHeroSection = () => {
 
   return (
     <section className="min-h-screen relative overflow-hidden bg-gradient-to-br from-background via-background to-aviation-navy/20">
-      {/* Animated Background Aircraft */}
-      <div className="absolute inset-0 pointer-events-none">
-        <div 
-          className="absolute top-20 right-10 w-32 h-32 opacity-10"
-          style={{
-            transform: `translateY(${scrollY * 0.3}px) rotate(${scrollY * 0.1}deg)`,
-          }}
-        >
-          <img 
-            src="/lovable-uploads/20ac9e9e-9335-4712-9293-9cd8c3398fbd.png" 
-            alt="Aircraft" 
-            className="w-full h-full object-contain"
-          />
-        </div>
-        
-        <div 
-          className="absolute top-1/3 left-10 w-24 h-24 opacity-10"
-          style={{
-            transform: `translateY(${scrollY * -0.2}px) rotate(${scrollY * -0.05}deg)`,
-          }}
-        >
-          <img 
-            src="/lovable-uploads/aec766ea-ce67-4779-9c02-1899b323b772.png" 
-            alt="Business Jet" 
-            className="w-full h-full object-contain"
-          />
-        </div>
-
-        <div 
-          className="absolute bottom-20 right-1/4 w-28 h-28 opacity-10"
-          style={{
-            transform: `translateY(${scrollY * 0.15}px) rotate(${scrollY * 0.08}deg)`,
-          }}
-        >
-          <img 
-            src="/lovable-uploads/4e62a767-b61c-46c7-b2ec-97c987a12622.png" 
-            alt="Commercial Aircraft" 
-            className="w-full h-full object-contain"
-          />
-        </div>
-      </div>
+      {/* Removed aircraft PNGs as requested */}
 
       {/* Floating geometric shapes */}
       <div className="absolute inset-0 pointer-events-none overflow-hidden">

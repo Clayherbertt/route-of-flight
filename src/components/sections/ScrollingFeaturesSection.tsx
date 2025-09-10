@@ -34,71 +34,38 @@ const ScrollingFeaturesSection = () => {
     {
       icon: Book,
       title: "Digital Logbook",
-      description: "Comprehensive flight logging with automatic currency tracking and regulatory compliance.",
-      aircraft: "/lovable-uploads/20ac9e9e-9335-4712-9293-9cd8c3398fbd.png"
+      description: "Comprehensive flight logging with automatic currency tracking and regulatory compliance."
     },
     {
       icon: Building2,
       title: "Airline Database",
-      description: "Complete profiles of US carriers with real-time hiring requirements and application tracking.",
-      aircraft: "/lovable-uploads/aec766ea-ce67-4779-9c02-1899b323b772.png"
+      description: "Complete profiles of US carriers with real-time hiring requirements and application tracking."
     },
     {
       icon: TrendingUp,
       title: "Career Analytics",
-      description: "Advanced insights and progression tracking to optimize your path to the airlines.",
-      aircraft: "/lovable-uploads/4e62a767-b61c-46c7-b2ec-97c987a12622.png"
+      description: "Advanced insights and progression tracking to optimize your path to the airlines."
     },
     {
       icon: Shield,
       title: "Secure & Compliant",
-      description: "Bank-level security with full FAA regulation compliance and data backup.",
-      aircraft: "/lovable-uploads/20ac9e9e-9335-4712-9293-9cd8c3398fbd.png"
+      description: "Bank-level security with full FAA regulation compliance and data backup."
     },
     {
       icon: Clock,
       title: "Real-time Updates",
-      description: "Live currency tracking, automatic calculations, and instant progress updates.",
-      aircraft: "/lovable-uploads/aec766ea-ce67-4779-9c02-1899b323b772.png"
+      description: "Live currency tracking, automatic calculations, and instant progress updates."
     },
     {
       icon: Users,
       title: "Community Network",
-      description: "Connect with pilots, mentors, and industry professionals in your career journey.",
-      aircraft: "/lovable-uploads/4e62a767-b61c-46c7-b2ec-97c987a12622.png"
+      description: "Connect with pilots, mentors, and industry professionals in your career journey."
     }
   ];
 
   return (
     <section className="py-20 relative overflow-hidden">
-      {/* Animated background aircraft */}
-      <div className="absolute inset-0 pointer-events-none">
-        <div 
-          className="absolute top-10 left-1/4 w-20 h-20 opacity-5"
-          style={{
-            transform: `translateX(${scrollY * 0.1}px) rotate(${scrollY * 0.02}deg)`,
-          }}
-        >
-          <img 
-            src="/lovable-uploads/20ac9e9e-9335-4712-9293-9cd8c3398fbd.png" 
-            alt="Aircraft" 
-            className="w-full h-full object-contain"
-          />
-        </div>
-        
-        <div 
-          className="absolute bottom-1/4 right-1/3 w-24 h-24 opacity-5"
-          style={{
-            transform: `translateX(${scrollY * -0.08}px) rotate(${scrollY * -0.03}deg)`,
-          }}
-        >
-          <img 
-            src="/lovable-uploads/aec766ea-ce67-4779-9c02-1899b323b772.png" 
-            alt="Business Jet" 
-            className="w-full h-full object-contain"
-          />
-        </div>
-      </div>
+      {/* Removed background aircraft as requested */}
 
       <div className="container mx-auto px-6 relative z-10">
         {/* Section Header */}
@@ -132,16 +99,7 @@ const ScrollingFeaturesSection = () => {
                   transform: isVisible ? 'translateY(0)' : 'translateY(32px)'
                 }}
               >
-                {/* Feature aircraft that slides in */}
-                <div className={`absolute -top-4 -right-4 w-16 h-16 transition-all duration-1000 ${
-                  isVisible ? 'translate-x-0 opacity-30' : 'translate-x-8 opacity-0'
-                }`}>
-                  <img 
-                    src={feature.aircraft} 
-                    alt="Feature Aircraft" 
-                    className="w-full h-full object-contain group-hover:scale-110 transition-transform duration-300"
-                  />
-                </div>
+                {/* Feature aircraft removed as requested */}
 
                 <div className="relative z-10">
                   <div className="flex items-center mb-4">
