@@ -37,15 +37,6 @@ const WIZARD_STEPS: WizardStep[] = [
     instructions: "These initial steps are going to help kickstart your aviation journey as well as give you the initial tools to be successful."
   },
   {
-    id: "medical",
-    title: "Medical Certification",
-    description: "Get your medical certificate",
-    icon: Heart,
-    required: true,
-    categories: ["Medical"],
-    instructions: "Medical certification is mandatory and must be completed early in your training."
-  },
-  {
     id: "initial-training",
     title: "Initial Training",
     description: "Build your flight certifications",
@@ -55,6 +46,15 @@ const WIZARD_STEPS: WizardStep[] = [
     instructions: "Select your training path. Private Pilot MUST be completed first, then you can choose the order for the remaining certificates.",
     multiSelect: true,
     orderMatters: true
+  },
+  {
+    id: "medical",
+    title: "Medical Certification",
+    description: "Get your medical certificate",
+    icon: Heart,
+    required: true,
+    categories: ["Medical"],
+    instructions: "Medical certification is mandatory and must be completed early in your training."
   },
   {
     id: "career-path",
