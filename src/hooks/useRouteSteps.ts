@@ -130,7 +130,17 @@ export function useRouteSteps() {
         if (createError) throw createError
         stepId = newStep.id
       } else {
-        // Update existing step
+        // Update existing step - first verify it exists
+        const { data: existingStep, error: checkError } = await supabase
+          .from('route_steps')
+          .select('id')
+          .eq('id', step.id)
+          .single()
+
+        if (checkError || !existingStep) {
+          throw new Error(`Route step with ID ${step.id} not found`)
+        }
+
         const { error: stepError } = await supabase
           .from('route_steps')
           .update({
@@ -156,8 +166,19 @@ export function useRouteSteps() {
         if (deleteError) throw deleteError
       }
 
-      // Insert details
-      if (step.details.length > 0) {
+      // Insert details - but only if we have a valid stepId
+      if (step.details.length > 0 && stepId) {
+        // Verify the step still exists before inserting details
+        const { data: stepExists, error: verifyError } = await supabase
+          .from('route_steps')
+          .select('id')
+          .eq('id', stepId)
+          .single()
+
+        if (verifyError || !stepExists) {
+          throw new Error(`Cannot insert details: Route step ${stepId} does not exist`)
+        }
+
         const { error: detailsError } = await supabase
           .from('route_step_details')
           .insert(
