@@ -28,15 +28,6 @@ interface WizardStep {
 
 const WIZARD_STEPS: WizardStep[] = [
   {
-    id: "medical",
-    title: "Medical Certification",
-    description: "Get your medical certificate",
-    icon: Heart,
-    required: true,
-    categories: ["Medical"],
-    instructions: "Medical certification is mandatory and must be completed early in your training."
-  },
-  {
     id: "initial-tasks",
     title: "Initial Tasks",
     description: "Essential first steps for every pilot",
@@ -122,8 +113,8 @@ export function RouteWizard({ isOpen, onClose, onStepAdd, availableSteps }: Rout
       categories.includes(step.category) && step.status === 'published'
     );
     
-    // Auto-select initial tasks on first step (now step 2)
-    if (currentStep === 1 && currentWizardStep.id === "initial-tasks") {
+    // Auto-select initial tasks on first step
+    if (currentStep === 0 && currentWizardStep.id === "initial-tasks") {
       const stepKey = currentWizardStep.id;
       if (filtered.length > 0 && (selectedSteps[stepKey] || []).length === 0) {
         const initialTaskIds = filtered.map(step => step.id);
