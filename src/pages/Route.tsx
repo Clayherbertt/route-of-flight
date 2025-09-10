@@ -114,9 +114,16 @@ const ROUTE_PHASES: RoutePhase[] = [
 ];
 
 export default function RouteBuilder() {
-  const { user } = useAuth();
+  const { user, loading: authLoading } = useAuth();
   const navigate = useNavigate();
   const { routeSteps, loading, updateStepDetailChecked } = useRouteSteps();
+
+  // Redirect to sign-in if not authenticated
+  useEffect(() => {
+    if (!authLoading && !user) {
+      navigate('/signin');
+    }
+  }, [user, authLoading, navigate]);
   const [studentRoute, setStudentRoute] = useState<StudentRoute[]>([]);
   const [phases, setPhases] = useState<RoutePhase[]>(ROUTE_PHASES);
   const [activePhase, setActivePhase] = useState("initial-tasks");
@@ -468,7 +475,7 @@ const formatHtmlContent = (html: string) => {
     return ["all", ...categories];
   };
 
-  if (loading) {
+  if (authLoading || loading) {
     return (
       <div className="min-h-screen bg-background">
         <Header />
