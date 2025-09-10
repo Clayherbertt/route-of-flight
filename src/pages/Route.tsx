@@ -8,6 +8,7 @@ import { Progress } from "@/components/ui/progress";
 import { useAuth } from "@/contexts/AuthContext";
 import { useNavigate } from "react-router-dom";
 import { useRouteSteps } from "@/hooks/useRouteSteps";
+import { SortableRouteStepCard } from "@/components/SortableRouteStepCard";
 import { Plus, Check, Lock, AlertCircle } from "lucide-react";
 import { toast } from "sonner";
 
@@ -115,6 +116,7 @@ export default function RouteBuilder() {
   const [phases, setPhases] = useState<RoutePhase[]>(ROUTE_PHASES);
   const [activePhase, setActivePhase] = useState("initial-tasks");
   const [selectedCategory, setSelectedCategory] = useState<string>("all");
+  const [expandedCards, setExpandedCards] = useState<Record<string, boolean>>({});
 
   useEffect(() => {
     if (!user) {
@@ -197,6 +199,13 @@ export default function RouteBuilder() {
   const getUniqueCategories = () => {
     const categories = [...new Set(routeSteps.map(step => step.category))];
     return ["all", ...categories];
+  };
+
+  const toggleCardExpansion = (stepId: string) => {
+    setExpandedCards(prev => ({
+      ...prev,
+      [stepId]: !prev[stepId]
+    }));
   };
 
   if (loading) {
@@ -309,39 +318,26 @@ export default function RouteBuilder() {
                     </div>
 
                     {/* Available Steps */}
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div className="space-y-4">
                       {availableSteps
                         .filter(step => phase.allowedCategories.includes(step.category))
                         .map(step => (
-                        <Card key={step.id} className="hover:shadow-md transition-shadow">
-                          <CardHeader className="pb-3">
-                            <div className="flex items-center justify-between">
-                              <CardTitle className="text-lg">{step.title}</CardTitle>
-                              <Button
-                                size="sm"
-                                onClick={() => addStepToRoute(step)}
-                                className="shrink-0"
-                              >
-                                <Plus className="h-4 w-4" />
-                              </Button>
-                            </div>
-                            <Badge variant="secondary" className="w-fit">
-                              {step.category}
-                            </Badge>
-                          </CardHeader>
-                          <CardContent>
-                            <CardDescription className="text-sm">
-                              {step.description}
-                            </CardDescription>
-                            {step.details && step.details.length > 0 && (
-                              <div className="mt-3">
-                                <p className="text-xs text-muted-foreground mb-2">
-                                  {step.details.length} tasks included
-                                </p>
-                              </div>
-                            )}
-                          </CardContent>
-                        </Card>
+                        <div key={step.id} className="relative">
+                          <SortableRouteStepCard
+                            step={step}
+                            isExpanded={expandedCards[step.id!] || false}
+                            onToggleExpansion={() => toggleCardExpansion(step.id!)}
+                            onEdit={() => {}} // No edit functionality for students
+                            onDelete={() => {}} // No delete functionality for students
+                          />
+                          <Button
+                            size="sm"
+                            onClick={() => addStepToRoute(step)}
+                            className="absolute top-4 right-4 z-10"
+                          >
+                            <Plus className="h-4 w-4" />
+                          </Button>
+                        </div>
                       ))}
                     </div>
                   </div>
@@ -362,49 +358,51 @@ export default function RouteBuilder() {
                 </CardDescription>
               </CardHeader>
               <CardContent>
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                  {studentRoute.map((step, index) => (
-                    <Card key={step.id} className="relative">
-                      <CardHeader className="pb-3">
-                        <div className="flex items-start justify-between">
-                          <div>
-                            <Badge variant="outline" className="mb-2">
-                              Step {index + 1}
-                            </Badge>
-                            <CardTitle className="text-base">{step.title}</CardTitle>
-                            <Badge variant="secondary" className="mt-1 text-xs">
-                              {step.category}
-                            </Badge>
-                          </div>
+                <div className="space-y-4">
+                  {studentRoute.map((step, index) => {
+                    // Find the full route step data to pass to SortableRouteStepCard
+                    const fullStep = routeSteps.find(rs => rs.id === step.stepId);
+                    if (!fullStep) return null;
+
+                    return (
+                      <div key={step.id} className="relative">
+                        <Badge variant="outline" className="absolute top-2 left-2 z-10">
+                          Step {index + 1}
+                        </Badge>
+                        <SortableRouteStepCard
+                          step={fullStep}
+                          isExpanded={expandedCards[step.id] || false}
+                          onToggleExpansion={() => toggleCardExpansion(step.id)}
+                          onEdit={() => {}} // No edit functionality for students
+                          onDelete={() => removeStepFromRoute(step.id)}
+                        />
+                        <div className="absolute top-2 right-2 z-10 flex gap-2">
+                          <Button
+                            size="sm"
+                            variant={step.completed ? "default" : "outline"}
+                            onClick={() => toggleStepCompletion(step.id)}
+                          >
+                            {step.completed ? (
+                              <>
+                                <Check className="h-4 w-4 mr-1" />
+                                Done
+                              </>
+                            ) : (
+                              "Complete"
+                            )}
+                          </Button>
                           <Button
                             size="sm"
                             variant="ghost"
                             onClick={() => removeStepFromRoute(step.id)}
-                            className="text-muted-foreground hover:text-destructive"
+                            className="text-muted-foreground hover:text-destructive px-2"
                           >
                             ×
                           </Button>
                         </div>
-                      </CardHeader>
-                      <CardContent>
-                        <Button
-                          size="sm"
-                          variant={step.completed ? "default" : "outline"}
-                          onClick={() => toggleStepCompletion(step.id)}
-                          className="w-full"
-                        >
-                          {step.completed ? (
-                            <>
-                              <Check className="h-4 w-4 mr-2" />
-                              Completed
-                            </>
-                          ) : (
-                            "Mark Complete"
-                          )}
-                        </Button>
-                      </CardContent>
-                    </Card>
-                  ))}
+                      </div>
+                    );
+                  })}
                 </div>
               </CardContent>
             </Card>
