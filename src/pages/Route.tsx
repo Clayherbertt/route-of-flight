@@ -124,6 +124,7 @@ export default function RouteBuilder() {
   const [showWizard, setShowWizard] = useState(false);
   const [hasCompletedWizard, setHasCompletedWizard] = useState(false);
   const [expandedSteps, setExpandedSteps] = useState<Set<string>>(new Set());
+  const [hasCheckedForExistingRoute, setHasCheckedForExistingRoute] = useState(false);
 
   // Load existing user route on component mount
   useEffect(() => {
@@ -140,6 +141,7 @@ export default function RouteBuilder() {
 
         if (error) {
           console.error('❌ Error loading user route:', error);
+          setHasCheckedForExistingRoute(true);
           return;
         }
 
@@ -178,6 +180,8 @@ export default function RouteBuilder() {
         }
       } catch (error) {
         console.error('❌ Exception loading user route:', error);
+      } finally {
+        setHasCheckedForExistingRoute(true);
       }
     };
 
@@ -186,12 +190,13 @@ export default function RouteBuilder() {
     }
   }, [user, routeSteps]);
 
-  // Show wizard if user has no route and hasn't completed wizard
+  // Show wizard only after we've checked for existing route data
   useEffect(() => {
-    if (!loading && studentRoute.length === 0 && !hasCompletedWizard) {
+    if (!loading && hasCheckedForExistingRoute && studentRoute.length === 0 && !hasCompletedWizard) {
+      console.log('🧙 Showing wizard - no existing route found');
       setShowWizard(true);
     }
-  }, [loading, studentRoute.length, hasCompletedWizard]);
+  }, [loading, hasCheckedForExistingRoute, studentRoute.length, hasCompletedWizard]);
 
   const availableSteps = routeSteps.filter(step => 
     step.status === 'published' && 
@@ -629,6 +634,7 @@ const formatHtmlContent = (html: string) => {
                          
                          setStudentRoute([]);
                          setHasCompletedWizard(false);
+                         setHasCheckedForExistingRoute(false);
                          setShowWizard(true);
                          toast.success('Route reset successfully');
                        } catch (error) {
