@@ -458,7 +458,7 @@ const formatHtmlContent = (html: string) => {
             <span className="text-primary font-medium">Career Route Builder</span>
           </div>
           <h1 className="text-5xl font-bold mb-6 bg-gradient-to-r from-primary to-primary/70 bg-clip-text text-transparent">
-            Build Your Airline Career Path
+            {studentRoute.length > 0 ? "My Route" : "Build Your Airline Career Path"}
           </h1>
           <p className="text-xl text-muted-foreground max-w-3xl mx-auto mb-8">
             Create your personalized journey to becoming an airline pilot. Select training steps, 
