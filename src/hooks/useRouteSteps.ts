@@ -121,7 +121,7 @@ export function useRouteSteps() {
             order_number: step.orderNumber,
             mandatory: step.mandatory,
             allow_customer_reorder: step.allowCustomerReorder,
-            status: step.status,
+            status: 'published', // Always publish new steps so data is immediately accessible
             category: step.category
           })
           .select()
@@ -196,7 +196,7 @@ export function useRouteSteps() {
               order_number: index,
               task_type: detail.taskType || 'flight',
               mandatory: detail.mandatory || false,
-              published: detail.published || false
+              published: true // Always publish new details so they're immediately accessible
             }))
           )
 
