@@ -110,7 +110,7 @@ export function useRouteSteps() {
     try {
       let stepId = step.id;
 
-      if (!stepId) {
+      if (!stepId || stepId.trim() === '') {
         // Create new step
         const { data: newStep, error: createError } = await supabase
           .from('route_steps')
