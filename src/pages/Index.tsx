@@ -1,6 +1,6 @@
 import Header from "@/components/layout/Header";
-import HeroSectionV2 from "@/components/sections/HeroSectionV2";
-import FeaturesSection from "@/components/sections/FeaturesSection";
+import AnimatedHeroSection from "@/components/sections/AnimatedHeroSection";
+import ScrollingFeaturesSection from "@/components/sections/ScrollingFeaturesSection";
 import LogbookSectionV2 from "@/components/sections/LogbookSectionV2";
 import AirlinesSection from "@/components/sections/AirlinesSection";
 import TestimonialsSection from "@/components/sections/TestimonialsSection";
@@ -11,8 +11,8 @@ const Index = () => {
     <div className="min-h-screen">
       <Header />
       <main>
-        <HeroSectionV2 />
-        <FeaturesSection />
+      <AnimatedHeroSection />
+      <ScrollingFeaturesSection />
         <LogbookSectionV2 />
         <AirlinesSection />
         <TestimonialsSection />
