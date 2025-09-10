@@ -135,9 +135,14 @@ export function useRouteSteps() {
           .from('route_steps')
           .select('id')
           .eq('id', step.id)
-          .single()
+          .maybeSingle()
 
-        if (checkError || !existingStep) {
+        if (checkError) {
+          console.error('Error checking existing step:', checkError)
+          throw new Error(`Error verifying route step: ${checkError.message}`)
+        }
+        
+        if (!existingStep) {
           throw new Error(`Route step with ID ${step.id} not found`)
         }
 
