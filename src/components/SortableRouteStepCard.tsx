@@ -152,23 +152,25 @@ export function SortableRouteStepCard({
                 <div>
                   <h4 className="font-medium mb-2">Tasks ({step.details.length})</h4>
                   <div className="space-y-2">
-                    {step.details.slice(0, 5).map((detail, index) => (
-                      <div key={index} className="flex items-center space-x-2 text-sm">
-                        <div className="w-2 h-2 rounded-full bg-primary/40" />
-                        <span className="flex-1">{detail.title}</span>
-                        {detail.flightHours && (
-                          <Badge variant="outline" className="text-xs">
-                            {detail.flightHours}h
-                          </Badge>
-                        )}
-                        <Badge 
-                          variant={detail.taskType === 'flight' ? 'default' : 'secondary'} 
-                          className="text-xs"
-                        >
-                          {detail.taskType || 'ground'}
-                        </Badge>
-                      </div>
-                    ))}
+                     {step.details.slice(0, 5).map((detail, index) => (
+                       <div key={index} className="flex items-center space-x-2 text-sm">
+                         <div className="w-2 h-2 rounded-full bg-primary/40" />
+                         <span className="flex-1">{detail.title}</span>
+                         {detail.flightHours && (
+                           <Badge variant="outline" className="text-xs">
+                             {detail.flightHours}h
+                           </Badge>
+                         )}
+                         {step.category !== 'Initial Tasks' && (
+                           <Badge 
+                             variant={detail.taskType === 'flight' ? 'default' : 'secondary'} 
+                             className="text-xs"
+                           >
+                             {detail.taskType || 'ground'}
+                           </Badge>
+                         )}
+                       </div>
+                     ))}
                     {step.details.length > 5 && (
                       <div className="text-sm text-muted-foreground">
                         +{step.details.length - 5} more tasks...
