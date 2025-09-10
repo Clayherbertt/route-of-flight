@@ -10,6 +10,7 @@ import { useNavigate } from "react-router-dom";
 import { useRouteSteps } from "@/hooks/useRouteSteps";
 import { StudentRouteStepCard } from "@/components/StudentRouteStepCard";
 import { RouteWizard } from "@/components/RouteWizard";
+import { CircularProgress } from "@/components/CircularProgress";
 import { Check, Lock, AlertCircle, Target, Plane, Compass } from "lucide-react";
 import { toast } from "sonner";
 
@@ -235,6 +236,16 @@ export default function RouteBuilder() {
     ));
   };
 
+  const getStepProgress = (step: any, fullStep: any) => {
+    if (!fullStep || !fullStep.details || fullStep.details.length === 0) return 0;
+    
+    const completedTasks = fullStep.details.filter((detail: any) => 
+      step.taskProgress[detail.id || detail.title] || false
+    ).length;
+    
+    return (completedTasks / fullStep.details.length) * 100;
+  };
+
   const toggleStepExpansion = (stepId: string) => {
     setExpandedSteps(prev => {
       const newSet = new Set(prev);
@@ -295,6 +306,7 @@ export default function RouteBuilder() {
                 if (!fullStep) return null;
 
                 const isExpanded = expandedSteps.has(step.id);
+                const stepProgress = getStepProgress(step, fullStep);
 
                 return (
                   <div key={step.id} className="relative">
@@ -310,11 +322,11 @@ export default function RouteBuilder() {
                             </p>
                           </div>
                           <div className="flex items-center gap-4 ml-6">
-                            <div className="relative">
-                              <div className="w-12 h-12 border-2 border-border rounded-full flex items-center justify-center">
-                                <div className="w-8 h-8 bg-muted rounded-full"></div>
-                              </div>
-                            </div>
+                            <CircularProgress 
+                              progress={stepProgress}
+                              size={48}
+                              strokeWidth={4}
+                            />
                             <Button 
                               variant="outline" 
                               size="sm"
