@@ -449,7 +449,7 @@ const formatHtmlContent = (html: string) => {
 
         {/* Show simple card layout when route has steps */}
         {studentRoute.length > 0 && (
-          <div className="max-w-4xl mx-auto">
+          <div className="max-w-6xl mx-auto">
             <div className="space-y-6">
               {studentRoute.map((step, index) => {
                 const fullStep = routeSteps.find(rs => rs.id === step.stepId);
