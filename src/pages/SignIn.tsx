@@ -11,8 +11,9 @@ import { toast } from "sonner";
 
 const SignIn = () => {
   const navigate = useNavigate();
-  const { signIn, signUp } = useAuth();
+  const { signIn, signUp, resetPassword } = useAuth();
   const [loading, setLoading] = useState(false);
+  const [resetLoading, setResetLoading] = useState(false);
   const [signInForm, setSignInForm] = useState({ email: "", password: "" });
   const [signUpForm, setSignUpForm] = useState({ 
     firstName: "",
@@ -55,6 +56,23 @@ const SignIn = () => {
       toast.error(error.message || "Failed to create account");
     } finally {
       setLoading(false);
+    }
+  };
+
+  const handleResetPassword = async () => {
+    if (!signInForm.email) {
+      toast.error("Please enter your email address first");
+      return;
+    }
+
+    setResetLoading(true);
+    try {
+      await resetPassword(signInForm.email);
+      toast.success("Password reset email sent! Check your inbox.");
+    } catch (error: any) {
+      toast.error(error.message || "Failed to send reset email");
+    } finally {
+      setResetLoading(false);
     }
   };
 
@@ -115,6 +133,17 @@ const SignIn = () => {
                   >
                     {loading ? "Signing in..." : "Sign In"}
                   </Button>
+                  <div className="text-center">
+                    <Button
+                      type="button"
+                      variant="link"
+                      className="text-sm text-muted-foreground hover:text-primary"
+                      onClick={handleResetPassword}
+                      disabled={resetLoading}
+                    >
+                      {resetLoading ? "Sending..." : "Forgot Password?"}
+                    </Button>
+                  </div>
                 </form>
               </TabsContent>
               
