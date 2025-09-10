@@ -629,14 +629,9 @@ const formatHtmlContent = (html: string) => {
                                         </div>
                                       </div>
                                     </div>
-                                    
-                                     {/* Detailed Content - Hide when completed */}
-                                     {!isCompleted && detail.description && detail.description.trim() && (
-                                       <div className="p-6">
-                                         {formatHtmlContent(detail.description)}
-                                       </div>
-                                     )}
-                                  </div>
+                                     
+                                     {/* Detailed Content - Descriptions hidden as requested */}
+                                   </div>
                                 );
                               })}
                             </div>
