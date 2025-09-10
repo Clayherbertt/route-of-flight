@@ -34,7 +34,7 @@ const WIZARD_STEPS: WizardStep[] = [
     icon: Target,
     required: true,
     categories: ["Initial Tasks"],
-    instructions: "These initial tasks are required for all pilots. They set the foundation for your aviation career."
+    instructions: "These initial steps are going to help kickstart your aviation journey as well as give you the initial tools to be successful."
   },
   {
     id: "medical",
