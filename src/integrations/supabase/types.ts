@@ -734,6 +734,42 @@ export type Database = {
         }
         Relationships: []
       }
+      user_routes: {
+        Row: {
+          completed: boolean
+          created_at: string
+          id: string
+          order_number: number
+          route_step_id: string
+          step_category: string
+          updated_at: string
+          user_id: string
+          wizard_step_key: string
+        }
+        Insert: {
+          completed?: boolean
+          created_at?: string
+          id?: string
+          order_number?: number
+          route_step_id: string
+          step_category: string
+          updated_at?: string
+          user_id: string
+          wizard_step_key: string
+        }
+        Update: {
+          completed?: boolean
+          created_at?: string
+          id?: string
+          order_number?: number
+          route_step_id?: string
+          step_category?: string
+          updated_at?: string
+          user_id?: string
+          wizard_step_key?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never

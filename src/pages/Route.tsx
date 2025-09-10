@@ -10,6 +10,7 @@ import { useNavigate } from "react-router-dom";
 import { useRouteSteps } from "@/hooks/useRouteSteps";
 import { StudentRouteStepCard } from "@/components/StudentRouteStepCard";
 import { RouteWizard } from "@/components/RouteWizard";
+import { supabase } from "@/integrations/supabase/client";
 import { CircularProgress } from "@/components/CircularProgress";
 import { Check, Lock, AlertCircle, Target, Plane, Compass } from "lucide-react";
 import { toast } from "sonner";
@@ -121,24 +122,67 @@ export default function RouteBuilder() {
   const [activePhase, setActivePhase] = useState("initial-tasks");
   const [selectedCategory, setSelectedCategory] = useState<string>("all");
   const [showWizard, setShowWizard] = useState(false);
-  const [hasSeenWizard, setHasSeenWizard] = useState(() => {
-    return localStorage.getItem('hasSeenRouteWizard') === 'true';
-  });
+  const [hasCompletedWizard, setHasCompletedWizard] = useState(false);
   const [expandedSteps, setExpandedSteps] = useState<Set<string>>(new Set());
 
+  // Load existing user route on component mount
   useEffect(() => {
-    if (!user) {
-      navigate("/signin");
-      return;
-    }
-  }, [user, navigate]);
+    if (!user) return;
+    
+    const loadUserRoute = async () => {
+      try {
+        const { data: userRoutes, error } = await supabase
+          .from('user_routes')
+          .select('*')
+          .eq('user_id', user.id)
+          .order('order_number');
 
-  // Show wizard if user has no route and hasn't seen it yet
+        if (error) {
+          console.error('Error loading user route:', error);
+          return;
+        }
+
+        if (userRoutes && userRoutes.length > 0) {
+          // User has completed the wizard before
+          setHasCompletedWizard(true);
+          
+          // Convert database records to StudentRoute format
+          const loadedRoute: StudentRoute[] = [];
+          
+          for (const userRoute of userRoutes) {
+            const step = routeSteps.find(s => s.id === userRoute.route_step_id);
+            if (step) {
+              loadedRoute.push({
+                id: `${step.id}-${userRoute.created_at}`,
+                stepId: step.id,
+                title: step.title,
+                category: step.category,
+                icon: step.icon,
+                completed: userRoute.completed,
+                order: userRoute.order_number,
+                taskProgress: {} // This could be expanded to save task progress too
+              });
+            }
+          }
+          
+          setStudentRoute(loadedRoute);
+        }
+      } catch (error) {
+        console.error('Error loading user route:', error);
+      }
+    };
+
+    if (routeSteps.length > 0) {
+      loadUserRoute();
+    }
+  }, [user, routeSteps]);
+
+  // Show wizard if user has no route and hasn't completed wizard
   useEffect(() => {
-    if (!loading && studentRoute.length === 0 && !hasSeenWizard) {
+    if (!loading && studentRoute.length === 0 && !hasCompletedWizard) {
       setShowWizard(true);
     }
-  }, [loading, studentRoute.length, hasSeenWizard]);
+  }, [loading, studentRoute.length, hasCompletedWizard]);
 
   const availableSteps = routeSteps.filter(step => 
     step.status === 'published' && 
@@ -168,7 +212,7 @@ export default function RouteBuilder() {
     return getPhaseProgress(previousPhase.id) === 100;
   };
 
-  const addStepToRoute = (stepId: string) => {
+  const addStepToRoute = async (stepId: string) => {
     const step = routeSteps.find(s => s.id === stepId);
     if (!step) return;
 
@@ -189,6 +233,32 @@ export default function RouteBuilder() {
       order: studentRoute.length,
       taskProgress: {}
     };
+
+    // Save to database if user is authenticated
+    if (user) {
+      try {
+        const { error } = await supabase
+          .from('user_routes')
+          .insert({
+            user_id: user.id,
+            route_step_id: step.id,
+            step_category: step.category,
+            wizard_step_key: 'manual', // This is for manual additions
+            order_number: studentRoute.length,
+            completed: false
+          });
+
+        if (error) {
+          console.error('Error saving step to database:', error);
+          toast.error('Failed to save step. Please try again.');
+          return;
+        }
+      } catch (error) {
+        console.error('Error saving step to database:', error);
+        toast.error('Failed to save step. Please try again.');
+        return;
+      }
+    }
 
     setStudentRoute(prev => [...prev, newStep]);
     toast.success(`Added ${step.title} to your route`);
@@ -514,17 +584,15 @@ const formatHtmlContent = (html: string) => {
                   Let our guided wizard help you create a personalized path from student pilot to airline pilot.
                 </p>
                 <div className="space-y-3">
-                <Button 
-                  onClick={() => {
-                    setShowWizard(true);
-                    setHasSeenWizard(true);
-                    localStorage.setItem('hasSeenRouteWizard', 'true');
-                  }}
-                  className="gap-2"
-                >
-                    <Compass className="h-4 w-4" />
-                    Start Route Builder Wizard
-                  </Button>
+                 <Button 
+                   onClick={() => {
+                     setShowWizard(true);
+                   }}
+                   className="gap-2"
+                 >
+                     <Compass className="h-4 w-4" />
+                     Start Route Builder Wizard
+                   </Button>
                   <p className="text-xs text-muted-foreground">
                     Or manually add steps from the categories above
                   </p>
@@ -537,12 +605,13 @@ const formatHtmlContent = (html: string) => {
         {/* Route Wizard */}
         <RouteWizard
           isOpen={showWizard}
-          onClose={() => {
+          onClose={async () => {
             setShowWizard(false);
-            setHasSeenWizard(true);
-            localStorage.setItem('hasSeenRouteWizard', 'true');
+            setHasCompletedWizard(true);
           }}
-          onStepAdd={addStepToRoute}
+          onStepAdd={async (stepId: string) => {
+            await addStepToRoute(stepId);
+          }}
           availableSteps={routeSteps}
         />
       </main>
