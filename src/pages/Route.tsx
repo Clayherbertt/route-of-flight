@@ -521,16 +521,17 @@ const formatHtmlContent = (html: string) => {
                               </div>
                             )}
                             
-                            <h4 className="font-semibold mb-4 text-lg">Tasks & Requirements ({fullStep.details.length})</h4>
-                            <div className="space-y-4">
+                            <h4 className="font-semibold mb-4 text-lg">Detailed Information ({fullStep.details.length})</h4>
+                            <div className="space-y-6">
                               {fullStep.details.map((detail, detailIndex) => {
                                 const isCompleted = step.taskProgress[detail.id || detail.title] || false;
                                 
                                 return (
-                                  <div key={detail.id || detailIndex} className={`border rounded-lg p-4 transition-all duration-300 ${
-                                    isCompleted ? 'bg-muted/30 opacity-75' : 'bg-card border-border'
+                                  <div key={detail.id || detailIndex} className={`border rounded-lg transition-all duration-300 ${
+                                    isCompleted ? 'bg-muted/20 opacity-75 border-muted' : 'bg-card border-border shadow-sm'
                                   }`}>
-                                    <div className="flex items-start space-x-3">
+                                    {/* Task Header */}
+                                    <div className="flex items-start space-x-3 p-4 border-b border-border/50">
                                       <Checkbox
                                         id={`task-${detail.id || detailIndex}`}
                                         checked={isCompleted}
@@ -538,7 +539,7 @@ const formatHtmlContent = (html: string) => {
                                         className="mt-1"
                                       />
                                       <div className="flex-1 min-w-0">
-                                        <div className="flex items-center justify-between gap-3 mb-2">
+                                        <div className="flex items-center justify-between gap-3">
                                           <label 
                                             htmlFor={`task-${detail.id || detailIndex}`}
                                             className={`font-semibold cursor-pointer transition-all duration-300 text-lg ${
@@ -568,16 +569,17 @@ const formatHtmlContent = (html: string) => {
                                             )}
                                           </div>
                                         </div>
-                                        {/* Show full formatted description */}
-                                        {detail.description && detail.description.trim() && (
-                                          <div className={`prose prose-sm max-w-none ${
-                                            isCompleted ? 'opacity-60' : ''
-                                          }`}>
-                                            {formatHtmlContent(detail.description)}
-                                          </div>
-                                        )}
                                       </div>
                                     </div>
+                                    
+                                    {/* Detailed Content */}
+                                    {detail.description && detail.description.trim() && (
+                                      <div className={`p-6 ${isCompleted ? 'opacity-60' : ''}`}>
+                                        <div className="prose prose-sm max-w-none prose-headings:text-foreground prose-p:text-foreground prose-li:text-foreground prose-strong:text-foreground">
+                                          {formatHtmlContent(detail.description)}
+                                        </div>
+                                      </div>
+                                    )}
                                   </div>
                                 );
                               })}
