@@ -4,6 +4,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
+import { Checkbox } from "@/components/ui/checkbox";
 import { useAuth } from "@/contexts/AuthContext";
 import { useNavigate } from "react-router-dom";
 import { useRouteSteps } from "@/hooks/useRouteSteps";
@@ -119,6 +120,7 @@ export default function RouteBuilder() {
   const [selectedCategory, setSelectedCategory] = useState<string>("all");
   const [showWizard, setShowWizard] = useState(false);
   const [hasSeenWizard, setHasSeenWizard] = useState(false);
+  const [expandedSteps, setExpandedSteps] = useState<Set<string>>(new Set());
 
   useEffect(() => {
     if (!user) {
@@ -229,6 +231,18 @@ export default function RouteBuilder() {
           } 
         : step
     ));
+  };
+
+  const toggleStepExpansion = (stepId: string) => {
+    setExpandedSteps(prev => {
+      const newSet = new Set(prev);
+      if (newSet.has(stepId)) {
+        newSet.delete(stepId);
+      } else {
+        newSet.add(stepId);
+      }
+      return newSet;
+    });
   };
 
   const getUniqueCategories = () => {
@@ -431,6 +445,8 @@ export default function RouteBuilder() {
                 const fullStep = routeSteps.find(rs => rs.id === step.stepId);
                 if (!fullStep) return null;
 
+                const isExpanded = expandedSteps.has(step.id);
+
                 return (
                   <div key={step.id} className="relative">
                     <Card className="border border-border/50 shadow-sm hover:shadow-md transition-shadow">
@@ -450,11 +466,79 @@ export default function RouteBuilder() {
                                 <div className="w-8 h-8 bg-muted rounded-full"></div>
                               </div>
                             </div>
-                            <Button variant="outline" size="sm">
-                              Expand
+                            <Button 
+                              variant="outline" 
+                              size="sm"
+                              onClick={() => toggleStepExpansion(step.id)}
+                            >
+                              {isExpanded ? 'Collapse' : 'Expand'}
                             </Button>
                           </div>
                         </div>
+
+                        {/* Expandable Content */}
+                        {isExpanded && (
+                          <div className="mt-6 border-t pt-6">
+                            <h4 className="font-semibold mb-4 text-lg">Tasks & Requirements ({fullStep.details.length})</h4>
+                            <div className="space-y-3">
+                              {fullStep.details.map((detail, detailIndex) => (
+                                <div key={detail.id || detailIndex} className="flex items-start space-x-3 p-3 rounded-lg bg-muted/30">
+                                  <Checkbox
+                                    id={`task-${detail.id || detailIndex}`}
+                                    checked={step.taskProgress[detail.id || detail.title] || false}
+                                    onCheckedChange={(checked) => toggleTaskCompletion(step.id, detail.id || detail.title, !!checked)}
+                                    className="mt-0.5"
+                                  />
+                                  <div className="flex-1 min-w-0">
+                                    <div className="flex items-center justify-between gap-3">
+                                      <label 
+                                        htmlFor={`task-${detail.id || detailIndex}`}
+                                        className={`font-medium cursor-pointer ${
+                                          step.taskProgress[detail.id || detail.title] ? 'line-through text-muted-foreground' : ''
+                                        }`}
+                                      >
+                                        {detail.title}
+                                      </label>
+                                      <div className="flex gap-2 flex-shrink-0">
+                                        {detail.flightHours && (
+                                          <Badge variant="outline" className="text-xs">
+                                            {detail.flightHours}h
+                                          </Badge>
+                                        )}
+                                        {step.category !== 'Initial Tasks' && (
+                                          <Badge 
+                                            variant={detail.taskType === 'flight' ? 'default' : 'secondary'} 
+                                            className="text-xs"
+                                          >
+                                            {detail.taskType || 'ground'}
+                                          </Badge>
+                                        )}
+                                        {detail.mandatory && (
+                                          <Badge variant="destructive" className="text-xs">
+                                            Required
+                                          </Badge>
+                                        )}
+                                      </div>
+                                    </div>
+                                    {detail.description && (
+                                      <p className={`text-sm mt-1 ${
+                                        step.taskProgress[detail.id || detail.title] ? 'line-through text-muted-foreground' : 'text-muted-foreground'
+                                      }`}>
+                                        {detail.description.replace(/<[^>]*>/g, '')}
+                                      </p>
+                                    )}
+                                  </div>
+                                </div>
+                              ))}
+                            </div>
+                            
+                            {fullStep.details.length === 0 && (
+                              <div className="text-center py-8 text-muted-foreground">
+                                <p>No tasks defined for this step yet.</p>
+                              </div>
+                            )}
+                          </div>
+                        )}
                       </CardContent>
                     </Card>
                     
