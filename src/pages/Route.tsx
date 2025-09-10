@@ -461,8 +461,10 @@ const formatHtmlContent = (html: string) => {
             {studentRoute.length > 0 ? "My Route" : "Build Your Airline Career Path"}
           </h1>
           <p className="text-xl text-muted-foreground max-w-3xl mx-auto mb-8">
-            Create your personalized journey to becoming an airline pilot. Select training steps, 
-            track your progress, and follow a proven path to the cockpit.
+            {studentRoute.length > 0 
+              ? "Track your progress and stay on course to achieve your aviation career goals." 
+              : "Create your personalized journey to becoming an airline pilot. Select training steps, track your progress, and follow a proven path to the cockpit."
+            }
           </p>
         </div>
 
