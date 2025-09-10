@@ -218,15 +218,37 @@ export function useRouteSteps() {
 
   const updateStepDetailChecked = async (stepId: string, detailIndex: number, checked: boolean) => {
     try {
+      console.log('🔧 updateStepDetailChecked called with:', { stepId, detailIndex, checked });
+      
       const step = routeSteps.find(s => s.id === stepId)
-      if (!step || !step.details[detailIndex]?.id) return
+      console.log('🔧 Found step:', step?.title);
+      
+      if (!step) {
+        console.warn('❌ Step not found for stepId:', stepId);
+        return;
+      }
+      
+      const detail = step.details[detailIndex];
+      console.log('🔧 Detail at index:', detailIndex, detail);
+      
+      if (!detail?.id) {
+        console.warn('❌ Detail has no ID:', detail);
+        return;
+      }
 
+      console.log('🚀 Updating database with:', { detailId: detail.id, checked });
+      
       const { error } = await supabase
         .from('route_step_details')
         .update({ checked })
-        .eq('id', step.details[detailIndex].id)
+        .eq('id', detail.id)
 
-      if (error) throw error
+      if (error) {
+        console.error('💥 Supabase error:', error);
+        throw error;
+      } else {
+        console.log('✅ Database update successful');
+      }
 
       // Update local state
       setRouteSteps(steps => 
