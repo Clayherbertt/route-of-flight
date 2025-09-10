@@ -119,7 +119,9 @@ export default function RouteBuilder() {
   const [activePhase, setActivePhase] = useState("initial-tasks");
   const [selectedCategory, setSelectedCategory] = useState<string>("all");
   const [showWizard, setShowWizard] = useState(false);
-  const [hasSeenWizard, setHasSeenWizard] = useState(false);
+  const [hasSeenWizard, setHasSeenWizard] = useState(() => {
+    return localStorage.getItem('hasSeenRouteWizard') === 'true';
+  });
   const [expandedSteps, setExpandedSteps] = useState<Set<string>>(new Set());
 
   useEffect(() => {
@@ -567,13 +569,14 @@ export default function RouteBuilder() {
                   Let our guided wizard help you create a personalized path from student pilot to airline pilot.
                 </p>
                 <div className="space-y-3">
-                  <Button 
-                    onClick={() => {
-                      setShowWizard(true);
-                      setHasSeenWizard(true);
-                    }}
-                    className="gap-2"
-                  >
+                <Button 
+                  onClick={() => {
+                    setShowWizard(true);
+                    setHasSeenWizard(true);
+                    localStorage.setItem('hasSeenRouteWizard', 'true');
+                  }}
+                  className="gap-2"
+                >
                     <Compass className="h-4 w-4" />
                     Start Route Builder Wizard
                   </Button>
@@ -592,6 +595,7 @@ export default function RouteBuilder() {
           onClose={() => {
             setShowWizard(false);
             setHasSeenWizard(true);
+            localStorage.setItem('hasSeenRouteWizard', 'true');
           }}
           onStepAdd={addStepToRoute}
           availableSteps={routeSteps}
