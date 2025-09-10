@@ -9,7 +9,7 @@ import { Check, ChevronRight, Plane, Heart, GraduationCap, Building, Users, MapP
 interface RouteWizardProps {
   isOpen: boolean;
   onClose: () => void;
-  onStepAdd: (stepId: string) => void;
+  onStepAdd: (stepId: string) => Promise<void>;
   availableSteps: any[];
 }
 
@@ -144,19 +144,20 @@ export function RouteWizard({ isOpen, onClose, onStepAdd, availableSteps }: Rout
     }
   };
 
-  const handleNext = () => {
+  const handleNext = async () => {
     // Add selected steps to route
     const stepKey = currentWizardStep.id;
     const selected = selectedSteps[stepKey] || [];
     
-    selected.forEach(stepId => {
-      onStepAdd(stepId);
-    });
+    // Save each selected step
+    for (const stepId of selected) {
+      await onStepAdd(stepId);
+    }
 
     if (currentStep < WIZARD_STEPS.length - 1) {
       setCurrentStep(currentStep + 1);
     } else {
-      // Wizard complete
+      // Wizard complete - close the wizard
       onClose();
     }
   };
