@@ -207,13 +207,13 @@ export default function RouteBuilder() {
     }
   }, [user, routeSteps]);
 
-  // Show wizard only after we've checked for existing route data
+  // Show wizard only if user has never completed it (no records in user_routes)
   useEffect(() => {
-    if (!loading && hasCheckedForExistingRoute && studentRoute.length === 0 && !hasCompletedWizard) {
-      console.log('🧙 Showing wizard - no existing route found');
+    if (!loading && hasCheckedForExistingRoute && !hasCompletedWizard) {
+      console.log('🧙 Showing wizard - user has never completed wizard');
       setShowWizard(true);
     }
-  }, [loading, hasCheckedForExistingRoute, studentRoute.length, hasCompletedWizard]);
+  }, [loading, hasCheckedForExistingRoute, hasCompletedWizard]);
 
   const availableSteps = routeSteps.filter(step => 
     step.status === 'published' && 
