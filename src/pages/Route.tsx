@@ -612,6 +612,34 @@ const formatHtmlContent = (html: string) => {
                      <Compass className="h-4 w-4" />
                      Start Route Builder Wizard
                    </Button>
+                 <Button 
+                   variant="outline"
+                   onClick={async () => {
+                     if (user) {
+                       try {
+                         const { error } = await supabase
+                           .from('user_routes')
+                           .delete()
+                           .eq('user_id', user.id);
+                         
+                         if (error) {
+                           toast.error('Failed to reset route');
+                           return;
+                         }
+                         
+                         setStudentRoute([]);
+                         setHasCompletedWizard(false);
+                         setShowWizard(true);
+                         toast.success('Route reset successfully');
+                       } catch (error) {
+                         toast.error('Failed to reset route');
+                       }
+                     }
+                   }}
+                   className="gap-2"
+                 >
+                     Reset Route & Start Over
+                   </Button>
                   <p className="text-xs text-muted-foreground">
                     Or manually add steps from the categories above
                   </p>
