@@ -19,8 +19,14 @@ export function UserMenu() {
   const navigate = useNavigate()
 
   const handleSignOut = async () => {
-    await signOut()
-    navigate("/")
+    try {
+      await signOut()
+      navigate("/signin")
+    } catch (error) {
+      console.error('Logout error:', error)
+      // Navigate to signin even if logout fails
+      navigate("/signin")
+    }
   }
 
   const handleProfile = () => {

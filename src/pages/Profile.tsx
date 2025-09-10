@@ -87,8 +87,13 @@ export default function Profile() {
   }
 
   const handleSignOut = async () => {
-    await signOut()
-    navigate('/')
+    try {
+      await signOut()
+      navigate('/signin')
+    } catch (error) {
+      console.error('Logout error:', error)
+      navigate('/signin')
+    }
   }
 
   if (!user) {
