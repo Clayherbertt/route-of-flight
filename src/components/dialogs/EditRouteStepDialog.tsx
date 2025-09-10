@@ -65,12 +65,12 @@ export function EditRouteStepDialog({
     // Ensure all data is properly formatted before saving
     const stepToSave: RouteStep = {
       ...editedStep,
-      title: editedStep.title.trim(),
+      title: editedStep.title.replace(/<[^>]*>/g, '').trim(), // Strip HTML tags from title
       description: editedStep.description.trim(),
       category: editedStep.category || 'Primary Training',
       details: editedStep.details.map((detail, index) => ({
         ...detail,
-        title: detail.title.trim(),
+        title: detail.title.replace(/<[^>]*>/g, '').trim(), // Strip HTML tags from detail titles
         orderNumber: index,
         taskType: detail.taskType || 'flight'
       }))
