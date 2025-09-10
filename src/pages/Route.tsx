@@ -116,7 +116,7 @@ const ROUTE_PHASES: RoutePhase[] = [
 export default function RouteBuilder() {
   const { user } = useAuth();
   const navigate = useNavigate();
-  const { routeSteps, loading } = useRouteSteps();
+  const { routeSteps, loading, updateStepDetailChecked } = useRouteSteps();
   const [studentRoute, setStudentRoute] = useState<StudentRoute[]>([]);
   const [phases, setPhases] = useState<RoutePhase[]>(ROUTE_PHASES);
   const [activePhase, setActivePhase] = useState("initial-tasks");
@@ -158,6 +158,14 @@ export default function RouteBuilder() {
           for (const userRoute of userRoutes) {
             const step = routeSteps.find(s => s.id === userRoute.route_step_id);
             if (step) {
+              // Load task progress from database
+              const taskProgress: Record<string, boolean> = {};
+              step.details.forEach(detail => {
+                if (detail.id || detail.title) {
+                  taskProgress[detail.id || detail.title] = detail.checked;
+                }
+              });
+
               loadedRoute.push({
                 id: `${step.id}-${userRoute.created_at}`,
                 stepId: step.id,
@@ -166,7 +174,7 @@ export default function RouteBuilder() {
                 icon: step.icon,
                 completed: userRoute.completed,
                 order: userRoute.order_number,
-                taskProgress: {} // This could be expanded to save task progress too
+                taskProgress
               });
             } else {
               console.warn('⚠️ Step not found for route:', userRoute.route_step_id);
@@ -242,6 +250,14 @@ export default function RouteBuilder() {
       return;
     }
 
+    // Initialize task progress from database state
+    const taskProgress: Record<string, boolean> = {};
+    step.details.forEach(detail => {
+      if (detail.id || detail.title) {
+        taskProgress[detail.id || detail.title] = detail.checked;
+      }
+    });
+
     const newStep: StudentRoute = {
       id: `${step.id}-${Date.now()}`,
       stepId: step.id,
@@ -250,7 +266,7 @@ export default function RouteBuilder() {
       icon: step.icon,
       completed: false,
       order: studentRoute.length,
-      taskProgress: {}
+      taskProgress
     };
 
     // Save to database if user is authenticated
@@ -320,7 +336,8 @@ export default function RouteBuilder() {
     ));
   };
 
-  const toggleTaskCompletion = (stepId: string, taskId: string, checked: boolean) => {
+  const toggleTaskCompletion = async (stepId: string, taskId: string, checked: boolean) => {
+    // Update local state immediately for responsive UI
     setStudentRoute(prev => prev.map(step => 
       step.id === stepId 
         ? { 
@@ -329,6 +346,33 @@ export default function RouteBuilder() {
           } 
         : step
     ));
+
+    // Persist to database - find the detail index for the taskId
+    try {
+      const step = routeSteps.find(s => s.id === stepId);
+      if (step) {
+        const detailIndex = step.details.findIndex(detail => 
+          (detail.id || detail.title) === taskId
+        );
+        
+        if (detailIndex !== -1) {
+          await updateStepDetailChecked(stepId, detailIndex, checked);
+          toast.success(checked ? "Task completed!" : "Task unchecked");
+        }
+      }
+    } catch (error) {
+      console.error("Failed to update task status:", error);
+      toast.error("Failed to save task status");
+      // Revert local state on error
+      setStudentRoute(prev => prev.map(step => 
+        step.id === stepId 
+          ? { 
+              ...step, 
+              taskProgress: { ...step.taskProgress, [taskId]: !checked }
+            } 
+          : step
+      ));
+    }
   };
 
 // Enhanced utility function to convert HTML to formatted JSX
