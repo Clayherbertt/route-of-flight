@@ -511,64 +511,72 @@ const formatHtmlContent = (html: string) => {
                         {/* Expandable Content */}
                         {isExpanded && (
                           <div className="mt-6 border-t pt-6">
+                            {/* Show main step description if it exists and has content */}
+                            {fullStep.description && fullStep.description.trim() && (
+                              <div className="mb-6">
+                                <h4 className="font-semibold mb-3 text-lg">Overview</h4>
+                                <div className="prose prose-sm max-w-none">
+                                  {formatHtmlContent(fullStep.description)}
+                                </div>
+                              </div>
+                            )}
+                            
                             <h4 className="font-semibold mb-4 text-lg">Tasks & Requirements ({fullStep.details.length})</h4>
-                            <div className="space-y-3">
+                            <div className="space-y-4">
                               {fullStep.details.map((detail, detailIndex) => {
                                 const isCompleted = step.taskProgress[detail.id || detail.title] || false;
                                 
                                 return (
-                                  <div key={detail.id || detailIndex} className={`flex items-start space-x-3 p-3 rounded-lg bg-muted/30 transition-all duration-300 ${
-                                    isCompleted ? 'opacity-75' : ''
+                                  <div key={detail.id || detailIndex} className={`border rounded-lg p-4 transition-all duration-300 ${
+                                    isCompleted ? 'bg-muted/30 opacity-75' : 'bg-card border-border'
                                   }`}>
-                                    <Checkbox
-                                      id={`task-${detail.id || detailIndex}`}
-                                      checked={isCompleted}
-                                      onCheckedChange={(checked) => toggleTaskCompletion(step.id, detail.id || detail.title, !!checked)}
-                                      className="mt-0.5"
-                                    />
-                                    <div className="flex-1 min-w-0">
-                                      <div className="flex items-center justify-between gap-3">
-                                        <label 
-                                          htmlFor={`task-${detail.id || detailIndex}`}
-                                          className={`font-medium cursor-pointer transition-all duration-300 ${
-                                            isCompleted ? 'line-through text-muted-foreground' : ''
-                                          }`}
-                                        >
-                                          {detail.title}
-                                        </label>
-                                        <div className="flex gap-2 flex-shrink-0">
-                                          {detail.flightHours && (
-                                            <Badge variant="outline" className="text-xs">
-                                              {detail.flightHours}h
-                                            </Badge>
-                                          )}
-                                          {step.category !== 'Initial Tasks' && (
-                                            <Badge 
-                                              variant={detail.taskType === 'flight' ? 'default' : 'secondary'} 
-                                              className="text-xs"
-                                            >
-                                              {detail.taskType || 'ground'}
-                                            </Badge>
-                                          )}
-                                          {detail.mandatory && (
-                                            <Badge variant="destructive" className="text-xs">
-                                              Required
-                                            </Badge>
-                                          )}
+                                    <div className="flex items-start space-x-3">
+                                      <Checkbox
+                                        id={`task-${detail.id || detailIndex}`}
+                                        checked={isCompleted}
+                                        onCheckedChange={(checked) => toggleTaskCompletion(step.id, detail.id || detail.title, !!checked)}
+                                        className="mt-1"
+                                      />
+                                      <div className="flex-1 min-w-0">
+                                        <div className="flex items-center justify-between gap-3 mb-2">
+                                          <label 
+                                            htmlFor={`task-${detail.id || detailIndex}`}
+                                            className={`font-semibold cursor-pointer transition-all duration-300 text-lg ${
+                                              isCompleted ? 'line-through text-muted-foreground' : 'text-foreground'
+                                            }`}
+                                          >
+                                            {detail.title}
+                                          </label>
+                                          <div className="flex gap-2 flex-shrink-0">
+                                            {detail.flightHours && (
+                                              <Badge variant="outline" className="text-xs">
+                                                {detail.flightHours}h
+                                              </Badge>
+                                            )}
+                                            {step.category !== 'Initial Tasks' && (
+                                              <Badge 
+                                                variant={detail.taskType === 'flight' ? 'default' : 'secondary'} 
+                                                className="text-xs"
+                                              >
+                                                {detail.taskType || 'ground'}
+                                              </Badge>
+                                            )}
+                                            {detail.mandatory && (
+                                              <Badge variant="destructive" className="text-xs">
+                                                Required
+                                              </Badge>
+                                            )}
+                                          </div>
                                         </div>
+                                        {/* Show full formatted description */}
+                                        {detail.description && detail.description.trim() && (
+                                          <div className={`prose prose-sm max-w-none ${
+                                            isCompleted ? 'opacity-60' : ''
+                                          }`}>
+                                            {formatHtmlContent(detail.description)}
+                                          </div>
+                                        )}
                                       </div>
-                                      {/* Only show description for uncompleted tasks */}
-                                      {!isCompleted && detail.description && (
-                                        <div className="mt-1">
-                                          {formatHtmlContent(detail.description)}
-                                        </div>
-                                      )}
-                                      {/* Show condensed description for completed tasks */}
-                                      {isCompleted && detail.description && (
-                                        <p className="text-xs mt-1 text-muted-foreground/60 line-through truncate">
-                                          {detail.description.replace(/<[^>]*>/g, '').substring(0, 60)}...
-                                        </p>
-                                      )}
                                     </div>
                                   </div>
                                 );
