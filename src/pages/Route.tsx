@@ -13,6 +13,7 @@ import { RouteWizard } from "@/components/RouteWizard";
 import { CircularProgress } from "@/components/CircularProgress";
 import { Check, Lock, AlertCircle, Target, Plane, Compass } from "lucide-react";
 import { toast } from "sonner";
+import React from "react";
 
 interface StudentRoute {
   id: string;
@@ -236,6 +237,80 @@ export default function RouteBuilder() {
     ));
   };
 
+// Utility function to convert HTML to formatted JSX
+const formatHtmlContent = (html: string) => {
+  if (!html) return null;
+  
+  // Split by paragraphs and process each one
+  const paragraphs = html.split(/(<p[^>]*>|<\/p>|<br\s*\/?>)/i).filter(Boolean);
+  const elements: React.ReactNode[] = [];
+  let currentParagraph = '';
+  
+  paragraphs.forEach((part, index) => {
+    if (part.match(/<p[^>]*>/i)) {
+      // Start of paragraph
+      currentParagraph = '';
+    } else if (part.match(/<\/p>/i)) {
+      // End of paragraph - process the content
+      if (currentParagraph.trim()) {
+        const formatted = currentParagraph
+          .replace(/<strong[^>]*>(.*?)<\/strong>/gi, '**$1**')
+          .replace(/<b[^>]*>(.*?)<\/b>/gi, '**$1**')
+          .replace(/&nbsp;/g, ' ')
+          .trim();
+        
+        // Split by bold markers and create proper formatting
+        const parts = formatted.split(/(\*\*.*?\*\*)/g);
+        const paragraphContent = parts.map((part, i) => {
+          if (part.startsWith('**') && part.endsWith('**')) {
+            return <strong key={i} className="font-bold">{part.slice(2, -2)}</strong>;
+          }
+          return part;
+        });
+        
+        elements.push(
+          <p key={index} className="mb-4 text-sm text-muted-foreground leading-relaxed">
+            {paragraphContent}
+          </p>
+        );
+      }
+      currentParagraph = '';
+    } else if (part.match(/<br\s*\/?>/i)) {
+      // Line break
+      currentParagraph += '\n';
+    } else if (!part.match(/<[^>]*>/)) {
+      // Regular content
+      currentParagraph += part;
+    }
+  });
+  
+  // Handle content without proper paragraph tags
+  if (currentParagraph.trim() && elements.length === 0) {
+    const formatted = html
+      .replace(/<strong[^>]*>(.*?)<\/strong>/gi, '**$1**')
+      .replace(/<b[^>]*>(.*?)<\/b>/gi, '**$1**')
+      .replace(/<[^>]*>/g, '')
+      .replace(/&nbsp;/g, ' ')
+      .trim();
+    
+    const parts = formatted.split(/(\*\*.*?\*\*)/g);
+    const content = parts.map((part, i) => {
+      if (part.startsWith('**') && part.endsWith('**')) {
+        return <strong key={i} className="font-bold">{part.slice(2, -2)}</strong>;
+      }
+      return part;
+    });
+    
+    return (
+      <div className="text-sm text-muted-foreground leading-relaxed">
+        {content}
+      </div>
+    );
+  }
+  
+  return elements.length > 0 ? <div>{elements}</div> : null;
+};
+
   const getStepProgress = (step: any, fullStep: any) => {
     if (!fullStep || !fullStep.details || fullStep.details.length === 0) return 0;
     
@@ -388,9 +463,9 @@ export default function RouteBuilder() {
                                       </div>
                                       {/* Only show description for uncompleted tasks */}
                                       {!isCompleted && detail.description && (
-                                        <p className="text-sm mt-1 text-muted-foreground">
-                                          {detail.description.replace(/<[^>]*>/g, '')}
-                                        </p>
+                                        <div className="mt-1">
+                                          {formatHtmlContent(detail.description)}
+                                        </div>
                                       )}
                                       {/* Show condensed description for completed tasks */}
                                       {isCompleted && detail.description && (
