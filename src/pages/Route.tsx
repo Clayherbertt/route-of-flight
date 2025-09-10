@@ -159,10 +159,12 @@ export default function RouteBuilder() {
             const step = routeSteps.find(s => s.id === userRoute.route_step_id);
             if (step) {
               // Load task progress from database
+              console.log('📊 Loading step details for step:', step.title, step.details.map(d => ({ id: d.id, title: d.title, checked: d.checked })));
               const taskProgress: Record<string, boolean> = {};
               step.details.forEach(detail => {
                 if (detail.id) {
                   taskProgress[detail.id] = detail.checked;
+                  console.log(`🔍 Setting taskProgress[${detail.id}] = ${detail.checked}`);
                 }
               });
 
@@ -350,18 +352,26 @@ export default function RouteBuilder() {
     // Persist to database - find the route step and detail by taskId
     try {
       // Find the route step that contains this student route step
-      const routeStep = routeSteps.find(rs => {
-        const studentStep = studentRoute.find(ss => ss.id === stepId);
-        return studentStep && rs.id === studentStep.stepId;
-      });
+      const studentStep = studentRoute.find(ss => ss.id === stepId);
+      console.log('🔍 Student step found:', studentStep);
+      
+      const routeStep = routeSteps.find(rs => rs.id === studentStep?.stepId);
+      console.log('🔍 Route step found:', routeStep);
       
       if (routeStep) {
         const detailIndex = routeStep.details.findIndex(detail => detail.id === taskId);
+        console.log('🔍 Detail index for taskId:', taskId, 'is:', detailIndex);
+        console.log('🔍 Route step details:', routeStep.details.map(d => ({ id: d.id, title: d.title, checked: d.checked })));
         
         if (detailIndex !== -1) {
+          console.log('🚀 Calling updateStepDetailChecked with:', { stepId: routeStep.id, detailIndex, checked });
           await updateStepDetailChecked(routeStep.id, detailIndex, checked);
           toast.success(checked ? "Task completed!" : "Task unchecked");
+        } else {
+          console.warn('❌ Detail not found for taskId:', taskId);
         }
+      } else {
+        console.warn('❌ Route step not found for student step:', studentStep?.stepId);
       }
     } catch (error) {
       console.error("Failed to update task status:", error);
