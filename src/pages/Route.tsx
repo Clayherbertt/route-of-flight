@@ -270,198 +270,205 @@ export default function RouteBuilder() {
           </p>
         </div>
 
-        {/* Phase Navigation */}
-        <div className="mb-8">
-          <Card className="overflow-hidden">
-            <CardContent className="p-6">
-              <div className="flex items-center gap-2 mb-4">
-                <Plane className="h-5 w-5 text-primary" />
-                <h2 className="text-lg font-semibold">Career Phases</h2>
-              </div>
-              <div className="flex flex-wrap gap-3">
-                {phases.map((phase) => {
-                  const progress = getPhaseProgress(phase.id);
-                  const unlocked = isPhaseUnlocked(phase.id);
-                  const isActive = activePhase === phase.id;
-                  
-                  return (
-                    <Button
-                      key={phase.id}
-                      variant={isActive ? "default" : "outline"}
-                      size="sm"
-                      disabled={!unlocked}
-                      onClick={() => unlocked && setActivePhase(phase.id)}
-                      className="relative"
-                    >
-                      <div className="flex items-center gap-2">
-                        {progress === 100 ? (
-                          <Check className="h-4 w-4 text-green-500" />
-                        ) : !unlocked ? (
-                          <Lock className="h-4 w-4" />
-                        ) : (
-                          <AlertCircle className="h-4 w-4" />
-                        )}
-                        {phase.title}
-                      </div>
-                      {progress > 0 && progress < 100 && (
-                        <div className="absolute bottom-0 left-0 h-1 bg-primary/30 rounded-full overflow-hidden">
-                          <div 
-                            className="h-full bg-primary transition-all duration-300"
-                            style={{ width: `${progress}%` }}
-                          />
+        {/* Show complex route building interface only when no route exists */}
+        {studentRoute.length === 0 && (
+          <>
+            {/* Phase Navigation */}
+            <div className="mb-8">
+              <Card className="overflow-hidden">
+                <CardContent className="p-6">
+                  <div className="flex items-center gap-2 mb-4">
+                    <Plane className="h-5 w-5 text-primary" />
+                    <h2 className="text-lg font-semibold">Career Phases</h2>
+                  </div>
+                  <div className="flex flex-wrap gap-3">
+                    {phases.map((phase) => {
+                      const progress = getPhaseProgress(phase.id);
+                      const unlocked = isPhaseUnlocked(phase.id);
+                      const isActive = activePhase === phase.id;
+                      
+                      return (
+                        <Button
+                          key={phase.id}
+                          variant={isActive ? "default" : "outline"}
+                          size="sm"
+                          disabled={!unlocked}
+                          onClick={() => unlocked && setActivePhase(phase.id)}
+                          className="relative"
+                        >
+                          <div className="flex items-center gap-2">
+                            {progress === 100 ? (
+                              <Check className="h-4 w-4 text-green-500" />
+                            ) : !unlocked ? (
+                              <Lock className="h-4 w-4" />
+                            ) : (
+                              <AlertCircle className="h-4 w-4" />
+                            )}
+                            {phase.title}
+                          </div>
+                          {progress > 0 && progress < 100 && (
+                            <div className="absolute bottom-0 left-0 h-1 bg-primary/30 rounded-full overflow-hidden">
+                              <div 
+                                className="h-full bg-primary transition-all duration-300"
+                                style={{ width: `${progress}%` }}
+                              />
+                            </div>
+                          )}
+                        </Button>
+                      );
+                    })}
+                  </div>
+                </CardContent>
+              </Card>
+            </div>
+
+            <div className="grid grid-cols-1 xl:grid-cols-3 gap-8">
+              {/* Available Steps */}
+              <div className="xl:col-span-2">
+                <Card>
+                  <CardHeader>
+                    <CardTitle>Available Training Steps</CardTitle>
+                    <CardDescription>
+                      {phases.find(p => p.id === activePhase)?.description}
+                    </CardDescription>
+                  </CardHeader>
+                  <CardContent>
+                    {/* Category Filter */}
+                    <div className="flex flex-wrap gap-2 mb-6">
+                      {getUniqueCategories()
+                        .filter(cat => {
+                          const currentPhase = phases.find(p => p.id === activePhase);
+                          return cat === "all" || currentPhase?.allowedCategories.includes(cat);
+                        })
+                        .map(category => (
+                        <Button
+                          key={category}
+                          variant={selectedCategory === category ? "default" : "outline"}
+                          size="sm"
+                          onClick={() => setSelectedCategory(category)}
+                          className="capitalize"
+                        >
+                          {category === "all" ? "All Categories" : category}
+                        </Button>
+                      ))}
+                    </div>
+
+                    {/* Available Steps */}
+                    <div className="space-y-6">
+                      {availableSteps
+                        .filter(step => {
+                          const currentPhase = phases.find(p => p.id === activePhase);
+                          return currentPhase?.allowedCategories.includes(step.category);
+                        })
+                        .map(step => (
+                        <StudentRouteStepCard
+                          key={step.id}
+                          step={step}
+                          variant="available"
+                          onAddToRoute={() => addStepToRouteFromCard(step)}
+                        />
+                      ))}
+                      
+                      {availableSteps.filter(step => {
+                        const currentPhase = phases.find(p => p.id === activePhase);
+                        return currentPhase?.allowedCategories.includes(step.category);
+                      }).length === 0 && (
+                        <div className="text-center py-12 text-muted-foreground">
+                          <Target className="h-12 w-12 mx-auto mb-4 opacity-50" />
+                          <p>No steps available for this phase yet.</p>
                         </div>
                       )}
-                    </Button>
-                  );
-                })}
+                    </div>
+                  </CardContent>
+                </Card>
               </div>
-            </CardContent>
-          </Card>
-        </div>
 
-        <div className="grid grid-cols-1 xl:grid-cols-3 gap-8">
-          {/* Available Steps */}
-          <div className="xl:col-span-2">
-            <Card>
-              <CardHeader>
-                <CardTitle>Available Training Steps</CardTitle>
-                <CardDescription>
-                  {phases.find(p => p.id === activePhase)?.description}
-                </CardDescription>
-              </CardHeader>
-              <CardContent>
-                {/* Category Filter */}
-                <div className="flex flex-wrap gap-2 mb-6">
-                  {getUniqueCategories()
-                    .filter(cat => {
-                      const currentPhase = phases.find(p => p.id === activePhase);
-                      return cat === "all" || currentPhase?.allowedCategories.includes(cat);
-                    })
-                    .map(category => (
-                    <Button
-                      key={category}
-                      variant={selectedCategory === category ? "default" : "outline"}
-                      size="sm"
-                      onClick={() => setSelectedCategory(category)}
-                      className="capitalize"
-                    >
-                      {category === "all" ? "All Categories" : category}
-                    </Button>
-                  ))}
-                </div>
-
-                {/* Available Steps */}
-                <div className="space-y-6">
-                  {availableSteps
-                    .filter(step => {
-                      const currentPhase = phases.find(p => p.id === activePhase);
-                      return currentPhase?.allowedCategories.includes(step.category);
-                    })
-                    .map(step => (
-                    <StudentRouteStepCard
-                      key={step.id}
-                      step={step}
-                      variant="available"
-                      onAddToRoute={() => addStepToRouteFromCard(step)}
-                    />
-                  ))}
-                  
-                  {availableSteps.filter(step => {
-                    const currentPhase = phases.find(p => p.id === activePhase);
-                    return currentPhase?.allowedCategories.includes(step.category);
-                  }).length === 0 && (
-                    <div className="text-center py-12 text-muted-foreground">
-                      <Target className="h-12 w-12 mx-auto mb-4 opacity-50" />
-                      <p>No steps available for this phase yet.</p>
-                    </div>
-                  )}
-                </div>
-              </CardContent>
-            </Card>
-          </div>
-
-          {/* Phase Progress Sidebar */}
-          <div className="xl:col-span-1">
-            <Card className="sticky top-4">
-              <CardHeader>
-                <CardTitle className="text-lg">Phase Progress</CardTitle>
-                <CardDescription>Track your advancement through each phase</CardDescription>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                {phases.map((phase) => {
-                  const progress = getPhaseProgress(phase.id);
-                  const unlocked = isPhaseUnlocked(phase.id);
-                  const phaseSteps = studentRoute.filter(step => 
-                    phase.allowedCategories.includes(step.category)
-                  );
-                  
-                  return (
-                    <div key={phase.id} className="space-y-2">
-                      <div className="flex items-center justify-between">
-                        <span className="text-sm font-medium">{phase.title}</span>
-                        {phase.required && (
-                          <Badge variant="destructive" className="text-xs">Required</Badge>
-                        )}
-                      </div>
-                      <Progress value={progress} className="h-2" />
-                      <div className="flex items-center justify-between text-xs text-muted-foreground">
-                        <span>
-                          {phaseSteps.length} of {phase.minSteps || 1} steps
-                        </span>
-                        <span>{Math.round(progress)}%</span>
-                      </div>
-                    </div>
-                  );
-                })}
-              </CardContent>
-            </Card>
-          </div>
-        </div>
+              {/* Phase Progress Sidebar */}
+              <div className="xl:col-span-1">
+                <Card className="sticky top-4">
+                  <CardHeader>
+                    <CardTitle className="text-lg">Phase Progress</CardTitle>
+                    <CardDescription>Track your advancement through each phase</CardDescription>
+                  </CardHeader>
+                  <CardContent className="space-y-4">
+                    {phases.map((phase) => {
+                      const progress = getPhaseProgress(phase.id);
+                      const unlocked = isPhaseUnlocked(phase.id);
+                      const phaseSteps = studentRoute.filter(step => 
+                        phase.allowedCategories.includes(step.category)
+                      );
+                      
+                      return (
+                        <div key={phase.id} className="space-y-2">
+                          <div className="flex items-center justify-between">
+                            <span className="text-sm font-medium">{phase.title}</span>
+                            {phase.required && (
+                              <Badge variant="destructive" className="text-xs">Required</Badge>
+                            )}
+                          </div>
+                          <Progress value={progress} className="h-2" />
+                          <div className="flex items-center justify-between text-xs text-muted-foreground">
+                            <span>
+                              {phaseSteps.length} of {phase.minSteps || 1} steps
+                            </span>
+                            <span>{Math.round(progress)}%</span>
+                          </div>
+                        </div>
+                      );
+                    })}
+                  </CardContent>
+                </Card>
+              </div>
+            </div>
+          </>
+        )}
 
         {/* Student's Selected Route */}
         {studentRoute.length > 0 && (
-          <div className="mt-12">
-            <Card>
-              <CardHeader>
-                <div className="flex items-center gap-2">
-                  <Target className="h-5 w-5 text-primary" />
-                  <CardTitle>Your Personal Career Route</CardTitle>
-                </div>
-                <CardDescription>
-                  Track your progress through your customized pilot training path
-                </CardDescription>
-              </CardHeader>
-              <CardContent>
-                <div className="space-y-6">
-                  {studentRoute.map((step, index) => {
-                    const fullStep = routeSteps.find(rs => rs.id === step.stepId);
-                    if (!fullStep) return null;
+          <div className="max-w-2xl mx-auto">
+            <div className="space-y-6">
+              {studentRoute.map((step, index) => {
+                const fullStep = routeSteps.find(rs => rs.id === step.stepId);
+                if (!fullStep) return null;
 
-                    // Create updated step with task progress
-                    const stepWithProgress = {
-                      ...fullStep,
-                      details: fullStep.details.map(detail => ({
-                        ...detail,
-                        checked: step.taskProgress[detail.id || detail.title] || false
-                      }))
-                    };
-
-                    return (
-                      <StudentRouteStepCard
-                        key={step.id}
-                        step={stepWithProgress}
-                        variant="selected"
-                        stepNumber={index + 1}
-                        isCompleted={step.completed}
-                        onRemoveFromRoute={() => removeStepFromRoute(step.id)}
-                        onToggleCompletion={() => toggleStepCompletion(step.id)}
-                        onTaskToggle={(taskId, checked) => toggleTaskCompletion(step.id, taskId, checked)}
-                      />
-                    );
-                  })}
-                </div>
-              </CardContent>
-            </Card>
+                return (
+                  <div key={step.id} className="relative">
+                    <Card className="border border-border/50 shadow-sm hover:shadow-md transition-shadow">
+                      <CardContent className="p-6">
+                        <div className="flex items-center justify-between">
+                          <div className="flex-1">
+                            <h3 className="text-lg font-semibold text-foreground mb-1">
+                              {step.title}
+                            </h3>
+                            <p className="text-sm text-muted-foreground">
+                              {fullStep.description?.replace(/<[^>]*>/g, '')}
+                            </p>
+                          </div>
+                          <div className="flex items-center gap-4 ml-6">
+                            <div className="relative">
+                              <div className="w-12 h-12 border-2 border-border rounded-full flex items-center justify-center">
+                                <div className="w-8 h-8 bg-muted rounded-full"></div>
+                              </div>
+                            </div>
+                            <Button variant="outline" size="sm">
+                              Expand
+                            </Button>
+                          </div>
+                        </div>
+                      </CardContent>
+                    </Card>
+                    
+                    {/* Arrow connector */}
+                    {index < studentRoute.length - 1 && (
+                      <div className="flex justify-center py-4">
+                        <div className="w-0.5 h-8 bg-border"></div>
+                        <div className="absolute w-2 h-2 bg-border rounded-full mt-3 -ml-1"></div>
+                      </div>
+                    )}
+                  </div>
+                );
+              })}
+            </div>
           </div>
         )}
 
