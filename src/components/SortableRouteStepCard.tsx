@@ -54,6 +54,11 @@ const iconMap = {
   Settings: icons.Settings
 }
 
+// Utility function to strip HTML tags for display
+const stripHtmlTags = (html: string) => {
+  return html.replace(/<[^>]*>/g, '').replace(/&nbsp;/g, ' ').trim()
+}
+
 export function SortableRouteStepCard({ 
   step, 
   isExpanded, 
@@ -110,7 +115,7 @@ export function SortableRouteStepCard({
                     </Badge>
                   </div>
                 </div>
-                <CardDescription>{step.description}</CardDescription>
+                <CardDescription>{stripHtmlTags(step.description)}</CardDescription>
               </div>
             </div>
             <div className="flex items-center space-x-2">
