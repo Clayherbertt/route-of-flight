@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
-import { Check, ChevronRight, Plane, Heart, GraduationCap, Building, Users, MapPin, Target } from "lucide-react";
+import { Check, ChevronRight, Plane, Heart, GraduationCap, Building, Users, MapPin, Target, BookOpen } from "lucide-react";
 
 interface RouteWizardProps {
   isOpen: boolean;
@@ -111,16 +111,29 @@ const WIZARD_STEPS: WizardStep[] = [
 
 export function RouteWizard({ isOpen, onClose, onStepAdd, availableSteps }: RouteWizardProps) {
   const [currentStep, setCurrentStep] = useState(0);
-  const [selectedSteps, setSelectedSteps] = useState<Record<string, string[]>>({});
+  const [selectedSteps, setSelectedSteps] = useState<Record<string, string[]>>({
+    "initial-tasks": [], // Pre-populate initial tasks
+  });
   const [careerPathChoice, setCareerPathChoice] = useState<string>("");
 
   const currentWizardStep = WIZARD_STEPS[currentStep];
   const progress = ((currentStep + 1) / WIZARD_STEPS.length) * 100;
 
   const getAvailableStepsForCategory = (categories: string[]) => {
-    return availableSteps.filter(step => 
+    const filtered = availableSteps.filter(step => 
       categories.includes(step.category) && step.status === 'published'
     );
+    
+    // Auto-select initial tasks on first step
+    if (currentStep === 0 && currentWizardStep.id === "initial-tasks") {
+      const stepKey = currentWizardStep.id;
+      if (filtered.length > 0 && (selectedSteps[stepKey] || []).length === 0) {
+        const initialTaskIds = filtered.map(step => step.id);
+        setSelectedSteps(prev => ({ ...prev, [stepKey]: initialTaskIds }));
+      }
+    }
+    
+    return filtered;
   };
 
   const handleStepSelect = (stepId: string) => {
@@ -178,7 +191,7 @@ export function RouteWizard({ isOpen, onClose, onStepAdd, availableSteps }: Rout
 
     return (
       <div className="space-y-4">
-        <p className="text-sm text-muted-foreground mb-6">{currentWizardStep.instructions}</p>
+        <div className="text-sm text-muted-foreground mb-6">{currentWizardStep.instructions}</div>
         <div className="space-y-3">
           {currentWizardStep.options.map((option) => (
             <Card 
@@ -195,7 +208,7 @@ export function RouteWizard({ isOpen, onClose, onStepAdd, availableSteps }: Rout
                 <div className="flex items-center justify-between">
                   <div>
                     <h3 className="font-semibold">{option.label}</h3>
-                    <p className="text-sm text-muted-foreground mt-1">{option.description}</p>
+                    <div className="text-sm text-muted-foreground mt-1">{option.description}</div>
                   </div>
                   {careerPathChoice === option.value && (
                     <Check className="h-5 w-5 text-primary" />
@@ -220,57 +233,64 @@ export function RouteWizard({ isOpen, onClose, onStepAdd, availableSteps }: Rout
     if (availableSteps.length === 0) {
       return (
         <div className="text-center py-8 text-muted-foreground">
-          <p>No steps available for this category yet.</p>
+          <div>No steps available for this category yet.</div>
         </div>
       );
     }
 
     return (
       <div className="space-y-4">
-        <p className="text-sm text-muted-foreground mb-6">{currentWizardStep.instructions}</p>
+        <div className="text-sm text-muted-foreground mb-6">{currentWizardStep.instructions}</div>
         
         {currentWizardStep.orderMatters && (
           <div className="bg-blue-50 dark:bg-blue-900/20 p-3 rounded-lg mb-4">
-            <p className="text-sm text-blue-700 dark:text-blue-300">
+            <div className="text-sm text-blue-700 dark:text-blue-300">
               <strong>Note:</strong> Private Pilot must be completed first. The other certificates can be done in any order.
-            </p>
+            </div>
           </div>
         )}
 
         <div className="space-y-3">
-          {availableSteps.map((step) => (
-            <Card 
-              key={step.id}
-              className={`cursor-pointer transition-all hover:shadow-md ${
-                selectedForThisStep.includes(step.id) ? 'ring-2 ring-primary' : ''
-              }`}
-              onClick={() => handleStepSelect(step.id)}
-            >
-              <CardContent className="p-4">
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-3">
-                    <div className="text-2xl">{step.icon}</div>
-                    <div>
-                      <h3 className="font-semibold">{step.title}</h3>
-                      <p className="text-sm text-muted-foreground">{step.description}</p>
-                      <Badge variant="outline" className="mt-1">
-                        {step.category}
-                      </Badge>
+          {availableSteps.map((step) => {
+            // Get the icon component from lucide-react
+            const IconComponent = step.icon === "BookOpen" ? BookOpen : 
+                               step.icon === "Plane" ? Plane : 
+                               BookOpen; // fallback to BookOpen for initial tasks
+            
+            return (
+              <Card 
+                key={step.id}
+                className={`cursor-pointer transition-all hover:shadow-md ${
+                  selectedForThisStep.includes(step.id) ? 'ring-2 ring-primary' : ''
+                }`}
+                onClick={() => handleStepSelect(step.id)}
+              >
+                <CardContent className="p-4">
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-3">
+                      <IconComponent className="h-6 w-6 text-muted-foreground" />
+                      <div>
+                        <h3 className="font-semibold">{step.title}</h3>
+                        <div className="text-sm text-muted-foreground">{step.description?.replace(/<[^>]*>/g, '')}</div>
+                        <Badge variant="outline" className="mt-1">
+                          {step.category}
+                        </Badge>
+                      </div>
                     </div>
+                    {selectedForThisStep.includes(step.id) && (
+                      <Check className="h-5 w-5 text-primary" />
+                    )}
                   </div>
-                  {selectedForThisStep.includes(step.id) && (
-                    <Check className="h-5 w-5 text-primary" />
-                  )}
-                </div>
-              </CardContent>
-            </Card>
-          ))}
+                </CardContent>
+              </Card>
+            );
+          })}
         </div>
 
         {currentWizardStep.multiSelect && (
-          <p className="text-xs text-muted-foreground mt-4">
+          <div className="text-xs text-muted-foreground mt-4">
             You can select multiple items. Click to select/deselect.
-          </p>
+          </div>
         )}
       </div>
     );
@@ -313,7 +333,7 @@ export function RouteWizard({ isOpen, onClose, onStepAdd, availableSteps }: Rout
                       <Badge variant="destructive">Required</Badge>
                     )}
                   </CardTitle>
-                  <p className="text-muted-foreground">{currentWizardStep.description}</p>
+                  <div className="text-muted-foreground">{currentWizardStep.description}</div>
                 </div>
               </div>
             </CardHeader>
