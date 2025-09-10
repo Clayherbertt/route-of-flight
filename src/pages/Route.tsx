@@ -8,7 +8,8 @@ import { useAuth } from "@/contexts/AuthContext";
 import { useNavigate } from "react-router-dom";
 import { useRouteSteps } from "@/hooks/useRouteSteps";
 import { StudentRouteStepCard } from "@/components/StudentRouteStepCard";
-import { Check, Lock, AlertCircle, Target, Plane } from "lucide-react";
+import { RouteWizard } from "@/components/RouteWizard";
+import { Check, Lock, AlertCircle, Target, Plane, Compass } from "lucide-react";
 import { toast } from "sonner";
 
 interface StudentRoute {
@@ -116,6 +117,8 @@ export default function RouteBuilder() {
   const [phases, setPhases] = useState<RoutePhase[]>(ROUTE_PHASES);
   const [activePhase, setActivePhase] = useState("initial-tasks");
   const [selectedCategory, setSelectedCategory] = useState<string>("all");
+  const [showWizard, setShowWizard] = useState(false);
+  const [hasSeenWizard, setHasSeenWizard] = useState(false);
 
   useEffect(() => {
     if (!user) {
@@ -123,6 +126,13 @@ export default function RouteBuilder() {
       return;
     }
   }, [user, navigate]);
+
+  // Show wizard if user has no route and hasn't seen it yet
+  useEffect(() => {
+    if (!loading && studentRoute.length === 0 && !hasSeenWizard) {
+      setShowWizard(true);
+    }
+  }, [loading, studentRoute.length, hasSeenWizard]);
 
   const availableSteps = routeSteps.filter(step => 
     step.status === 'published' && 
@@ -152,7 +162,33 @@ export default function RouteBuilder() {
     return getPhaseProgress(previousPhase.id) === 100;
   };
 
-  const addStepToRoute = (step: any) => {
+  const addStepToRoute = (stepId: string) => {
+    const step = routeSteps.find(s => s.id === stepId);
+    if (!step) return;
+
+    // Check if step already exists in route
+    const existingStep = studentRoute.find(s => s.stepId === stepId);
+    if (existingStep) {
+      toast.error(`${step.title} is already in your route`);
+      return;
+    }
+
+    const newStep: StudentRoute = {
+      id: `${step.id}-${Date.now()}`,
+      stepId: step.id,
+      title: step.title,
+      category: step.category,
+      icon: step.icon,
+      completed: false,
+      order: studentRoute.length,
+      taskProgress: {}
+    };
+
+    setStudentRoute(prev => [...prev, newStep]);
+    toast.success(`Added ${step.title} to your route`);
+  };
+
+  const addStepToRouteFromCard = (step: any) => {
     const currentPhase = phases.find(p => p.id === activePhase);
     if (!currentPhase) return;
 
@@ -170,19 +206,7 @@ export default function RouteBuilder() {
       return;
     }
 
-    const newStep: StudentRoute = {
-      id: `${step.id}-${Date.now()}`,
-      stepId: step.id,
-      title: step.title,
-      category: step.category,
-      icon: step.icon,
-      completed: false,
-      order: studentRoute.length,
-      taskProgress: {}
-    };
-
-    setStudentRoute(prev => [...prev, newStep]);
-    toast.success(`Added ${step.title} to your route`);
+    addStepToRoute(step.id);
   };
 
   const removeStepFromRoute = (stepId: string) => {
@@ -338,7 +362,7 @@ export default function RouteBuilder() {
                       key={step.id}
                       step={step}
                       variant="available"
-                      onAddToRoute={() => addStepToRoute(step)}
+                      onAddToRoute={() => addStepToRouteFromCard(step)}
                     />
                   ))}
                   
@@ -446,23 +470,41 @@ export default function RouteBuilder() {
           <div className="mt-12">
             <Card className="border-dashed">
               <CardContent className="py-12 text-center">
-                <Target className="h-16 w-16 mx-auto mb-4 text-muted-foreground/50" />
-                <h3 className="text-xl font-semibold mb-2">Start Building Your Route</h3>
+                <Compass className="h-16 w-16 mx-auto mb-4 text-muted-foreground/50" />
+                <h3 className="text-xl font-semibold mb-2">Ready to Build Your Flight Career Route?</h3>
                 <p className="text-muted-foreground mb-6 max-w-md mx-auto">
-                  Begin by adding training steps from the available options above. 
-                  Build a personalized path that matches your career goals.
+                  Let our guided wizard help you create a personalized path from student pilot to airline pilot.
                 </p>
-                <Button 
-                  onClick={() => setActivePhase("initial-tasks")}
-                  className="gap-2"
-                >
-                  <Target className="h-4 w-4" />
-                  Start with Initial Tasks
-                </Button>
+                <div className="space-y-3">
+                  <Button 
+                    onClick={() => {
+                      setShowWizard(true);
+                      setHasSeenWizard(true);
+                    }}
+                    className="gap-2"
+                  >
+                    <Compass className="h-4 w-4" />
+                    Start Route Builder Wizard
+                  </Button>
+                  <p className="text-xs text-muted-foreground">
+                    Or manually add steps from the categories above
+                  </p>
+                </div>
               </CardContent>
             </Card>
           </div>
         )}
+
+        {/* Route Wizard */}
+        <RouteWizard
+          isOpen={showWizard}
+          onClose={() => {
+            setShowWizard(false);
+            setHasSeenWizard(true);
+          }}
+          onStepAdd={addStepToRoute}
+          availableSteps={routeSteps}
+        />
       </main>
     </div>
   );
