@@ -342,55 +342,66 @@ export default function RouteBuilder() {
                           <div className="mt-6 border-t pt-6">
                             <h4 className="font-semibold mb-4 text-lg">Tasks & Requirements ({fullStep.details.length})</h4>
                             <div className="space-y-3">
-                              {fullStep.details.map((detail, detailIndex) => (
-                                <div key={detail.id || detailIndex} className="flex items-start space-x-3 p-3 rounded-lg bg-muted/30">
-                                  <Checkbox
-                                    id={`task-${detail.id || detailIndex}`}
-                                    checked={step.taskProgress[detail.id || detail.title] || false}
-                                    onCheckedChange={(checked) => toggleTaskCompletion(step.id, detail.id || detail.title, !!checked)}
-                                    className="mt-0.5"
-                                  />
-                                  <div className="flex-1 min-w-0">
-                                    <div className="flex items-center justify-between gap-3">
-                                      <label 
-                                        htmlFor={`task-${detail.id || detailIndex}`}
-                                        className={`font-medium cursor-pointer ${
-                                          step.taskProgress[detail.id || detail.title] ? 'line-through text-muted-foreground' : ''
-                                        }`}
-                                      >
-                                        {detail.title}
-                                      </label>
-                                      <div className="flex gap-2 flex-shrink-0">
-                                        {detail.flightHours && (
-                                          <Badge variant="outline" className="text-xs">
-                                            {detail.flightHours}h
-                                          </Badge>
-                                        )}
-                                        {step.category !== 'Initial Tasks' && (
-                                          <Badge 
-                                            variant={detail.taskType === 'flight' ? 'default' : 'secondary'} 
-                                            className="text-xs"
-                                          >
-                                            {detail.taskType || 'ground'}
-                                          </Badge>
-                                        )}
-                                        {detail.mandatory && (
-                                          <Badge variant="destructive" className="text-xs">
-                                            Required
-                                          </Badge>
-                                        )}
+                              {fullStep.details.map((detail, detailIndex) => {
+                                const isCompleted = step.taskProgress[detail.id || detail.title] || false;
+                                
+                                return (
+                                  <div key={detail.id || detailIndex} className={`flex items-start space-x-3 p-3 rounded-lg bg-muted/30 transition-all duration-300 ${
+                                    isCompleted ? 'opacity-75' : ''
+                                  }`}>
+                                    <Checkbox
+                                      id={`task-${detail.id || detailIndex}`}
+                                      checked={isCompleted}
+                                      onCheckedChange={(checked) => toggleTaskCompletion(step.id, detail.id || detail.title, !!checked)}
+                                      className="mt-0.5"
+                                    />
+                                    <div className="flex-1 min-w-0">
+                                      <div className="flex items-center justify-between gap-3">
+                                        <label 
+                                          htmlFor={`task-${detail.id || detailIndex}`}
+                                          className={`font-medium cursor-pointer transition-all duration-300 ${
+                                            isCompleted ? 'line-through text-muted-foreground' : ''
+                                          }`}
+                                        >
+                                          {detail.title}
+                                        </label>
+                                        <div className="flex gap-2 flex-shrink-0">
+                                          {detail.flightHours && (
+                                            <Badge variant="outline" className="text-xs">
+                                              {detail.flightHours}h
+                                            </Badge>
+                                          )}
+                                          {step.category !== 'Initial Tasks' && (
+                                            <Badge 
+                                              variant={detail.taskType === 'flight' ? 'default' : 'secondary'} 
+                                              className="text-xs"
+                                            >
+                                              {detail.taskType || 'ground'}
+                                            </Badge>
+                                          )}
+                                          {detail.mandatory && (
+                                            <Badge variant="destructive" className="text-xs">
+                                              Required
+                                            </Badge>
+                                          )}
+                                        </div>
                                       </div>
+                                      {/* Only show description for uncompleted tasks */}
+                                      {!isCompleted && detail.description && (
+                                        <p className="text-sm mt-1 text-muted-foreground">
+                                          {detail.description.replace(/<[^>]*>/g, '')}
+                                        </p>
+                                      )}
+                                      {/* Show condensed description for completed tasks */}
+                                      {isCompleted && detail.description && (
+                                        <p className="text-xs mt-1 text-muted-foreground/60 line-through truncate">
+                                          {detail.description.replace(/<[^>]*>/g, '').substring(0, 60)}...
+                                        </p>
+                                      )}
                                     </div>
-                                    {detail.description && (
-                                      <p className={`text-sm mt-1 ${
-                                        step.taskProgress[detail.id || detail.title] ? 'line-through text-muted-foreground' : 'text-muted-foreground'
-                                      }`}>
-                                        {detail.description.replace(/<[^>]*>/g, '')}
-                                      </p>
-                                    )}
                                   </div>
-                                </div>
-                              ))}
+                                );
+                              })}
                             </div>
                             
                             {fullStep.details.length === 0 && (
