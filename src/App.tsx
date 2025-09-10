@@ -15,6 +15,7 @@ import Admin from "./pages/Admin";
 import UserManagement from "./pages/UserManagement";
 import ManageAirlines from "./pages/ManageAirlines";
 import RouteDashboard from "./pages/RouteDashboard";
+import RouteBuilder from "./pages/Route";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -38,6 +39,7 @@ const App = () => (
             <Route path="/admin/users" element={<UserManagement />} />
             <Route path="/admin/airlines" element={<ManageAirlines />} />
             <Route path="/admin/routes" element={<RouteDashboard />} />
+            <Route path="/route" element={<RouteBuilder />} />
             <Route path="*" element={<NotFound />} />
           </Routes>
         </BrowserRouter>

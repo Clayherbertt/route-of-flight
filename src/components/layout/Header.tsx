@@ -33,7 +33,7 @@ const Header = () => {
             Airlines
           </Link>
           <Link
-            to="/"
+            to="/route"
             className="text-sm font-medium text-muted-foreground hover:text-foreground smooth-transition"
           >
             <Route className="inline h-4 w-4 mr-2" />
