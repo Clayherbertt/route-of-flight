@@ -556,17 +556,22 @@ const formatHtmlContent = (html: string) => {
                                                 Required
                                               </Badge>
                                             )}
+                                            {isCompleted && (
+                                              <Badge variant="default" className="text-xs bg-green-500">
+                                                ✓ Complete
+                                              </Badge>
+                                            )}
                                           </div>
                                         </div>
                                       </div>
                                     </div>
                                     
-                                    {/* Detailed Content - Show ALL content */}
-                                    {detail.description && detail.description.trim() ? (
-                                      <div className={`p-6 ${isCompleted ? 'opacity-60' : ''}`}>
+                                    {/* Detailed Content - Hide when completed */}
+                                    {!isCompleted && detail.description && detail.description.trim() ? (
+                                      <div className="p-6">
                                         {formatHtmlContent(detail.description)}
                                       </div>
-                                    ) : (
+                                    ) : !isCompleted && (!detail.description || !detail.description.trim()) ? (
                                       <div className="p-4 text-sm text-muted-foreground bg-yellow-50 border-l-4 border-yellow-200">
                                         ⚠️ No detailed content available for "{detail.title}"
                                         <br />
@@ -574,7 +579,7 @@ const formatHtmlContent = (html: string) => {
                                           Content length: {detail.description?.length || 0} characters
                                         </span>
                                       </div>
-                                    )}
+                                    ) : null}
                                   </div>
                                 );
                               })}
