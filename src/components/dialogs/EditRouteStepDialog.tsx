@@ -208,10 +208,15 @@ export function EditRouteStepDialog({
 
             <div className="space-y-2">
               <Label htmlFor="description">Task Description</Label>
-              <Textarea id="description" value={editedStep.description} onChange={e => setEditedStep({
-              ...editedStep,
-              description: e.target.value
-            })} placeholder="Describe what this training step involves..." rows={3} />
+              <RichTextEditor 
+                value={editedStep.description} 
+                onChange={(value) => setEditedStep({
+                  ...editedStep,
+                  description: value
+                })} 
+                placeholder="Describe what this training step involves..." 
+                height="120px"
+              />
             </div>
 
             <div className="space-y-2">
