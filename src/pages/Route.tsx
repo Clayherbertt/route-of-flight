@@ -566,20 +566,12 @@ const formatHtmlContent = (html: string) => {
                                       </div>
                                     </div>
                                     
-                                    {/* Detailed Content - Hide when completed */}
-                                    {!isCompleted && detail.description && detail.description.trim() ? (
-                                      <div className="p-6">
-                                        {formatHtmlContent(detail.description)}
-                                      </div>
-                                    ) : !isCompleted && (!detail.description || !detail.description.trim()) ? (
-                                      <div className="p-4 text-sm text-muted-foreground bg-yellow-50 border-l-4 border-yellow-200">
-                                        ⚠️ No detailed content available for "{detail.title}"
-                                        <br />
-                                        <span className="text-xs">
-                                          Content length: {detail.description?.length || 0} characters
-                                        </span>
-                                      </div>
-                                    ) : null}
+                                     {/* Detailed Content - Hide when completed */}
+                                     {!isCompleted && detail.description && detail.description.trim() && (
+                                       <div className="p-6">
+                                         {formatHtmlContent(detail.description)}
+                                       </div>
+                                     )}
                                   </div>
                                 );
                               })}
