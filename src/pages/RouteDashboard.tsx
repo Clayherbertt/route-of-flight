@@ -123,6 +123,8 @@ export default function RouteDashboard() {
 
   // Template selection handlers
   const handleAddNewStep = () => {
+    setEditingStep(null) // Clear any existing editing state
+    setEditDialogOpen(false) // Ensure edit dialog is closed
     setTemplateDialogOpen(true)
   }
 

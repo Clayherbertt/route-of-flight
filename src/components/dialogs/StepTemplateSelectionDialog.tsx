@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { Button } from '@/components/ui/button'
 import {
   Dialog,
@@ -141,9 +141,16 @@ export function StepTemplateSelectionDialog({
   }
 
   const handleCancel = () => {
-    onOpenChange(false)
     setSelectedTemplate(null)
+    onOpenChange(false)
   }
+
+  // Reset selection when dialog opens/closes
+  useEffect(() => {
+    if (!open) {
+      setSelectedTemplate(null)
+    }
+  }, [open])
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>

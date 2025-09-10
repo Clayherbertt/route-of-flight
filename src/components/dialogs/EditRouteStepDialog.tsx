@@ -54,12 +54,14 @@ export function EditRouteStepDialog({
   const [newFlightHours, setNewFlightHours] = useState('');
   const [newGroundTitle, setNewGroundTitle] = useState('');
 
-  // Reset edited step when step prop changes
+  // Reset edited step when step prop changes or dialog opens/closes
   useEffect(() => {
     if (step) {
       setEditedStep(step);
+    } else {
+      setEditedStep(null);
     }
-  }, [step]);
+  }, [step, open]);
   if (!editedStep) return null;
   const handleSave = () => {
     // Ensure all data is properly formatted before saving
