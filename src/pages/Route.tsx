@@ -161,8 +161,8 @@ export default function RouteBuilder() {
               // Load task progress from database
               const taskProgress: Record<string, boolean> = {};
               step.details.forEach(detail => {
-                if (detail.id || detail.title) {
-                  taskProgress[detail.id || detail.title] = detail.checked;
+                if (detail.id) {
+                  taskProgress[detail.id] = detail.checked;
                 }
               });
 
@@ -253,8 +253,8 @@ export default function RouteBuilder() {
     // Initialize task progress from database state
     const taskProgress: Record<string, boolean> = {};
     step.details.forEach(detail => {
-      if (detail.id || detail.title) {
-        taskProgress[detail.id || detail.title] = detail.checked;
+      if (detail.id) {
+        taskProgress[detail.id] = detail.checked;
       }
     });
 
@@ -347,16 +347,19 @@ export default function RouteBuilder() {
         : step
     ));
 
-    // Persist to database - find the detail index for the taskId
+    // Persist to database - find the route step and detail by taskId
     try {
-      const step = routeSteps.find(s => s.id === stepId);
-      if (step) {
-        const detailIndex = step.details.findIndex(detail => 
-          (detail.id || detail.title) === taskId
-        );
+      // Find the route step that contains this student route step
+      const routeStep = routeSteps.find(rs => {
+        const studentStep = studentRoute.find(ss => ss.id === stepId);
+        return studentStep && rs.id === studentStep.stepId;
+      });
+      
+      if (routeStep) {
+        const detailIndex = routeStep.details.findIndex(detail => detail.id === taskId);
         
         if (detailIndex !== -1) {
-          await updateStepDetailChecked(stepId, detailIndex, checked);
+          await updateStepDetailChecked(routeStep.id, detailIndex, checked);
           toast.success(checked ? "Task completed!" : "Task unchecked");
         }
       }
