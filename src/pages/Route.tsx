@@ -331,78 +331,57 @@ export default function RouteBuilder() {
     ));
   };
 
-// Utility function to convert HTML to formatted JSX
+// Enhanced utility function to convert HTML to formatted JSX
 const formatHtmlContent = (html: string) => {
-  if (!html) return null;
+  if (!html || !html.trim()) return null;
   
-  // Split by paragraphs and process each one
-  const paragraphs = html.split(/(<p[^>]*>|<\/p>|<br\s*\/?>)/i).filter(Boolean);
-  const elements: React.ReactNode[] = [];
-  let currentParagraph = '';
-  
-  paragraphs.forEach((part, index) => {
-    if (part.match(/<p[^>]*>/i)) {
-      // Start of paragraph
-      currentParagraph = '';
-    } else if (part.match(/<\/p>/i)) {
-      // End of paragraph - process the content
-      if (currentParagraph.trim()) {
-        const formatted = currentParagraph
-          .replace(/<strong[^>]*>(.*?)<\/strong>/gi, '**$1**')
-          .replace(/<b[^>]*>(.*?)<\/b>/gi, '**$1**')
-          .replace(/&nbsp;/g, ' ')
-          .trim();
-        
-        // Split by bold markers and create proper formatting
-        const parts = formatted.split(/(\*\*.*?\*\*)/g);
-        const paragraphContent = parts.map((part, i) => {
-          if (part.startsWith('**') && part.endsWith('**')) {
-            return <strong key={i} className="font-bold">{part.slice(2, -2)}</strong>;
-          }
-          return part;
-        });
-        
-        elements.push(
-          <p key={index} className="mb-4 text-sm text-muted-foreground leading-relaxed">
-            {paragraphContent}
-          </p>
-        );
-      }
-      currentParagraph = '';
-    } else if (part.match(/<br\s*\/?>/i)) {
-      // Line break
-      currentParagraph += '\n';
-    } else if (!part.match(/<[^>]*>/)) {
-      // Regular content
-      currentParagraph += part;
-    }
-  });
-  
-  // Handle content without proper paragraph tags
-  if (currentParagraph.trim() && elements.length === 0) {
-    const formatted = html
-      .replace(/<strong[^>]*>(.*?)<\/strong>/gi, '**$1**')
-      .replace(/<b[^>]*>(.*?)<\/b>/gi, '**$1**')
-      .replace(/<[^>]*>/g, '')
+  // Create a more comprehensive HTML parser
+  const createElementFromHtml = (htmlString: string) => {
+    // Handle common HTML elements with proper styling
+    const processedHtml = htmlString
+      // Handle strong/bold tags
+      .replace(/<strong[^>]*>(.*?)<\/strong>/gi, '<span class="font-bold text-foreground">$1</span>')
+      .replace(/<b[^>]*>(.*?)<\/b>/gi, '<span class="font-bold text-foreground">$1</span>')
+      // Handle underline tags
+      .replace(/<u[^>]*>(.*?)<\/u>/gi, '<span class="underline font-semibold text-foreground">$1</span>')
+      // Handle paragraphs
+      .replace(/<p[^>]*>/gi, '<div class="mb-4 text-foreground leading-relaxed">')
+      .replace(/<\/p>/gi, '</div>')
+      // Handle line breaks
+      .replace(/<br\s*\/?>/gi, '<br />')
+      // Handle unordered lists
+      .replace(/<ul[^>]*>/gi, '<ul class="list-disc list-inside ml-4 mb-4 space-y-2">')
+      .replace(/<\/ul>/gi, '</ul>')
+      // Handle ordered lists
+      .replace(/<ol[^>]*>/gi, '<ol class="list-decimal list-inside ml-4 mb-4 space-y-2">')
+      .replace(/<\/ol>/gi, '</ol>')
+      // Handle list items
+      .replace(/<li[^>]*>/gi, '<li class="text-foreground mb-1">')
+      .replace(/<\/li>/gi, '</li>')
+      // Handle headings
+      .replace(/<h1[^>]*>(.*?)<\/h1>/gi, '<h1 class="text-2xl font-bold mb-4 text-foreground">$1</h1>')
+      .replace(/<h2[^>]*>(.*?)<\/h2>/gi, '<h2 class="text-xl font-bold mb-3 text-foreground">$1</h2>')
+      .replace(/<h3[^>]*>(.*?)<\/h3>/gi, '<h3 class="text-lg font-semibold mb-3 text-foreground">$1</h3>')
+      .replace(/<h4[^>]*>(.*?)<\/h4>/gi, '<h4 class="text-base font-semibold mb-2 text-foreground">$1</h4>')
+      // Handle non-breaking spaces
       .replace(/&nbsp;/g, ' ')
-      .trim();
+      // Handle other common entities
+      .replace(/&amp;/g, '&')
+      .replace(/&lt;/g, '<')
+      .replace(/&gt;/g, '>')
+      .replace(/&quot;/g, '"');
     
-    const parts = formatted.split(/(\*\*.*?\*\*)/g);
-    const content = parts.map((part, i) => {
-      if (part.startsWith('**') && part.endsWith('**')) {
-        return <strong key={i} className="font-bold">{part.slice(2, -2)}</strong>;
-      }
-      return part;
-    });
-    
-    return (
-      <div className="text-sm text-muted-foreground leading-relaxed">
-        {content}
-      </div>
-    );
-  }
+    return processedHtml;
+  };
   
-  return elements.length > 0 ? <div>{elements}</div> : null;
+  const processedContent = createElementFromHtml(html);
+  
+  return (
+    <div 
+      className="prose prose-sm max-w-none prose-headings:text-foreground prose-p:text-foreground prose-li:text-foreground prose-strong:text-foreground prose-ul:text-foreground prose-ol:text-foreground"
+      dangerouslySetInnerHTML={{ __html: processedContent }}
+    />
+  );
 };
 
   const getStepProgress = (step: any, fullStep: any) => {
@@ -526,6 +505,16 @@ const formatHtmlContent = (html: string) => {
                               {fullStep.details.map((detail, detailIndex) => {
                                 const isCompleted = step.taskProgress[detail.id || detail.title] || false;
                                 
+                                // Debug logging
+                                console.log(`📝 Detail "${detail.title}":`, {
+                                  id: detail.id,
+                                  title: detail.title,
+                                  descriptionLength: detail.description?.length || 0,
+                                  descriptionPreview: detail.description?.substring(0, 100) + '...',
+                                  taskType: detail.taskType,
+                                  mandatory: detail.mandatory
+                                });
+                                
                                 return (
                                   <div key={detail.id || detailIndex} className={`border rounded-lg transition-all duration-300 ${
                                     isCompleted ? 'bg-muted/20 opacity-75 border-muted' : 'bg-card border-border shadow-sm'
@@ -572,12 +561,18 @@ const formatHtmlContent = (html: string) => {
                                       </div>
                                     </div>
                                     
-                                    {/* Detailed Content */}
-                                    {detail.description && detail.description.trim() && (
+                                    {/* Detailed Content - Show ALL content */}
+                                    {detail.description && detail.description.trim() ? (
                                       <div className={`p-6 ${isCompleted ? 'opacity-60' : ''}`}>
-                                        <div className="prose prose-sm max-w-none prose-headings:text-foreground prose-p:text-foreground prose-li:text-foreground prose-strong:text-foreground">
-                                          {formatHtmlContent(detail.description)}
-                                        </div>
+                                        {formatHtmlContent(detail.description)}
+                                      </div>
+                                    ) : (
+                                      <div className="p-4 text-sm text-muted-foreground bg-yellow-50 border-l-4 border-yellow-200">
+                                        ⚠️ No detailed content available for "{detail.title}"
+                                        <br />
+                                        <span className="text-xs">
+                                          Content length: {detail.description?.length || 0} characters
+                                        </span>
                                       </div>
                                     )}
                                   </div>
@@ -586,8 +581,10 @@ const formatHtmlContent = (html: string) => {
                             </div>
                             
                             {fullStep.details.length === 0 && (
-                              <div className="text-center py-8 text-muted-foreground">
-                                <p>No tasks defined for this step yet.</p>
+                              <div className="text-center py-8 text-muted-foreground bg-red-50 border border-red-200 rounded">
+                                <p>⚠️ No route step details found in database</p>
+                                <p className="text-xs mt-2">Step ID: {fullStep.id}</p>
+                                <p className="text-xs">Check admin panel for step details</p>
                               </div>
                             )}
                           </div>
