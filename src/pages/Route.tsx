@@ -130,6 +130,7 @@ export default function RouteBuilder() {
     if (!user) return;
     
     const loadUserRoute = async () => {
+      console.log('🔄 Loading user route for user:', user.id);
       try {
         const { data: userRoutes, error } = await supabase
           .from('user_routes')
@@ -138,12 +139,15 @@ export default function RouteBuilder() {
           .order('order_number');
 
         if (error) {
-          console.error('Error loading user route:', error);
+          console.error('❌ Error loading user route:', error);
           return;
         }
 
+        console.log('📊 Loaded user routes from database:', userRoutes);
+
         if (userRoutes && userRoutes.length > 0) {
           // User has completed the wizard before
+          console.log('✅ User has existing route, setting hasCompletedWizard to true');
           setHasCompletedWizard(true);
           
           // Convert database records to StudentRoute format
@@ -162,13 +166,18 @@ export default function RouteBuilder() {
                 order: userRoute.order_number,
                 taskProgress: {} // This could be expanded to save task progress too
               });
+            } else {
+              console.warn('⚠️ Step not found for route:', userRoute.route_step_id);
             }
           }
           
+          console.log('🎯 Setting loaded route to state:', loadedRoute);
           setStudentRoute(loadedRoute);
+        } else {
+          console.log('📝 No existing user routes found');
         }
       } catch (error) {
-        console.error('Error loading user route:', error);
+        console.error('❌ Exception loading user route:', error);
       }
     };
 
@@ -213,12 +222,17 @@ export default function RouteBuilder() {
   };
 
   const addStepToRoute = async (stepId: string) => {
+    console.log('🔍 addStepToRoute called with stepId:', stepId);
     const step = routeSteps.find(s => s.id === stepId);
-    if (!step) return;
+    if (!step) {
+      console.error('❌ Step not found:', stepId);
+      return;
+    }
 
     // Check if step already exists in route
     const existingStep = studentRoute.find(s => s.stepId === stepId);
     if (existingStep) {
+      console.log('⚠️ Step already exists in route:', step.title);
       toast.error(`${step.title} is already in your route`);
       return;
     }
@@ -236,6 +250,7 @@ export default function RouteBuilder() {
 
     // Save to database if user is authenticated
     if (user) {
+      console.log('💾 Saving step to database for user:', user.id);
       try {
         const { error } = await supabase
           .from('user_routes')
@@ -249,18 +264,22 @@ export default function RouteBuilder() {
           });
 
         if (error) {
-          console.error('Error saving step to database:', error);
+          console.error('❌ Database save error:', error);
           toast.error('Failed to save step. Please try again.');
           return;
         }
+        console.log('✅ Successfully saved step to database');
       } catch (error) {
-        console.error('Error saving step to database:', error);
+        console.error('❌ Database save exception:', error);
         toast.error('Failed to save step. Please try again.');
         return;
       }
+    } else {
+      console.warn('⚠️ No user authenticated, cannot save to database');
     }
 
     setStudentRoute(prev => [...prev, newStep]);
+    console.log('✅ Step added to local state:', step.title);
     toast.success(`Added ${step.title} to your route`);
   };
 
