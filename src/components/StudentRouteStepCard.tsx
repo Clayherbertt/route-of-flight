@@ -194,7 +194,13 @@ export function StudentRouteStepCard({
                       )}
                     </div>
                   </div>
-                  {/* Description hidden as requested by user */}
+                  {detail.description && (
+                    <p className={`text-sm mt-2 ${
+                      detail.checked ? 'text-muted-foreground' : 'text-muted-foreground'
+                    }`}>
+                      {stripHtmlTags(detail.description)}
+                    </p>
+                  )}
                 </div>
               </div>
             ))}
