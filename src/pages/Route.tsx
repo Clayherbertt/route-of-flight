@@ -509,6 +509,21 @@ const formatHtmlContent = (html: string) => {
               : "Create your personalized journey to becoming an airline pilot. Select training steps, track your progress, and follow a proven path to the cockpit."
             }
           </p>
+          
+          {/* Adjust Route Button for existing routes */}
+          {studentRoute.length > 0 && (
+            <div className="flex justify-center mb-8">
+              <Button 
+                onClick={() => setShowWizard(true)}
+                variant="aviation"
+                size="lg"
+                className="gap-2"
+              >
+                <Compass className="h-5 w-5" />
+                Adjust Flight Route
+              </Button>
+            </div>
+          )}
         </div>
 
         {/* Show simple card layout when route has steps */}
