@@ -23,6 +23,7 @@ import Header from '@/components/layout/Header'
 import { SortableRouteStepCard } from '@/components/SortableRouteStepCard'
 import { EditRouteStepDialog } from '@/components/dialogs/EditRouteStepDialog'
 import { StepTemplateSelectionDialog } from '@/components/dialogs/StepTemplateSelectionDialog'
+import { RouteWizard } from '@/components/RouteWizard'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
@@ -54,6 +55,9 @@ export default function RouteDashboard() {
   
   // Template selection dialog state
   const [templateDialogOpen, setTemplateDialogOpen] = useState(false)
+  
+  // Route wizard dialog state
+  const [wizardOpen, setWizardOpen] = useState(false)
   
   // Expansion state for cards
   const [expandedCards, setExpandedCards] = useState<Record<string, boolean>>({})
@@ -273,6 +277,22 @@ export default function RouteDashboard() {
           </DndContext>
         </div>
 
+        {/* Route Wizard Button */}
+        <div className="mt-12 mb-8 text-center">
+          <Button 
+            onClick={() => setWizardOpen(true)}
+            variant="aviation"
+            size="lg"
+            className="text-lg px-8 py-4"
+          >
+            <Route className="mr-2 h-5 w-5" />
+            Adjust Flight Route
+          </Button>
+          <p className="text-sm text-muted-foreground mt-2">
+            Use the wizard to customize your career path
+          </p>
+        </div>
+
         <EditRouteStepDialog
           step={editingStep}
           open={editDialogOpen}
@@ -284,6 +304,13 @@ export default function RouteDashboard() {
           open={templateDialogOpen}
           onOpenChange={setTemplateDialogOpen}
           onSelectTemplate={handleSelectTemplate}
+        />
+
+        <RouteWizard
+          isOpen={wizardOpen}
+          onClose={() => setWizardOpen(false)}
+          onStepAdd={handleSelectTemplate}
+          availableSteps={routeSteps}
         />
       </main>
     </div>
