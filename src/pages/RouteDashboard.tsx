@@ -176,10 +176,19 @@ export default function RouteDashboard() {
               <h1 className="text-3xl font-bold">Route Dashboard</h1>
               <Badge variant="secondary">Administrator</Badge>
             </div>
-            <Button onClick={handleAddNewStep}>
-              <Plus className="mr-2 h-4 w-4" />
-              Add New Step
-            </Button>
+            <div className="flex gap-2">
+              <Button onClick={handleAddNewStep}>
+                <Plus className="mr-2 h-4 w-4" />
+                Add New Step
+              </Button>
+              <Button 
+                onClick={() => setWizardOpen(true)}
+                variant="aviation"
+              >
+                <Route className="mr-2 h-4 w-4" />
+                Adjust Flight Route
+              </Button>
+            </div>
           </div>
           <p className="text-muted-foreground">
             Configure career path routes and steps for aspiring airline pilots
@@ -277,21 +286,6 @@ export default function RouteDashboard() {
           </DndContext>
         </div>
 
-        {/* Route Wizard Button */}
-        <div className="mt-12 mb-8 text-center">
-          <Button 
-            onClick={() => setWizardOpen(true)}
-            variant="aviation"
-            size="lg"
-            className="text-lg px-8 py-4"
-          >
-            <Route className="mr-2 h-5 w-5" />
-            Adjust Flight Route
-          </Button>
-          <p className="text-sm text-muted-foreground mt-2">
-            Use the wizard to customize your career path
-          </p>
-        </div>
 
         <EditRouteStepDialog
           step={editingStep}
