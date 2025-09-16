@@ -55,10 +55,38 @@ export default function ManageAirlines() {
     );
   }
 
-  const filteredAirlines = airlines.filter(airline =>
-    airline.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    airline.category.toLowerCase().includes(searchTerm.toLowerCase())
-  );
+  // Group airlines by category in the same order as public page
+  const airlineSections = [
+    {
+      title: "Majors",
+      airlines: airlines.filter(airline => airline.category === "Majors")
+    },
+    {
+      title: "Ultra Low Cost Carriers & Large Operators", 
+      airlines: airlines.filter(airline => airline.category === "Ultra Low Cost Carriers & Large Operators")
+    },
+    {
+      title: "Regional Carriers",
+      airlines: airlines.filter(airline => airline.category === "Regional Carriers")
+    },
+    {
+      title: "Fractional Carriers",
+      airlines: airlines.filter(airline => airline.category === "Fractional Carriers")
+    },
+    {
+      title: "Cargo",
+      airlines: airlines.filter(airline => airline.category === "Cargo")
+    }
+  ];
+
+  // Filter airlines based on search term
+  const filteredSections = airlineSections.map(section => ({
+    ...section,
+    airlines: section.airlines.filter(airline => 
+      airline.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      airline.category.toLowerCase().includes(searchTerm.toLowerCase())
+    )
+  })).filter(section => section.airlines.length > 0);
 
   const handleCreateAirline = () => {
     setSelectedAirline(null);
@@ -184,75 +212,93 @@ export default function ManageAirlines() {
           </Card>
         </div>
 
-        {/* Airlines Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {filteredAirlines.map((airline) => (
-            <Card key={airline.id} className="hover:shadow-lg transition-shadow">
-              <CardHeader className="pb-3">
-                <div className="flex items-start justify-between">
-                  <div className="flex items-center gap-3">
-                    <div className="p-2 rounded-full bg-primary/10">
-                      <Plane className="h-5 w-5 text-primary" />
-                    </div>
-                    <div>
-                      <CardTitle className="text-lg">{airline.name}</CardTitle>
-                      <p className="text-sm text-muted-foreground">{airline.call_sign}</p>
-                    </div>
-                  </div>
-                  <div className="flex items-center gap-1">
-                    <Button
-                      variant="ghost"
-                      size="icon"
-                      onClick={() => handleEditAirline(airline)}
-                    >
-                      <Edit className="h-4 w-4" />
-                    </Button>
-                    <Button
-                      variant="ghost"
-                      size="icon"
-                      onClick={() => handleDeleteAirline(airline.id)}
-                    >
-                      <Trash2 className="h-4 w-4" />
-                    </Button>
-                  </div>
+        {/* Airlines Sections */}
+        <div className="space-y-8">
+          {filteredSections.map((section, sectionIndex) => (
+            <div key={sectionIndex} className="space-y-6">
+              <div className="flex items-center gap-4">
+                <div className="p-2 rounded-full bg-primary/10">
+                  <Building2 className="h-6 w-6 text-primary" />
                 </div>
-              </CardHeader>
-              <CardContent className="space-y-3">
-                <div className="flex items-center justify-between">
-                  <Badge className={getCategoryColor(airline.category)}>
-                    {airline.category}
+                <div>
+                  <h2 className="text-2xl font-bold text-foreground">{section.title}</h2>
+                  <Badge variant="outline" className={getCategoryColor(section.title)}>
+                    {section.airlines.length} Airlines
                   </Badge>
-                  {airline.is_hiring && (
-                    <Badge variant="default" className="bg-green-500/10 text-green-700 border-green-200/30">
-                      Hiring
-                    </Badge>
-                  )}
                 </div>
-                
-                <div className="space-y-2 text-sm">
-                  <div className="flex items-center gap-2">
-                    <Users className="h-4 w-4 text-muted-foreground" />
-                    <span>{airline.pilot_group_size} pilots</span>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <Plane className="h-4 w-4 text-muted-foreground" />
-                    <span>{airline.fleet_size} aircraft</span>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <MapPin className="h-4 w-4 text-muted-foreground" />
-                    <span>{airline.bases.length} bases</span>
-                  </div>
-                </div>
-                
-                <p className="text-sm text-muted-foreground line-clamp-2">
-                  {airline.description}
-                </p>
-              </CardContent>
-            </Card>
+              </div>
+              
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                {section.airlines.map((airline) => (
+                  <Card key={airline.id} className="hover:shadow-lg transition-shadow">
+                    <CardHeader className="pb-3">
+                      <div className="flex items-start justify-between">
+                        <div className="flex items-center gap-3">
+                          <div className="p-2 rounded-full bg-primary/10">
+                            <Plane className="h-5 w-5 text-primary" />
+                          </div>
+                          <div>
+                            <CardTitle className="text-lg">{airline.name}</CardTitle>
+                            <p className="text-sm text-muted-foreground">{airline.call_sign}</p>
+                          </div>
+                        </div>
+                        <div className="flex items-center gap-1">
+                          <Button
+                            variant="ghost"
+                            size="icon"
+                            onClick={() => handleEditAirline(airline)}
+                          >
+                            <Edit className="h-4 w-4" />
+                          </Button>
+                          <Button
+                            variant="ghost"
+                            size="icon"
+                            onClick={() => handleDeleteAirline(airline.id)}
+                          >
+                            <Trash2 className="h-4 w-4" />
+                          </Button>
+                        </div>
+                      </div>
+                    </CardHeader>
+                    <CardContent className="space-y-3">
+                      <div className="flex items-center justify-between">
+                        <Badge className={getCategoryColor(airline.category)}>
+                          {airline.category}
+                        </Badge>
+                        {airline.is_hiring && (
+                          <Badge variant="default" className="bg-green-500/10 text-green-700 border-green-200/30">
+                            Hiring
+                          </Badge>
+                        )}
+                      </div>
+                      
+                      <div className="space-y-2 text-sm">
+                        <div className="flex items-center gap-2">
+                          <Users className="h-4 w-4 text-muted-foreground" />
+                          <span>{airline.pilot_group_size} pilots</span>
+                        </div>
+                        <div className="flex items-center gap-2">
+                          <Plane className="h-4 w-4 text-muted-foreground" />
+                          <span>{airline.fleet_size} aircraft</span>
+                        </div>
+                        <div className="flex items-center gap-2">
+                          <MapPin className="h-4 w-4 text-muted-foreground" />
+                          <span>{airline.bases.length} bases</span>
+                        </div>
+                      </div>
+                      
+                      <p className="text-sm text-muted-foreground line-clamp-2">
+                        {airline.description}
+                      </p>
+                    </CardContent>
+                  </Card>
+                ))}
+              </div>
+            </div>
           ))}
         </div>
 
-        {filteredAirlines.length === 0 && (
+        {filteredSections.length === 0 && (
           <div className="text-center py-12">
             <Building2 className="h-16 w-16 text-muted-foreground/50 mx-auto mb-4" />
             <h3 className="text-xl font-semibold text-muted-foreground mb-2">
