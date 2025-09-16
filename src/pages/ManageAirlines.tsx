@@ -55,10 +55,38 @@ export default function ManageAirlines() {
     );
   }
 
-  const filteredAirlines = airlines.filter(airline =>
-    airline.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    airline.category.toLowerCase().includes(searchTerm.toLowerCase())
-  );
+  // Group airlines by category in the same order as public page
+  const airlineSections = [
+    {
+      title: "Majors",
+      airlines: airlines.filter(airline => airline.category === "Majors")
+    },
+    {
+      title: "Ultra Low Cost Carriers & Large Operators", 
+      airlines: airlines.filter(airline => airline.category === "Ultra Low Cost Carriers & Large Operators")
+    },
+    {
+      title: "Regional Carriers",
+      airlines: airlines.filter(airline => airline.category === "Regional Carriers")
+    },
+    {
+      title: "Fractional Carriers",
+      airlines: airlines.filter(airline => airline.category === "Fractional Carriers")
+    },
+    {
+      title: "Cargo",
+      airlines: airlines.filter(airline => airline.category === "Cargo")
+    }
+  ];
+
+  // Filter airlines based on search term
+  const filteredSections = airlineSections.map(section => ({
+    ...section,
+    airlines: section.airlines.filter(airline => 
+      airline.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      airline.category.toLowerCase().includes(searchTerm.toLowerCase())
+    )
+  })).filter(section => section.airlines.length > 0);
 
   const handleCreateAirline = () => {
     setSelectedAirline(null);
@@ -184,49 +212,57 @@ export default function ManageAirlines() {
           </Card>
         </div>
 
-        {/* Airlines List */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-          {filteredAirlines.map((airline) => (
-            <Card key={airline.id} className="p-4">
-              <div className="flex items-start justify-between mb-3">
-                <div>
-                  <h3 className="font-semibold">{airline.name}</h3>
-                  <p className="text-sm text-muted-foreground">{airline.call_sign}</p>
-                </div>
-                <div className="flex gap-1">
-                  <Button
-                    variant="ghost"
-                    size="icon"
-                    onClick={() => handleEditAirline(airline)}
-                  >
-                    <Edit className="h-4 w-4" />
-                  </Button>
-                  <Button
-                    variant="ghost"
-                    size="icon"
-                    onClick={() => handleDeleteAirline(airline.id)}
-                  >
-                    <Trash2 className="h-4 w-4" />
-                  </Button>
-                </div>
-              </div>
+        {/* Airlines Sections - Simple Layout */}
+        <div className="space-y-8">
+          {filteredSections.map((section, sectionIndex) => (
+            <div key={sectionIndex} className="space-y-4">
+              <h2 className="text-xl font-semibold">{section.title}</h2>
               
-              <div className="space-y-2">
-                <Badge className={getCategoryColor(airline.category)} variant="outline">
-                  {airline.category}
-                </Badge>
-                {airline.is_hiring && (
-                  <Badge className="bg-green-100 text-green-800">Hiring</Badge>
-                )}
-                <p className="text-sm text-muted-foreground">
-                  {airline.fleet_size} aircraft • {airline.bases.length} bases
-                </p>
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                {section.airlines.map((airline) => (
+                  <Card key={airline.id} className="p-4">
+                    <div className="flex items-start justify-between mb-3">
+                      <div>
+                        <h3 className="font-semibold">{airline.name}</h3>
+                        <p className="text-sm text-muted-foreground">{airline.call_sign}</p>
+                      </div>
+                      <div className="flex gap-1">
+                        <Button
+                          variant="ghost"
+                          size="icon"
+                          onClick={() => handleEditAirline(airline)}
+                        >
+                          <Edit className="h-4 w-4" />
+                        </Button>
+                        <Button
+                          variant="ghost"
+                          size="icon"
+                          onClick={() => handleDeleteAirline(airline.id)}
+                        >
+                          <Trash2 className="h-4 w-4" />
+                        </Button>
+                      </div>
+                    </div>
+                    
+                    <div className="space-y-2">
+                      <Badge className={getCategoryColor(airline.category)} variant="outline">
+                        {airline.category}
+                      </Badge>
+                      {airline.is_hiring && (
+                        <Badge className="bg-green-100 text-green-800">Hiring</Badge>
+                      )}
+                      <p className="text-sm text-muted-foreground">
+                        {airline.fleet_size} aircraft • {airline.bases.length} bases
+                      </p>
+                    </div>
+                  </Card>
+                ))}
               </div>
-            </Card>
+            </div>
           ))}
         </div>
 
-        {filteredAirlines.length === 0 && (
+        {filteredSections.length === 0 && (
           <div className="text-center py-12">
             <Building2 className="h-16 w-16 text-muted-foreground/50 mx-auto mb-4" />
             <h3 className="text-xl font-semibold text-muted-foreground mb-2">
