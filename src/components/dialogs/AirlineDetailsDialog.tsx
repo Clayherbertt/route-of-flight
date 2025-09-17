@@ -219,7 +219,7 @@ export function AirlineDetailsDialog({ open, onOpenChange, airline }: AirlineDet
           )}
 
           {/* Pay Scale */}
-          {(airline.fo_pay_year_1 || airline.captain_pay_year_1) && (
+          {(airline.fo_pay_year_1 || airline.captain_pay_year_1 || airline.fo_narrowbody_pay_year_1 || airline.captain_narrowbody_pay_year_1) && (
             <Card>
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
@@ -228,59 +228,149 @@ export function AirlineDetailsDialog({ open, onOpenChange, airline }: AirlineDet
                 </CardTitle>
               </CardHeader>
               <CardContent>
-                <div className="overflow-x-auto">
-                  <table className="w-full">
-                    <thead>
-                      <tr className="border-b">
-                        <th className="text-left py-3 px-4 font-semibold">Position</th>
-                        {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map(year => (
-                          <th key={year} className="text-center py-3 px-2 font-medium text-sm">
-                            Year {year}
-                          </th>
-                        ))}
-                      </tr>
-                    </thead>
-                    <tbody className="divide-y">
-                      {/* First Officer Row */}
-                      {airline.fo_pay_year_1 && (
-                        <tr className="hover:bg-muted/30 transition-colors">
-                          <td className="py-4 px-4 font-semibold text-primary">First Officer</td>
-                          {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map(year => {
-                            const payKey = `fo_pay_year_${year}` as keyof typeof airline;
-                            const payValue = airline[payKey] as string;
-                            
-                            return (
-                              <td key={year} className="text-center py-4 px-2">
-                                <div className="font-bold text-sm">
-                                  {payValue || '-'}
-                                </div>
-                              </td>
-                            );
-                          })}
+                {/* Check if we have narrow body and wide body data */}
+                {(airline.fo_narrowbody_pay_year_1 || airline.captain_narrowbody_pay_year_1) ? (
+                  <div className="space-y-6">
+                    {/* First Officer Pay Scale */}
+                    {airline.fo_narrowbody_pay_year_1 && (
+                      <div>
+                        <h4 className="font-semibold mb-3 text-lg">First Officer Pay Scale</h4>
+                        <div className="overflow-x-auto">
+                          <table className="w-full">
+                            <thead>
+                              <tr className="border-b">
+                                <th className="text-left py-3 px-4 font-semibold">Year</th>
+                                <th className="text-center py-3 px-4 font-semibold">Narrow Body</th>
+                                <th className="text-center py-3 px-4 font-semibold">Wide Body</th>
+                              </tr>
+                            </thead>
+                            <tbody className="divide-y">
+                              {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map(year => {
+                                const narrowBodyKey = `fo_narrowbody_pay_year_${year}` as keyof typeof airline;
+                                const wideBodyKey = `fo_widebody_pay_year_${year}` as keyof typeof airline;
+                                const narrowBodyValue = airline[narrowBodyKey] as string;
+                                const wideBodyValue = airline[wideBodyKey] as string;
+                                
+                                return (
+                                  <tr key={year} className="hover:bg-muted/30 transition-colors">
+                                    <td className="py-3 px-4 font-medium">Year {year}</td>
+                                    <td className="text-center py-3 px-4">
+                                      <div className="font-bold text-sm">
+                                        {narrowBodyValue ? `$${narrowBodyValue}` : '-'}
+                                      </div>
+                                    </td>
+                                    <td className="text-center py-3 px-4">
+                                      <div className="font-bold text-sm">
+                                        {wideBodyValue ? `$${wideBodyValue}` : '-'}
+                                      </div>
+                                    </td>
+                                  </tr>
+                                );
+                              })}
+                            </tbody>
+                          </table>
+                        </div>
+                      </div>
+                    )}
+
+                    {/* Captain Pay Scale */}
+                    {airline.captain_narrowbody_pay_year_1 && (
+                      <div>
+                        <h4 className="font-semibold mb-3 text-lg">Captain Pay Scale</h4>
+                        <div className="overflow-x-auto">
+                          <table className="w-full">
+                            <thead>
+                              <tr className="border-b">
+                                <th className="text-left py-3 px-4 font-semibold">Year</th>
+                                <th className="text-center py-3 px-4 font-semibold">Narrow Body</th>
+                                <th className="text-center py-3 px-4 font-semibold">Wide Body</th>
+                              </tr>
+                            </thead>
+                            <tbody className="divide-y">
+                              {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map(year => {
+                                const narrowBodyKey = `captain_narrowbody_pay_year_${year}` as keyof typeof airline;
+                                const wideBodyKey = `captain_widebody_pay_year_${year}` as keyof typeof airline;
+                                const narrowBodyValue = airline[narrowBodyKey] as string;
+                                const wideBodyValue = airline[wideBodyKey] as string;
+                                
+                                return (
+                                  <tr key={year} className="hover:bg-muted/30 transition-colors">
+                                    <td className="py-3 px-4 font-medium">Year {year}</td>
+                                    <td className="text-center py-3 px-4">
+                                      <div className="font-bold text-sm">
+                                        {narrowBodyValue ? `$${narrowBodyValue}` : '-'}
+                                      </div>
+                                    </td>
+                                    <td className="text-center py-3 px-4">
+                                      <div className="font-bold text-sm">
+                                        {wideBodyValue ? `$${wideBodyValue}` : '-'}
+                                      </div>
+                                    </td>
+                                  </tr>
+                                );
+                              })}
+                            </tbody>
+                          </table>
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                ) : (
+                  /* Fallback to original single table format */
+                  <div className="overflow-x-auto">
+                    <table className="w-full">
+                      <thead>
+                        <tr className="border-b">
+                          <th className="text-left py-3 px-4 font-semibold">Position</th>
+                          {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map(year => (
+                            <th key={year} className="text-center py-3 px-2 font-medium text-sm">
+                              Year {year}
+                            </th>
+                          ))}
                         </tr>
-                      )}
-                      
-                      {/* Captain Row */}
-                      {airline.captain_pay_year_1 && (
-                        <tr className="hover:bg-muted/30 transition-colors">
-                          <td className="py-4 px-4 font-semibold text-primary">Captain</td>
-                          {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map(year => {
-                            const payKey = `captain_pay_year_${year}` as keyof typeof airline;
-                            const payValue = airline[payKey] as string;
-                            
-                            return (
-                              <td key={year} className="text-center py-4 px-2">
-                                <div className="font-bold text-sm">
-                                  {payValue || '-'}
-                                </div>
-                              </td>
-                            );
-                          })}
-                        </tr>
-                      )}
-                    </tbody>
-                  </table>
-                </div>
+                      </thead>
+                      <tbody className="divide-y">
+                        {/* First Officer Row */}
+                        {airline.fo_pay_year_1 && (
+                          <tr className="hover:bg-muted/30 transition-colors">
+                            <td className="py-4 px-4 font-semibold text-primary">First Officer</td>
+                            {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map(year => {
+                              const payKey = `fo_pay_year_${year}` as keyof typeof airline;
+                              const payValue = airline[payKey] as string;
+                              
+                              return (
+                                <td key={year} className="text-center py-4 px-2">
+                                  <div className="font-bold text-sm">
+                                    {payValue || '-'}
+                                  </div>
+                                </td>
+                              );
+                            })}
+                          </tr>
+                        )}
+                        
+                        {/* Captain Row */}
+                        {airline.captain_pay_year_1 && (
+                          <tr className="hover:bg-muted/30 transition-colors">
+                            <td className="py-4 px-4 font-semibold text-primary">Captain</td>
+                            {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map(year => {
+                              const payKey = `captain_pay_year_${year}` as keyof typeof airline;
+                              const payValue = airline[payKey] as string;
+                              
+                              return (
+                                <td key={year} className="text-center py-4 px-2">
+                                  <div className="font-bold text-sm">
+                                    {payValue || '-'}
+                                  </div>
+                                </td>
+                              );
+                            })}
+                          </tr>
+                        )}
+                      </tbody>
+                    </table>
+                  </div>
+                )}
               </CardContent>
             </Card>
           )}

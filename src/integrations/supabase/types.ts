@@ -265,6 +265,16 @@ export type Database = {
           application_url: string | null
           bases: string[] | null
           call_sign: string
+          captain_narrowbody_pay_year_1: string | null
+          captain_narrowbody_pay_year_10: string | null
+          captain_narrowbody_pay_year_2: string | null
+          captain_narrowbody_pay_year_3: string | null
+          captain_narrowbody_pay_year_4: string | null
+          captain_narrowbody_pay_year_5: string | null
+          captain_narrowbody_pay_year_6: string | null
+          captain_narrowbody_pay_year_7: string | null
+          captain_narrowbody_pay_year_8: string | null
+          captain_narrowbody_pay_year_9: string | null
           captain_pay_year_1: string | null
           captain_pay_year_10: string | null
           captain_pay_year_2: string | null
@@ -275,11 +285,31 @@ export type Database = {
           captain_pay_year_7: string | null
           captain_pay_year_8: string | null
           captain_pay_year_9: string | null
+          captain_widebody_pay_year_1: string | null
+          captain_widebody_pay_year_10: string | null
+          captain_widebody_pay_year_2: string | null
+          captain_widebody_pay_year_3: string | null
+          captain_widebody_pay_year_4: string | null
+          captain_widebody_pay_year_5: string | null
+          captain_widebody_pay_year_6: string | null
+          captain_widebody_pay_year_7: string | null
+          captain_widebody_pay_year_8: string | null
+          captain_widebody_pay_year_9: string | null
           category: string | null
           created_at: string
           description: string
           fleet_info: Json | null
           fleet_size: number
+          fo_narrowbody_pay_year_1: string | null
+          fo_narrowbody_pay_year_10: string | null
+          fo_narrowbody_pay_year_2: string | null
+          fo_narrowbody_pay_year_3: string | null
+          fo_narrowbody_pay_year_4: string | null
+          fo_narrowbody_pay_year_5: string | null
+          fo_narrowbody_pay_year_6: string | null
+          fo_narrowbody_pay_year_7: string | null
+          fo_narrowbody_pay_year_8: string | null
+          fo_narrowbody_pay_year_9: string | null
           fo_pay_year_1: string | null
           fo_pay_year_10: string | null
           fo_pay_year_2: string | null
@@ -290,6 +320,16 @@ export type Database = {
           fo_pay_year_7: string | null
           fo_pay_year_8: string | null
           fo_pay_year_9: string | null
+          fo_widebody_pay_year_1: string | null
+          fo_widebody_pay_year_10: string | null
+          fo_widebody_pay_year_2: string | null
+          fo_widebody_pay_year_3: string | null
+          fo_widebody_pay_year_4: string | null
+          fo_widebody_pay_year_5: string | null
+          fo_widebody_pay_year_6: string | null
+          fo_widebody_pay_year_7: string | null
+          fo_widebody_pay_year_8: string | null
+          fo_widebody_pay_year_9: string | null
           id: string
           inside_scoop: string[] | null
           is_hiring: boolean | null
@@ -310,6 +350,16 @@ export type Database = {
           application_url?: string | null
           bases?: string[] | null
           call_sign: string
+          captain_narrowbody_pay_year_1?: string | null
+          captain_narrowbody_pay_year_10?: string | null
+          captain_narrowbody_pay_year_2?: string | null
+          captain_narrowbody_pay_year_3?: string | null
+          captain_narrowbody_pay_year_4?: string | null
+          captain_narrowbody_pay_year_5?: string | null
+          captain_narrowbody_pay_year_6?: string | null
+          captain_narrowbody_pay_year_7?: string | null
+          captain_narrowbody_pay_year_8?: string | null
+          captain_narrowbody_pay_year_9?: string | null
           captain_pay_year_1?: string | null
           captain_pay_year_10?: string | null
           captain_pay_year_2?: string | null
@@ -320,11 +370,31 @@ export type Database = {
           captain_pay_year_7?: string | null
           captain_pay_year_8?: string | null
           captain_pay_year_9?: string | null
+          captain_widebody_pay_year_1?: string | null
+          captain_widebody_pay_year_10?: string | null
+          captain_widebody_pay_year_2?: string | null
+          captain_widebody_pay_year_3?: string | null
+          captain_widebody_pay_year_4?: string | null
+          captain_widebody_pay_year_5?: string | null
+          captain_widebody_pay_year_6?: string | null
+          captain_widebody_pay_year_7?: string | null
+          captain_widebody_pay_year_8?: string | null
+          captain_widebody_pay_year_9?: string | null
           category?: string | null
           created_at?: string
           description: string
           fleet_info?: Json | null
           fleet_size?: number
+          fo_narrowbody_pay_year_1?: string | null
+          fo_narrowbody_pay_year_10?: string | null
+          fo_narrowbody_pay_year_2?: string | null
+          fo_narrowbody_pay_year_3?: string | null
+          fo_narrowbody_pay_year_4?: string | null
+          fo_narrowbody_pay_year_5?: string | null
+          fo_narrowbody_pay_year_6?: string | null
+          fo_narrowbody_pay_year_7?: string | null
+          fo_narrowbody_pay_year_8?: string | null
+          fo_narrowbody_pay_year_9?: string | null
           fo_pay_year_1?: string | null
           fo_pay_year_10?: string | null
           fo_pay_year_2?: string | null
@@ -335,6 +405,16 @@ export type Database = {
           fo_pay_year_7?: string | null
           fo_pay_year_8?: string | null
           fo_pay_year_9?: string | null
+          fo_widebody_pay_year_1?: string | null
+          fo_widebody_pay_year_10?: string | null
+          fo_widebody_pay_year_2?: string | null
+          fo_widebody_pay_year_3?: string | null
+          fo_widebody_pay_year_4?: string | null
+          fo_widebody_pay_year_5?: string | null
+          fo_widebody_pay_year_6?: string | null
+          fo_widebody_pay_year_7?: string | null
+          fo_widebody_pay_year_8?: string | null
+          fo_widebody_pay_year_9?: string | null
           id?: string
           inside_scoop?: string[] | null
           is_hiring?: boolean | null
@@ -355,6 +435,16 @@ export type Database = {
           application_url?: string | null
           bases?: string[] | null
           call_sign?: string
+          captain_narrowbody_pay_year_1?: string | null
+          captain_narrowbody_pay_year_10?: string | null
+          captain_narrowbody_pay_year_2?: string | null
+          captain_narrowbody_pay_year_3?: string | null
+          captain_narrowbody_pay_year_4?: string | null
+          captain_narrowbody_pay_year_5?: string | null
+          captain_narrowbody_pay_year_6?: string | null
+          captain_narrowbody_pay_year_7?: string | null
+          captain_narrowbody_pay_year_8?: string | null
+          captain_narrowbody_pay_year_9?: string | null
           captain_pay_year_1?: string | null
           captain_pay_year_10?: string | null
           captain_pay_year_2?: string | null
@@ -365,11 +455,31 @@ export type Database = {
           captain_pay_year_7?: string | null
           captain_pay_year_8?: string | null
           captain_pay_year_9?: string | null
+          captain_widebody_pay_year_1?: string | null
+          captain_widebody_pay_year_10?: string | null
+          captain_widebody_pay_year_2?: string | null
+          captain_widebody_pay_year_3?: string | null
+          captain_widebody_pay_year_4?: string | null
+          captain_widebody_pay_year_5?: string | null
+          captain_widebody_pay_year_6?: string | null
+          captain_widebody_pay_year_7?: string | null
+          captain_widebody_pay_year_8?: string | null
+          captain_widebody_pay_year_9?: string | null
           category?: string | null
           created_at?: string
           description?: string
           fleet_info?: Json | null
           fleet_size?: number
+          fo_narrowbody_pay_year_1?: string | null
+          fo_narrowbody_pay_year_10?: string | null
+          fo_narrowbody_pay_year_2?: string | null
+          fo_narrowbody_pay_year_3?: string | null
+          fo_narrowbody_pay_year_4?: string | null
+          fo_narrowbody_pay_year_5?: string | null
+          fo_narrowbody_pay_year_6?: string | null
+          fo_narrowbody_pay_year_7?: string | null
+          fo_narrowbody_pay_year_8?: string | null
+          fo_narrowbody_pay_year_9?: string | null
           fo_pay_year_1?: string | null
           fo_pay_year_10?: string | null
           fo_pay_year_2?: string | null
@@ -380,6 +490,16 @@ export type Database = {
           fo_pay_year_7?: string | null
           fo_pay_year_8?: string | null
           fo_pay_year_9?: string | null
+          fo_widebody_pay_year_1?: string | null
+          fo_widebody_pay_year_10?: string | null
+          fo_widebody_pay_year_2?: string | null
+          fo_widebody_pay_year_3?: string | null
+          fo_widebody_pay_year_4?: string | null
+          fo_widebody_pay_year_5?: string | null
+          fo_widebody_pay_year_6?: string | null
+          fo_widebody_pay_year_7?: string | null
+          fo_widebody_pay_year_8?: string | null
+          fo_widebody_pay_year_9?: string | null
           id?: string
           inside_scoop?: string[] | null
           is_hiring?: boolean | null

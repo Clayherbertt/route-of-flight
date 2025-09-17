@@ -44,6 +44,48 @@ export interface AirlineData {
   captain_pay_year_8?: string;
   captain_pay_year_9?: string;
   captain_pay_year_10?: string;
+  // Narrow body pay scales
+  fo_narrowbody_pay_year_1?: string;
+  fo_narrowbody_pay_year_2?: string;
+  fo_narrowbody_pay_year_3?: string;
+  fo_narrowbody_pay_year_4?: string;
+  fo_narrowbody_pay_year_5?: string;
+  fo_narrowbody_pay_year_6?: string;
+  fo_narrowbody_pay_year_7?: string;
+  fo_narrowbody_pay_year_8?: string;
+  fo_narrowbody_pay_year_9?: string;
+  fo_narrowbody_pay_year_10?: string;
+  captain_narrowbody_pay_year_1?: string;
+  captain_narrowbody_pay_year_2?: string;
+  captain_narrowbody_pay_year_3?: string;
+  captain_narrowbody_pay_year_4?: string;
+  captain_narrowbody_pay_year_5?: string;
+  captain_narrowbody_pay_year_6?: string;
+  captain_narrowbody_pay_year_7?: string;
+  captain_narrowbody_pay_year_8?: string;
+  captain_narrowbody_pay_year_9?: string;
+  captain_narrowbody_pay_year_10?: string;
+  // Wide body pay scales
+  fo_widebody_pay_year_1?: string;
+  fo_widebody_pay_year_2?: string;
+  fo_widebody_pay_year_3?: string;
+  fo_widebody_pay_year_4?: string;
+  fo_widebody_pay_year_5?: string;
+  fo_widebody_pay_year_6?: string;
+  fo_widebody_pay_year_7?: string;
+  fo_widebody_pay_year_8?: string;
+  fo_widebody_pay_year_9?: string;
+  fo_widebody_pay_year_10?: string;
+  captain_widebody_pay_year_1?: string;
+  captain_widebody_pay_year_2?: string;
+  captain_widebody_pay_year_3?: string;
+  captain_widebody_pay_year_4?: string;
+  captain_widebody_pay_year_5?: string;
+  captain_widebody_pay_year_6?: string;
+  captain_widebody_pay_year_7?: string;
+  captain_widebody_pay_year_8?: string;
+  captain_widebody_pay_year_9?: string;
+  captain_widebody_pay_year_10?: string;
   additional_info: string[];
   category: string;
   active: boolean;
@@ -91,6 +133,48 @@ const transformDatabaseAirline = (dbAirline: DatabaseAirline): AirlineData => ({
   captain_pay_year_8: dbAirline.captain_pay_year_8 || '',
   captain_pay_year_9: dbAirline.captain_pay_year_9 || '',
   captain_pay_year_10: dbAirline.captain_pay_year_10 || '',
+  // Narrow body pay scales
+  fo_narrowbody_pay_year_1: dbAirline.fo_narrowbody_pay_year_1 || '',
+  fo_narrowbody_pay_year_2: dbAirline.fo_narrowbody_pay_year_2 || '',
+  fo_narrowbody_pay_year_3: dbAirline.fo_narrowbody_pay_year_3 || '',
+  fo_narrowbody_pay_year_4: dbAirline.fo_narrowbody_pay_year_4 || '',
+  fo_narrowbody_pay_year_5: dbAirline.fo_narrowbody_pay_year_5 || '',
+  fo_narrowbody_pay_year_6: dbAirline.fo_narrowbody_pay_year_6 || '',
+  fo_narrowbody_pay_year_7: dbAirline.fo_narrowbody_pay_year_7 || '',
+  fo_narrowbody_pay_year_8: dbAirline.fo_narrowbody_pay_year_8 || '',
+  fo_narrowbody_pay_year_9: dbAirline.fo_narrowbody_pay_year_9 || '',
+  fo_narrowbody_pay_year_10: dbAirline.fo_narrowbody_pay_year_10 || '',
+  captain_narrowbody_pay_year_1: dbAirline.captain_narrowbody_pay_year_1 || '',
+  captain_narrowbody_pay_year_2: dbAirline.captain_narrowbody_pay_year_2 || '',
+  captain_narrowbody_pay_year_3: dbAirline.captain_narrowbody_pay_year_3 || '',
+  captain_narrowbody_pay_year_4: dbAirline.captain_narrowbody_pay_year_4 || '',
+  captain_narrowbody_pay_year_5: dbAirline.captain_narrowbody_pay_year_5 || '',
+  captain_narrowbody_pay_year_6: dbAirline.captain_narrowbody_pay_year_6 || '',
+  captain_narrowbody_pay_year_7: dbAirline.captain_narrowbody_pay_year_7 || '',
+  captain_narrowbody_pay_year_8: dbAirline.captain_narrowbody_pay_year_8 || '',
+  captain_narrowbody_pay_year_9: dbAirline.captain_narrowbody_pay_year_9 || '',
+  captain_narrowbody_pay_year_10: dbAirline.captain_narrowbody_pay_year_10 || '',
+  // Wide body pay scales
+  fo_widebody_pay_year_1: dbAirline.fo_widebody_pay_year_1 || '',
+  fo_widebody_pay_year_2: dbAirline.fo_widebody_pay_year_2 || '',
+  fo_widebody_pay_year_3: dbAirline.fo_widebody_pay_year_3 || '',
+  fo_widebody_pay_year_4: dbAirline.fo_widebody_pay_year_4 || '',
+  fo_widebody_pay_year_5: dbAirline.fo_widebody_pay_year_5 || '',
+  fo_widebody_pay_year_6: dbAirline.fo_widebody_pay_year_6 || '',
+  fo_widebody_pay_year_7: dbAirline.fo_widebody_pay_year_7 || '',
+  fo_widebody_pay_year_8: dbAirline.fo_widebody_pay_year_8 || '',
+  fo_widebody_pay_year_9: dbAirline.fo_widebody_pay_year_9 || '',
+  fo_widebody_pay_year_10: dbAirline.fo_widebody_pay_year_10 || '',
+  captain_widebody_pay_year_1: dbAirline.captain_widebody_pay_year_1 || '',
+  captain_widebody_pay_year_2: dbAirline.captain_widebody_pay_year_2 || '',
+  captain_widebody_pay_year_3: dbAirline.captain_widebody_pay_year_3 || '',
+  captain_widebody_pay_year_4: dbAirline.captain_widebody_pay_year_4 || '',
+  captain_widebody_pay_year_5: dbAirline.captain_widebody_pay_year_5 || '',
+  captain_widebody_pay_year_6: dbAirline.captain_widebody_pay_year_6 || '',
+  captain_widebody_pay_year_7: dbAirline.captain_widebody_pay_year_7 || '',
+  captain_widebody_pay_year_8: dbAirline.captain_widebody_pay_year_8 || '',
+  captain_widebody_pay_year_9: dbAirline.captain_widebody_pay_year_9 || '',
+  captain_widebody_pay_year_10: dbAirline.captain_widebody_pay_year_10 || '',
   additional_info: dbAirline.additional_info || [],
   category: dbAirline.category || 'Majors',
   active: dbAirline.active,
