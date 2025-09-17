@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useIsAdmin } from '@/hooks/useIsAdmin';
 import { useAirlines, AirlineData } from '@/hooks/useAirlines';
@@ -33,11 +33,26 @@ export default function ManageAirlines() {
   const [isFormOpen, setIsFormOpen] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [hasNavigated, setHasNavigated] = useState(false);
 
-  // Redirect if not admin
+  // Redirect if not admin (but only once to prevent loops during development)
+  useEffect(() => {
+    if (!adminLoading && !isAdmin && !hasNavigated) {
+      setHasNavigated(true);
+      navigate('/');
+    }
+  }, [adminLoading, isAdmin, navigate, hasNavigated]);
+
+  // Show loading or redirect message
   if (!adminLoading && !isAdmin) {
-    navigate('/');
-    return null;
+    return (
+      <div className="min-h-screen bg-background flex items-center justify-center">
+        <div className="text-center">
+          <h1 className="text-2xl font-bold mb-2">Access Denied</h1>
+          <p className="text-muted-foreground">Redirecting to home page...</p>
+        </div>
+      </div>
+    );
   }
 
   if (adminLoading || loading) {
