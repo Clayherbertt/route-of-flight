@@ -58,6 +58,48 @@ export function AirlineForm({ airline, onSubmit, onCancel, isSubmitting = false 
     captain_pay_year_8: airline?.captain_pay_year_8 || '',
     captain_pay_year_9: airline?.captain_pay_year_9 || '',
     captain_pay_year_10: airline?.captain_pay_year_10 || '',
+    // Narrow body pay scales
+    fo_narrowbody_pay_year_1: airline?.fo_narrowbody_pay_year_1 || '',
+    fo_narrowbody_pay_year_2: airline?.fo_narrowbody_pay_year_2 || '',
+    fo_narrowbody_pay_year_3: airline?.fo_narrowbody_pay_year_3 || '',
+    fo_narrowbody_pay_year_4: airline?.fo_narrowbody_pay_year_4 || '',
+    fo_narrowbody_pay_year_5: airline?.fo_narrowbody_pay_year_5 || '',
+    fo_narrowbody_pay_year_6: airline?.fo_narrowbody_pay_year_6 || '',
+    fo_narrowbody_pay_year_7: airline?.fo_narrowbody_pay_year_7 || '',
+    fo_narrowbody_pay_year_8: airline?.fo_narrowbody_pay_year_8 || '',
+    fo_narrowbody_pay_year_9: airline?.fo_narrowbody_pay_year_9 || '',
+    fo_narrowbody_pay_year_10: airline?.fo_narrowbody_pay_year_10 || '',
+    captain_narrowbody_pay_year_1: airline?.captain_narrowbody_pay_year_1 || '',
+    captain_narrowbody_pay_year_2: airline?.captain_narrowbody_pay_year_2 || '',
+    captain_narrowbody_pay_year_3: airline?.captain_narrowbody_pay_year_3 || '',
+    captain_narrowbody_pay_year_4: airline?.captain_narrowbody_pay_year_4 || '',
+    captain_narrowbody_pay_year_5: airline?.captain_narrowbody_pay_year_5 || '',
+    captain_narrowbody_pay_year_6: airline?.captain_narrowbody_pay_year_6 || '',
+    captain_narrowbody_pay_year_7: airline?.captain_narrowbody_pay_year_7 || '',
+    captain_narrowbody_pay_year_8: airline?.captain_narrowbody_pay_year_8 || '',
+    captain_narrowbody_pay_year_9: airline?.captain_narrowbody_pay_year_9 || '',
+    captain_narrowbody_pay_year_10: airline?.captain_narrowbody_pay_year_10 || '',
+    // Wide body pay scales
+    fo_widebody_pay_year_1: airline?.fo_widebody_pay_year_1 || '',
+    fo_widebody_pay_year_2: airline?.fo_widebody_pay_year_2 || '',
+    fo_widebody_pay_year_3: airline?.fo_widebody_pay_year_3 || '',
+    fo_widebody_pay_year_4: airline?.fo_widebody_pay_year_4 || '',
+    fo_widebody_pay_year_5: airline?.fo_widebody_pay_year_5 || '',
+    fo_widebody_pay_year_6: airline?.fo_widebody_pay_year_6 || '',
+    fo_widebody_pay_year_7: airline?.fo_widebody_pay_year_7 || '',
+    fo_widebody_pay_year_8: airline?.fo_widebody_pay_year_8 || '',
+    fo_widebody_pay_year_9: airline?.fo_widebody_pay_year_9 || '',
+    fo_widebody_pay_year_10: airline?.fo_widebody_pay_year_10 || '',
+    captain_widebody_pay_year_1: airline?.captain_widebody_pay_year_1 || '',
+    captain_widebody_pay_year_2: airline?.captain_widebody_pay_year_2 || '',
+    captain_widebody_pay_year_3: airline?.captain_widebody_pay_year_3 || '',
+    captain_widebody_pay_year_4: airline?.captain_widebody_pay_year_4 || '',
+    captain_widebody_pay_year_5: airline?.captain_widebody_pay_year_5 || '',
+    captain_widebody_pay_year_6: airline?.captain_widebody_pay_year_6 || '',
+    captain_widebody_pay_year_7: airline?.captain_widebody_pay_year_7 || '',
+    captain_widebody_pay_year_8: airline?.captain_widebody_pay_year_8 || '',
+    captain_widebody_pay_year_9: airline?.captain_widebody_pay_year_9 || '',
+    captain_widebody_pay_year_10: airline?.captain_widebody_pay_year_10 || '',
     fleet_info: airline?.fleet_info || [{ type: '', quantity: 1 }],
     bases: airline?.bases || [''],
     required_qualifications: airline?.required_qualifications || [''],
@@ -102,6 +144,48 @@ export function AirlineForm({ airline, onSubmit, onCancel, isSubmitting = false 
         captain_pay_year_8: airline.captain_pay_year_8 || '',
         captain_pay_year_9: airline.captain_pay_year_9 || '',
         captain_pay_year_10: airline.captain_pay_year_10 || '',
+        // Narrow body pay scales
+        fo_narrowbody_pay_year_1: airline.fo_narrowbody_pay_year_1 || '',
+        fo_narrowbody_pay_year_2: airline.fo_narrowbody_pay_year_2 || '',
+        fo_narrowbody_pay_year_3: airline.fo_narrowbody_pay_year_3 || '',
+        fo_narrowbody_pay_year_4: airline.fo_narrowbody_pay_year_4 || '',
+        fo_narrowbody_pay_year_5: airline.fo_narrowbody_pay_year_5 || '',
+        fo_narrowbody_pay_year_6: airline.fo_narrowbody_pay_year_6 || '',
+        fo_narrowbody_pay_year_7: airline.fo_narrowbody_pay_year_7 || '',
+        fo_narrowbody_pay_year_8: airline.fo_narrowbody_pay_year_8 || '',
+        fo_narrowbody_pay_year_9: airline.fo_narrowbody_pay_year_9 || '',
+        fo_narrowbody_pay_year_10: airline.fo_narrowbody_pay_year_10 || '',
+        captain_narrowbody_pay_year_1: airline.captain_narrowbody_pay_year_1 || '',
+        captain_narrowbody_pay_year_2: airline.captain_narrowbody_pay_year_2 || '',
+        captain_narrowbody_pay_year_3: airline.captain_narrowbody_pay_year_3 || '',
+        captain_narrowbody_pay_year_4: airline.captain_narrowbody_pay_year_4 || '',
+        captain_narrowbody_pay_year_5: airline.captain_narrowbody_pay_year_5 || '',
+        captain_narrowbody_pay_year_6: airline.captain_narrowbody_pay_year_6 || '',
+        captain_narrowbody_pay_year_7: airline.captain_narrowbody_pay_year_7 || '',
+        captain_narrowbody_pay_year_8: airline.captain_narrowbody_pay_year_8 || '',
+        captain_narrowbody_pay_year_9: airline.captain_narrowbody_pay_year_9 || '',
+        captain_narrowbody_pay_year_10: airline.captain_narrowbody_pay_year_10 || '',
+        // Wide body pay scales
+        fo_widebody_pay_year_1: airline.fo_widebody_pay_year_1 || '',
+        fo_widebody_pay_year_2: airline.fo_widebody_pay_year_2 || '',
+        fo_widebody_pay_year_3: airline.fo_widebody_pay_year_3 || '',
+        fo_widebody_pay_year_4: airline.fo_widebody_pay_year_4 || '',
+        fo_widebody_pay_year_5: airline.fo_widebody_pay_year_5 || '',
+        fo_widebody_pay_year_6: airline.fo_widebody_pay_year_6 || '',
+        fo_widebody_pay_year_7: airline.fo_widebody_pay_year_7 || '',
+        fo_widebody_pay_year_8: airline.fo_widebody_pay_year_8 || '',
+        fo_widebody_pay_year_9: airline.fo_widebody_pay_year_9 || '',
+        fo_widebody_pay_year_10: airline.fo_widebody_pay_year_10 || '',
+        captain_widebody_pay_year_1: airline.captain_widebody_pay_year_1 || '',
+        captain_widebody_pay_year_2: airline.captain_widebody_pay_year_2 || '',
+        captain_widebody_pay_year_3: airline.captain_widebody_pay_year_3 || '',
+        captain_widebody_pay_year_4: airline.captain_widebody_pay_year_4 || '',
+        captain_widebody_pay_year_5: airline.captain_widebody_pay_year_5 || '',
+        captain_widebody_pay_year_6: airline.captain_widebody_pay_year_6 || '',
+        captain_widebody_pay_year_7: airline.captain_widebody_pay_year_7 || '',
+        captain_widebody_pay_year_8: airline.captain_widebody_pay_year_8 || '',
+        captain_widebody_pay_year_9: airline.captain_widebody_pay_year_9 || '',
+        captain_widebody_pay_year_10: airline.captain_widebody_pay_year_10 || '',
         fleet_info: airline.fleet_info || [{ type: '', quantity: 1 }],
         bases: airline.bases || [''],
         required_qualifications: airline.required_qualifications || [''],
@@ -175,29 +259,28 @@ export function AirlineForm({ airline, onSubmit, onCancel, isSubmitting = false 
     const cleanedFormData = { ...formData };
     
     // Process all pay fields for consistent formatting and clean undefined values
+    const payFieldPrefixes = [
+      'fo_pay_year_',
+      'captain_pay_year_',
+      'fo_narrowbody_pay_year_',
+      'captain_narrowbody_pay_year_',
+      'fo_widebody_pay_year_',
+      'captain_widebody_pay_year_'
+    ];
+
     for (let year = 1; year <= 10; year++) {
-      const foField = `fo_pay_year_${year}`;
-      const captainField = `captain_pay_year_${year}`;
-      
-      // Clean FO pay field
-      const foValue = (cleanedFormData as any)[foField];
-      if (foValue && typeof foValue === 'string' && foValue.trim()) {
-        if (!foValue.includes('/hr')) {
-          (cleanedFormData as any)[foField] = formatPayValue(foValue);
+      payFieldPrefixes.forEach(prefix => {
+        const field = `${prefix}${year}`;
+        const value = (cleanedFormData as any)[field];
+        
+        if (value && typeof value === 'string' && value.trim()) {
+          if (!value.includes('/hr')) {
+            (cleanedFormData as any)[field] = formatPayValue(value);
+          }
+        } else {
+          (cleanedFormData as any)[field] = null;
         }
-      } else {
-        (cleanedFormData as any)[foField] = null;
-      }
-      
-      // Clean Captain pay field
-      const captainValue = (cleanedFormData as any)[captainField];
-      if (captainValue && typeof captainValue === 'string' && captainValue.trim()) {
-        if (!captainValue.includes('/hr')) {
-          (cleanedFormData as any)[captainField] = formatPayValue(captainValue);
-        }
-      } else {
-        (cleanedFormData as any)[captainField] = null;
-      }
+      });
     }
 
     const filteredData = {
@@ -572,41 +655,133 @@ export function AirlineForm({ airline, onSubmit, onCancel, isSubmitting = false 
           </div>
 
           {/* Pay Scales */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div className="space-y-6">
+            {/* Regular Pay Scales */}
             <div>
-              <h4 className="font-medium mb-3">First Officer Pay</h4>
-              <div className="space-y-2">
-                {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map((year) => (
-                  <Input 
-                    key={year}
-                    placeholder={`Year ${year} (e.g., 120.50)`}
-                    value={(formData as any)[`fo_pay_year_${year}`] || ''}
-                    onChange={(e) => handleInputChange(`fo_pay_year_${year}`, e.target.value)}
-                    onBlur={(e) => {
-                      if (e.target.value.trim()) {
-                        handlePayInputBlur(`fo_pay_year_${year}`, e.target.value);
-                      }
-                    }}
-                  />
-                ))}
+              <h4 className="font-semibold mb-4 text-lg">Standard Pay Scales</h4>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div>
+                  <h5 className="font-medium mb-3">First Officer Pay</h5>
+                  <div className="space-y-2">
+                    {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map((year) => (
+                      <Input 
+                        key={year}
+                        placeholder={`Year ${year} (e.g., 120.50)`}
+                        value={(formData as any)[`fo_pay_year_${year}`] || ''}
+                        onChange={(e) => handleInputChange(`fo_pay_year_${year}`, e.target.value)}
+                        onBlur={(e) => {
+                          if (e.target.value.trim()) {
+                            handlePayInputBlur(`fo_pay_year_${year}`, e.target.value);
+                          }
+                        }}
+                      />
+                    ))}
+                  </div>
+                </div>
+                <div>
+                  <h5 className="font-medium mb-3">Captain Pay</h5>
+                  <div className="space-y-2">
+                    {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map((year) => (
+                      <Input 
+                        key={year}
+                        placeholder={`Year ${year} (e.g., 300.50)`}
+                        value={(formData as any)[`captain_pay_year_${year}`] || ''}
+                        onChange={(e) => handleInputChange(`captain_pay_year_${year}`, e.target.value)}
+                        onBlur={(e) => {
+                          if (e.target.value.trim()) {
+                            handlePayInputBlur(`captain_pay_year_${year}`, e.target.value);
+                          }
+                        }}
+                      />
+                    ))}
+                  </div>
+                </div>
               </div>
             </div>
+
+            {/* Narrow Body Pay Scales */}
             <div>
-              <h4 className="font-medium mb-3">Captain Pay</h4>
-              <div className="space-y-2">
-                {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map((year) => (
-                  <Input 
-                    key={year}
-                    placeholder={`Year ${year} (e.g., 300.50)`}
-                    value={(formData as any)[`captain_pay_year_${year}`] || ''}
-                    onChange={(e) => handleInputChange(`captain_pay_year_${year}`, e.target.value)}
-                    onBlur={(e) => {
-                      if (e.target.value.trim()) {
-                        handlePayInputBlur(`captain_pay_year_${year}`, e.target.value);
-                      }
-                    }}
-                  />
-                ))}
+              <h4 className="font-semibold mb-4 text-lg">Narrow Body Pay Scales</h4>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div>
+                  <h5 className="font-medium mb-3">First Officer - Narrow Body</h5>
+                  <div className="space-y-2">
+                    {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map((year) => (
+                      <Input 
+                        key={year}
+                        placeholder={`Year ${year} (e.g., 108.34)`}
+                        value={(formData as any)[`fo_narrowbody_pay_year_${year}`] || ''}
+                        onChange={(e) => handleInputChange(`fo_narrowbody_pay_year_${year}`, e.target.value)}
+                        onBlur={(e) => {
+                          if (e.target.value.trim()) {
+                            handlePayInputBlur(`fo_narrowbody_pay_year_${year}`, e.target.value);
+                          }
+                        }}
+                      />
+                    ))}
+                  </div>
+                </div>
+                <div>
+                  <h5 className="font-medium mb-3">Captain - Narrow Body</h5>
+                  <div className="space-y-2">
+                    {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map((year) => (
+                      <Input 
+                        key={year}
+                        placeholder={`Year ${year} (e.g., 309.03)`}
+                        value={(formData as any)[`captain_narrowbody_pay_year_${year}`] || ''}
+                        onChange={(e) => handleInputChange(`captain_narrowbody_pay_year_${year}`, e.target.value)}
+                        onBlur={(e) => {
+                          if (e.target.value.trim()) {
+                            handlePayInputBlur(`captain_narrowbody_pay_year_${year}`, e.target.value);
+                          }
+                        }}
+                      />
+                    ))}
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Wide Body Pay Scales */}
+            <div>
+              <h4 className="font-semibold mb-4 text-lg">Wide Body Pay Scales</h4>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div>
+                  <h5 className="font-medium mb-3">First Officer - Wide Body</h5>
+                  <div className="space-y-2">
+                    {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map((year) => (
+                      <Input 
+                        key={year}
+                        placeholder={`Year ${year} (e.g., 108.34)`}
+                        value={(formData as any)[`fo_widebody_pay_year_${year}`] || ''}
+                        onChange={(e) => handleInputChange(`fo_widebody_pay_year_${year}`, e.target.value)}
+                        onBlur={(e) => {
+                          if (e.target.value.trim()) {
+                            handlePayInputBlur(`fo_widebody_pay_year_${year}`, e.target.value);
+                          }
+                        }}
+                      />
+                    ))}
+                  </div>
+                </div>
+                <div>
+                  <h5 className="font-medium mb-3">Captain - Wide Body</h5>
+                  <div className="space-y-2">
+                    {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map((year) => (
+                      <Input 
+                        key={year}
+                        placeholder={`Year ${year} (e.g., 383.12)`}
+                        value={(formData as any)[`captain_widebody_pay_year_${year}`] || ''}
+                        onChange={(e) => handleInputChange(`captain_widebody_pay_year_${year}`, e.target.value)}
+                        onBlur={(e) => {
+                          if (e.target.value.trim()) {
+                            handlePayInputBlur(`captain_widebody_pay_year_${year}`, e.target.value);
+                          }
+                        }}
+                      />
+                    ))}
+                  </div>
+                </div>
               </div>
             </div>
           </div>
