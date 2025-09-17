@@ -111,15 +111,38 @@ export function AirlineForm({ airline, onSubmit, onCancel, isSubmitting = false 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
+    // Clean up all pay fields to ensure consistent formatting
+    const cleanedFormData = { ...formData };
+    
+    // Process all pay fields for consistent formatting
+    for (let year = 1; year <= 10; year++) {
+      const foField = `fo_pay_year_${year}`;
+      const captainField = `captain_pay_year_${year}`;
+      
+      if ((cleanedFormData as any)[foField]) {
+        const value = (cleanedFormData as any)[foField] as string;
+        if (value.trim() && !value.includes('/hr')) {
+          (cleanedFormData as any)[foField] = formatPayValue(value);
+        }
+      }
+      
+      if ((cleanedFormData as any)[captainField]) {
+        const value = (cleanedFormData as any)[captainField] as string;
+        if (value.trim() && !value.includes('/hr')) {
+          (cleanedFormData as any)[captainField] = formatPayValue(value);
+        }
+      }
+    }
+
     const filteredData = {
-      ...formData,
+      ...cleanedFormData,
       logo: '✈️',
       active: true,
-      bases: formData.bases.filter(base => base.trim() !== ''),
-      required_qualifications: formData.required_qualifications.filter(qual => qual.trim() !== ''),
-      preferred_qualifications: formData.preferred_qualifications.filter(qual => qual.trim() !== ''),
-      inside_scoop: formData.inside_scoop.filter(scoop => scoop.trim() !== ''),
-      additional_info: formData.additional_info.filter(info => info.trim() !== ''),
+      bases: cleanedFormData.bases.filter(base => base.trim() !== ''),
+      required_qualifications: cleanedFormData.required_qualifications.filter(qual => qual.trim() !== ''),
+      preferred_qualifications: cleanedFormData.preferred_qualifications.filter(qual => qual.trim() !== ''),
+      inside_scoop: cleanedFormData.inside_scoop.filter(scoop => scoop.trim() !== ''),
+      additional_info: cleanedFormData.additional_info.filter(info => info.trim() !== ''),
     };
 
     await onSubmit(filteredData);
@@ -493,7 +516,11 @@ export function AirlineForm({ airline, onSubmit, onCancel, isSubmitting = false 
                     placeholder={`Year ${year} (e.g., 120.50)`}
                     value={(formData as any)[`fo_pay_year_${year}`] || ''}
                     onChange={(e) => handleInputChange(`fo_pay_year_${year}`, e.target.value)}
-                    onBlur={(e) => handlePayInputBlur(`fo_pay_year_${year}`, e.target.value)}
+                    onBlur={(e) => {
+                      if (e.target.value.trim()) {
+                        handlePayInputBlur(`fo_pay_year_${year}`, e.target.value);
+                      }
+                    }}
                   />
                 ))}
               </div>
@@ -507,7 +534,11 @@ export function AirlineForm({ airline, onSubmit, onCancel, isSubmitting = false 
                     placeholder={`Year ${year} (e.g., 300.50)`}
                     value={(formData as any)[`captain_pay_year_${year}`] || ''}
                     onChange={(e) => handleInputChange(`captain_pay_year_${year}`, e.target.value)}
-                    onBlur={(e) => handlePayInputBlur(`captain_pay_year_${year}`, e.target.value)}
+                    onBlur={(e) => {
+                      if (e.target.value.trim()) {
+                        handlePayInputBlur(`captain_pay_year_${year}`, e.target.value);
+                      }
+                    }}
                   />
                 ))}
               </div>
