@@ -110,9 +110,9 @@ export default function ManageAirlines() {
     try {
       setIsSubmitting(true);
       if (isEditing && selectedAirline) {
-        // Remove fields that shouldn't be updated
-        const { id, created_at, updated_at, ...updateData } = data as any;
-        await updateAirline(selectedAirline.id, updateData);
+        console.log('Updating airline with data:', data);
+        // Use the data directly since it's already properly typed without id, created_at, updated_at
+        await updateAirline(selectedAirline.id, data);
       } else {
         await createAirline(data);
       }
