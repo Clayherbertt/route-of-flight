@@ -256,12 +256,12 @@ export function AirlineDetailsDialog({ open, onOpenChange, airline }: AirlineDet
                                     <td className="py-3 px-4 font-medium">Year {year}</td>
                                     <td className="text-center py-3 px-4">
                                       <div className="font-bold text-sm">
-                                        {narrowBodyValue ? `$${narrowBodyValue}` : '-'}
+                                        {narrowBodyValue || '-'}
                                       </div>
                                     </td>
                                     <td className="text-center py-3 px-4">
                                       <div className="font-bold text-sm">
-                                        {wideBodyValue ? `$${wideBodyValue}` : '-'}
+                                        {wideBodyValue || '-'}
                                       </div>
                                     </td>
                                   </tr>
@@ -298,12 +298,12 @@ export function AirlineDetailsDialog({ open, onOpenChange, airline }: AirlineDet
                                     <td className="py-3 px-4 font-medium">Year {year}</td>
                                     <td className="text-center py-3 px-4">
                                       <div className="font-bold text-sm">
-                                        {narrowBodyValue ? `$${narrowBodyValue}` : '-'}
+                                        {narrowBodyValue || '-'}
                                       </div>
                                     </td>
                                     <td className="text-center py-3 px-4">
                                       <div className="font-bold text-sm">
-                                        {wideBodyValue ? `$${wideBodyValue}` : '-'}
+                                        {wideBodyValue || '-'}
                                       </div>
                                     </td>
                                   </tr>
