@@ -52,8 +52,25 @@ export function AirlineForm({ airline, onSubmit, onCancel, isSubmitting = false 
     additional_info: airline?.additional_info || [''],
   });
 
+  const formatPayValue = (value: string) => {
+    // Remove any non-numeric characters except decimal point
+    const numericValue = value.replace(/[^0-9.]/g, '');
+    if (!numericValue) return '';
+    
+    // Format as currency
+    const number = parseFloat(numericValue);
+    if (isNaN(number)) return '';
+    
+    return `$${number.toFixed(2)}/hr`;
+  };
+
   const handleInputChange = (field: string, value: any) => {
     setFormData(prev => ({ ...prev, [field]: value }));
+  };
+
+  const handlePayInputChange = (field: string, value: string) => {
+    const formattedValue = formatPayValue(value);
+    setFormData(prev => ({ ...prev, [field]: formattedValue }));
   };
 
   const handleArrayChange = (field: string, index: number, value: string) => {
@@ -472,7 +489,7 @@ export function AirlineForm({ airline, onSubmit, onCancel, isSubmitting = false 
                     key={year}
                     placeholder={`Year ${year} (e.g., $${108 + year * 12}.16/hr)`}
                     value={(formData as any)[`fo_pay_year_${year}`] || ''}
-                    onChange={(e) => handleInputChange(`fo_pay_year_${year}`, e.target.value)}
+                    onChange={(e) => handlePayInputChange(`fo_pay_year_${year}`, e.target.value)}
                   />
                 ))}
               </div>
@@ -485,7 +502,7 @@ export function AirlineForm({ airline, onSubmit, onCancel, isSubmitting = false 
                     key={year}
                     placeholder={`Year ${year} (e.g., $${280 + year * 15}.31/hr)`}
                     value={(formData as any)[`captain_pay_year_${year}`] || ''}
-                    onChange={(e) => handleInputChange(`captain_pay_year_${year}`, e.target.value)}
+                    onChange={(e) => handlePayInputChange(`captain_pay_year_${year}`, e.target.value)}
                   />
                 ))}
               </div>

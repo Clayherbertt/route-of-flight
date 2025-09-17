@@ -110,7 +110,6 @@ export function useAirlines() {
       const { data, error } = await supabase
         .from('airlines')
         .select('*')
-        .eq('active', true)
         .order('name');
 
       if (error) {

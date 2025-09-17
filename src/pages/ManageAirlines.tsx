@@ -110,7 +110,9 @@ export default function ManageAirlines() {
     try {
       setIsSubmitting(true);
       if (isEditing && selectedAirline) {
-        await updateAirline(selectedAirline.id, data);
+        // Remove fields that shouldn't be updated
+        const { id, created_at, updated_at, ...updateData } = data as any;
+        await updateAirline(selectedAirline.id, updateData);
       } else {
         await createAirline(data);
       }
