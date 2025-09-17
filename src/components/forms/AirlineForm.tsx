@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
@@ -39,10 +39,24 @@ export function AirlineForm({ airline, onSubmit, onCancel, isSubmitting = false 
     most_junior_captain_hire_date: airline?.most_junior_captain_hire_date || '',
     retirements_in_2025: airline?.retirements_in_2025 || 0,
     fo_pay_year_1: airline?.fo_pay_year_1 || '',
+    fo_pay_year_2: airline?.fo_pay_year_2 || '',
+    fo_pay_year_3: airline?.fo_pay_year_3 || '',
+    fo_pay_year_4: airline?.fo_pay_year_4 || '',
     fo_pay_year_5: airline?.fo_pay_year_5 || '',
+    fo_pay_year_6: airline?.fo_pay_year_6 || '',
+    fo_pay_year_7: airline?.fo_pay_year_7 || '',
+    fo_pay_year_8: airline?.fo_pay_year_8 || '',
+    fo_pay_year_9: airline?.fo_pay_year_9 || '',
     fo_pay_year_10: airline?.fo_pay_year_10 || '',
     captain_pay_year_1: airline?.captain_pay_year_1 || '',
+    captain_pay_year_2: airline?.captain_pay_year_2 || '',
+    captain_pay_year_3: airline?.captain_pay_year_3 || '',
+    captain_pay_year_4: airline?.captain_pay_year_4 || '',
     captain_pay_year_5: airline?.captain_pay_year_5 || '',
+    captain_pay_year_6: airline?.captain_pay_year_6 || '',
+    captain_pay_year_7: airline?.captain_pay_year_7 || '',
+    captain_pay_year_8: airline?.captain_pay_year_8 || '',
+    captain_pay_year_9: airline?.captain_pay_year_9 || '',
     captain_pay_year_10: airline?.captain_pay_year_10 || '',
     fleet_info: airline?.fleet_info || [{ type: '', quantity: 1 }],
     bases: airline?.bases || [''],
@@ -51,6 +65,52 @@ export function AirlineForm({ airline, onSubmit, onCancel, isSubmitting = false 
     inside_scoop: airline?.inside_scoop || [''],
     additional_info: airline?.additional_info || [''],
   });
+
+  // Update form data when airline prop changes
+  useEffect(() => {
+    if (airline) {
+      setFormData({
+        name: airline.name || '',
+        call_sign: airline.call_sign || '',
+        pilot_group_size: airline.pilot_group_size || '',
+        fleet_size: airline.fleet_size || 0,
+        description: airline.description || '',
+        pilot_union: airline.pilot_union || '',
+        category: airline.category || 'Majors',
+        is_hiring: airline.is_hiring || false,
+        application_url: airline.application_url || '',
+        most_junior_base: airline.most_junior_base || '',
+        most_junior_captain_hire_date: airline.most_junior_captain_hire_date || '',
+        retirements_in_2025: airline.retirements_in_2025 || 0,
+        fo_pay_year_1: airline.fo_pay_year_1 || '',
+        fo_pay_year_2: airline.fo_pay_year_2 || '',
+        fo_pay_year_3: airline.fo_pay_year_3 || '',
+        fo_pay_year_4: airline.fo_pay_year_4 || '',
+        fo_pay_year_5: airline.fo_pay_year_5 || '',
+        fo_pay_year_6: airline.fo_pay_year_6 || '',
+        fo_pay_year_7: airline.fo_pay_year_7 || '',
+        fo_pay_year_8: airline.fo_pay_year_8 || '',
+        fo_pay_year_9: airline.fo_pay_year_9 || '',
+        fo_pay_year_10: airline.fo_pay_year_10 || '',
+        captain_pay_year_1: airline.captain_pay_year_1 || '',
+        captain_pay_year_2: airline.captain_pay_year_2 || '',
+        captain_pay_year_3: airline.captain_pay_year_3 || '',
+        captain_pay_year_4: airline.captain_pay_year_4 || '',
+        captain_pay_year_5: airline.captain_pay_year_5 || '',
+        captain_pay_year_6: airline.captain_pay_year_6 || '',
+        captain_pay_year_7: airline.captain_pay_year_7 || '',
+        captain_pay_year_8: airline.captain_pay_year_8 || '',
+        captain_pay_year_9: airline.captain_pay_year_9 || '',
+        captain_pay_year_10: airline.captain_pay_year_10 || '',
+        fleet_info: airline.fleet_info || [{ type: '', quantity: 1 }],
+        bases: airline.bases || [''],
+        required_qualifications: airline.required_qualifications || [''],
+        preferred_qualifications: airline.preferred_qualifications || [''],
+        inside_scoop: airline.inside_scoop || [''],
+        additional_info: airline.additional_info || [''],
+      });
+    }
+  }, [airline]);
 
   const formatPayValue = (value: string) => {
     if (!value) return '';
