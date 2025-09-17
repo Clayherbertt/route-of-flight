@@ -9,6 +9,7 @@ import { Badge } from '@/components/ui/badge';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { AirlineForm } from '@/components/forms/AirlineForm';
 import Header from '@/components/layout/Header';
+import { toast } from '@/hooks/use-toast';
 import { 
   Search, 
   Plus, 
@@ -110,9 +111,16 @@ export default function ManageAirlines() {
     try {
       setIsSubmitting(true);
       if (isEditing && selectedAirline) {
-        console.log('Updating airline with data:', data);
-        // Use the data directly since it's already properly typed without id, created_at, updated_at
-        await updateAirline(selectedAirline.id, data);
+        console.log('🚀 Submitting update for airline:', selectedAirline.name);
+        console.log('📊 Data being sent:', data);
+        const result = await updateAirline(selectedAirline.id, data);
+        console.log('✅ Update successful:', result);
+        
+        // Show success message
+        toast({
+          title: "Success!",
+          description: `${selectedAirline.name} has been updated successfully.`,
+        });
       } else {
         await createAirline(data);
       }
