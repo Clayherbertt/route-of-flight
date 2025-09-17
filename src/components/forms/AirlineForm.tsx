@@ -53,6 +53,7 @@ export function AirlineForm({ airline, onSubmit, onCancel, isSubmitting = false 
   });
 
   const formatPayValue = (value: string) => {
+    if (!value) return '';
     // Remove any non-numeric characters except decimal point
     const numericValue = value.replace(/[^0-9.]/g, '');
     if (!numericValue) return '';
@@ -68,9 +69,11 @@ export function AirlineForm({ airline, onSubmit, onCancel, isSubmitting = false 
     setFormData(prev => ({ ...prev, [field]: value }));
   };
 
-  const handlePayInputChange = (field: string, value: string) => {
-    const formattedValue = formatPayValue(value);
-    setFormData(prev => ({ ...prev, [field]: formattedValue }));
+  const handlePayInputBlur = (field: string, value: string) => {
+    if (value.trim() !== '') {
+      const formattedValue = formatPayValue(value);
+      setFormData(prev => ({ ...prev, [field]: formattedValue }));
+    }
   };
 
   const handleArrayChange = (field: string, index: number, value: string) => {
@@ -487,9 +490,10 @@ export function AirlineForm({ airline, onSubmit, onCancel, isSubmitting = false 
                 {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map((year) => (
                   <Input 
                     key={year}
-                    placeholder={`Year ${year} (e.g., $${108 + year * 12}.16/hr)`}
+                    placeholder={`Year ${year} (e.g., 120.50)`}
                     value={(formData as any)[`fo_pay_year_${year}`] || ''}
-                    onChange={(e) => handlePayInputChange(`fo_pay_year_${year}`, e.target.value)}
+                    onChange={(e) => handleInputChange(`fo_pay_year_${year}`, e.target.value)}
+                    onBlur={(e) => handlePayInputBlur(`fo_pay_year_${year}`, e.target.value)}
                   />
                 ))}
               </div>
@@ -500,9 +504,10 @@ export function AirlineForm({ airline, onSubmit, onCancel, isSubmitting = false 
                 {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map((year) => (
                   <Input 
                     key={year}
-                    placeholder={`Year ${year} (e.g., $${280 + year * 15}.31/hr)`}
+                    placeholder={`Year ${year} (e.g., 300.50)`}
                     value={(formData as any)[`captain_pay_year_${year}`] || ''}
-                    onChange={(e) => handlePayInputChange(`captain_pay_year_${year}`, e.target.value)}
+                    onChange={(e) => handleInputChange(`captain_pay_year_${year}`, e.target.value)}
+                    onBlur={(e) => handlePayInputBlur(`captain_pay_year_${year}`, e.target.value)}
                   />
                 ))}
               </div>
