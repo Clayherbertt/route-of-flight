@@ -228,52 +228,58 @@ export function AirlineDetailsDialog({ open, onOpenChange, airline }: AirlineDet
                 </CardTitle>
               </CardHeader>
               <CardContent>
-                <div className="space-y-6">
-                  {/* First Officer Pay */}
-                  {airline.fo_pay_year_1 && (
-                    <div>
-                      <h4 className="font-semibold mb-3">First Officer</h4>
-                      <div className="grid grid-cols-2 sm:grid-cols-5 gap-4">
-                        {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map(year => {
-                          const payKey = `fo_pay_year_${year}` as keyof typeof airline;
-                          const payValue = airline[payKey] as string;
-                          
-                          if (!payValue || typeof payValue !== 'string') return null;
-                          
-                          return (
-                            <div key={year} className="text-center p-3 bg-muted/50 rounded-lg">
-                              <div className="text-sm text-muted-foreground">Year {year}</div>
-                              <div className="text-lg font-bold">{payValue}</div>
-                            </div>
-                          );
-                        })}
-                      </div>
-                    </div>
-                  )}
-
-                  {airline.fo_pay_year_1 && airline.captain_pay_year_1 && <Separator />}
-
-                  {/* Captain Pay */}
-                  {airline.captain_pay_year_1 && (
-                    <div>
-                      <h4 className="font-semibold mb-3">Captain</h4>
-                      <div className="grid grid-cols-2 sm:grid-cols-5 gap-4">
-                        {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map(year => {
-                          const payKey = `captain_pay_year_${year}` as keyof typeof airline;
-                          const payValue = airline[payKey] as string;
-                          
-                          if (!payValue || typeof payValue !== 'string') return null;
-                          
-                          return (
-                            <div key={year} className="text-center p-3 bg-muted/50 rounded-lg">
-                              <div className="text-sm text-muted-foreground">Year {year}</div>
-                              <div className="text-lg font-bold">{payValue}</div>
-                            </div>
-                          );
-                        })}
-                      </div>
-                    </div>
-                  )}
+                <div className="overflow-x-auto">
+                  <table className="w-full">
+                    <thead>
+                      <tr className="border-b">
+                        <th className="text-left py-3 px-4 font-semibold">Position</th>
+                        {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map(year => (
+                          <th key={year} className="text-center py-3 px-2 font-medium text-sm">
+                            Year {year}
+                          </th>
+                        ))}
+                      </tr>
+                    </thead>
+                    <tbody className="divide-y">
+                      {/* First Officer Row */}
+                      {airline.fo_pay_year_1 && (
+                        <tr className="hover:bg-muted/30 transition-colors">
+                          <td className="py-4 px-4 font-semibold text-primary">First Officer</td>
+                          {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map(year => {
+                            const payKey = `fo_pay_year_${year}` as keyof typeof airline;
+                            const payValue = airline[payKey] as string;
+                            
+                            return (
+                              <td key={year} className="text-center py-4 px-2">
+                                <div className="font-bold text-sm">
+                                  {payValue || '-'}
+                                </div>
+                              </td>
+                            );
+                          })}
+                        </tr>
+                      )}
+                      
+                      {/* Captain Row */}
+                      {airline.captain_pay_year_1 && (
+                        <tr className="hover:bg-muted/30 transition-colors">
+                          <td className="py-4 px-4 font-semibold text-primary">Captain</td>
+                          {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map(year => {
+                            const payKey = `captain_pay_year_${year}` as keyof typeof airline;
+                            const payValue = airline[payKey] as string;
+                            
+                            return (
+                              <td key={year} className="text-center py-4 px-2">
+                                <div className="font-bold text-sm">
+                                  {payValue || '-'}
+                                </div>
+                              </td>
+                            );
+                          })}
+                        </tr>
+                      )}
+                    </tbody>
+                  </table>
                 </div>
               </CardContent>
             </Card>
