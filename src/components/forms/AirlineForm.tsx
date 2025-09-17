@@ -111,26 +111,32 @@ export function AirlineForm({ airline, onSubmit, onCancel, isSubmitting = false 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    // Clean up all pay fields to ensure consistent formatting
+    // Clean up all data and handle undefined/empty values properly
     const cleanedFormData = { ...formData };
     
-    // Process all pay fields for consistent formatting
+    // Process all pay fields for consistent formatting and clean undefined values
     for (let year = 1; year <= 10; year++) {
       const foField = `fo_pay_year_${year}`;
       const captainField = `captain_pay_year_${year}`;
       
-      if ((cleanedFormData as any)[foField]) {
-        const value = (cleanedFormData as any)[foField] as string;
-        if (value.trim() && !value.includes('/hr')) {
-          (cleanedFormData as any)[foField] = formatPayValue(value);
+      // Clean FO pay field
+      const foValue = (cleanedFormData as any)[foField];
+      if (foValue && typeof foValue === 'string' && foValue.trim()) {
+        if (!foValue.includes('/hr')) {
+          (cleanedFormData as any)[foField] = formatPayValue(foValue);
         }
+      } else {
+        (cleanedFormData as any)[foField] = null;
       }
       
-      if ((cleanedFormData as any)[captainField]) {
-        const value = (cleanedFormData as any)[captainField] as string;
-        if (value.trim() && !value.includes('/hr')) {
-          (cleanedFormData as any)[captainField] = formatPayValue(value);
+      // Clean Captain pay field
+      const captainValue = (cleanedFormData as any)[captainField];
+      if (captainValue && typeof captainValue === 'string' && captainValue.trim()) {
+        if (!captainValue.includes('/hr')) {
+          (cleanedFormData as any)[captainField] = formatPayValue(captainValue);
         }
+      } else {
+        (cleanedFormData as any)[captainField] = null;
       }
     }
 
