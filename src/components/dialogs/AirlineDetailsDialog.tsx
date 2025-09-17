@@ -233,19 +233,20 @@ export function AirlineDetailsDialog({ open, onOpenChange, airline }: AirlineDet
                   {airline.fo_pay_year_1 && (
                     <div>
                       <h4 className="font-semibold mb-3">First Officer</h4>
-                      <div className="grid grid-cols-3 gap-4">
-                        <div className="text-center p-3 bg-muted/50 rounded-lg">
-                          <div className="text-sm text-muted-foreground">Year 1</div>
-                          <div className="text-lg font-bold">{airline.fo_pay_year_1}</div>
-                        </div>
-                        <div className="text-center p-3 bg-muted/50 rounded-lg">
-                          <div className="text-sm text-muted-foreground">Year 5</div>
-                          <div className="text-lg font-bold">{airline.fo_pay_year_5 || "N/A"}</div>
-                        </div>
-                        <div className="text-center p-3 bg-muted/50 rounded-lg">
-                          <div className="text-sm text-muted-foreground">Year 10</div>
-                          <div className="text-lg font-bold">{airline.fo_pay_year_10 || "N/A"}</div>
-                        </div>
+                      <div className="grid grid-cols-2 sm:grid-cols-5 gap-4">
+                        {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map(year => {
+                          const payKey = `fo_pay_year_${year}` as keyof typeof airline;
+                          const payValue = airline[payKey] as string;
+                          
+                          if (!payValue || typeof payValue !== 'string') return null;
+                          
+                          return (
+                            <div key={year} className="text-center p-3 bg-muted/50 rounded-lg">
+                              <div className="text-sm text-muted-foreground">Year {year}</div>
+                              <div className="text-lg font-bold">{payValue}</div>
+                            </div>
+                          );
+                        })}
                       </div>
                     </div>
                   )}
@@ -256,19 +257,20 @@ export function AirlineDetailsDialog({ open, onOpenChange, airline }: AirlineDet
                   {airline.captain_pay_year_1 && (
                     <div>
                       <h4 className="font-semibold mb-3">Captain</h4>
-                      <div className="grid grid-cols-3 gap-4">
-                        <div className="text-center p-3 bg-muted/50 rounded-lg">
-                          <div className="text-sm text-muted-foreground">Year 1</div>
-                          <div className="text-lg font-bold">{airline.captain_pay_year_1}</div>
-                        </div>
-                        <div className="text-center p-3 bg-muted/50 rounded-lg">
-                          <div className="text-sm text-muted-foreground">Year 5</div>
-                          <div className="text-lg font-bold">{airline.captain_pay_year_5 || "N/A"}</div>
-                        </div>
-                        <div className="text-center p-3 bg-muted/50 rounded-lg">
-                          <div className="text-sm text-muted-foreground">Year 10</div>
-                          <div className="text-lg font-bold">{airline.captain_pay_year_10 || "N/A"}</div>
-                        </div>
+                      <div className="grid grid-cols-2 sm:grid-cols-5 gap-4">
+                        {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map(year => {
+                          const payKey = `captain_pay_year_${year}` as keyof typeof airline;
+                          const payValue = airline[payKey] as string;
+                          
+                          if (!payValue || typeof payValue !== 'string') return null;
+                          
+                          return (
+                            <div key={year} className="text-center p-3 bg-muted/50 rounded-lg">
+                              <div className="text-sm text-muted-foreground">Year {year}</div>
+                              <div className="text-lg font-bold">{payValue}</div>
+                            </div>
+                          );
+                        })}
                       </div>
                     </div>
                   )}
