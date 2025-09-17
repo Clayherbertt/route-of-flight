@@ -267,7 +267,14 @@ export type Database = {
           call_sign: string
           captain_pay_year_1: string | null
           captain_pay_year_10: string | null
+          captain_pay_year_2: string | null
+          captain_pay_year_3: string | null
+          captain_pay_year_4: string | null
           captain_pay_year_5: string | null
+          captain_pay_year_6: string | null
+          captain_pay_year_7: string | null
+          captain_pay_year_8: string | null
+          captain_pay_year_9: string | null
           category: string | null
           created_at: string
           description: string
@@ -275,7 +282,14 @@ export type Database = {
           fleet_size: number
           fo_pay_year_1: string | null
           fo_pay_year_10: string | null
+          fo_pay_year_2: string | null
+          fo_pay_year_3: string | null
+          fo_pay_year_4: string | null
           fo_pay_year_5: string | null
+          fo_pay_year_6: string | null
+          fo_pay_year_7: string | null
+          fo_pay_year_8: string | null
+          fo_pay_year_9: string | null
           id: string
           inside_scoop: string[] | null
           is_hiring: boolean | null
@@ -298,7 +312,14 @@ export type Database = {
           call_sign: string
           captain_pay_year_1?: string | null
           captain_pay_year_10?: string | null
+          captain_pay_year_2?: string | null
+          captain_pay_year_3?: string | null
+          captain_pay_year_4?: string | null
           captain_pay_year_5?: string | null
+          captain_pay_year_6?: string | null
+          captain_pay_year_7?: string | null
+          captain_pay_year_8?: string | null
+          captain_pay_year_9?: string | null
           category?: string | null
           created_at?: string
           description: string
@@ -306,7 +327,14 @@ export type Database = {
           fleet_size?: number
           fo_pay_year_1?: string | null
           fo_pay_year_10?: string | null
+          fo_pay_year_2?: string | null
+          fo_pay_year_3?: string | null
+          fo_pay_year_4?: string | null
           fo_pay_year_5?: string | null
+          fo_pay_year_6?: string | null
+          fo_pay_year_7?: string | null
+          fo_pay_year_8?: string | null
+          fo_pay_year_9?: string | null
           id?: string
           inside_scoop?: string[] | null
           is_hiring?: boolean | null
@@ -329,7 +357,14 @@ export type Database = {
           call_sign?: string
           captain_pay_year_1?: string | null
           captain_pay_year_10?: string | null
+          captain_pay_year_2?: string | null
+          captain_pay_year_3?: string | null
+          captain_pay_year_4?: string | null
           captain_pay_year_5?: string | null
+          captain_pay_year_6?: string | null
+          captain_pay_year_7?: string | null
+          captain_pay_year_8?: string | null
+          captain_pay_year_9?: string | null
           category?: string | null
           created_at?: string
           description?: string
@@ -337,7 +372,14 @@ export type Database = {
           fleet_size?: number
           fo_pay_year_1?: string | null
           fo_pay_year_10?: string | null
+          fo_pay_year_2?: string | null
+          fo_pay_year_3?: string | null
+          fo_pay_year_4?: string | null
           fo_pay_year_5?: string | null
+          fo_pay_year_6?: string | null
+          fo_pay_year_7?: string | null
+          fo_pay_year_8?: string | null
+          fo_pay_year_9?: string | null
           id?: string
           inside_scoop?: string[] | null
           is_hiring?: boolean | null

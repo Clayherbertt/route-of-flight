@@ -25,10 +25,24 @@ export interface AirlineData {
   most_junior_captain_hire_date?: string;
   retirements_in_2025: number;
   fo_pay_year_1?: string;
+  fo_pay_year_2?: string;
+  fo_pay_year_3?: string;
+  fo_pay_year_4?: string;
   fo_pay_year_5?: string;
+  fo_pay_year_6?: string;
+  fo_pay_year_7?: string;
+  fo_pay_year_8?: string;
+  fo_pay_year_9?: string;
   fo_pay_year_10?: string;
   captain_pay_year_1?: string;
+  captain_pay_year_2?: string;
+  captain_pay_year_3?: string;
+  captain_pay_year_4?: string;
   captain_pay_year_5?: string;
+  captain_pay_year_6?: string;
+  captain_pay_year_7?: string;
+  captain_pay_year_8?: string;
+  captain_pay_year_9?: string;
   captain_pay_year_10?: string;
   additional_info: string[];
   category: string;
@@ -58,10 +72,24 @@ const transformDatabaseAirline = (dbAirline: DatabaseAirline): AirlineData => ({
   most_junior_captain_hire_date: dbAirline.most_junior_captain_hire_date || undefined,
   retirements_in_2025: dbAirline.retirements_in_2025 || 0,
   fo_pay_year_1: dbAirline.fo_pay_year_1 || undefined,
+  fo_pay_year_2: dbAirline.fo_pay_year_2 || undefined,
+  fo_pay_year_3: dbAirline.fo_pay_year_3 || undefined,
+  fo_pay_year_4: dbAirline.fo_pay_year_4 || undefined,
   fo_pay_year_5: dbAirline.fo_pay_year_5 || undefined,
+  fo_pay_year_6: dbAirline.fo_pay_year_6 || undefined,
+  fo_pay_year_7: dbAirline.fo_pay_year_7 || undefined,
+  fo_pay_year_8: dbAirline.fo_pay_year_8 || undefined,
+  fo_pay_year_9: dbAirline.fo_pay_year_9 || undefined,
   fo_pay_year_10: dbAirline.fo_pay_year_10 || undefined,
   captain_pay_year_1: dbAirline.captain_pay_year_1 || undefined,
+  captain_pay_year_2: dbAirline.captain_pay_year_2 || undefined,
+  captain_pay_year_3: dbAirline.captain_pay_year_3 || undefined,
+  captain_pay_year_4: dbAirline.captain_pay_year_4 || undefined,
   captain_pay_year_5: dbAirline.captain_pay_year_5 || undefined,
+  captain_pay_year_6: dbAirline.captain_pay_year_6 || undefined,
+  captain_pay_year_7: dbAirline.captain_pay_year_7 || undefined,
+  captain_pay_year_8: dbAirline.captain_pay_year_8 || undefined,
+  captain_pay_year_9: dbAirline.captain_pay_year_9 || undefined,
   captain_pay_year_10: dbAirline.captain_pay_year_10 || undefined,
   additional_info: dbAirline.additional_info || [],
   category: dbAirline.category || 'Majors',

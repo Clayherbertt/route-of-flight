@@ -467,41 +467,27 @@ export function AirlineForm({ airline, onSubmit, onCancel, isSubmitting = false 
             <div>
               <h4 className="font-medium mb-3">First Officer Pay</h4>
               <div className="space-y-2">
-                <Input 
-                  placeholder="Year 1 (e.g., $108.16/hr)" 
-                  value={formData.fo_pay_year_1}
-                  onChange={(e) => handleInputChange('fo_pay_year_1', e.target.value)}
-                />
-                <Input 
-                  placeholder="Year 5 (e.g., $201.45/hr)" 
-                  value={formData.fo_pay_year_5}
-                  onChange={(e) => handleInputChange('fo_pay_year_5', e.target.value)}
-                />
-                <Input 
-                  placeholder="Year 10 (e.g., $224.41/hr)" 
-                  value={formData.fo_pay_year_10}
-                  onChange={(e) => handleInputChange('fo_pay_year_10', e.target.value)}
-                />
+                {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map((year) => (
+                  <Input 
+                    key={year}
+                    placeholder={`Year ${year} (e.g., $${108 + year * 12}.16/hr)`}
+                    value={(formData as any)[`fo_pay_year_${year}`] || ''}
+                    onChange={(e) => handleInputChange(`fo_pay_year_${year}`, e.target.value)}
+                  />
+                ))}
               </div>
             </div>
             <div>
               <h4 className="font-medium mb-3">Captain Pay</h4>
               <div className="space-y-2">
-                <Input 
-                  placeholder="Year 1 (e.g., $300.31/hr)" 
-                  value={formData.captain_pay_year_1}
-                  onChange={(e) => handleInputChange('captain_pay_year_1', e.target.value)}
-                />
-                <Input 
-                  placeholder="Year 5 (e.g., $311.31/hr)" 
-                  value={formData.captain_pay_year_5}
-                  onChange={(e) => handleInputChange('captain_pay_year_5', e.target.value)}
-                />
-                <Input 
-                  placeholder="Year 10 (e.g., $325.31/hr)" 
-                  value={formData.captain_pay_year_10}
-                  onChange={(e) => handleInputChange('captain_pay_year_10', e.target.value)}
-                />
+                {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map((year) => (
+                  <Input 
+                    key={year}
+                    placeholder={`Year ${year} (e.g., $${280 + year * 15}.31/hr)`}
+                    value={(formData as any)[`captain_pay_year_${year}`] || ''}
+                    onChange={(e) => handleInputChange(`captain_pay_year_${year}`, e.target.value)}
+                  />
+                ))}
               </div>
             </div>
           </div>
