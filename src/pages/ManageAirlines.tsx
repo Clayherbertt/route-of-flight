@@ -212,50 +212,44 @@ export default function ManageAirlines() {
           </Card>
         </div>
 
-        {/* Airlines Sections - Simple Layout */}
-        <div className="space-y-8">
+        {/* Airlines Sections - Basic Layout */}
+        <div className="space-y-6">
           {filteredSections.map((section, sectionIndex) => (
-            <div key={sectionIndex} className="space-y-4">
-              <h2 className="text-xl font-semibold">{section.title}</h2>
+            <div key={sectionIndex}>
+              <h2 className="text-lg font-medium mb-3 border-b pb-2">{section.title}</h2>
               
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+              <div className="space-y-2">
                 {section.airlines.map((airline) => (
-                  <Card key={airline.id} className="p-4">
-                    <div className="flex items-start justify-between mb-3">
+                  <div key={airline.id} className="flex items-center justify-between p-3 border rounded">
+                    <div className="flex items-center gap-4">
                       <div>
-                        <h3 className="font-semibold">{airline.name}</h3>
-                        <p className="text-sm text-muted-foreground">{airline.call_sign}</p>
+                        <span className="font-medium">{airline.name}</span>
+                        <span className="text-sm text-muted-foreground ml-2">({airline.call_sign})</span>
                       </div>
-                      <div className="flex gap-1">
-                        <Button
-                          variant="ghost"
-                          size="icon"
-                          onClick={() => handleEditAirline(airline)}
-                        >
-                          <Edit className="h-4 w-4" />
-                        </Button>
-                        <Button
-                          variant="ghost"
-                          size="icon"
-                          onClick={() => handleDeleteAirline(airline.id)}
-                        >
-                          <Trash2 className="h-4 w-4" />
-                        </Button>
-                      </div>
-                    </div>
-                    
-                    <div className="space-y-2">
-                      <Badge className={getCategoryColor(airline.category)} variant="outline">
-                        {airline.category}
-                      </Badge>
                       {airline.is_hiring && (
-                        <Badge className="bg-green-100 text-green-800">Hiring</Badge>
+                        <span className="text-xs bg-green-100 text-green-800 px-2 py-1 rounded">Hiring</span>
                       )}
-                      <p className="text-sm text-muted-foreground">
-                        {airline.fleet_size} aircraft • {airline.bases.length} bases
-                      </p>
                     </div>
-                  </Card>
+                    <div className="flex items-center gap-2">
+                      <span className="text-sm text-muted-foreground">
+                        {airline.fleet_size} aircraft
+                      </span>
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => handleEditAirline(airline)}
+                      >
+                        Edit
+                      </Button>
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => handleDeleteAirline(airline.id)}
+                      >
+                        Delete
+                      </Button>
+                    </div>
+                  </div>
                 ))}
               </div>
             </div>
