@@ -255,14 +255,14 @@ export function AirlineDetailsDialog({ open, onOpenChange, airline }: AirlineDet
                                   <tr key={year} className="hover:bg-muted/30 transition-colors">
                                     <td className="py-3 px-4 font-medium">Year {year}</td>
                                     <td className="text-center py-3 px-4">
-                                      <div className="font-bold text-sm">
-                                        {narrowBodyValue || '-'}
-                                      </div>
+                                       <div className="font-bold text-sm">
+                                         {narrowBodyValue ? (narrowBodyValue.includes('$') ? narrowBodyValue : `$${narrowBodyValue}`) : '-'}
+                                       </div>
                                     </td>
                                     <td className="text-center py-3 px-4">
-                                      <div className="font-bold text-sm">
-                                        {wideBodyValue || '-'}
-                                      </div>
+                                       <div className="font-bold text-sm">
+                                         {wideBodyValue ? (wideBodyValue.includes('$') ? wideBodyValue : `$${wideBodyValue}`) : '-'}
+                                       </div>
                                     </td>
                                   </tr>
                                 );
@@ -297,14 +297,14 @@ export function AirlineDetailsDialog({ open, onOpenChange, airline }: AirlineDet
                                   <tr key={year} className="hover:bg-muted/30 transition-colors">
                                     <td className="py-3 px-4 font-medium">Year {year}</td>
                                     <td className="text-center py-3 px-4">
-                                      <div className="font-bold text-sm">
-                                        {narrowBodyValue || '-'}
-                                      </div>
+                                       <div className="font-bold text-sm">
+                                         {narrowBodyValue ? (narrowBodyValue.includes('$') ? narrowBodyValue : `$${narrowBodyValue}`) : '-'}
+                                       </div>
                                     </td>
                                     <td className="text-center py-3 px-4">
-                                      <div className="font-bold text-sm">
-                                        {wideBodyValue || '-'}
-                                      </div>
+                                       <div className="font-bold text-sm">
+                                         {wideBodyValue ? (wideBodyValue.includes('$') ? wideBodyValue : `$${wideBodyValue}`) : '-'}
+                                       </div>
                                     </td>
                                   </tr>
                                 );
