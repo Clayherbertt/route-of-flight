@@ -228,8 +228,8 @@ export function AirlineDetailsDialog({ open, onOpenChange, airline }: AirlineDet
                 </CardTitle>
               </CardHeader>
               <CardContent>
-                {/* Check if we have narrow body and wide body data */}
-                {(airline.fo_narrowbody_pay_year_1 || airline.captain_narrowbody_pay_year_1) ? (
+                {/* Check if this is American Airlines for narrow body/wide body format */}
+                {airline.name === 'American Airlines' ? (
                   <div className="space-y-6">
                     {/* First Officer Pay Scale */}
                     {airline.fo_narrowbody_pay_year_1 && (
