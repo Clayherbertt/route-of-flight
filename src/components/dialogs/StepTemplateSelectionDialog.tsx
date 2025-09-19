@@ -31,6 +31,9 @@ interface StepTemplate {
     allowCustomerReorder: boolean
     status: 'draft' | 'published'
     category: string
+    hourType?: 'ATP' | 'R-ATP'
+    hourRequirementTitle?: string
+    hourRequirement?: number
     details: Array<{
       title: string
       description: string
@@ -77,34 +80,21 @@ const stepTemplates: StepTemplate[] = [
     }
   },
   {
-    id: 'advanced-training',
-    title: 'Advanced Training',
-    description: 'Create a blank advanced training step',
-    icon: 'GraduationCap',
-    category: 'Training',
+    id: 'flight-instruction',
+    title: 'Flight Instruction',
+    description: 'Create a blank flight instruction step with hour tracking',
+    icon: 'Clock',
+    category: 'Instruction',
     defaultStructure: {
       title: '',
       description: '',
       mandatory: false,
       allowCustomerReorder: false,
       status: 'draft' as const,
-      category: 'Advanced Training',
-      details: []
-    }
-  },
-  {
-    id: 'career-development',
-    title: 'Career Development',
-    description: 'Create a blank career development step',
-    icon: 'Trophy',
-    category: 'Career',
-    defaultStructure: {
-      title: '',
-      description: '',
-      mandatory: false,
-      allowCustomerReorder: false,
-      status: 'draft' as const,
-      category: 'Career Development',
+      category: 'Flight Instruction',
+      hourType: 'ATP', // ATP or R-ATP
+      hourRequirementTitle: '',
+      hourRequirement: 0,
       details: []
     }
   }
