@@ -12,7 +12,7 @@ import { StudentRouteStepCard } from "@/components/StudentRouteStepCard";
 import { RouteWizard } from "@/components/RouteWizard";
 import { supabase } from "@/integrations/supabase/client";
 import { CircularProgress } from "@/components/CircularProgress";
-import { Check, Lock, AlertCircle, Target, Plane, Compass } from "lucide-react";
+import { Check, Lock, AlertCircle, Target, Plane, Compass, ChevronDown, ChevronRight } from "lucide-react";
 import { toast } from "sonner";
 import React from "react";
 
@@ -543,9 +543,23 @@ const formatHtmlContent = (html: string) => {
                       <CardContent className="p-6">
                         <div className="flex items-center justify-between">
                           <div className="flex-1">
-                            <h3 className="text-lg font-semibold text-foreground mb-1">
-                              {step.title}
-                            </h3>
+                            <div className="flex items-center gap-3">
+                              <h3 className="text-lg font-semibold text-foreground mb-1">
+                                {step.title}
+                              </h3>
+                              <Button 
+                                variant="ghost" 
+                                size="sm"
+                                onClick={() => toggleStepExpansion(step.id)}
+                                className="h-8 w-8 p-0 hover:bg-muted/50"
+                              >
+                                {isExpanded ? (
+                                  <ChevronDown className="h-4 w-4" />
+                                ) : (
+                                  <ChevronRight className="h-4 w-4" />
+                                )}
+                              </Button>
+                            </div>
                             <p className="text-sm text-muted-foreground">
                               {fullStep.description?.replace(/<[^>]*>/g, '')}
                             </p>
@@ -556,13 +570,6 @@ const formatHtmlContent = (html: string) => {
                               size={48}
                               strokeWidth={4}
                             />
-                            <Button 
-                              variant="outline" 
-                              size="sm"
-                              onClick={() => toggleStepExpansion(step.id)}
-                            >
-                              {isExpanded ? 'Collapse' : 'Expand'}
-                            </Button>
                           </div>
                         </div>
 

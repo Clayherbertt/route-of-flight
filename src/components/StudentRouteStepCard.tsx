@@ -2,7 +2,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
 import { Checkbox } from '@/components/ui/checkbox'
-import { Plus, Check } from 'lucide-react'
+import { Plus, Check, ChevronDown, ChevronRight } from 'lucide-react'
 import * as icons from 'lucide-react'
 
 interface RouteStepDetail {
@@ -38,6 +38,8 @@ interface StudentRouteStepCardProps {
   onTaskToggle?: (taskId: string, checked: boolean) => void
   isCompleted?: boolean
   stepNumber?: number
+  isExpanded?: boolean
+  onToggleExpansion?: () => void
 }
 
 const iconMap = {
@@ -66,7 +68,9 @@ export function StudentRouteStepCard({
   onToggleCompletion,
   onTaskToggle,
   isCompleted = false,
-  stepNumber
+  stepNumber,
+  isExpanded = false,
+  onToggleExpansion
 }: StudentRouteStepCardProps) {
   const IconComponent = iconMap[step.icon as keyof typeof iconMap] || icons.GraduationCap
 
@@ -149,9 +153,26 @@ export function StudentRouteStepCard({
 
       <CardContent className="pt-0">
         <div className="border-t pt-4">
-          <h4 className="font-semibold mb-4 text-lg">Tasks & Requirements ({step.details.length})</h4>
-          <div className="space-y-3">
-            {step.details.map((detail, index) => (
+          <div className="flex items-center justify-between mb-4">
+            <h4 className="font-semibold text-lg">Tasks & Requirements ({step.details.length})</h4>
+            {onToggleExpansion && (
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={onToggleExpansion}
+                className="h-8 w-8 p-0"
+              >
+                {isExpanded ? (
+                  <ChevronDown className="h-4 w-4" />
+                ) : (
+                  <ChevronRight className="h-4 w-4" />
+                )}
+              </Button>
+            )}
+          </div>
+          {isExpanded && (
+            <div className="space-y-3">
+              {step.details.map((detail, index) => (
               <div key={detail.id || index} className="flex items-start space-x-3 p-3 rounded-lg bg-muted/30">
                 {variant === 'selected' && onTaskToggle ? (
                   <Checkbox
@@ -203,10 +224,11 @@ export function StudentRouteStepCard({
                   )}
                 </div>
               </div>
-            ))}
-          </div>
+              ))}
+            </div>
+          )}
           
-          {step.details.length === 0 && (
+          {isExpanded && step.details.length === 0 && (
             <div className="text-center py-8 text-muted-foreground">
               <p>No tasks defined for this step yet.</p>
             </div>
