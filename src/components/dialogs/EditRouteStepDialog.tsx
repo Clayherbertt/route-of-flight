@@ -126,6 +126,9 @@ interface RouteStep {
   allowCustomerReorder: boolean;
   status: 'draft' | 'published';
   category: string;
+  hourType?: 'ATP' | 'R-ATP';
+  hourRequirementTitle?: string;
+  hourRequirement?: number;
   details: RouteStepDetail[];
   nextSteps: string[];
   connectedFrom?: string[];
@@ -389,6 +392,59 @@ export function EditRouteStepDialog({
               status: checked ? 'published' : 'draft'
             })} />
             </div>
+
+            {/* Hour Requirements for Flight Instructing */}
+            {editedStep.category === 'Flight Instructing' && (
+              <>
+                <div className="space-y-4 p-4 border rounded-lg bg-muted/30">
+                  <h3 className="font-medium">Hour Requirements</h3>
+                  
+                  <div className="space-y-2">
+                    <Label>Hour Type</Label>
+                    <Select value={editedStep.hourType || 'ATP'} onValueChange={value => setEditedStep({
+                      ...editedStep,
+                      hourType: value as 'ATP' | 'R-ATP'
+                    })}>
+                      <SelectTrigger>
+                        <SelectValue placeholder="Select hour type" />
+                      </SelectTrigger>
+                      <SelectContent className="bg-background border z-50">
+                        <SelectItem value="ATP">ATP</SelectItem>
+                        <SelectItem value="R-ATP">R-ATP</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+
+                  <div className="space-y-2">
+                    <Label htmlFor="hourRequirementTitle">Hour Requirement Title</Label>
+                    <Input 
+                      id="hourRequirementTitle"
+                      value={editedStep.hourRequirementTitle || ''} 
+                      onChange={e => setEditedStep({
+                        ...editedStep,
+                        hourRequirementTitle: e.target.value
+                      })} 
+                      placeholder="e.g., Total Flight Time Required" 
+                    />
+                  </div>
+
+                  <div className="space-y-2">
+                    <Label htmlFor="hourRequirement">Required Hours</Label>
+                    <Input 
+                      id="hourRequirement"
+                      type="number"
+                      value={editedStep.hourRequirement || ''} 
+                      onChange={e => setEditedStep({
+                        ...editedStep,
+                        hourRequirement: e.target.value ? parseInt(e.target.value) : undefined
+                      })} 
+                      placeholder="Enter required hours" 
+                      min="0"
+                    />
+                  </div>
+                </div>
+              </>
+            )}
           </div>
 
           <Separator />
