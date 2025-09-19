@@ -653,20 +653,20 @@ const formatHtmlContent = (html: string) => {
                                                  ✓ Complete
                                                </Badge>
                                              )}
-                                             {detail.description && detail.description.trim() && (
-                                               <Button
-                                                 variant="ghost"
-                                                 size="sm"
-                                                 onClick={() => toggleTaskExpansion(detail.id || `${step.id}-${detailIndex}`)}
-                                                 className="h-6 w-6 p-0"
-                                               >
-                                                 {expandedTasks.has(detail.id || `${step.id}-${detailIndex}`) ? (
-                                                   <ChevronDown className="h-3 w-3" />
-                                                 ) : (
-                                                   <ChevronRight className="h-3 w-3" />
-                                                 )}
-                                               </Button>
-                                             )}
+                                              {detail.description && detail.description.trim() && false && (
+                                                <Button
+                                                  variant="ghost"
+                                                  size="sm"
+                                                  onClick={() => toggleTaskExpansion(detail.id || `${step.id}-${detailIndex}`)}
+                                                  className="h-6 w-6 p-0"
+                                                >
+                                                  {expandedTasks.has(detail.id || `${step.id}-${detailIndex}`) ? (
+                                                    <ChevronDown className="h-3 w-3" />
+                                                  ) : (
+                                                    <ChevronRight className="h-3 w-3" />
+                                                  )}
+                                                </Button>
+                                              )}
                                            </div>
                                          </div>
                                        </div>
