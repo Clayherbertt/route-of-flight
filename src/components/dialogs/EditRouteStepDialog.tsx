@@ -315,7 +315,7 @@ export function EditRouteStepDialog({
   const flightTasks = editedStep.details.filter(detail => detail.taskType === 'flight');
   const groundTasks = editedStep.details.filter(detail => detail.taskType === 'ground');
   return <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-3xl max-h-[85vh] overflow-y-auto">
+      <DialogContent className="max-w-6xl max-h-[85vh] overflow-y-auto">
         <DialogHeader>
           <DialogTitle>Edit Task Template</DialogTitle>
           <DialogDescription>
