@@ -128,6 +128,11 @@ export function RouteWizard({ isOpen, onClose, onStepAdd, availableSteps }: Rout
   const handleStepSelect = (stepId: string) => {
     const stepKey = currentWizardStep.id;
     
+    // Prevent unchecking initial tasks - they're required
+    if (stepKey === 'initial-tasks') {
+      return;
+    }
+    
     if (currentWizardStep.multiSelect) {
       setSelectedSteps(prev => {
         const current = prev[stepKey] || [];
@@ -250,10 +255,10 @@ export function RouteWizard({ isOpen, onClose, onStepAdd, availableSteps }: Rout
             return (
               <Card 
                 key={step.id}
-                className={`cursor-pointer transition-all hover:shadow-md ${
+                className={`transition-all hover:shadow-md ${
                   selectedForThisStep.includes(step.id) ? 'ring-2 ring-primary' : ''
-                }`}
-                onClick={() => handleStepSelect(step.id)}
+                } ${currentWizardStep.id === 'initial-tasks' ? 'cursor-not-allowed opacity-70' : 'cursor-pointer'}`}
+                onClick={currentWizardStep.id === 'initial-tasks' ? undefined : () => handleStepSelect(step.id)}
               >
                 <CardContent className="p-4">
                   <div className="flex items-center justify-between">
