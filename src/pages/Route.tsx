@@ -613,13 +613,13 @@ const formatHtmlContent = (html: string) => {
                                    }`}>
                                      {/* Task Header */}
                                      <div className="flex items-start space-x-3 p-4 border-b border-border/50">
-                                         <Checkbox
-                                           id={`task-${detail.id || detailIndex}`}
-                                           checked={isCompleted}
-                                           onCheckedChange={step.category === 'Initial Tasks' || detail.mandatory ? undefined : (checked) => toggleTaskCompletion(step.id, detail.id || detail.title, !!checked)}
-                                           disabled={step.category === 'Initial Tasks' || detail.mandatory}
-                                           className={`mt-1 ${(step.category === 'Initial Tasks' || detail.mandatory) ? 'cursor-not-allowed opacity-50' : ''}`}
-                                         />
+                                          <Checkbox
+                                            id={`task-${detail.id || detailIndex}`}
+                                            checked={isCompleted}
+                                            onCheckedChange={step.category === 'Initial Tasks' || detail.mandatory ? () => {} : (checked) => toggleTaskCompletion(step.id, detail.id || detail.title, !!checked)}
+                                            disabled={step.category === 'Initial Tasks' || detail.mandatory}
+                                            className={`mt-1 ${(step.category === 'Initial Tasks' || detail.mandatory) ? 'cursor-not-allowed opacity-50 pointer-events-none' : ''}`}
+                                          />
                                        <div className="flex-1 min-w-0">
                                          <div className="flex items-center justify-between gap-3">
                                            <label 
