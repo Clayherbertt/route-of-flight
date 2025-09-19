@@ -15,7 +15,7 @@ import { Route3DTimeline } from "@/components/3d/Route3DTimeline";
 import { Route3DModal } from "@/components/3d/Route3DModal";
 import { supabase } from "@/integrations/supabase/client";
 import { CircularProgress } from "@/components/CircularProgress";
-import { Check, Lock, AlertCircle, Target, Plane, Compass, View, Box } from "lucide-react";
+import { Check, Lock, AlertCircle, Target, Plane, Compass, View, Layers } from "lucide-react";
 import { toast } from "sonner";
 import React from "react";
 
@@ -515,7 +515,7 @@ const formatHtmlContent = (html: string) => {
                 onCheckedChange={setIs3DView}
               />
               <span className="text-sm text-muted-foreground">3D View</span>
-              <Box className="h-4 w-4 text-muted-foreground" />
+              <Layers className="h-4 w-4 text-muted-foreground" />
             </div>
           )}
         </div>
