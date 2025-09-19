@@ -260,7 +260,8 @@ export default function RouteDashboard() {
                         onDelete={() => handleDeleteStep(step.id!)}
                       />
                       
-                      {index < routeSteps.length - 1 && (
+                      {/* Only show arrows between first two cards */}
+                      {index < 2 && index < routeSteps.length - 1 && (
                         <div className="flex justify-center py-2">
                           <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center">
                             <ArrowDown className="h-4 w-4 text-primary" />
