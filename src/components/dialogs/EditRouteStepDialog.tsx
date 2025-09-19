@@ -126,7 +126,7 @@ interface RouteStep {
   allowCustomerReorder: boolean;
   status: 'draft' | 'published';
   category: string;
-  hourType?: 'ATP' | 'R-ATP';
+  hourType?: 'ATP' | 'R-ATP Military' | 'R-ATP Bachelors Degree' | 'R-ATP Associated Degree';
   hourRequirementTitle?: string;
   hourRequirement?: number;
   details: RouteStepDetail[];
@@ -403,14 +403,16 @@ export function EditRouteStepDialog({
                     <Label>Hour Type</Label>
                     <Select value={editedStep.hourType || 'ATP'} onValueChange={value => setEditedStep({
                       ...editedStep,
-                      hourType: value as 'ATP' | 'R-ATP'
+                      hourType: value as 'ATP' | 'R-ATP Military' | 'R-ATP Bachelors Degree' | 'R-ATP Associated Degree'
                     })}>
                       <SelectTrigger>
                         <SelectValue placeholder="Select hour type" />
                       </SelectTrigger>
                       <SelectContent className="bg-background border z-50">
                         <SelectItem value="ATP">ATP</SelectItem>
-                        <SelectItem value="R-ATP">R-ATP</SelectItem>
+                        <SelectItem value="R-ATP Military">R-ATP Military</SelectItem>
+                        <SelectItem value="R-ATP Bachelors Degree">R-ATP Bachelors Degree</SelectItem>
+                        <SelectItem value="R-ATP Associated Degree">R-ATP Associated Degree</SelectItem>
                       </SelectContent>
                     </Select>
                   </div>
