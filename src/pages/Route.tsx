@@ -616,9 +616,8 @@ const formatHtmlContent = (html: string) => {
                                           <Checkbox
                                             id={`task-${detail.id || detailIndex}`}
                                             checked={isCompleted}
-                                            onCheckedChange={step.category === 'Initial Tasks' || detail.mandatory ? () => {} : (checked) => toggleTaskCompletion(step.id, detail.id || detail.title, !!checked)}
-                                            disabled={step.category === 'Initial Tasks' || detail.mandatory}
-                                            className={`mt-1 ${(step.category === 'Initial Tasks' || detail.mandatory) ? 'cursor-not-allowed opacity-50 pointer-events-none' : ''}`}
+                                            onCheckedChange={(checked) => toggleTaskCompletion(step.id, detail.id || detail.title, !!checked)}
+                                            className="mt-1"
                                           />
                                        <div className="flex-1 min-w-0">
                                          <div className="flex items-center justify-between gap-3">
