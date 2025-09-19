@@ -499,7 +499,11 @@ export function EditRouteStepDialog({
                 <div className="space-y-4">
                   <div className="flex items-center gap-2">
                     <Plane className="h-5 w-5" />
-                    <h3 className="text-lg font-semibold">Flight Training Requirements</h3>
+                    <h3 className="text-lg font-semibold">
+                      {editedStep.category === 'Flight Instructing' && editedStep.hourType 
+                        ? `${editedStep.hourType} minimums` 
+                        : 'Flight Training Requirements'}
+                    </h3>
                     <Badge variant="default">{flightTasks.length} items</Badge>
                   </div>
                   
