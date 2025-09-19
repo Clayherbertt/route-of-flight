@@ -414,34 +414,6 @@ export function EditRouteStepDialog({
                       </SelectContent>
                     </Select>
                   </div>
-
-                  <div className="space-y-2">
-                    <Label htmlFor="hourRequirementTitle">Hour Requirement Title</Label>
-                    <Input 
-                      id="hourRequirementTitle"
-                      value={editedStep.hourRequirementTitle || ''} 
-                      onChange={e => setEditedStep({
-                        ...editedStep,
-                        hourRequirementTitle: e.target.value
-                      })} 
-                      placeholder="e.g., Total Flight Time Required" 
-                    />
-                  </div>
-
-                  <div className="space-y-2">
-                    <Label htmlFor="hourRequirement">Required Hours</Label>
-                    <Input 
-                      id="hourRequirement"
-                      type="number"
-                      value={editedStep.hourRequirement || ''} 
-                      onChange={e => setEditedStep({
-                        ...editedStep,
-                        hourRequirement: e.target.value ? parseInt(e.target.value) : undefined
-                      })} 
-                      placeholder="Enter required hours" 
-                      min="0"
-                    />
-                  </div>
                 </div>
               </>
             )}
@@ -542,45 +514,47 @@ export function EditRouteStepDialog({
 
                 <Separator />
 
-                {/* Ground Training Requirements */}
-                <div className="space-y-4">
-                  <div className="flex items-center gap-2">
-                    <div className="h-5 w-5 rounded-full bg-primary flex items-center justify-center">
-                      <span className="text-xs text-primary-foreground font-bold">G</span>
+                {/* Ground Training Requirements - Hidden for Flight Instructing */}
+                {editedStep.category !== 'Flight Instructing' && (
+                  <div className="space-y-4">
+                    <div className="flex items-center gap-2">
+                      <div className="h-5 w-5 rounded-full bg-primary flex items-center justify-center">
+                        <span className="text-xs text-primary-foreground font-bold">G</span>
+                      </div>
+                      <h3 className="text-lg font-semibold">Ground Training Requirements</h3>
+                      <Badge variant="secondary">{groundTasks.length} items</Badge>
                     </div>
-                    <h3 className="text-lg font-semibold">Ground Training Requirements</h3>
-                    <Badge variant="secondary">{groundTasks.length} items</Badge>
-                  </div>
-                  
-                  <div className="space-y-3">
-                    <SortableContext items={groundTasks.map((task) => `task-${editedStep.details.indexOf(task)}`)} strategy={verticalListSortingStrategy}>
-                      {groundTasks.map((task, taskIndex) => {
-                        const originalIndex = editedStep.details.indexOf(task);
-                        return (
-                          <SortableTaskItem
-                            key={`task-${originalIndex}`}
-                            task={task}
-                            taskIndex={taskIndex}
-                            originalIndex={originalIndex}
-                            onToggleCompleted={toggleTaskCompleted}
-                            onUpdateTitle={updateTaskTitle}
-                            onRemove={removeDetail}
-                          />
-                        );
-                      })}
-                    </SortableContext>
-                      
-                    <div className="border-2 border-dashed rounded-lg p-4">
-                      <h4 className="font-medium text-sm mb-3">Add Ground Requirement</h4>
-                      <div className="flex items-center gap-2">
-                        <Input value={newGroundTitle} onChange={e => setNewGroundTitle(e.target.value)} placeholder="Add ground requirement (e.g., Written exam preparation)" className="flex-1" />
-                        <Button onClick={addGroundTask} disabled={!newGroundTitle.trim()}>
-                          <Plus className="h-4 w-4" />
-                        </Button>
+                    
+                    <div className="space-y-3">
+                      <SortableContext items={groundTasks.map((task) => `task-${editedStep.details.indexOf(task)}`)} strategy={verticalListSortingStrategy}>
+                        {groundTasks.map((task, taskIndex) => {
+                          const originalIndex = editedStep.details.indexOf(task);
+                          return (
+                            <SortableTaskItem
+                              key={`task-${originalIndex}`}
+                              task={task}
+                              taskIndex={taskIndex}
+                              originalIndex={originalIndex}
+                              onToggleCompleted={toggleTaskCompleted}
+                              onUpdateTitle={updateTaskTitle}
+                              onRemove={removeDetail}
+                            />
+                          );
+                        })}
+                      </SortableContext>
+                        
+                      <div className="border-2 border-dashed rounded-lg p-4">
+                        <h4 className="font-medium text-sm mb-3">Add Ground Requirement</h4>
+                        <div className="flex items-center gap-2">
+                          <Input value={newGroundTitle} onChange={e => setNewGroundTitle(e.target.value)} placeholder="Add ground requirement (e.g., Written exam preparation)" className="flex-1" />
+                          <Button onClick={addGroundTask} disabled={!newGroundTitle.trim()}>
+                            <Plus className="h-4 w-4" />
+                          </Button>
+                        </div>
                       </div>
                     </div>
                   </div>
-                </div>
+                )}
               </>
             </DndContext>
           )}
