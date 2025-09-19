@@ -105,8 +105,34 @@ export function RouteWizard({ isOpen, onClose, onStepAdd, availableSteps }: Rout
   const [selectedSteps, setSelectedSteps] = useState<Record<string, string[]>>({});
   const [careerPathChoice, setCareerPathChoice] = useState<string>("");
 
-  const currentWizardStep = WIZARD_STEPS[currentStep];
-  const progress = ((currentStep + 1) / WIZARD_STEPS.length) * 100;
+  // Dynamically generate wizard steps based on career path choice
+  const getWizardSteps = (): WizardStep[] => {
+    const baseSteps = WIZARD_STEPS.slice(0, 3); // Initial Tasks, Initial Training, Career Path Choice
+    
+    // If Flight Instructor Route is selected, add Flight Instructing step
+    if (careerPathChoice === "instructor") {
+      const flightInstructingStep: WizardStep = {
+        id: "flight-instructing",
+        title: "Flight Instructing",
+        description: "CFI, CFII, MEI certifications and requirements",
+        icon: BookOpen,
+        required: true,
+        categories: ["Flight Instructing"],
+        instructions: "Select the flight instruction certifications and requirements for your route.",
+        multiSelect: true,
+        orderMatters: false
+      };
+      
+      const remainingSteps = WIZARD_STEPS.slice(3); // Cadet Program, Regional, Major
+      return [...baseSteps, flightInstructingStep, ...remainingSteps];
+    }
+    
+    return WIZARD_STEPS;
+  };
+
+  const wizardSteps = getWizardSteps();
+  const currentWizardStep = wizardSteps[currentStep];
+  const progress = ((currentStep + 1) / wizardSteps.length) * 100;
 
   const getAvailableStepsForCategory = (categories: string[]) => {
     const filtered = availableSteps.filter(step => 
@@ -159,7 +185,7 @@ export function RouteWizard({ isOpen, onClose, onStepAdd, availableSteps }: Rout
       await onStepAdd(stepId);
     }
 
-    if (currentStep < WIZARD_STEPS.length - 1) {
+    if (currentStep < wizardSteps.length - 1) {
       setCurrentStep(currentStep + 1);
     } else {
       // Wizard complete - close the wizard
@@ -308,7 +334,7 @@ export function RouteWizard({ isOpen, onClose, onStepAdd, availableSteps }: Rout
           {/* Progress Bar */}
           <div className="space-y-2">
             <div className="flex justify-between text-sm">
-              <span>Step {currentStep + 1} of {WIZARD_STEPS.length}</span>
+              <span>Step {currentStep + 1} of {wizardSteps.length}</span>
               <span>{Math.round(progress)}% Complete</span>
             </div>
             <Progress value={progress} className="h-2" />
@@ -362,7 +388,7 @@ export function RouteWizard({ isOpen, onClose, onStepAdd, availableSteps }: Rout
                 disabled={currentWizardStep.required && !canProceed()}
                 className="gap-2"
               >
-                {currentStep === WIZARD_STEPS.length - 1 ? 'Finish' : 'Next'}
+                {currentStep === wizardSteps.length - 1 ? 'Finish' : 'Next'}
                 <ChevronRight className="h-4 w-4" />
               </Button>
             </div>
