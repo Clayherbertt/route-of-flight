@@ -82,7 +82,7 @@ const stepTemplates: StepTemplate[] = [
   {
     id: 'flight-instruction',
     title: 'Flight Instruction',
-    description: 'Create a blank flight instruction step with hour tracking',
+    description: 'Flight instruction template with ATP/R-ATP hour requirements',
     icon: 'Clock',
     category: 'Instruction',
     defaultStructure: {
@@ -91,8 +91,8 @@ const stepTemplates: StepTemplate[] = [
       mandatory: false,
       allowCustomerReorder: false,
       status: 'draft' as const,
-      category: 'Flight Instruction',
-      hourType: 'ATP', // ATP or R-ATP
+      category: 'Flight Instructing',
+      hourType: 'ATP',
       hourRequirementTitle: '',
       hourRequirement: 0,
       details: []
