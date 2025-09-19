@@ -47,60 +47,64 @@ const stepTemplates: StepTemplate[] = [
   {
     id: 'flight-training',
     title: 'Flight Training',
-    description: 'Private pilot license training with structured curriculum',
+    description: 'Create a blank flight training step',
     icon: 'Plane',
     category: 'Training',
     defaultStructure: {
-      title: 'Private Pilot License Training',
-      description: 'Complete your private pilot license with structured flight training',
-      mandatory: true,
+      title: '',
+      description: '',
+      mandatory: false,
       allowCustomerReorder: false,
       status: 'draft' as const,
       category: 'Primary Training',
-      details: [
-        {
-          title: 'Pre-flight Procedures',
-          description: 'Learn comprehensive aircraft inspection and preparation procedures',
-          checked: false,
-          flightHours: 5,
-          taskType: 'flight' as const
-        },
-        {
-          title: 'Basic Maneuvers',
-          description: 'Master fundamental flight maneuvers including turns, climbs, and descents',
-          checked: false,
-          flightHours: 10,
-          taskType: 'flight' as const
-        },
-        {
-          title: 'Solo Flight',
-          description: 'Complete supervised solo flights to build confidence and skills',
-          checked: false,
-          flightHours: 10,
-          taskType: 'flight' as const
-        },
-        {
-          title: 'Regulations Study',
-          description: 'Study Part 61 and Part 91 federal aviation regulations',
-          checked: false,
-          taskType: 'ground' as const
-        }
-      ]
+      details: []
     }
   },
   {
     id: 'initial-tasks',
     title: 'Initial Tasks',
-    description: 'Pre-training preparation and administrative tasks',
+    description: 'Create a blank initial tasks step',
     icon: 'BookOpen',
     category: 'Preparation',
     defaultStructure: {
       title: '',
       description: '',
-      mandatory: true,
+      mandatory: false,
       allowCustomerReorder: false,
       status: 'draft' as const,
       category: 'Initial Tasks',
+      details: []
+    }
+  },
+  {
+    id: 'advanced-training',
+    title: 'Advanced Training',
+    description: 'Create a blank advanced training step',
+    icon: 'GraduationCap',
+    category: 'Training',
+    defaultStructure: {
+      title: '',
+      description: '',
+      mandatory: false,
+      allowCustomerReorder: false,
+      status: 'draft' as const,
+      category: 'Advanced Training',
+      details: []
+    }
+  },
+  {
+    id: 'career-development',
+    title: 'Career Development',
+    description: 'Create a blank career development step',
+    icon: 'Trophy',
+    category: 'Career',
+    defaultStructure: {
+      title: '',
+      description: '',
+      mandatory: false,
+      allowCustomerReorder: false,
+      status: 'draft' as const,
+      category: 'Career Development',
       details: []
     }
   }
@@ -193,7 +197,7 @@ export function StepTemplateSelectionDialog({
                     {template.description}
                   </CardDescription>
                   <div className="mt-3 text-xs text-muted-foreground">
-                    {template.defaultStructure.details.length} pre-configured topics
+                    Blank template - ready for customization
                   </div>
                 </CardContent>
               </Card>
@@ -206,10 +210,10 @@ export function StepTemplateSelectionDialog({
             <h4 className="font-medium mb-2">Template Preview: {selectedTemplate.title}</h4>
             <div className="bg-muted/50 p-4 rounded-lg">
               <div className="text-sm space-y-2">
-                <div><strong>Default Title:</strong> {selectedTemplate.defaultStructure.title}</div>
-                <div><strong>Topics:</strong> {selectedTemplate.defaultStructure.details.length} items</div>
-                <div><strong>Mandatory:</strong> {selectedTemplate.defaultStructure.mandatory ? 'Yes' : 'No'}</div>
-                <div><strong>Customer Reorder:</strong> {selectedTemplate.defaultStructure.allowCustomerReorder ? 'Enabled' : 'Disabled'}</div>
+                <div><strong>Title:</strong> Blank (ready to customize)</div>
+                <div><strong>Description:</strong> Empty (ready to customize)</div>
+                <div><strong>Category:</strong> {selectedTemplate.defaultStructure.category}</div>
+                <div><strong>Status:</strong> Draft</div>
               </div>
             </div>
           </div>
