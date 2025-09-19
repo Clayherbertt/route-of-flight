@@ -614,92 +614,138 @@ export function AirlineForm({ airline, onSubmit, onCancel, isSubmitting = false 
 
           {/* Pay Scales */}
           <div className="space-y-6">
-
-            {/* Narrow Body Pay Scales */}
-            <div>
-              <h4 className="font-semibold mb-4 text-lg">Narrow Body Pay Scales</h4>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div>
-                  <h5 className="font-medium mb-3">First Officer - Narrow Body</h5>
-                  <div className="space-y-2">
-                    {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map((year) => (
-                      <Input 
-                        key={year}
-                        placeholder={`Year ${year} (e.g., 108.34)`}
-                        value={(formData as any)[`fo_narrowbody_pay_year_${year}`] || ''}
-                        onChange={(e) => handleInputChange(`fo_narrowbody_pay_year_${year}`, e.target.value)}
-                        onBlur={(e) => {
-                          if (e.target.value.trim()) {
-                            handlePayInputBlur(`fo_narrowbody_pay_year_${year}`, e.target.value);
-                          }
-                        }}
-                      />
-                    ))}
+            {formData.name === 'Alaska Airlines' ? (
+              /* Simple Pay Scale for Alaska Airlines */
+              <div>
+                <h4 className="font-semibold mb-4 text-lg">Pay Scales</h4>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  <div>
+                    <h5 className="font-medium mb-3">First Officer</h5>
+                    <div className="space-y-2">
+                      {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map((year) => (
+                        <Input 
+                          key={year}
+                          placeholder={`Year ${year} (e.g., 108.34)`}
+                          value={(formData as any)[`fo_narrowbody_pay_year_${year}`] || ''}
+                          onChange={(e) => handleInputChange(`fo_narrowbody_pay_year_${year}`, e.target.value)}
+                          onBlur={(e) => {
+                            if (e.target.value.trim()) {
+                              handlePayInputBlur(`fo_narrowbody_pay_year_${year}`, e.target.value);
+                            }
+                          }}
+                        />
+                      ))}
+                    </div>
                   </div>
-                </div>
-                <div>
-                  <h5 className="font-medium mb-3">Captain - Narrow Body</h5>
-                  <div className="space-y-2">
-                    {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map((year) => (
-                      <Input 
-                        key={year}
-                        placeholder={`Year ${year} (e.g., 309.03)`}
-                        value={(formData as any)[`captain_narrowbody_pay_year_${year}`] || ''}
-                        onChange={(e) => handleInputChange(`captain_narrowbody_pay_year_${year}`, e.target.value)}
-                        onBlur={(e) => {
-                          if (e.target.value.trim()) {
-                            handlePayInputBlur(`captain_narrowbody_pay_year_${year}`, e.target.value);
-                          }
-                        }}
-                      />
-                    ))}
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            {/* Wide Body Pay Scales */}
-            <div>
-              <h4 className="font-semibold mb-4 text-lg">Wide Body Pay Scales</h4>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div>
-                  <h5 className="font-medium mb-3">First Officer - Wide Body</h5>
-                  <div className="space-y-2">
-                    {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map((year) => (
-                      <Input 
-                        key={year}
-                        placeholder={`Year ${year} (e.g., 108.34)`}
-                        value={(formData as any)[`fo_widebody_pay_year_${year}`] || ''}
-                        onChange={(e) => handleInputChange(`fo_widebody_pay_year_${year}`, e.target.value)}
-                        onBlur={(e) => {
-                          if (e.target.value.trim()) {
-                            handlePayInputBlur(`fo_widebody_pay_year_${year}`, e.target.value);
-                          }
-                        }}
-                      />
-                    ))}
-                  </div>
-                </div>
-                <div>
-                  <h5 className="font-medium mb-3">Captain - Wide Body</h5>
-                  <div className="space-y-2">
-                    {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map((year) => (
-                      <Input 
-                        key={year}
-                        placeholder={`Year ${year} (e.g., 383.12)`}
-                        value={(formData as any)[`captain_widebody_pay_year_${year}`] || ''}
-                        onChange={(e) => handleInputChange(`captain_widebody_pay_year_${year}`, e.target.value)}
-                        onBlur={(e) => {
-                          if (e.target.value.trim()) {
-                            handlePayInputBlur(`captain_widebody_pay_year_${year}`, e.target.value);
-                          }
-                        }}
-                      />
-                    ))}
+                  <div>
+                    <h5 className="font-medium mb-3">Captain</h5>
+                    <div className="space-y-2">
+                      {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map((year) => (
+                        <Input 
+                          key={year}
+                          placeholder={`Year ${year} (e.g., 309.03)`}
+                          value={(formData as any)[`captain_narrowbody_pay_year_${year}`] || ''}
+                          onChange={(e) => handleInputChange(`captain_narrowbody_pay_year_${year}`, e.target.value)}
+                          onBlur={(e) => {
+                            if (e.target.value.trim()) {
+                              handlePayInputBlur(`captain_narrowbody_pay_year_${year}`, e.target.value);
+                            }
+                          }}
+                        />
+                      ))}
+                    </div>
                   </div>
                 </div>
               </div>
-            </div>
+            ) : (
+              <>
+                {/* Narrow Body Pay Scales */}
+                <div>
+                  <h4 className="font-semibold mb-4 text-lg">Narrow Body Pay Scales</h4>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div>
+                      <h5 className="font-medium mb-3">First Officer - Narrow Body</h5>
+                      <div className="space-y-2">
+                        {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map((year) => (
+                          <Input 
+                            key={year}
+                            placeholder={`Year ${year} (e.g., 108.34)`}
+                            value={(formData as any)[`fo_narrowbody_pay_year_${year}`] || ''}
+                            onChange={(e) => handleInputChange(`fo_narrowbody_pay_year_${year}`, e.target.value)}
+                            onBlur={(e) => {
+                              if (e.target.value.trim()) {
+                                handlePayInputBlur(`fo_narrowbody_pay_year_${year}`, e.target.value);
+                              }
+                            }}
+                          />
+                        ))}
+                      </div>
+                    </div>
+                    <div>
+                      <h5 className="font-medium mb-3">Captain - Narrow Body</h5>
+                      <div className="space-y-2">
+                        {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map((year) => (
+                          <Input 
+                            key={year}
+                            placeholder={`Year ${year} (e.g., 309.03)`}
+                            value={(formData as any)[`captain_narrowbody_pay_year_${year}`] || ''}
+                            onChange={(e) => handleInputChange(`captain_narrowbody_pay_year_${year}`, e.target.value)}
+                            onBlur={(e) => {
+                              if (e.target.value.trim()) {
+                                handlePayInputBlur(`captain_narrowbody_pay_year_${year}`, e.target.value);
+                              }
+                            }}
+                          />
+                        ))}
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Wide Body Pay Scales */}
+                <div>
+                  <h4 className="font-semibold mb-4 text-lg">Wide Body Pay Scales</h4>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div>
+                      <h5 className="font-medium mb-3">First Officer - Wide Body</h5>
+                      <div className="space-y-2">
+                        {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map((year) => (
+                          <Input 
+                            key={year}
+                            placeholder={`Year ${year} (e.g., 108.34)`}
+                            value={(formData as any)[`fo_widebody_pay_year_${year}`] || ''}
+                            onChange={(e) => handleInputChange(`fo_widebody_pay_year_${year}`, e.target.value)}
+                            onBlur={(e) => {
+                              if (e.target.value.trim()) {
+                                handlePayInputBlur(`fo_widebody_pay_year_${year}`, e.target.value);
+                              }
+                            }}
+                          />
+                        ))}
+                      </div>
+                    </div>
+                    <div>
+                      <h5 className="font-medium mb-3">Captain - Wide Body</h5>
+                      <div className="space-y-2">
+                        {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map((year) => (
+                          <Input 
+                            key={year}
+                            placeholder={`Year ${year} (e.g., 383.12)`}
+                            value={(formData as any)[`captain_widebody_pay_year_${year}`] || ''}
+                            onChange={(e) => handleInputChange(`captain_widebody_pay_year_${year}`, e.target.value)}
+                            onBlur={(e) => {
+                              if (e.target.value.trim()) {
+                                handlePayInputBlur(`captain_widebody_pay_year_${year}`, e.target.value);
+                              }
+                            }}
+                          />
+                        ))}
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </>
+            )}
           </div>
         </CardContent>
       </Card>
