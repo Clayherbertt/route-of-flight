@@ -594,7 +594,18 @@ const formatHtmlContent = (html: string) => {
                             
                             <h4 className="font-semibold mb-4 text-lg">Detailed Information ({fullStep.details.length})</h4>
                             <div className="space-y-6">
-                              {fullStep.details.map((detail, detailIndex) => {
+                              {fullStep.details
+                                .sort((a, b) => {
+                                  // First sort by task type (flight first, then ground)
+                                  if (a.taskType !== b.taskType) {
+                                    if (a.taskType === 'flight') return -1;
+                                    if (b.taskType === 'flight') return 1;
+                                    return 0;
+                                  }
+                                  // Then sort by order number within the same task type
+                                  return (a.orderNumber || 0) - (b.orderNumber || 0);
+                                })
+                                .map((detail, detailIndex) => {
                                 const isCompleted = step.taskProgress[detail.id || detail.title] || false;
                                 
                                 // Debug logging
