@@ -131,6 +131,7 @@ export default function RouteBuilder() {
   const [showWizard, setShowWizard] = useState(false);
   const [hasCompletedWizard, setHasCompletedWizard] = useState(false);
   const [expandedSteps, setExpandedSteps] = useState<Set<string>>(new Set());
+  const [expandedTasks, setExpandedTasks] = useState<Set<string>>(new Set());
   const [hasCheckedForExistingRoute, setHasCheckedForExistingRoute] = useState(false);
 
   // Load existing user route on component mount
@@ -458,6 +459,18 @@ const formatHtmlContent = (html: string) => {
     return (completedTasks / fullStep.details.length) * 100;
   };
 
+  const toggleTaskExpansion = (taskId: string) => {
+    setExpandedTasks(prev => {
+      const newSet = new Set(prev);
+      if (newSet.has(taskId)) {
+        newSet.delete(taskId);
+      } else {
+        newSet.add(taskId);
+      }
+      return newSet;
+    });
+  };
+
   const toggleStepExpansion = (stepId: string) => {
     setExpandedSteps(prev => {
       const newSet = new Set(prev);
@@ -543,23 +556,9 @@ const formatHtmlContent = (html: string) => {
                       <CardContent className="p-6">
                         <div className="flex items-center justify-between">
                           <div className="flex-1">
-                            <div className="flex items-center gap-3">
-                              <h3 className="text-lg font-semibold text-foreground mb-1">
-                                {step.title}
-                              </h3>
-                              <Button 
-                                variant="ghost" 
-                                size="sm"
-                                onClick={() => toggleStepExpansion(step.id)}
-                                className="h-8 w-8 p-0 hover:bg-muted/50"
-                              >
-                                {isExpanded ? (
-                                  <ChevronDown className="h-4 w-4" />
-                                ) : (
-                                  <ChevronRight className="h-4 w-4" />
-                                )}
-                              </Button>
-                            </div>
+                            <h3 className="text-lg font-semibold text-foreground mb-1">
+                              {step.title}
+                            </h3>
                             <p className="text-sm text-muted-foreground">
                               {fullStep.description?.replace(/<[^>]*>/g, '')}
                             </p>
@@ -570,6 +569,13 @@ const formatHtmlContent = (html: string) => {
                               size={48}
                               strokeWidth={4}
                             />
+                            <Button 
+                              variant="outline" 
+                              size="sm"
+                              onClick={() => toggleStepExpansion(step.id)}
+                            >
+                              {isExpanded ? 'Collapse' : 'Expand'}
+                            </Button>
                           </div>
                         </div>
 
@@ -601,60 +607,81 @@ const formatHtmlContent = (html: string) => {
                                   mandatory: detail.mandatory
                                 });
                                 
-                                return (
-                                  <div key={detail.id || detailIndex} className={`border rounded-lg transition-all duration-300 ${
-                                    isCompleted ? 'bg-muted/20 opacity-75 border-muted' : 'bg-card border-border shadow-sm'
-                                  }`}>
-                                    {/* Task Header */}
-                                    <div className="flex items-start space-x-3 p-4 border-b border-border/50">
-                                      <Checkbox
-                                        id={`task-${detail.id || detailIndex}`}
-                                        checked={isCompleted}
-                                        onCheckedChange={(checked) => toggleTaskCompletion(step.id, detail.id || detail.title, !!checked)}
-                                        className="mt-1"
-                                      />
-                                      <div className="flex-1 min-w-0">
-                                        <div className="flex items-center justify-between gap-3">
-                                          <label 
-                                            htmlFor={`task-${detail.id || detailIndex}`}
-                                            className={`font-semibold cursor-pointer transition-all duration-300 text-lg ${
-                                              isCompleted ? 'line-through text-muted-foreground' : 'text-foreground'
-                                            }`}
-                                          >
-                                            {detail.title}
-                                          </label>
-                                          <div className="flex gap-2 flex-shrink-0">
-                                            {detail.flightHours && (
-                                              <Badge variant="outline" className="text-xs">
-                                                {detail.flightHours}h
-                                              </Badge>
-                                            )}
-                                            {step.category !== 'Initial Tasks' && (
-                                              <Badge 
-                                                variant={detail.taskType === 'flight' ? 'default' : 'secondary'} 
-                                                className="text-xs"
-                                              >
-                                                {detail.taskType || 'ground'}
-                                              </Badge>
-                                            )}
-                                            {detail.mandatory && (
-                                              <Badge variant="destructive" className="text-xs">
-                                                Required
-                                              </Badge>
-                                            )}
-                                            {isCompleted && (
-                                              <Badge variant="default" className="text-xs bg-green-500">
-                                                ✓ Complete
-                                              </Badge>
-                                            )}
-                                          </div>
-                                        </div>
-                                      </div>
+                                 return (
+                                   <div key={detail.id || detailIndex} className={`border rounded-lg transition-all duration-300 ${
+                                     isCompleted ? 'bg-muted/20 opacity-75 border-muted' : 'bg-card border-border shadow-sm'
+                                   }`}>
+                                     {/* Task Header */}
+                                     <div className="flex items-start space-x-3 p-4 border-b border-border/50">
+                                       <Checkbox
+                                         id={`task-${detail.id || detailIndex}`}
+                                         checked={isCompleted}
+                                         onCheckedChange={(checked) => toggleTaskCompletion(step.id, detail.id || detail.title, !!checked)}
+                                         className="mt-1"
+                                       />
+                                       <div className="flex-1 min-w-0">
+                                         <div className="flex items-center justify-between gap-3">
+                                           <label 
+                                             htmlFor={`task-${detail.id || detailIndex}`}
+                                             className={`font-semibold cursor-pointer transition-all duration-300 text-lg ${
+                                               isCompleted ? 'line-through text-muted-foreground' : 'text-foreground'
+                                             }`}
+                                           >
+                                             {detail.title}
+                                           </label>
+                                           <div className="flex gap-2 flex-shrink-0">
+                                             {detail.flightHours && (
+                                               <Badge variant="outline" className="text-xs">
+                                                 {detail.flightHours}h
+                                               </Badge>
+                                             )}
+                                             {step.category !== 'Initial Tasks' && (
+                                               <Badge 
+                                                 variant={detail.taskType === 'flight' ? 'default' : 'secondary'} 
+                                                 className="text-xs"
+                                               >
+                                                 {detail.taskType || 'ground'}
+                                               </Badge>
+                                             )}
+                                             {detail.mandatory && (
+                                               <Badge variant="destructive" className="text-xs">
+                                                 Required
+                                               </Badge>
+                                             )}
+                                             {isCompleted && (
+                                               <Badge variant="default" className="text-xs bg-green-500">
+                                                 ✓ Complete
+                                               </Badge>
+                                             )}
+                                             {detail.description && detail.description.trim() && (
+                                               <Button
+                                                 variant="ghost"
+                                                 size="sm"
+                                                 onClick={() => toggleTaskExpansion(detail.id || `${step.id}-${detailIndex}`)}
+                                                 className="h-6 w-6 p-0"
+                                               >
+                                                 {expandedTasks.has(detail.id || `${step.id}-${detailIndex}`) ? (
+                                                   <ChevronDown className="h-3 w-3" />
+                                                 ) : (
+                                                   <ChevronRight className="h-3 w-3" />
+                                                 )}
+                                               </Button>
+                                             )}
+                                           </div>
+                                         </div>
+                                       </div>
+                                     </div>
+                                      
+                                     {/* Detailed Content - Show rich description when expanded */}
+                                     {expandedTasks.has(detail.id || `${step.id}-${detailIndex}`) && detail.description && detail.description.trim() && (
+                                       <div className="p-4 bg-muted/10 border-t border-border/30">
+                                         <div className="prose prose-sm max-w-none">
+                                           {formatHtmlContent(detail.description)}
+                                         </div>
+                                       </div>
+                                     )}
                                     </div>
-                                     
-                                     {/* Detailed Content - Descriptions hidden as requested */}
-                                   </div>
-                                );
+                                 );
                               })}
                             </div>
                             
