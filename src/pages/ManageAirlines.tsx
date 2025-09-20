@@ -6,6 +6,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
+import { Switch } from '@/components/ui/switch';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { AirlineForm } from '@/components/forms/AirlineForm';
 import Header from '@/components/layout/Header';
@@ -116,9 +117,20 @@ export default function ManageAirlines() {
     setIsFormOpen(true);
   };
 
-  const handleDeleteAirline = async (id: string) => {
-    if (confirm('Are you sure you want to deactivate this airline?')) {
-      await deleteAirline(id);
+  const handleToggleVisibility = async (airline: AirlineData) => {
+    try {
+      await updateAirline(airline.id, { active: !airline.active });
+      toast({
+        title: "Success!",
+        description: `${airline.name} is now ${!airline.active ? 'visible' : 'hidden'} to customers.`,
+      });
+    } catch (error) {
+      console.error('Error toggling airline visibility:', error);
+      toast({
+        title: "Error",
+        description: "Failed to update airline visibility.",
+        variant: "destructive",
+      });
     }
   };
 
@@ -243,7 +255,7 @@ export default function ManageAirlines() {
             <div key={sectionIndex}>
               <h2 className="text-lg font-medium mb-3 border-b pb-2">{section.title}</h2>
               
-              <div className="space-y-2">
+                <div className="space-y-2">
                 {section.airlines.map((airline) => (
                   <div key={airline.id} className="flex items-center justify-between p-3 border rounded">
                     <div className="flex items-center gap-4">
@@ -254,24 +266,30 @@ export default function ManageAirlines() {
                       {airline.is_hiring && (
                         <span className="text-xs bg-green-100 text-green-800 px-2 py-1 rounded">Hiring</span>
                       )}
+                      {!airline.active && (
+                        <Badge variant="secondary" className="text-xs">Hidden</Badge>
+                      )}
                     </div>
-                    <div className="flex items-center gap-2">
+                    <div className="flex items-center gap-4">
                       <span className="text-sm text-muted-foreground">
                         {airline.fleet_size} aircraft
                       </span>
+                      <div className="flex items-center gap-2">
+                        <span className="text-sm text-muted-foreground">
+                          {airline.active ? 'Visible' : 'Hidden'}
+                        </span>
+                        <Switch
+                          checked={airline.active}
+                          onCheckedChange={() => handleToggleVisibility(airline)}
+                          aria-label={`Toggle visibility for ${airline.name}`}
+                        />
+                      </div>
                       <Button
                         variant="outline"
                         size="sm"
                         onClick={() => handleEditAirline(airline)}
                       >
                         Edit
-                      </Button>
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        onClick={() => handleDeleteAirline(airline.id)}
-                      >
-                        Delete
                       </Button>
                     </div>
                   </div>
