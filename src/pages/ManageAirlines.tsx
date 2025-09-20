@@ -117,6 +117,45 @@ export default function ManageAirlines() {
     setIsFormOpen(true);
   };
 
+  const handleToggleCategoryVisibility = async (category: string) => {
+    const categoryAirlines = airlines.filter(airline => airline.category === category);
+    const allVisible = categoryAirlines.every(airline => airline.active);
+    const newVisibility = !allVisible;
+    
+    console.log('🔄 Toggling category visibility for:', category, 'to:', newVisibility);
+    
+    try {
+      // Update all airlines in this category
+      const updatePromises = categoryAirlines.map(airline => 
+        updateAirline(airline.id, { active: newVisibility })
+      );
+      
+      await Promise.all(updatePromises);
+      
+      toast({
+        title: "Success!",
+        description: `All ${category} airlines are now ${newVisibility ? 'visible' : 'hidden'} to customers.`,
+      });
+    } catch (error) {
+      console.error('Error toggling category visibility:', error);
+      toast({
+        title: "Error",
+        description: "Failed to update category visibility.",
+        variant: "destructive",
+      });
+    }
+  };
+
+  const getCategoryVisibilityState = (category: string) => {
+    const categoryAirlines = airlines.filter(airline => airline.category === category);
+    if (categoryAirlines.length === 0) return false;
+    
+    const visibleCount = categoryAirlines.filter(airline => airline.active).length;
+    if (visibleCount === categoryAirlines.length) return true;
+    if (visibleCount === 0) return false;
+    return 'mixed'; // Some visible, some hidden
+  };
+
   const handleToggleVisibility = async (airline: AirlineData, event?: React.MouseEvent) => {
     if (event) {
       event.preventDefault();
@@ -258,60 +297,84 @@ export default function ManageAirlines() {
 
         {/* Airlines Sections - Basic Layout */}
         <div className="space-y-6">
-          {filteredSections.map((section, sectionIndex) => (
-            <div key={sectionIndex}>
-              <h2 className="text-lg font-medium mb-3 border-b pb-2">{section.title}</h2>
-              
-                <div className="space-y-2">
-                {section.airlines.map((airline) => (
-                  <div key={airline.id} className="flex items-center justify-between p-3 border rounded">
-                    <div className="flex items-center gap-4">
-                      <div>
-                        <span className="font-medium">{airline.name}</span>
-                        <span className="text-sm text-muted-foreground ml-2">({airline.call_sign})</span>
-                      </div>
-                      {airline.is_hiring && (
-                        <span className="text-xs bg-green-100 text-green-800 px-2 py-1 rounded">Hiring</span>
-                      )}
-                      {!airline.active && (
-                        <Badge variant="secondary" className="text-xs">Hidden</Badge>
-                      )}
-                    </div>
-                    <div className="flex items-center gap-4">
+          {filteredSections.map((section, sectionIndex) => {
+            const categoryVisibility = getCategoryVisibilityState(section.title);
+            const allVisible = categoryVisibility === true;
+            const someVisible = categoryVisibility === 'mixed';
+            
+            return (
+              <div key={sectionIndex}>
+                <div className="flex items-center justify-between mb-3 border-b pb-2">
+                  <h2 className="text-lg font-medium">{section.title}</h2>
+                  <div className="flex items-center gap-3">
+                    <span className="text-sm text-muted-foreground">
+                      {section.airlines.filter(a => a.active).length} of {section.airlines.length} visible
+                    </span>
+                    <div className="flex items-center gap-2">
                       <span className="text-sm text-muted-foreground">
-                        {airline.fleet_size} aircraft
+                        {allVisible ? 'All Visible' : someVisible ? 'Mixed' : 'All Hidden'}
                       </span>
-                      <div className="flex items-center gap-2">
-                        <span className="text-sm text-muted-foreground">
-                          {airline.active ? 'Visible' : 'Hidden'}
-                        </span>
-                        <Switch
-                          checked={airline.active}
-                          onCheckedChange={(checked) => {
-                            handleToggleVisibility(airline);
-                          }}
-                          onClick={(e) => e.stopPropagation()}
-                          aria-label={`Toggle visibility for ${airline.name}`}
-                        />
-                      </div>
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        type="button"
-                        onClick={(e) => {
-                          e.preventDefault();
-                          e.stopPropagation();
-                          handleEditAirline(airline);
-                        }}
-                      >
-                        Edit
-                      </Button>
+                      <Switch
+                        checked={allVisible}
+                        onCheckedChange={() => handleToggleCategoryVisibility(section.title)}
+                        className={someVisible ? 'opacity-60' : ''}
+                        aria-label={`Toggle visibility for all ${section.title} airlines`}
+                      />
                     </div>
                   </div>
-                ))}
+                </div>
+                
+                <div className="space-y-2">
+                  {section.airlines.map((airline) => (
+                    <div key={airline.id} className="flex items-center justify-between p-3 border rounded">
+                      <div className="flex items-center gap-4">
+                        <div>
+                          <span className="font-medium">{airline.name}</span>
+                          <span className="text-sm text-muted-foreground ml-2">({airline.call_sign})</span>
+                        </div>
+                        {airline.is_hiring && (
+                          <span className="text-xs bg-green-100 text-green-800 px-2 py-1 rounded">Hiring</span>
+                        )}
+                        {!airline.active && (
+                          <Badge variant="secondary" className="text-xs">Hidden</Badge>
+                        )}
+                      </div>
+                      <div className="flex items-center gap-4">
+                        <span className="text-sm text-muted-foreground">
+                          {airline.fleet_size} aircraft
+                        </span>
+                        <div className="flex items-center gap-2">
+                          <span className="text-sm text-muted-foreground">
+                            {airline.active ? 'Visible' : 'Hidden'}
+                          </span>
+                          <Switch
+                            checked={airline.active}
+                            onCheckedChange={(checked) => {
+                              handleToggleVisibility(airline);
+                            }}
+                            onClick={(e) => e.stopPropagation()}
+                            aria-label={`Toggle visibility for ${airline.name}`}
+                          />
+                        </div>
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          type="button"
+                          onClick={(e) => {
+                            e.preventDefault();
+                            e.stopPropagation();
+                            handleEditAirline(airline);
+                          }}
+                        >
+                          Edit
+                        </Button>
+                      </div>
+                    </div>
+                  ))}
+                </div>
               </div>
-            </div>
-          ))}
+            );
+          })}
         </div>
 
         {filteredSections.length === 0 && (
