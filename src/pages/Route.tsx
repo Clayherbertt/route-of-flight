@@ -764,7 +764,7 @@ const formatHtmlContent = (html: string) => {
                                                   ✓ Complete
                                                 </Badge>
                                               )}
-                                              {detail.description && detail.description.trim() && false && (
+                                              {detail.description && detail.description.trim() && (
                                                 <Button
                                                   variant="ghost"
                                                   size="sm"
