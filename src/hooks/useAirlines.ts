@@ -254,6 +254,11 @@ export function useAirlines() {
 
   const updateAirline = async (id: string, updates: Partial<AirlineData>) => {
     try {
+      // Update local state immediately for responsive UI
+      setAirlines(prev => prev.map(airline => 
+        airline.id === id ? { ...airline, ...updates } : airline
+      ));
+
       const { data, error } = await supabase
         .from('airlines')
         .update(updates)
@@ -263,6 +268,7 @@ export function useAirlines() {
 
       if (error) throw error;
 
+      // Update with fresh data from server
       const transformedData = transformDatabaseAirline(data);
       setAirlines(prev => prev.map(airline => 
         airline.id === id ? transformedData : airline
@@ -275,6 +281,8 @@ export function useAirlines() {
       return transformedData;
     } catch (error) {
       console.error('Error updating airline:', error);
+      // Revert optimistic update on error
+      fetchAirlines();
       toast({
         title: "Error",
         description: "Failed to update airline",
@@ -339,15 +347,15 @@ export function useAirlines() {
     };
   }, []);
 
-  // Add window focus listener to refetch data when user returns to tab
-  useEffect(() => {
-    const handleFocus = () => {
-      fetchAirlines();
-    };
-
-    window.addEventListener('focus', handleFocus);
-    return () => window.removeEventListener('focus', handleFocus);
-  }, []);
+  // Removed window focus listener to prevent page reloads during user interactions
+  // useEffect(() => {
+  //   const handleFocus = () => {
+  //     fetchAirlines();
+  //   };
+  //
+  //   window.addEventListener('focus', handleFocus);
+  //   return () => window.removeEventListener('focus', handleFocus);
+  // }, []);
 
   return {
     airlines,

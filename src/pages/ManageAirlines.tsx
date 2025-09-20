@@ -123,6 +123,8 @@ export default function ManageAirlines() {
       event.stopPropagation();
     }
     
+    console.log('🔄 Toggling visibility for:', airline.name, 'from', airline.active, 'to', !airline.active);
+    
     try {
       await updateAirline(airline.id, { active: !airline.active });
       toast({
