@@ -2,8 +2,10 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
 import { Checkbox } from '@/components/ui/checkbox'
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible'
 import { Plus, Check, ChevronDown, ChevronRight } from 'lucide-react'
 import * as icons from 'lucide-react'
+import { useState } from 'react'
 
 interface RouteStepDetail {
   id?: string
@@ -73,6 +75,17 @@ export function StudentRouteStepCard({
   onToggleExpansion
 }: StudentRouteStepCardProps) {
   const IconComponent = iconMap[step.icon as keyof typeof iconMap] || icons.GraduationCap
+  const [expandedTasks, setExpandedTasks] = useState<Set<string>>(new Set())
+
+  const toggleTaskExpansion = (taskId: string) => {
+    const newExpanded = new Set(expandedTasks)
+    if (newExpanded.has(taskId)) {
+      newExpanded.delete(taskId)
+    } else {
+      newExpanded.add(taskId)
+    }
+    setExpandedTasks(newExpanded)
+  }
 
   return (
     <Card className={`transition-all duration-200 hover:shadow-md ${
@@ -172,59 +185,87 @@ export function StudentRouteStepCard({
           </div>
           {isExpanded && (
             <div className="space-y-3">
-              {step.details.map((detail, index) => (
-              <div key={detail.id || index} className="flex items-start space-x-3 p-3 rounded-lg bg-muted/30">
-                {variant === 'selected' && onTaskToggle ? (
-                  <Checkbox
-                    id={`task-${detail.id || index}`}
-                    checked={detail.checked}
-                    onCheckedChange={(checked) => onTaskToggle(detail.id || index.toString(), !!checked)}
-                    className="mt-0.5"
-                  />
-                ) : (
-                  <div className="w-2 h-2 rounded-full bg-primary/40 mt-2 flex-shrink-0" />
-                )}
-                <div className="flex-1 min-w-0">
-                  <div className="flex items-center justify-between gap-3">
-                    <label 
-                      htmlFor={`task-${detail.id || index}`}
-                      className={`font-medium cursor-pointer ${
-                        detail.checked ? 'line-through text-muted-foreground' : ''
-                      }`}
-                    >
-                      {detail.title}
-                    </label>
-                    <div className="flex gap-2 flex-shrink-0">
-                      {detail.flightHours && (
-                        <Badge variant="outline" className="text-xs">
-                          {detail.flightHours}h
-                        </Badge>
-                      )}
-                      {step.category !== 'Initial Tasks' && (
-                        <Badge 
-                          variant={detail.taskType === 'flight' ? 'default' : 'secondary'} 
-                          className="text-xs"
-                        >
-                          {detail.taskType || 'ground'}
-                        </Badge>
-                      )}
-                      {detail.mandatory && (
-                        <Badge variant="destructive" className="text-xs">
-                          Required
-                        </Badge>
-                      )}
-                    </div>
-                  </div>
-                  {detail.description && (
-                    <p className={`text-sm mt-2 ${
-                      detail.checked ? 'text-muted-foreground' : 'text-muted-foreground'
-                    }`}>
-                      {stripHtmlTags(detail.description)}
-                    </p>
-                  )}
-                </div>
-              </div>
-              ))}
+              {step.details.map((detail, index) => {
+                const taskId = detail.id || index.toString()
+                const isTaskExpanded = expandedTasks.has(taskId)
+                
+                return (
+                  <Card key={taskId} className="border border-muted">
+                    <CardContent className="p-4">
+                      <div className="flex items-start space-x-3">
+                        {variant === 'selected' && onTaskToggle ? (
+                          <Checkbox
+                            id={`task-${taskId}`}
+                            checked={detail.checked}
+                            onCheckedChange={(checked) => onTaskToggle(taskId, !!checked)}
+                            className="mt-0.5"
+                          />
+                        ) : (
+                          <div className="w-2 h-2 rounded-full bg-primary/40 mt-2 flex-shrink-0" />
+                        )}
+                        <div className="flex-1 min-w-0">
+                          <div className="flex items-center justify-between gap-3">
+                            <label 
+                              htmlFor={`task-${taskId}`}
+                              className={`font-medium cursor-pointer ${
+                                detail.checked ? 'line-through text-muted-foreground' : ''
+                              }`}
+                            >
+                              {detail.title}
+                            </label>
+                            <div className="flex gap-2 flex-shrink-0 items-center">
+                              {detail.flightHours && (
+                                <Badge variant="outline" className="text-xs">
+                                  {detail.flightHours}h
+                                </Badge>
+                              )}
+                              {step.category !== 'Initial Tasks' && (
+                                <Badge 
+                                  variant={detail.taskType === 'flight' ? 'default' : 'secondary'} 
+                                  className="text-xs"
+                                >
+                                  {detail.taskType || 'ground'}
+                                </Badge>
+                              )}
+                              {detail.mandatory && (
+                                <Badge variant="destructive" className="text-xs">
+                                  Required
+                                </Badge>
+                              )}
+                              {detail.description && (
+                                <Button
+                                  variant="ghost"
+                                  size="sm"
+                                  onClick={() => toggleTaskExpansion(taskId)}
+                                  className="h-6 w-6 p-0 ml-2"
+                                >
+                                  {isTaskExpanded ? (
+                                    <ChevronDown className="h-3 w-3" />
+                                  ) : (
+                                    <ChevronRight className="h-3 w-3" />
+                                  )}
+                                </Button>
+                              )}
+                            </div>
+                          </div>
+                          {detail.description && (
+                            <Collapsible open={isTaskExpanded} onOpenChange={() => toggleTaskExpansion(taskId)}>
+                              <CollapsibleContent className="mt-3">
+                                <div className="prose prose-sm max-w-none bg-muted/50 rounded-lg p-4">
+                                  <div 
+                                    dangerouslySetInnerHTML={{ __html: detail.description }}
+                                    className="text-sm text-muted-foreground [&>*]:mb-2 [&>*:last-child]:mb-0 [&>ul]:ml-4 [&>ol]:ml-4 [&>ul>li]:list-disc [&>ol>li]:list-decimal"
+                                  />
+                                </div>
+                              </CollapsibleContent>
+                            </Collapsible>
+                          )}
+                        </div>
+                      </div>
+                    </CardContent>
+                  </Card>
+                )
+              })}
             </div>
           )}
           
