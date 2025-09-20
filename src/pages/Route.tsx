@@ -5,6 +5,10 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
 import { Checkbox } from "@/components/ui/checkbox";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import { useAuth } from "@/contexts/AuthContext";
 import { useNavigate } from "react-router-dom";
 import { useRouteSteps } from "@/hooks/useRouteSteps";
@@ -396,6 +400,35 @@ export default function RouteBuilder() {
     }
   };
 
+  const updateTaskDetails = async (stepId: string, taskId: string, updates: { 
+    flightHours?: number; 
+    taskType?: 'flight' | 'ground'; 
+    hourType?: 'ATP' | 'R-ATP Bachelors Degree' | 'R-ATP Associated Degree' 
+  }) => {
+    // Update local state immediately for better UX - this affects the displayed data
+    setStudentRoute(prev => prev.map(step => {
+      if (step.id === stepId) {
+        // Find and update the step details in the full route step data
+        const fullStep = routeSteps.find(rs => rs.id === stepId);
+        if (fullStep) {
+          fullStep.details = fullStep.details.map(detail => {
+            if (detail.id === taskId || detail.title === taskId) {
+              return {
+                ...detail,
+                ...updates
+              }
+            }
+            return detail
+          })
+        }
+        return step;
+      }
+      return step;
+    }));
+    
+    // You could add server sync here if needed in the future
+  };
+
 // Enhanced utility function to convert HTML to formatted JSX
 const formatHtmlContent = (html: string) => {
   if (!html || !html.trim()) return null;
@@ -640,30 +673,97 @@ const formatHtmlContent = (html: string) => {
                                            >
                                              {detail.title}
                                            </label>
-                                           <div className="flex gap-2 flex-shrink-0">
-                                             {detail.flightHours && (
-                                               <Badge variant="outline" className="text-xs">
-                                                 {detail.flightHours}h
-                                               </Badge>
-                                             )}
-                                             {step.category !== 'Initial Tasks' && (
-                                               <Badge 
-                                                 variant={detail.taskType === 'flight' ? 'default' : 'secondary'} 
-                                                 className="text-xs"
-                                               >
-                                                 {detail.taskType || 'ground'}
-                                               </Badge>
-                                             )}
-                                             {detail.mandatory && (
-                                               <Badge variant="destructive" className="text-xs">
-                                                 Required
-                                               </Badge>
-                                             )}
-                                             {isCompleted && (
-                                               <Badge variant="default" className="text-xs bg-green-500">
-                                                 ✓ Complete
-                                               </Badge>
-                                             )}
+                                            <div className="flex gap-2 flex-shrink-0">
+                                              {/* Flight Hours Dropdown */}
+                                              {(detail.flightHours || step.category === 'Flight Instructing') && (
+                                                <Popover>
+                                                  <PopoverTrigger asChild>
+                                                    <Button variant="outline" size="sm" className="h-6 text-xs px-2 cursor-pointer">
+                                                      {detail.flightHours || 0}h
+                                                    </Button>
+                                                  </PopoverTrigger>
+                                                  <PopoverContent className="w-64 p-3 bg-background border z-50">
+                                                    <div className="space-y-3">
+                                                      <Label className="text-sm font-medium">Flight Hours</Label>
+                                                      <Input
+                                                        type="number"
+                                                        placeholder="Enter hours"
+                                                        value={detail.flightHours || ''}
+                                                        onChange={(e) => {
+                                                          const hours = parseFloat(e.target.value) || 0
+                                                          updateTaskDetails(step.id!, detail.id || detail.title, { flightHours: hours })
+                                                        }}
+                                                        className="h-8"
+                                                      />
+                                                      {step.category === 'Flight Instructing' && (
+                                                        <>
+                                                          <Label className="text-sm font-medium">Hour Type</Label>
+                                                          <Select 
+                                                            value={(detail as any).hourType || 'ATP'} 
+                                                            onValueChange={(value) => updateTaskDetails(step.id!, detail.id || detail.title, { 
+                                                              hourType: value as 'ATP' | 'R-ATP Bachelors Degree' | 'R-ATP Associated Degree' 
+                                                            })}
+                                                          >
+                                                            <SelectTrigger className="h-8">
+                                                              <SelectValue />
+                                                            </SelectTrigger>
+                                                            <SelectContent className="bg-background border z-50">
+                                                              <SelectItem value="ATP">ATP</SelectItem>
+                                                              <SelectItem value="R-ATP Bachelors Degree">R-ATP Bachelors Degree</SelectItem>
+                                                              <SelectItem value="R-ATP Associated Degree">R-ATP Associated Degree</SelectItem>
+                                                            </SelectContent>
+                                                          </Select>
+                                                        </>
+                                                      )}
+                                                    </div>
+                                                  </PopoverContent>
+                                                </Popover>
+                                              )}
+                                              
+                                              {/* Task Type Dropdown */}
+                                              {step.category !== 'Initial Tasks' && (
+                                                <Popover>
+                                                  <PopoverTrigger asChild>
+                                                    <Button 
+                                                      variant={detail.taskType === 'flight' ? 'default' : 'secondary'} 
+                                                      size="sm" 
+                                                      className="h-6 text-xs px-2 cursor-pointer"
+                                                    >
+                                                      {detail.taskType || 'ground'}
+                                                    </Button>
+                                                  </PopoverTrigger>
+                                                  <PopoverContent className="w-48 p-3 bg-background border z-50">
+                                                    <div className="space-y-2">
+                                                      <Label className="text-sm font-medium">Task Type</Label>
+                                                      <Select 
+                                                        value={detail.taskType || 'ground'} 
+                                                        onValueChange={(value) => updateTaskDetails(step.id!, detail.id || detail.title, { 
+                                                          taskType: value as 'flight' | 'ground' 
+                                                        })}
+                                                      >
+                                                        <SelectTrigger className="h-8">
+                                                          <SelectValue />
+                                                        </SelectTrigger>
+                                                        <SelectContent className="bg-background border z-50">
+                                                          <SelectItem value="flight">Flight</SelectItem>
+                                                          <SelectItem value="ground">Ground</SelectItem>
+                                                        </SelectContent>
+                                                      </Select>
+                                                    </div>
+                                                  </PopoverContent>
+                                                </Popover>
+                                              )}
+                                              
+                                              {detail.mandatory && (
+                                                <Badge variant="destructive" className="text-xs">
+                                                  Required
+                                                </Badge>
+                                              )}
+                                              {isCompleted && (
+                                                <Badge variant="default" className="text-xs bg-green-500">
+                                                  ✓ Complete
+                                                </Badge>
+                                              )}
                                               {detail.description && detail.description.trim() && false && (
                                                 <Button
                                                   variant="ghost"
