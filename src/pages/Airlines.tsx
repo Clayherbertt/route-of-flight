@@ -91,27 +91,27 @@ const Airlines = () => {
     }
   };
 
-  // Group airlines by category
+  // Group airlines by category and only show active ones
   const airlineSections = [
     {
       title: "Majors",
-      airlines: airlines.filter(airline => airline.category === "Majors")
+      airlines: airlines.filter(airline => airline.category === "Majors" && airline.active)
     },
     {
       title: "Ultra Low Cost Carriers & Large Operators", 
-      airlines: airlines.filter(airline => airline.category === "Ultra Low Cost Carriers & Large Operators")
+      airlines: airlines.filter(airline => airline.category === "Ultra Low Cost Carriers & Large Operators" && airline.active)
     },
     {
       title: "Regional Carriers",
-      airlines: airlines.filter(airline => airline.category === "Regional Carriers")
+      airlines: airlines.filter(airline => airline.category === "Regional Carriers" && airline.active)
     },
     {
       title: "Fractional Carriers",
-      airlines: airlines.filter(airline => airline.category === "Fractional Carriers")
+      airlines: airlines.filter(airline => airline.category === "Fractional Carriers" && airline.active)
     },
     {
       title: "Cargo",
-      airlines: airlines.filter(airline => airline.category === "Cargo")
+      airlines: airlines.filter(airline => airline.category === "Cargo" && airline.active)
     }
   ];
 
