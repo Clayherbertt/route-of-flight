@@ -328,8 +328,8 @@ export function useAirlines() {
         },
         (payload) => {
           console.log('Airlines table changed:', payload);
-          // Refetch data when any change occurs
-          fetchAirlines();
+          // Don't refetch all data since we optimistically update local state
+          // Only log the change for debugging purposes
         }
       )
       .subscribe();
