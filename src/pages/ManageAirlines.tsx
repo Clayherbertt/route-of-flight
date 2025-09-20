@@ -117,7 +117,12 @@ export default function ManageAirlines() {
     setIsFormOpen(true);
   };
 
-  const handleToggleVisibility = async (airline: AirlineData) => {
+  const handleToggleVisibility = async (airline: AirlineData, event?: React.MouseEvent) => {
+    if (event) {
+      event.preventDefault();
+      event.stopPropagation();
+    }
+    
     try {
       await updateAirline(airline.id, { active: !airline.active });
       toast({
@@ -280,14 +285,22 @@ export default function ManageAirlines() {
                         </span>
                         <Switch
                           checked={airline.active}
-                          onCheckedChange={() => handleToggleVisibility(airline)}
+                          onCheckedChange={(checked) => {
+                            handleToggleVisibility(airline);
+                          }}
+                          onClick={(e) => e.stopPropagation()}
                           aria-label={`Toggle visibility for ${airline.name}`}
                         />
                       </div>
                       <Button
                         variant="outline"
                         size="sm"
-                        onClick={() => handleEditAirline(airline)}
+                        type="button"
+                        onClick={(e) => {
+                          e.preventDefault();
+                          e.stopPropagation();
+                          handleEditAirline(airline);
+                        }}
                       >
                         Edit
                       </Button>
