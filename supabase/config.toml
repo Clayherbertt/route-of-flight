@@ -56,6 +56,3 @@ port = 54328
 
 [functions]
 verify_jwt = true
-
-[functions.import-csv-flights]
-verify_jwt = false

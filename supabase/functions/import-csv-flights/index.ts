@@ -36,7 +36,6 @@ interface FlightEntry {
 
 serve(async (req) => {
   console.log('CSV import function called with method:', req.method)
-  console.log('Request headers:', Object.fromEntries(req.headers.entries()))
   
   // Handle CORS preflight requests
   if (req.method === 'OPTIONS') {
@@ -47,7 +46,7 @@ serve(async (req) => {
   try {
     console.log('Starting CSV import function execution')
     
-    // Get the authorization header for user identification
+    // Get authorization header
     const authHeader = req.headers.get('Authorization')
     console.log('Auth header present:', !!authHeader)
     
@@ -56,7 +55,11 @@ serve(async (req) => {
       throw new Error('No authorization header provided')
     }
 
-    // Create Supabase client with anon key
+    // Extract JWT from header
+    const jwt = authHeader.replace('Bearer ', '')
+    console.log('JWT extracted, length:', jwt.length)
+
+    // Create Supabase client
     const supabaseClient = createClient(
       Deno.env.get('SUPABASE_URL') ?? '',
       Deno.env.get('SUPABASE_ANON_KEY') ?? '',
@@ -69,13 +72,16 @@ serve(async (req) => {
     
     console.log('Supabase client created')
 
-    // Get the current user
-    const { data: { user }, error: userError } = await supabaseClient.auth.getUser()
-    console.log('User authentication result:', { user: !!user, error: userError?.message })
+    // Verify user authentication using the JWT
+    const { data: { user }, error: userError } = await supabaseClient.auth.getUser(jwt)
+    console.log('User authentication result:', { 
+      user: user ? { id: user.id, email: user.email } : null, 
+      error: userError?.message 
+    })
 
     if (userError || !user) {
       console.error('Authentication error:', userError)
-      throw new Error(`User not authenticated: ${userError?.message}`)
+      throw new Error(`User not authenticated: ${userError?.message || 'Unknown error'}`)
     }
 
     console.log('Processing CSV import for user:', user.id)
