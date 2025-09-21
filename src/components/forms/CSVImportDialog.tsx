@@ -67,6 +67,25 @@ const SAMPLE_CSV = `Date,Aircraft,Type,From,To,Total Time,PIC,Cross Country,Nigh
 2024-01-15,N12345,C172,KJFK,KLGA,1.2,1.2,0,0,2,1,Pattern work
 2024-01-20,N67890,PA28,KLGA,KBDR,2.1,2.1,2.1,0,1,1,Cross country flight`;
 
+const FOREFLIGHT_SAMPLE_CSV = `ForeFlight Logbook Import,This row is required for importing into ForeFlight. Do not delete or modify.
+
+Aircraft Table
+AircraftID,TypeCode,Year,Make,Model,GearType,EngineType,equipType (FAA),aircraftClass (FAA)
+N12345,C172,,Cessna,172S,fixed_tricycle,Piston,aircraft,airplane_single_engine_land
+N67890,PA28,,Piper,Cherokee,fixed_tricycle,Piston,aircraft,airplane_single_engine_land
+
+Flights Table
+Date,AircraftID,From,To,Route,TimeOut,TimeOff,TimeOn,TimeIn,OnDuty,OffDuty,TotalTime,PIC,SIC,Night,Solo,CrossCountry,Distance,ActualInstrument,SimulatedInstrument,Holds,Approach1,Approach2,DualGiven,DualReceived,DayTakeoffs,DayLandingsFullStop,NightTakeoffs,NightLandingsFullStop,AllLandings,PilotComments
+2024-01-15,N12345,KJFK,KLGA,,,,,,,,1.2,1.2,0.0,0.0,0.0,0.0,147.3,0.0,0.0,0,ILS,VOR,0.0,0.0,2,1,0,0,1,Pattern work
+2024-01-20,N67890,KLGA,KBDR,,,,,,,,2.1,2.1,0.0,0.0,0.0,2.1,173.2,0.0,0.0,0,,,0.0,0.0,1,1,0,0,1,Cross country flight`;
+
+interface AircraftInfo {
+  aircraftId: string;
+  typeCode: string;
+  make: string;
+  model: string;
+}
+
 export function CSVImportDialog({ open, onOpenChange, onImportComplete }: CSVImportDialogProps) {
   const { toast } = useToast();
   const [step, setStep] = useState<'upload' | 'mapping' | 'preview' | 'importing' | 'complete'>('upload');
@@ -76,6 +95,58 @@ export function CSVImportDialog({ open, onOpenChange, onImportComplete }: CSVImp
   const [validationErrors, setValidationErrors] = useState<ValidationError[]>([]);
   const [importProgress, setImportProgress] = useState(0);
   const [importResults, setImportResults] = useState<{ success: number; failed: number }>({ success: 0, failed: 0 });
+  const [isForeFlight, setIsForeFlight] = useState(false);
+  const [aircraftLookup, setAircraftLookup] = useState<Map<string, AircraftInfo>>(new Map());
+
+  const parseForeFlight = (allRows: string[][]) => {
+    const aircraftLookupMap = new Map<string, AircraftInfo>();
+    let flightHeaders: string[] = [];
+    let flightRows: CSVRow[] = [];
+    
+    let currentSection = '';
+    let flightTableStartIndex = -1;
+    
+    for (let i = 0; i < allRows.length; i++) {
+      const row = allRows[i];
+      const firstCell = row[0]?.toString().toLowerCase();
+      
+      if (firstCell === 'aircraft table') {
+        currentSection = 'aircraft';
+        continue;
+      } else if (firstCell === 'flights table') {
+        currentSection = 'flights';
+        flightTableStartIndex = i + 1;
+        continue;
+      }
+      
+      if (currentSection === 'aircraft' && row.length >= 5 && row[0] && row[0] !== 'AircraftID') {
+        const aircraftId = row[0];
+        const typeCode = row[1] || '';
+        const make = row[3] || '';
+        const model = row[4] || '';
+        
+        if (aircraftId.trim()) {
+          aircraftLookupMap.set(aircraftId, {
+            aircraftId,
+            typeCode,
+            make,
+            model
+          });
+        }
+      } else if (currentSection === 'flights' && i === flightTableStartIndex) {
+        flightHeaders = row.filter(Boolean);
+      } else if (currentSection === 'flights' && i > flightTableStartIndex && row.some(cell => cell?.trim())) {
+        const rowObj: CSVRow = {};
+        flightHeaders.forEach((header, index) => {
+          rowObj[header] = row[index] || '';
+        });
+        flightRows.push(rowObj);
+      }
+    }
+    
+    setAircraftLookup(aircraftLookupMap);
+    return { headers: flightHeaders, rows: flightRows };
+  };
 
   const handleFileUpload = useCallback((event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
@@ -101,34 +172,80 @@ export function CSVImportDialog({ open, onOpenChange, onImportComplete }: CSVImp
           return;
         }
 
-        const headers = results.data[0] as string[];
-        const rows = results.data.slice(1) as CSVRow[];
+        const allRows = results.data as string[][];
+        
+        // Check if this is a ForeFlight export
+        const isForeFlight = allRows[0]?.[0]?.toLowerCase().includes('foreflight logbook import');
+        setIsForeFlight(isForeFlight);
+        
+        let headers: string[];
+        let rows: CSVRow[];
+        
+        if (isForeFlight) {
+          const parsed = parseForeFlight(allRows);
+          headers = parsed.headers;
+          rows = parsed.rows;
+        } else {
+          headers = allRows[0] as string[];
+          rows = allRows.slice(1).filter(row => row.some(cell => cell?.trim())).map(row => {
+            const rowObj: CSVRow = {};
+            headers.forEach((header, index) => {
+              rowObj[header] = row[index] || '';
+            });
+            return rowObj;
+          });
+        }
         
         setCsvHeaders(headers);
-        setCsvData(rows.filter(row => Object.values(row).some(val => val?.trim())));
+        setCsvData(rows);
         
-        // Auto-map common field names
+        // Auto-map field names
         const autoMappings: FieldMapping[] = [];
         headers.forEach(header => {
           const lowerHeader = header.toLowerCase();
           let dbField = '';
           
-          if (lowerHeader.includes('date')) dbField = 'date';
-          else if (lowerHeader.includes('aircraft') && (lowerHeader.includes('reg') || lowerHeader.includes('tail') || lowerHeader.includes('n-'))) dbField = 'aircraft_registration';
-          else if (lowerHeader.includes('aircraft') && lowerHeader.includes('type')) dbField = 'aircraft_type';
-          else if (lowerHeader.includes('type') && !lowerHeader.includes('aircraft')) dbField = 'aircraft_type';
-          else if (lowerHeader.includes('from') || lowerHeader.includes('departure') || lowerHeader.includes('origin')) dbField = 'departure_airport';
-          else if (lowerHeader.includes('to') || lowerHeader.includes('arrival') || lowerHeader.includes('destination')) dbField = 'arrival_airport';
-          else if (lowerHeader.includes('total') && lowerHeader.includes('time')) dbField = 'total_time';
-          else if (lowerHeader.includes('pic') || lowerHeader === 'pilot in command') dbField = 'pic_time';
-          else if (lowerHeader.includes('sic') || lowerHeader.includes('second in command')) dbField = 'sic_time';
-          else if (lowerHeader.includes('cross') && lowerHeader.includes('country')) dbField = 'cross_country_time';
-          else if (lowerHeader.includes('night')) dbField = 'night_time';
-          else if (lowerHeader.includes('instrument')) dbField = 'instrument_time';
-          else if (lowerHeader.includes('approach')) dbField = 'approaches';
-          else if (lowerHeader.includes('landing')) dbField = 'landings';
-          else if (lowerHeader.includes('route')) dbField = 'route';
-          else if (lowerHeader.includes('remarks') || lowerHeader.includes('notes') || lowerHeader.includes('comment')) dbField = 'remarks';
+          if (isForeFlight) {
+            // ForeFlight-specific mappings
+            if (lowerHeader === 'date') dbField = 'date';
+            else if (lowerHeader === 'aircraftid') dbField = 'aircraft_registration';
+            else if (lowerHeader === 'from') dbField = 'departure_airport';
+            else if (lowerHeader === 'to') dbField = 'arrival_airport';
+            else if (lowerHeader === 'totaltime') dbField = 'total_time';
+            else if (lowerHeader === 'pic') dbField = 'pic_time';
+            else if (lowerHeader === 'sic') dbField = 'sic_time';
+            else if (lowerHeader === 'crosscountry') dbField = 'cross_country_time';
+            else if (lowerHeader === 'night') dbField = 'night_time';
+            else if (lowerHeader === 'actualinstrument') dbField = 'actual_instrument';
+            else if (lowerHeader === 'simulatedinstrument') dbField = 'simulated_instrument';
+            else if (lowerHeader === 'solo') dbField = 'solo_time';
+            else if (lowerHeader === 'dualreceived') dbField = 'dual_received';
+            else if (lowerHeader === 'dualgiven') dbField = 'dual_given';
+            else if (lowerHeader === 'holds') dbField = 'holds';
+            else if (lowerHeader === 'alllandings') dbField = 'landings';
+            else if (lowerHeader === 'daylandingsfullstop') dbField = 'day_landings';
+            else if (lowerHeader === 'nightlandingsfullstop') dbField = 'night_landings';
+            else if (lowerHeader === 'route') dbField = 'route';
+            else if (lowerHeader === 'pilotcomments') dbField = 'remarks';
+          } else {
+            // Standard mappings
+            if (lowerHeader.includes('date')) dbField = 'date';
+            else if (lowerHeader.includes('aircraft') && (lowerHeader.includes('reg') || lowerHeader.includes('tail') || lowerHeader.includes('n-'))) dbField = 'aircraft_registration';
+            else if (lowerHeader.includes('aircraft') && lowerHeader.includes('type')) dbField = 'aircraft_type';
+            else if (lowerHeader.includes('type') && !lowerHeader.includes('aircraft')) dbField = 'aircraft_type';
+            else if (lowerHeader.includes('from') || lowerHeader.includes('departure') || lowerHeader.includes('origin')) dbField = 'departure_airport';
+            else if (lowerHeader.includes('to') || lowerHeader.includes('arrival') || lowerHeader.includes('destination')) dbField = 'arrival_airport';
+            else if (lowerHeader.includes('total') && lowerHeader.includes('time')) dbField = 'total_time';
+            else if (lowerHeader.includes('pic') || lowerHeader === 'pilot in command') dbField = 'pic_time';
+            else if (lowerHeader.includes('sic') || lowerHeader.includes('second in command')) dbField = 'sic_time';
+            else if (lowerHeader.includes('cross') && lowerHeader.includes('country')) dbField = 'cross_country_time';
+            else if (lowerHeader.includes('night')) dbField = 'night_time';
+            else if (lowerHeader.includes('instrument')) dbField = 'instrument_time';
+            else if (lowerHeader.includes('approach')) dbField = 'approaches';
+            else if (lowerHeader.includes('landing')) dbField = 'landings';
+            else if (lowerHeader.includes('route')) dbField = 'route';
+            else if (lowerHeader.includes('remarks') || lowerHeader.includes('notes') || lowerHeader.includes('comment')) dbField = 'remarks';
+          }
           
           if (dbField) {
             autoMappings.push({ csvColumn: header, dbField });
@@ -237,8 +354,10 @@ export function CSVImportDialog({ open, onOpenChange, onImportComplete }: CSVImp
     try {
       const mappedData = csvData.map(row => {
         const flightEntry: any = {};
+        let approachCount = 0;
+        
         fieldMappings.forEach(mapping => {
-          const value = row[csvHeaders.indexOf(mapping.csvColumn)]?.trim();
+          const value = row[mapping.csvColumn]?.trim();
           if (value) {
             if (mapping.dbField === 'date') {
               flightEntry[mapping.dbField] = new Date(value).toISOString().split('T')[0];
@@ -249,6 +368,34 @@ export function CSVImportDialog({ open, onOpenChange, onImportComplete }: CSVImp
             }
           }
         });
+        
+        // Handle ForeFlight approach columns
+        if (isForeFlight) {
+          for (let i = 1; i <= 6; i++) {
+            const approachValue = row[`Approach${i}`]?.trim();
+            if (approachValue) {
+              approachCount++;
+            }
+          }
+          if (approachCount > 0) {
+            flightEntry.approaches = approachCount;
+          }
+          
+          // Get aircraft type from lookup if aircraftid is provided
+          const aircraftId = flightEntry.aircraft_registration || row['AircraftID'];
+          if (aircraftId && aircraftLookup.has(aircraftId)) {
+            const aircraftInfo = aircraftLookup.get(aircraftId)!;
+            // Use TypeCode if available, otherwise combine Make and Model
+            if (aircraftInfo.typeCode) {
+              flightEntry.aircraft_type = aircraftInfo.typeCode;
+            } else if (aircraftInfo.make && aircraftInfo.model) {
+              flightEntry.aircraft_type = `${aircraftInfo.make} ${aircraftInfo.model}`;
+            } else {
+              flightEntry.aircraft_type = aircraftInfo.make || aircraftInfo.model || 'Unknown';
+            }
+          }
+        }
+        
         return flightEntry;
       });
 
@@ -278,12 +425,13 @@ export function CSVImportDialog({ open, onOpenChange, onImportComplete }: CSVImp
     }
   };
 
-  const downloadTemplate = () => {
-    const blob = new Blob([SAMPLE_CSV], { type: 'text/csv' });
+  const downloadTemplate = (templateType: 'standard' | 'foreflight' = 'standard') => {
+    const csvContent = templateType === 'foreflight' ? FOREFLIGHT_SAMPLE_CSV : SAMPLE_CSV;
+    const blob = new Blob([csvContent], { type: 'text/csv' });
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
     a.href = url;
-    a.download = 'logbook-template.csv';
+    a.download = `logbook-template-${templateType}.csv`;
     document.body.appendChild(a);
     a.click();
     document.body.removeChild(a);
@@ -298,6 +446,8 @@ export function CSVImportDialog({ open, onOpenChange, onImportComplete }: CSVImp
     setValidationErrors([]);
     setImportProgress(0);
     setImportResults({ success: 0, failed: 0 });
+    setIsForeFlight(false);
+    setAircraftLookup(new Map());
   };
 
   return (
@@ -343,13 +493,19 @@ export function CSVImportDialog({ open, onOpenChange, onImportComplete }: CSVImp
                   />
                 </div>
                 
-                <div className="flex items-center gap-2">
-                  <Button variant="outline" onClick={downloadTemplate} size="sm">
-                    <Download className="h-4 w-4 mr-2" />
-                    Download Template
-                  </Button>
+                <div className="flex flex-col gap-2">
+                  <div className="flex items-center gap-2">
+                    <Button variant="outline" onClick={() => downloadTemplate('standard')} size="sm">
+                      <Download className="h-4 w-4 mr-2" />
+                      Standard Template
+                    </Button>
+                    <Button variant="outline" onClick={() => downloadTemplate('foreflight')} size="sm">
+                      <Download className="h-4 w-4 mr-2" />
+                      ForeFlight Template
+                    </Button>
+                  </div>
                   <span className="text-sm text-muted-foreground">
-                    Need help? Download our template CSV file
+                    Download a template file that matches your logbook software
                   </span>
                 </div>
               </CardContent>
@@ -363,7 +519,7 @@ export function CSVImportDialog({ open, onOpenChange, onImportComplete }: CSVImp
               <CardHeader>
                 <CardTitle className="text-lg">Map CSV Columns</CardTitle>
                 <CardDescription>
-                  Match your CSV columns to the logbook fields. Required fields are marked with *
+                  {isForeFlight ? 'ForeFlight format detected! ' : ''}Match your CSV columns to the logbook fields. Required fields are marked with *
                 </CardDescription>
               </CardHeader>
               <CardContent>
