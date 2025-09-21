@@ -394,21 +394,22 @@ const Logbook = () => {
                         <TableCell>
                           <DropdownMenu>
                             <DropdownMenuTrigger asChild>
-                              <Button variant="ghost" size="sm" className="h-8 w-8 p-0">
+                              <Button variant="ghost" size="sm" className="h-8 w-8 p-0 hover:bg-muted">
+                                <span className="sr-only">Open menu</span>
                                 <MoreHorizontal className="h-4 w-4" />
                               </Button>
                             </DropdownMenuTrigger>
-                            <DropdownMenuContent align="end">
+                            <DropdownMenuContent align="end" className="w-[160px]">
                               <DropdownMenuItem onClick={() => handleEditFlight(flight)}>
                                 <Edit className="h-4 w-4 mr-2" />
-                                Edit
+                                Edit Flight
                               </DropdownMenuItem>
                               <DropdownMenuItem 
                                 onClick={() => setDeletingFlight(flight)}
                                 className="text-destructive focus:text-destructive"
                               >
                                 <Trash2 className="h-4 w-4 mr-2" />
-                                Delete
+                                Delete Flight
                               </DropdownMenuItem>
                             </DropdownMenuContent>
                           </DropdownMenu>
