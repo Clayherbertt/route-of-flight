@@ -134,10 +134,10 @@ serve(async (req) => {
             end_time: flight.end_time || null,
           };
 
-          // Validate required fields
+          // Validate required fields - allow total_time of 0 for cancelled flights, ground time, etc.
           if (!entry.date || !entry.aircraft_registration || !entry.aircraft_type || 
-              !entry.departure_airport || !entry.arrival_airport || entry.total_time <= 0) {
-            throw new Error(`Flight ${index + 1}: Missing required fields`)
+              !entry.departure_airport || !entry.arrival_airport || entry.total_time < 0) {
+            throw new Error(`Flight ${index + 1}: Missing required fields - Date: "${entry.date}", Registration: "${entry.aircraft_registration}", Type: "${entry.aircraft_type}", Departure: "${entry.departure_airport}", Arrival: "${entry.arrival_airport}", Total Time: ${entry.total_time}`)
           }
 
           return entry;
