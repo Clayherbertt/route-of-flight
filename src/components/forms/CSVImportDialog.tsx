@@ -252,6 +252,11 @@ export function CSVImportDialog({ open, onOpenChange, onImportComplete }: CSVImp
           }
         });
         
+        // For ForeFlight, add aircraft_type as a virtual mapping since it's derived from AircraftID
+        if (isForeFlight && aircraftLookup.size > 0) {
+          autoMappings.push({ csvColumn: 'AircraftID', dbField: 'aircraft_type' });
+        }
+        
         setFieldMappings(autoMappings);
         
         // Check if we have all required fields
