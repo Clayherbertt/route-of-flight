@@ -53,43 +53,63 @@ async function processFlightImport(flights: FlightEntry[], userId: string, supab
       const flightIndex = i + j + 1;
       
       try {
+        // Parse numeric fields with better error handling
+        const parseNumericField = (value: any, fieldName: string, defaultValue: number = 0): number => {
+          if (value === undefined || value === null || value === '' || value === 'null') {
+            return defaultValue;
+          }
+          const parsed = Number(value);
+          if (isNaN(parsed)) {
+            console.log(`Flight ${flightIndex}: Invalid ${fieldName} value "${value}", using ${defaultValue}`)
+            return defaultValue;
+          }
+          return parsed;
+        };
+
         const entry = {
           user_id: userId,
           date: flight.date,
-          aircraft_registration: flight.aircraft_registration,
-          aircraft_type: flight.aircraft_type,
-          departure_airport: flight.departure_airport,
-          arrival_airport: flight.arrival_airport,
-          total_time: Number(flight.total_time) || 0,
-          pic_time: Number(flight.pic_time) || 0,
-          cross_country_time: Number(flight.cross_country_time) || 0,
-          night_time: Number(flight.night_time) || 0,
-          instrument_time: Number(flight.instrument_time) || 0,
+          aircraft_registration: flight.aircraft_registration?.toString().trim() || '',
+          aircraft_type: flight.aircraft_type?.toString().trim() || '',
+          departure_airport: flight.departure_airport?.toString().trim() || '',
+          arrival_airport: flight.arrival_airport?.toString().trim() || '',
+          total_time: parseNumericField(flight.total_time, 'total_time'),
+          pic_time: parseNumericField(flight.pic_time, 'pic_time'),
+          cross_country_time: parseNumericField(flight.cross_country_time, 'cross_country_time'),
+          night_time: parseNumericField(flight.night_time, 'night_time'),
+          instrument_time: parseNumericField(flight.instrument_time, 'instrument_time'),
           approaches: flight.approaches?.toString() || '0',
-          landings: Number(flight.landings) || 0,
-          sic_time: Number(flight.sic_time) || 0,
-          solo_time: Number(flight.solo_time) || 0,
-          day_takeoffs: Number(flight.day_landings) || 0,
-          day_landings: Number(flight.day_landings) || 0,
-          night_takeoffs: Number(flight.night_landings) || 0,
-          night_landings: Number(flight.night_landings) || 0,
-          actual_instrument: Number(flight.actual_instrument) || 0,
-          simulated_instrument: Number(flight.simulated_instrument) || 0,
-          holds: Number(flight.holds) || 0,
-          dual_given: Number(flight.dual_given) || 0,
-          dual_received: Number(flight.dual_received) || 0,
+          landings: parseNumericField(flight.landings, 'landings'),
+          sic_time: parseNumericField(flight.sic_time, 'sic_time'),
+          solo_time: parseNumericField(flight.solo_time, 'solo_time'),
+          day_takeoffs: parseNumericField(flight.day_landings, 'day_takeoffs'),
+          day_landings: parseNumericField(flight.day_landings, 'day_landings'),
+          night_takeoffs: parseNumericField(flight.night_landings, 'night_takeoffs'),
+          night_landings: parseNumericField(flight.night_landings, 'night_landings'),
+          actual_instrument: parseNumericField(flight.actual_instrument, 'actual_instrument'),
+          simulated_instrument: parseNumericField(flight.simulated_instrument, 'simulated_instrument'),
+          holds: parseNumericField(flight.holds, 'holds'),
+          dual_given: parseNumericField(flight.dual_given, 'dual_given'),
+          dual_received: parseNumericField(flight.dual_received, 'dual_received'),
           simulated_flight: 0,
           ground_training: 0,
-          route: flight.route || null,
-          remarks: flight.remarks || null,
+          route: flight.route?.toString() || null,
+          remarks: flight.remarks?.toString() || null,
           start_time: flight.start_time || null,
           end_time: flight.end_time || null,
         };
 
-        // Validate required fields
-        if (!entry.date || !entry.aircraft_registration || !entry.aircraft_type || 
-            !entry.departure_airport || !entry.arrival_airport) {
-          console.log(`Skipping flight ${flightIndex}: Missing required fields`)
+        // Validate required fields (more lenient approach)
+        const missingFields = [];
+        if (!entry.date || entry.date === '') missingFields.push('date');
+        if (!entry.aircraft_registration || entry.aircraft_registration.trim() === '') missingFields.push('aircraft_registration');
+        if (!entry.aircraft_type || entry.aircraft_type.trim() === '') missingFields.push('aircraft_type');
+        if (!entry.departure_airport || entry.departure_airport.trim() === '') missingFields.push('departure_airport');
+        if (!entry.arrival_airport || entry.arrival_airport.trim() === '') missingFields.push('arrival_airport');
+        
+        if (missingFields.length > 0) {
+          console.log(`Skipping flight ${flightIndex}: Missing required fields: ${missingFields.join(', ')}`)
+          console.log(`Flight data:`, JSON.stringify(flight, null, 2))
           failureCount++;
           continue;
         }
@@ -101,7 +121,17 @@ async function processFlightImport(flights: FlightEntry[], userId: string, supab
           })
 
         if (error) {
-          console.error(`Failed to insert flight ${flightIndex}:`, error.message)
+          console.error(`Failed to insert flight ${flightIndex}:`, {
+            error: error.message,
+            code: error.code,
+            details: error.details,
+            flight_data: {
+              date: entry.date,
+              aircraft: entry.aircraft_registration,
+              total_time: entry.total_time,
+              airports: `${entry.departure_airport} -> ${entry.arrival_airport}`
+            }
+          })
           failureCount++;
         } else {
           successCount++;
