@@ -309,11 +309,21 @@ export function CSVImportDialog({ open, onOpenChange, onImportComplete }: CSVImp
     const errors: ValidationError[] = [];
     const requiredFields = DATABASE_FIELDS.filter(f => f.required).map(f => f.key);
     
+    console.log('=== VALIDATION DEBUG START ===');
+    console.log('Required fields:', requiredFields);
+    console.log('Field mappings:', fieldMappings);
+    console.log('Is ForeFlight:', isForeFlight);
+    console.log('CSV data length:', csvData.length);
+    
     // Check if all required fields are mapped
     const mappedFields = fieldMappings.map(m => m.dbField);
     const missingRequired = requiredFields.filter(field => !mappedFields.includes(field));
     
+    console.log('Mapped fields:', mappedFields);
+    console.log('Missing required fields:', missingRequired);
+    
     if (missingRequired.length > 0) {
+      console.log('ERROR: Missing required fields detected');
       toast({
         title: "Missing required fields",
         description: `Please map the following required fields: ${missingRequired.join(', ')}`,
@@ -322,26 +332,33 @@ export function CSVImportDialog({ open, onOpenChange, onImportComplete }: CSVImp
       return false;
     }
 
+    // Skip validation if no data
+    if (!csvData || csvData.length === 0) {
+      console.log('ERROR: No CSV data to validate');
+      return false;
+    }
+
     // Validate data in each row
     csvData.forEach((row, index) => {
+      console.log(`\n--- Validating Row ${index + 1} ---`);
+      console.log('Row data:', row);
+      
       fieldMappings.forEach(mapping => {
-        // Handle both object-based data (ForeFlight) and array-based data (standard CSV)
         let value: string;
         if (isForeFlight) {
-          // ForeFlight rows are objects
           value = (row as Record<string, string>)[mapping.csvColumn];
         } else {
-          // Standard CSV rows are arrays
           value = (row as unknown as string[])[csvHeaders.indexOf(mapping.csvColumn)];
         }
         
-        // Clean up the value
         value = value?.trim?.() || '';
+        const field = DATABASE_FIELDS.find(f => f.key === mapping.dbField);
         
-        console.log(`Row ${index + 1}, Field ${mapping.dbField}, Value: "${value}"`);
+        console.log(`  Field: ${mapping.dbField} (${field?.required ? 'REQUIRED' : 'optional'}) = "${value}"`);
         
-        if (DATABASE_FIELDS.find(f => f.key === mapping.dbField)?.required && !value) {
-          console.log(`Validation error: Required field ${mapping.dbField} is empty on row ${index + 1}`);
+        // Check required fields
+        if (field?.required && !value) {
+          console.log(`  ❌ VALIDATION ERROR: Required field ${mapping.dbField} is empty`);
           errors.push({
             row: index + 1,
             field: mapping.dbField,
@@ -349,48 +366,60 @@ export function CSVImportDialog({ open, onOpenChange, onImportComplete }: CSVImp
           });
         }
         
-        // Validate specific field types
+        // Validate date format
         if (mapping.dbField === 'date' && value) {
           const date = new Date(value);
           if (isNaN(date.getTime())) {
-            console.log(`Validation error: Invalid date "${value}" on row ${index + 1}`);
+            console.log(`  ❌ VALIDATION ERROR: Invalid date "${value}"`);
             errors.push({
               row: index + 1,
               field: mapping.dbField,
               message: 'Invalid date format'
             });
+          } else {
+            console.log(`  ✅ Date "${value}" is valid`);
           }
         }
         
-        // Improved time validation - handle decimal numbers and empty values
+        // Validate time fields
         if (mapping.dbField.includes('time') && value) {
           const numValue = parseFloat(value);
           if (isNaN(numValue) || numValue < 0) {
-            console.log(`Validation error: Invalid time "${value}" on row ${index + 1} for field ${mapping.dbField}`);
+            console.log(`  ❌ VALIDATION ERROR: Invalid time "${value}" (parsed as ${numValue})`);
             errors.push({
               row: index + 1,
               field: mapping.dbField,
               message: 'Invalid time format (must be a positive number)'
             });
+          } else {
+            console.log(`  ✅ Time "${value}" is valid (${numValue})`);
           }
         }
         
-        // Validate numeric fields (approaches, landings, holds)
+        // Validate numeric fields
         if (['approaches', 'landings', 'day_landings', 'night_landings', 'holds'].includes(mapping.dbField) && value) {
           const numValue = parseInt(value);
           if (isNaN(numValue) || numValue < 0) {
-            console.log(`Validation error: Invalid number "${value}" on row ${index + 1} for field ${mapping.dbField}`);
+            console.log(`  ❌ VALIDATION ERROR: Invalid number "${value}" (parsed as ${numValue})`);
             errors.push({
               row: index + 1,
               field: mapping.dbField,
               message: 'Invalid number format (must be a positive integer)'
             });
+          } else {
+            console.log(`  ✅ Number "${value}" is valid (${numValue})`);
           }
         }
       });
     });
 
-    console.log(`Total validation errors: ${errors.length}`);
+    console.log('\n=== VALIDATION SUMMARY ===');
+    console.log(`Total validation errors found: ${errors.length}`);
+    if (errors.length > 0) {
+      console.log('Errors:', errors);
+    }
+    console.log('=== VALIDATION DEBUG END ===\n');
+
     setValidationErrors(errors);
     
     if (errors.length > 0) {
