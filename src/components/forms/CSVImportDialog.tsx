@@ -12,6 +12,7 @@ import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Upload, FileText, CheckCircle, AlertCircle, Download } from "lucide-react";
 import Papa from "papaparse";
 import { useToast } from "@/hooks/use-toast";
+import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
 
 interface CSVImportDialogProps {
@@ -88,6 +89,8 @@ interface AircraftInfo {
 
 export function CSVImportDialog({ open, onOpenChange, onImportComplete }: CSVImportDialogProps) {
   const { toast } = useToast();
+  const { user, session } = useAuth();
+  
   const [step, setStep] = useState<'upload' | 'mapping' | 'preview' | 'importing' | 'complete'>('upload');
   const [csvData, setCsvData] = useState<CSVRow[]>([]);
   const [csvHeaders, setCsvHeaders] = useState<string[]>([]);
@@ -375,6 +378,18 @@ export function CSVImportDialog({ open, onOpenChange, onImportComplete }: CSVImp
   };
 
   const startImport = async () => {
+    if (!user) {
+      toast({
+        title: "Authentication required",
+        description: "You must be logged in to import flights. Please sign in and try again.",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    console.log('Starting import with user:', user.id);
+    console.log('User session present:', !!session);
+    
     setStep('importing');
     setImportProgress(0);
     
@@ -426,11 +441,22 @@ export function CSVImportDialog({ open, onOpenChange, onImportComplete }: CSVImp
         return flightEntry;
       });
 
+      console.log('About to call edge function with data:', { 
+        flights: mappedData.slice(0, 2),
+        userLoggedIn: !!user,
+        sessionExists: !!session 
+      });
+      
       const { data, error } = await supabase.functions.invoke('import-csv-flights', {
         body: { flights: mappedData }
       });
 
-      if (error) throw error;
+      console.log('Edge function response:', { data, error });
+
+      if (error) {
+        console.error('Edge function error:', error);
+        throw error;
+      }
 
       setImportResults(data);
       setImportProgress(100);
@@ -445,7 +471,7 @@ export function CSVImportDialog({ open, onOpenChange, onImportComplete }: CSVImp
       console.error('Import error:', error);
       toast({
         title: "Import failed",
-        description: "There was an error importing your flights. Please try again.",
+        description: error.message || "There was an error importing your flights. Please try again.",
         variant: "destructive",
       });
       setStep('preview');
