@@ -253,7 +253,27 @@ export function CSVImportDialog({ open, onOpenChange, onImportComplete }: CSVImp
         });
         
         setFieldMappings(autoMappings);
-        setStep('mapping');
+        
+        // Check if we have all required fields
+        const requiredFields = DATABASE_FIELDS.filter(f => f.required).map(f => f.key);
+        const mappedFields = autoMappings.map(m => m.dbField);
+        const missingRequired = requiredFields.filter(field => !mappedFields.includes(field));
+        
+        if (missingRequired.length > 0) {
+          toast({
+            title: "Missing required fields",
+            description: `Could not automatically map these required fields: ${missingRequired.join(', ')}. Please use the manual mapping.`,
+            variant: "destructive",
+          });
+          setStep('mapping');
+        } else {
+          // Auto-proceed to preview if all required fields are mapped
+          toast({
+            title: "File processed successfully",
+            description: `${isForeFlight ? 'ForeFlight' : 'CSV'} format detected. ${rows.length} flights ready to import.`,
+          });
+          setStep('preview');
+        }
       },
       header: false,
       skipEmptyLines: true
@@ -462,7 +482,7 @@ export function CSVImportDialog({ open, onOpenChange, onImportComplete }: CSVImp
             Import CSV Logbook
           </DialogTitle>
           <DialogDescription>
-            Import flight entries from a CSV file. Supported formats include ForeFlight, LogTen Pro, and MyFlightbook exports.
+            Upload your CSV file and we'll automatically detect the format and import your flights. Supports ForeFlight, LogTen Pro, and standard CSV formats.
           </DialogDescription>
         </DialogHeader>
 
@@ -472,7 +492,7 @@ export function CSVImportDialog({ open, onOpenChange, onImportComplete }: CSVImp
               <CardHeader>
                 <CardTitle className="text-lg">Upload CSV File</CardTitle>
                 <CardDescription>
-                  Select a CSV file containing your flight logbook entries
+                  Upload your CSV file - we'll automatically detect the format and map the fields for you
                 </CardDescription>
               </CardHeader>
               <CardContent className="space-y-4">
@@ -481,7 +501,7 @@ export function CSVImportDialog({ open, onOpenChange, onImportComplete }: CSVImp
                   <Label htmlFor="csv-upload" className="cursor-pointer">
                     <span className="text-lg font-medium">Choose CSV file</span>
                     <p className="text-sm text-muted-foreground mt-1">
-                      Or drag and drop your file here
+                      Supports ForeFlight, LogTen Pro, and standard CSV formats
                     </p>
                   </Label>
                   <Input
@@ -505,7 +525,7 @@ export function CSVImportDialog({ open, onOpenChange, onImportComplete }: CSVImp
                     </Button>
                   </div>
                   <span className="text-sm text-muted-foreground">
-                    Download a template file that matches your logbook software
+                    Need a template? Download a sample file to see the expected format
                   </span>
                 </div>
               </CardContent>
@@ -565,9 +585,9 @@ export function CSVImportDialog({ open, onOpenChange, onImportComplete }: CSVImp
             <Card>
               <CardHeader>
                 <CardTitle className="text-lg">Preview Import Data</CardTitle>
-                <CardDescription>
-                  Review the first 10 rows of your data before importing. Total rows to import: {csvData.length}
-                </CardDescription>
+              <CardDescription>
+                Review your flight data before importing. {csvData.length} flights detected.
+              </CardDescription>
               </CardHeader>
               <CardContent>
                 {validationErrors.length > 0 && (
