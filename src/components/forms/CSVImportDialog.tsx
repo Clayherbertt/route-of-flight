@@ -606,23 +606,26 @@ export function CSVImportDialog({ open, onOpenChange, onImportComplete }: CSVImp
                   </Alert>
                 )}
                 
-                <div className="overflow-x-auto">
+                <div className="max-h-96 overflow-x-auto overflow-y-auto border rounded-lg">
                   <Table>
                     <TableHeader>
-                      <TableRow>
-                        <TableHead>Row</TableHead>
-                        {fieldMappings.map(mapping => (
-                          <TableHead key={mapping.dbField}>
+                      <TableRow className="bg-muted/50">
+                        <TableHead className="sticky left-0 bg-muted/50 border-r min-w-16">Row</TableHead>
+                        {fieldMappings.slice(0, 8).map(mapping => (
+                          <TableHead key={mapping.dbField} className="min-w-32">
                             {DATABASE_FIELDS.find(f => f.key === mapping.dbField)?.label}
                           </TableHead>
                         ))}
+                        {fieldMappings.length > 8 && (
+                          <TableHead className="min-w-20">...</TableHead>
+                        )}
                       </TableRow>
                     </TableHeader>
                     <TableBody>
                        {csvData.slice(0, 10).map((row, index) => (
                         <TableRow key={index}>
-                          <TableCell>{index + 1}</TableCell>
-                          {fieldMappings.map(mapping => {
+                          <TableCell className="sticky left-0 bg-background border-r font-medium">{index + 1}</TableCell>
+                          {fieldMappings.slice(0, 8).map(mapping => {
                             // Handle both object-based data (ForeFlight) and array-based data (standard CSV)
                             let value: string;
                             if (isForeFlight) {
@@ -639,17 +642,30 @@ export function CSVImportDialog({ open, onOpenChange, onImportComplete }: CSVImp
                               </TableCell>
                             );
                           })}
+                          {fieldMappings.length > 8 && (
+                            <TableCell className="text-muted-foreground">+{fieldMappings.length - 8} more</TableCell>
+                          )}
                         </TableRow>
                       ))}
                     </TableBody>
                   </Table>
                 </div>
                 
-                <div className="flex justify-between mt-6">
-                  <Button variant="outline" onClick={() => setStep('mapping')}>
+                {fieldMappings.length > 8 && (
+                  <div className="text-sm text-muted-foreground">
+                    Showing first 8 columns. All {fieldMappings.length} columns will be imported.
+                  </div>
+                )}
+                
+                <div className="flex flex-col sm:flex-row justify-between gap-4 mt-6 pt-4 border-t">
+                  <Button variant="outline" onClick={() => setStep('mapping')} className="w-full sm:w-auto">
                     Back to Mapping
                   </Button>
-                  <Button onClick={startImport} disabled={validationErrors.length > 0}>
+                  <Button 
+                    onClick={startImport} 
+                    disabled={validationErrors.length > 0}
+                    className="w-full sm:w-auto bg-primary hover:bg-primary/90"
+                  >
                     Import {csvData.length} Flights
                   </Button>
                 </div>
