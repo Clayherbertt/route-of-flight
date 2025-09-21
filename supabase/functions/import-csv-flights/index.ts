@@ -96,7 +96,9 @@ async function processFlightImport(flights: FlightEntry[], userId: string, supab
 
         const { data, error } = await supabaseClient
           .from('flight_entries')
-          .insert([entry])
+          .upsert([entry], {
+            onConflict: 'user_id,date,aircraft_registration,departure_airport,arrival_airport'
+          })
 
         if (error) {
           console.error(`Failed to insert flight ${flightIndex}:`, error.message)
