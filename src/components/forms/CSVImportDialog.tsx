@@ -145,7 +145,7 @@ export function CSVImportDialog({ open, onOpenChange, onImportComplete }: CSVImp
     }
     
     setAircraftLookup(aircraftLookupMap);
-    return { headers: flightHeaders, rows: flightRows };
+    return { headers: flightHeaders, rows: flightRows, aircraftLookup: aircraftLookupMap };
   };
 
   const handleFileUpload = useCallback((event: React.ChangeEvent<HTMLInputElement>) => {
@@ -180,11 +180,13 @@ export function CSVImportDialog({ open, onOpenChange, onImportComplete }: CSVImp
         
         let headers: string[];
         let rows: CSVRow[];
+        let aircraftLookupMap = new Map<string, AircraftInfo>();
         
         if (isForeFlight) {
           const parsed = parseForeFlight(allRows);
           headers = parsed.headers;
           rows = parsed.rows;
+          aircraftLookupMap = parsed.aircraftLookup;
         } else {
           headers = allRows[0] as string[];
           rows = allRows.slice(1).filter(row => row.some(cell => cell?.trim())).map(row => {
@@ -253,7 +255,7 @@ export function CSVImportDialog({ open, onOpenChange, onImportComplete }: CSVImp
         });
         
         // For ForeFlight, add aircraft_type as a virtual mapping since it's derived from AircraftID
-        if (isForeFlight && aircraftLookup.size > 0) {
+        if (isForeFlight && aircraftLookupMap.size > 0) {
           autoMappings.push({ csvColumn: 'AircraftID', dbField: 'aircraft_type' });
         }
         
