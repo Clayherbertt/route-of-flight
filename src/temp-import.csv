@@ -1,0 +1,1205 @@
+ForeFlight Logbook Import,This row is required for importing into ForeFlight. Do not delete or modify.,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+Aircraft Table,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+AircraftID,TypeCode,Year,Make,Model,GearType,EngineType,equipType (FAA),aircraftClass (FAA),complexAircraft (FAA),taa (FAA),highPerformance (FAA),pressurized (FAA),,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+N6865A,B/C/C,,PA44-180,Seminole,retractable_tricycle,Piston,aircraft,airplane_multi_engine_land,TRUE,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+N731ND,PA-28,,Piper,Cherokee,fixed_tricycle,Piston,aircraft,airplane_single_engine_land,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+N836AT,PA44-180,,Piper,Seminole,retractable_tricycle,Piston,aircraft,airplane_multi_engine_land,TRUE,TRUE,TRUE,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+N886AT,PA-44-180,,Piper,Seminole,retractable_tricycle,Piston,aircraft,airplane_multi_engine_land,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+N1738S,CE172S,,Cessna,172S,fixed_tricycle,Piston,aircraft,airplane_single_engine_land,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+N9370R,CE172S,,Cessna,172,fixed_tricycle,Piston,aircraft,airplane_single_engine_land,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+N894KC,CE172S,,Cessna,172S,fixed_tricycle,Piston,aircraft,airplane_single_engine_land,,TRUE,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+N1738S,CE172S,,Cessna,172S,fixed_tricycle,Piston,aircraft,airplane_single_engine_land,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+N20502,CE172S,,Cessna,172S,fixed_tricycle,Piston,aircraft,airplane_single_engine_land,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+N390XD,BL7,,Decathalon,Super,fixed_tailwheel,Piston,aircraft,airplane_single_engine_land,,,TRUE,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+N854SC,CE172S,,Cessna,172,fixed_tricycle,Piston,aircraft,airplane_single_engine_land,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+N60372,CE172S,,Cessna,172,fixed_tricycle,Piston,aircraft,airplane_single_engine_land,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+REDBIRD,C172,,Cessna Aircraft,172S Skyhawk,fixed_tricycle,Piston,ftd,airplane_single_engine_land,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+N716SC,C172,2020,Cessna Aircraft,172S Skyhawk,fixed_tricycle,Piston,aircraft,airplane_single_engine_land,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+N761AG,C337,1973,Cessna Aircraft,337 Skymaster,retractable_tricycle,Piston,aircraft,airplane_multi_engine_land,TRUE,,TRUE,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+N987SC,PA44,2020,Piper,Seminole,retractable_tricycle,Piston,aircraft,airplane_multi_engine_land,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+PCFFRASCA,C172,,Cessna Aircraft,172S Skyhawk,fixed_tricycle,Piston,aatd,airplane_single_engine_land,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+N716SC,C172,,Cessna Aircraft,172S Skyhawk,fixed_tricycle,Piston,aircraft,airplane_single_engine_land,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+N747SC,CE172S,2020,Cessna,172s,fixed_tricycle,Piston,aircraft,airplane_single_engine_land,,TRUE,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+N716SC,C172,,Cessna Aircraft,172S Skyhawk,fixed_tricycle,Piston,aircraft,airplane_single_engine_land,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+N423SC,C172,2020,Cessna Aircraft,172S Skyhawk,fixed_tricycle,Piston,aircraft,airplane_single_engine_land,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+N423SC,C172,2020,Cessna Aircraft,172S Skyhawk,fixed_tricycle,Piston,aircraft,airplane_single_engine_land,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+172RB,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+N776SC,CE172S,,Cessna,C172S,fixed_tricycle,Piston,aircraft,airplane_single_engine_land,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+N423SC,C172,2020,Cessna Aircraft,172S Skyhawk,fixed_tricycle,Piston,aircraft,airplane_single_engine_land,,TRUE,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+N407SC,C172,,Cessna Aircraft,172S Skyhawk,fixed_tricycle,Piston,aircraft,airplane_single_engine_land,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+SCA18,C172,,Cessna Aircraft,172S Skyhawk,fixed_tricycle,Piston,aircraft,airplane_single_engine_land,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+N21212,CE172S,,Cessna,172S,fixed_tricycle,Piston,aircraft,airplane_single_engine_land,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+N694SC,C172,,Cessna Aircraft,172S Skyhawk,fixed_tricycle,Piston,aircraft,airplane_single_engine_land,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+N698FL,PA160A,,Piper,Cherokee,fixed_tricycle,Piston,aircraft,airplane_single_engine_land,,,TRUE,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+N952SC,C172,,Cessna Aircraft,172S Skyhawk,fixed_tricycle,Piston,aircraft,airplane_single_engine_land,,TRUE,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+N951SC,C172,2015,Cessna Aircraft,172S Skyhawk,fixed_tricycle,Piston,aircraft,airplane_single_engine_land,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+ALSIM172,,,,,,,aatd,airplane_single_engine_land,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+AL172,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+ALSIM,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+SCA23 ALSIM,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+N181SC,C172,,Cessna Aircraft,172S Skyhawk,fixed_tricycle,Piston,aircraft,airplane_single_engine_land,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+N776SC,CE172S,,Cessna,172s,fixed_tricycle,Piston,aircraft,airplane_single_engine_land,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+SIM 29/8/7,B734,,Boeing,737-400,,,ffs,airplane_multi_engine_land,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+N627SW,B733,,Boeing,737-300,retractable_tricycle,Turbojet,aircraft,airplane_multi_engine_land,TRUE,TRUE,TRUE,TRUE,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+N624XA,B738,,Boeing,737-800,retractable_tricycle,Turbojet,aircraft,airplane_multi_engine_land,TRUE,TRUE,TRUE,TRUE,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+N280SC,CE172SC,,Cessna,172,fixed_tricycle,Piston,aircraft,airplane_single_engine_land,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+N854SC,C172,,Cessna Aircraft,172S Skyhawk,fixed_tricycle,Piston,aircraft,airplane_single_engine_land,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+N714SC,C172,,Cessna Aircraft,172S Skyhawk,fixed_tricycle,Piston,aircraft,airplane_single_engine_land,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+N753SC,C172,,Cessna Aircraft,172S Skyhawk,fixed_tricycle,Piston,aircraft,airplane_single_engine_land,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+N397SW,B733,,Boeing,737-300,retractable_tricycle,Turbojet,aircraft,airplane_multi_engine_land,TRUE,TRUE,TRUE,TRUE,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+N811TJ,B733,,Boeing,737-300,retractable_tricycle,Turbojet,aircraft,airplane_multi_engine_land,TRUE,TRUE,TRUE,TRUE,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+N709MB,B738,,Boeing,737-800,retractable_tricycle,Turbojet,aircraft,airplane_multi_engine_land,TRUE,TRUE,TRUE,TRUE,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+N545CC,B734,,Boeing,737-400,retractable_tricycle,Turbojet,aircraft,airplane_multi_engine_land,TRUE,TRUE,TRUE,TRUE,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+N440US,B734,,Boeing,737-400,retractable_tricycle,Turbojet,aircraft,airplane_multi_engine_land,TRUE,TRUE,TRUE,TRUE,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+SCA17,C172,2020,Cessna Aircraft,172S Skyhawk,fixed_tricycle,Piston,aircraft,airplane_single_engine_land,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+N438US,B734,,Boeing,737-400,retractable_tricycle,Turbojet,aircraft,airplane_multi_engine_land,TRUE,TRUE,TRUE,TRUE,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+N117SV,CE172S,,Cessna,172,fixed_tricycle,Piston,aircraft,airplane_single_engine_land,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+N1715T,C172,,Cessna Aircraft,172S Skyhawk,fixed_tricycle,Piston,aircraft,airplane_single_engine_land,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+SCA95,C172,,Cessna Aircraft,172S Skyhawk,fixed_tricycle,Piston,aircraft,airplane_single_engine_land,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+SCA77,C172,,Cessna Aircraft,172S Skyhawk,fixed_tricycle,Piston,aircraft,airplane_single_engine_land,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+SCA75,C172,,Cessna Aircraft,172S Skyhawk,fixed_tricycle,Piston,aircraft,airplane_single_engine_land,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+SCA54,C172,,Cessna Aircraft,172S Skyhawk,fixed_tricycle,Piston,aircraft,airplane_single_engine_land,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+SCA52,C172,,Cessna Aircraft,172S Skyhawk,fixed_tricycle,Piston,aircraft,airplane_single_engine_land,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+SCA47,C172,,Cessna Aircraft,172S Skyhawk,fixed_tricycle,Piston,aircraft,airplane_single_engine_land,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+SCA42,C172,,Cessna Aircraft,172S Skyhawk,fixed_tricycle,Piston,aircraft,airplane_single_engine_land,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+SCA23 ,C172,,Cessna Aircraft,172S Skyhawk,fixed_tricycle,Piston,aircraft,airplane_single_engine_land,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+SCA16,C172,,Cessna Aircraft,172S Skyhawk,fixed_tricycle,Piston,aircraft,airplane_single_engine_land,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+SCA14,C172,,Cessna Aircraft,172S Skyhawk,fixed_tricycle,Piston,aircraft,airplane_single_engine_land,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+N9466X,C172,,Cessna Aircraft,172S Skyhawk,fixed_tricycle,Piston,aircraft,airplane_single_engine_land,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+N9230Y,C172,,Cessna Aircraft,172S Skyhawk,fixed_tricycle,Piston,aircraft,airplane_single_engine_land,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+N92266,C172,,Cessna Aircraft,172S Skyhawk,fixed_tricycle,Piston,aircraft,airplane_single_engine_land,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+N9223C,C172,,Cessna Aircraft,172S Skyhawk,fixed_tricycle,Piston,aircraft,airplane_single_engine_land,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+N9222H,C172,,Cessna Aircraft,172S Skyhawk,fixed_tricycle,Piston,aircraft,airplane_single_engine_land,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+N92228,C172,,Cessna Aircraft,172S Skyhawk,fixed_tricycle,Piston,aircraft,airplane_single_engine_land,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+N802NM,C172,,Cessna Aircraft,172S Skyhawk,fixed_tricycle,Piston,aircraft,airplane_single_engine_land,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+N171SC,C172,,Cessna Aircraft,172S Skyhawk,fixed_tricycle,Piston,aircraft,airplane_single_engine_land,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+N1726T,C172,,Cessna Aircraft,172S Skyhawk,fixed_tricycle,Piston,aircraft,airplane_single_engine_land,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+N1727T,C172,,Cessna Aircraft,172S Skyhawk,fixed_tricycle,Piston,aircraft,airplane_single_engine_land,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+N1742S,C172,,Cessna Aircraft,172S Skyhawk,fixed_tricycle,Piston,aircraft,airplane_single_engine_land,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+N1754T,C172,,Cessna Aircraft,172S Skyhawk,fixed_tricycle,Piston,aircraft,airplane_single_engine_land,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+N1760T,C172,,Cessna Aircraft,172S Skyhawk,fixed_tricycle,Piston,aircraft,airplane_single_engine_land,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+N20417,C172,,Cessna Aircraft,172S Skyhawk,fixed_tricycle,Piston,aircraft,airplane_single_engine_land,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+N20564,C172,,Cessna Aircraft,172S Skyhawk,fixed_tricycle,Piston,aircraft,airplane_single_engine_land,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+N2098A,C172,,Cessna Aircraft,172S Skyhawk,fixed_tricycle,Piston,aircraft,airplane_single_engine_land,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+N345CS,C172,,Cessna Aircraft,172S Skyhawk,fixed_tricycle,Piston,aircraft,airplane_single_engine_land,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+N4190V,C172,,Cessna Aircraft,172S Skyhawk,fixed_tricycle,Piston,aircraft,airplane_single_engine_land,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+N445BW,C172,,Cessna Aircraft,172S Skyhawk,fixed_tricycle,Piston,aircraft,airplane_single_engine_land,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+N5013R,C172,,Cessna Aircraft,172S Skyhawk,fixed_tricycle,Piston,aircraft,airplane_single_engine_land,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+N5438E,C182,,Cessna Aircraft,182R Skylane,fixed_tricycle,Piston,aircraft,airplane_single_engine_land,,,TRUE,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+N6024E,C172,,Cessna Aircraft,172S Skyhawk,fixed_tricycle,Piston,aircraft,airplane_single_engine_land,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+N698FL,P28A,,AICSA,Cherokee Archer,fixed_tricycle,Piston,aircraft,airplane_single_engine_land,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+N738EA,C172,,Cessna Aircraft,172S Skyhawk,fixed_tricycle,Piston,aircraft,airplane_single_engine_land,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+N94618,C172,,Cessna Aircraft,172S Skyhawk,fixed_tricycle,Piston,aircraft,airplane_single_engine_land,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+SCA69,C172,,Cessna Aircraft,172S Skyhawk,fixed_tricycle,Piston,aircraft,airplane_single_engine_land,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+SCA17,C172,,Cessna Aircraft,172S Skyhawk,fixed_tricycle,Piston,aircraft,airplane_single_engine_land,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+N797EJ,RV9,,Vans,RV-9,fixed_tricycle,Piston,aircraft,airplane_single_engine_land,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+SCA ALSIM AL172,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+SCA28,C172,,Cessna Aircraft,172S Skyhawk,fixed_tricycle,Piston,aircraft,airplane_single_engine_land,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+N716SC,CE172S,,Cessna,172,fixed_tricycle,Piston,aircraft,airplane_single_engine_land,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+N807TJ,B734,,Boeing,737-400,retractable_tricycle,Turbojet,aircraft,airplane_multi_engine_land,TRUE,TRUE,TRUE,TRUE,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+N986AS,B738,,Boeing,737-800,retractable_tricycle,Turbojet,aircraft,airplane_multi_engine_land,TRUE,TRUE,TRUE,TRUE,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+SCA40,C172,,Cessna Aircraft,172S Skyhawk,fixed_tricycle,Piston,aircraft,airplane_single_engine_land,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+N935BL,C172,,,,,,aircraft,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+N313XA,B734,,Boeing,737-400,retractable_tricycle,Turbojet,aircraft,airplane_multi_engine_land,TRUE,TRUE,TRUE,TRUE,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+N529AU,B733,,Boeing,737-300,fixed_tricycle,Turbojet,aircraft,airplane_multi_engine_land,TRUE,TRUE,TRUE,TRUE,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+N811TJ,B733,,Boeing,737-300,retractable_tricycle,Turbojet,aircraft,airplane_multi_engine_land,TRUE,TRUE,TRUE,TRUE,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+N314XA,B734,,Boeing,737-400,retractable_tricycle,Turbojet,aircraft,airplane_multi_engine_land,TRUE,TRUE,TRUE,TRUE,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+N917XA,B738,,Boeing,737-800,retractable_tricycle,Turbojet,aircraft,airplane_multi_engine_land,TRUE,TRUE,TRUE,TRUE,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+N804TJ,B734,,Boeing,737-400,retractable_tricycle,Turbojet,aircraft,airplane_multi_engine_land,TRUE,TRUE,TRUE,TRUE,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+N808TJ,B734,,Boeing,737-400,retractable_tricycle,Turbojet,aircraft,airplane_multi_engine_land,TRUE,TRUE,TRUE,TRUE,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+N859AM,B738,,Boeing,737-800,retractable_tricycle,Turbojet,aircraft,airplane_multi_engine_land,TRUE,TRUE,TRUE,TRUE,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+N471BS,B738,,Boeing,737-800,retractable_tricycle,Turbojet,aircraft,airplane_multi_engine_land,TRUE,TRUE,TRUE,TRUE,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+N276EA,B738,,Boeing,737-800,retractable_tricycle,Turbojet,aircraft,airplane_multi_engine_land,TRUE,TRUE,TRUE,TRUE,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+N240QS,CL60,,Bombardier,Challenger 650,retractable_tricycle,Turbojet,aircraft,airplane_multi_engine_land,TRUE,TRUE,TRUE,TRUE,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+N261QS,CL60,,Bombardier,Challenger 650,retractable_tricycle,Turbojet,aircraft,airplane_multi_engine_land,TRUE,TRUE,TRUE,TRUE,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+N244QS,CL60,,Bombardier,Challenger 650,retractable_tricycle,Turbojet,aircraft,airplane_multi_engine_land,TRUE,TRUE,TRUE,TRUE,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+N225QS,CL60,,Bombardier,Challenger 650,retractable_tricycle,Turbofan,aircraft,airplane_multi_engine_land,TRUE,TRUE,TRUE,TRUE,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+N249QS,CL60,,Bombardier,Challenger 650,retractable_tricycle,Turbojet,aircraft,airplane_multi_engine_land,TRUE,TRUE,TRUE,TRUE,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+N235QS,CL60,,Bombardier,Challenger 650,retractable_tricycle,Turbofan,aircraft,airplane_multi_engine_land,TRUE,TRUE,TRUE,TRUE,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+N228QS,CL60,,Bombardier,Challenger 650,retractable_tricycle,Turbofan,aircraft,airplane_multi_engine_land,TRUE,TRUE,TRUE,TRUE,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+N200QS,CL60,,Bombardier,Challenger 650,retractable_tricycle,Turbofan,aircraft,airplane_multi_engine_land,TRUE,TRUE,TRUE,TRUE,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+N216QS,CL60,,Bombardier,Challenger 650,retractable_tricycle,Turbojet,aircraft,airplane_multi_engine_land,TRUE,TRUE,TRUE,TRUE,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+N260QS,CL60,,Bombardier,Challenger 650,retractable_tricycle,Turbojet,aircraft,airplane_multi_engine_land,TRUE,TRUE,TRUE,TRUE,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+N268QS,CL60,,Bombardier,Challenger 650,retractable_tricycle,Turbojet,aircraft,airplane_multi_engine_land,TRUE,TRUE,TRUE,TRUE,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+N263QS,CL60,,Bombardier,Challenger 650,retractable_tricycle,Turbojet,aircraft,airplane_multi_engine_land,TRUE,TRUE,TRUE,TRUE,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+N267QS,CL60,,Bombardier,Challenger 650,retractable_tricycle,Turbojet,aircraft,airplane_multi_engine_land,TRUE,TRUE,TRUE,TRUE,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+N250QS,CL60,,Bombardier,Challenger 650,retractable_tricycle,Turbojet,aircraft,airplane_multi_engine_land,TRUE,TRUE,TRUE,TRUE,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+N258QS,CL60,,Bombardier,Challenger 650,retractable_tricycle,Turbojet,aircraft,airplane_multi_engine_land,TRUE,TRUE,TRUE,TRUE,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+N219QS,CL60,,Bombardier,Challenger 650,retractable_tricycle,Turbojet,aircraft,airplane_multi_engine_land,TRUE,TRUE,TRUE,TRUE,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+N238QS,CL60,,Bombardier,Challenger 650,retractable_tricycle,Turbojet,aircraft,airplane_multi_engine_land,TRUE,TRUE,TRUE,TRUE,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+N208QS,CL60,,Bombardier,Challenger 650,retractable_tricycle,Turbojet,aircraft,airplane_multi_engine_land,TRUE,TRUE,TRUE,TRUE,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+N246QS,CL60,,Bombardier,Challenger 650,retractable_tricycle,Turbojet,aircraft,airplane_multi_engine_land,TRUE,TRUE,TRUE,TRUE,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+N259QS,CL60,,Bombardier,Challenger 650,retractable_tricycle,Turbofan,aircraft,airplane_multi_engine_land,TRUE,TRUE,TRUE,TRUE,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+N209QS,CL60,,Bombardier,Challenger 650,retractable_tricycle,Turbofan,aircraft,airplane_multi_engine_land,TRUE,TRUE,TRUE,TRUE,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+N916SC,B738,,Boeing,737-800,retractable_tricycle,Turbojet,aircraft,airplane_multi_engine_land,TRUE,TRUE,TRUE,TRUE,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+N803TJ,B734,,Boeing,737-400,retractable_tricycle,Turbojet,aircraft,airplane_multi_engine_land,TRUE,TRUE,TRUE,TRUE,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+N802TJ,B734,,Boeing,737-400,retractable_tricycle,Turbojet,aircraft,airplane_multi_engine_land,TRUE,TRUE,TRUE,TRUE,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+N623SW,B733,,Boeing,737-300,retractable_tricycle,Turbojet,aircraft,airplane_multi_engine_land,TRUE,TRUE,TRUE,TRUE,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+N67TC,B738,,Boeing,737-800,retractable_tricycle,Turbojet,aircraft,airplane_multi_engine_land,TRUE,TRUE,TRUE,TRUE,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+N253QS,CL60,,Bombardier,Challenger 650,retractable_tricycle,Turbojet,aircraft,airplane_multi_engine_land,TRUE,TRUE,TRUE,TRUE,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+N298SC,C172,,,,,,aircraft,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+N264QS,CL60,,Bombardier,Challenger 650,retractable_tricycle,Turbofan,aircraft,airplane_multi_engine_land,TRUE,TRUE,TRUE,TRUE,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+N227EA,B738,,Boeing,737-800,retractable_tricycle,Turbojet,aircraft,airplane_multi_engine_land,TRUE,TRUE,TRUE,TRUE,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+Flights Table,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+Date,AircraftID,From,To,Route,TimeOut,TimeOff,TimeOn,TimeIn,OnDuty,OffDuty,TotalTime,PIC,SIC,Night,Solo,CrossCountry,PICUS,MultiPilot,IFR,Examiner,NVG,NVG Ops,Distance,ActualInstrument,SimulatedInstrument,HobbsStart,HobbsEnd,TachStart,TachEnd,Holds,Approach1,Approach2,Approach3,Approach4,Approach5,Approach6,DualGiven,DualReceived,SimulatedFlight,GroundTraining,GroundTrainingGiven,InstructorName,InstructorComments,Person1,Person2,Person3,Person4,Person5,Person6,PilotComments,Flight Review (FAA),IPC (FAA),Checkride (FAA),FAA 61.58 (FAA),NVG Proficiency (FAA),DayTakeoffs,DayLandingsFullStop,NightTakeoffs,NightLandingsFullStop,AllLandings
+2025-09-03,N264QS,KGPT,KDAL,,,,,,,,1.6,0.0,1.6,0.0,0.0,1.6,0.0,0.0,0.0,0.0,0.0,0,424.40,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,0.0,0.0,0.0,0.0,0.0,,,,,,,,,,,,,,,1,1,0,0,1
+2025-08-26,N253QS,KAPA,KGJT,,,,,,,,0.9,0.0,0.9,0.0,0.0,0.9,0.0,0.0,0.0,0.0,0.0,0,173.20,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,0.0,0.0,0.0,0.0,0.0,,,,,,,,,,,,,,,1,1,0,0,1
+2025-08-26,N253QS,KBZN,KAPA,,,,,,,,1.4,0.0,1.4,0.0,0.0,1.4,0.0,0.0,0.0,0.0,0.0,0,464.90,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,0.0,0.0,0.0,0.0,0.0,,,,,,,,,,,,,,,1,1,0,0,1
+2025-08-25,N253QS,KBUR,KBZN,,,,,,,,2.6,0.0,2.6,0.0,0.0,2.6,0.0,0.0,0.0,0.0,0.0,0,768.80,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,0.0,0.0,0.0,0.0,0.0,,,,,,,,,,,,,,,1,1,0,0,1
+2025-08-25,N253QS,KAPC,KBUR,,,,,,,,1.3,0.0,1.3,0.0,0.0,1.3,0.0,0.0,0.0,0.0,0.0,0,306.60,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,0.0,0.0,0.0,0.0,0.0,,,,,,,,,,,,,,,1,1,0,0,1
+2025-08-25,N253QS,KNUQ,KAPC,,,,,,,,0.6,0.0,0.6,0.0,0.0,0.6,0.0,0.0,0.0,0.0,0.0,0,49.00,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,0.0,0.0,0.0,0.0,0.0,,,,,,,,,,,,,,,1,1,0,0,1
+2025-08-24,N253QS,KBZN,KNUQ,,,,,,,,2.3,0.0,2.3,0.0,0.0,2.3,0.0,0.0,0.0,0.0,0.0,0,700.30,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,0.0,0.0,0.0,0.0,0.0,,,,,,,,,,,,,,,1,1,0,0,1
+2025-08-24,N253QS,KHND,KBZN,,,,,,,,2.1,0.0,2.1,0.0,0.0,2.1,0.0,0.0,0.0,0.0,0.0,0,615.00,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,0.0,0.0,0.0,0.0,0.0,,,,,,,,,,,,,,,1,1,0,0,1
+2025-08-24,N209QS,KVNY,KHND,,,,,,,,2.1,0.0,2.1,0.0,0.0,2.1,0.0,0.0,0.0,0.0,0.0,0,196.10,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,0.0,0.0,0.0,0.0,0.0,,,,,,,,,"""First Rejected Takeoff""",,,,,,1,1,0,0,1
+2025-08-23,N209QS,KSDL,KVNY,,,,,,,,1.2,0.0,1.2,0.0,0.0,1.2,0.0,0.0,0.0,0.0,0.0,0,330.30,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,0.0,0.0,0.0,0.0,0.0,,,,,,,,,,,,,,,1,1,0,0,1
+2025-08-23,N209QS,KSZT,KSDL,,,,,,,,2.7,0.0,2.7,0.0,0.0,2.7,0.0,0.0,0.0,0.0,0.0,0,904.70,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,0.0,0.0,0.0,0.0,0.0,,,,,,,,,,,,,,,1,1,0,0,1
+2025-08-23,N209QS,KDAL,KSZT,,,,,,,,4.0,0.0,4.0,0.0,0.0,4.0,0.0,0.0,0.0,0.0,0.0,0,1285.10,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,0.0,0.0,0.0,0.0,0.0,,,,,,,,,,,,,,,1,1,0,0,1
+2025-08-21,N209QS,PASI,KDAL,,,,,,,,5.7,0.0,5.7,0.0,0.0,5.7,0.0,0.0,0.0,0.0,0.0,0,2142.30,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,0.0,0.0,0.0,0.0,0.0,,,,,,,,,,,,,,,1,1,0,0,1
+2025-08-21,N209QS,KSEA,PASI,,,,,,,,2.5,0.0,2.5,0.0,0.0,2.5,0.0,0.0,0.0,0.0,0.0,0,748.40,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,0.0,0.0,0.0,0.0,0.0,,,,,,,,,,,,,,,1,1,0,0,1
+2025-08-21,N238QS,KBCB,KMLB,,,,,,,,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0,0.00,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,0.0,0.0,0.0,0.0,0.0,,,,,,,,,,,,,,,0,0,0,0,0
+2025-08-16,N298SC,KSDL,KSDL,KSEZ,,,,,,,2.1,2.1,0.0,0.0,0.0,2.1,0.0,0.0,0.0,0.0,0.0,0,147.30,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,0.0,0.0,0.0,0.0,0.0,,,,,,,,,,,,,,,2,2,0,0,2
+2025-08-11,N259QS,KDEN,KLAS,,,,,,,,2.0,0.0,2.0,0.0,0.0,2.0,0.0,0.0,0.0,0.0,0.0,0,545.90,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,0.0,0.0,0.0,0.0,0.0,,,,,,,,,,,,,,,1,1,0,0,1
+2025-08-10,N246QS,KCOE,KSDL,,,,,,,,2.2,0.0,2.2,0.0,0.0,2.2,0.0,0.0,0.0,0.0,0.0,0,877.10,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,0.0,0.0,0.0,0.0,0.0,,,,,,,,,,,,,,,1,1,0,0,1
+2025-08-10,N246QS,KLAX,KCOE,,,,,,,,2.5,0.0,2.5,0.0,0.0,2.5,0.0,0.0,0.0,0.0,0.0,0,832.50,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,0.0,0.0,0.0,0.0,0.0,,,,,,,,,,,,,,,1,1,0,0,1
+2025-08-09,N246QS,KBUR,KLAX,,,,,,,,0.6,0.0,0.6,0.0,0.0,0.6,0.0,0.0,0.0,0.0,0.0,0,15.70,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,0.0,0.0,0.0,0.0,0.0,,,,,,,,,,,,,,,1,1,0,0,1
+2025-08-09,N246QS,KCCR,KBUR,,,,,,,,1.1,0.0,1.1,0.0,0.0,1.1,0.0,0.0,0.0,0.0,0.0,0,289.50,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,0.0,0.0,0.0,0.0,0.0,,,,,,,,,,,,,,,1,1,0,0,1
+2025-08-08,N246QS,KLAS,KCCR,,,,,,,,1.4,0.0,1.4,0.0,0.0,1.4,0.0,0.0,0.0,0.0,0.0,0,350.80,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,0.0,0.0,0.0,0.0,0.0,,,,,,,,,,,,,,,1,1,0,0,1
+2025-07-29,N208QS,KGSP,KDAL,,,,,,,,2.2,0.0,2.2,0.0,0.0,2.2,0.0,0.0,0.0,0.0,0.0,0,740.50,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,0.0,0.0,0.0,0.0,0.0,,,,,,,,,,,,,,,1,1,0,0,1
+2025-07-28,N238QS,KCHO,KBCB,,,,,,,,0.6,0.0,0.6,0.0,0.0,0.6,0.0,0.0,0.0,0.0,0.0,0,108.70,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,0.0,0.0,0.0,0.0,0.0,,,,,,,,,,,,,,,1,0,0,0,0
+2025-07-27,N238QS,KFSD,KCHO,,,,,,,,2.5,0.0,2.5,0.0,0.0,2.5,0.0,0.0,0.0,0.0,0.0,0,891.90,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,0.0,0.0,0.0,0.0,0.0,,,,,,,,,,,,,,,1,1,0,0,1
+2025-07-27,N238QS,KSUN,KFSD,,,,,,,,2.1,0.0,2.1,,0.0,2.1,0.0,0.0,0.0,0.0,0.0,0,764.60,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,0.0,0.0,0.0,0.0,0.0,,,,,,,,,,,,,,,1,1,0,0,1
+2025-07-27,N238QS,KSLC,KSUN,,,,,,,,1.1,0.0,1.1,0.0,0.0,1.1,0.0,0.0,0.0,0.0,0.0,0,192.90,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,0.0,0.0,0.0,0.0,0.0,,,,,,,,,,,,,,,1,1,0,0,1
+2025-07-26,N238QS,KHYA,KSLC,,,,,,,,5.4,0.0,5.4,0.0,0.0,5.4,0.0,0.0,0.0,0.0,0.0,0,1869.80,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,0.0,0.0,0.0,0.0,0.0,,,,,,,,,,,,,,,1,1,0,0,1
+2025-07-26,N238QS,KTEB,KHYA,,,,,,,,0.9,0.0,0.9,0.0,0.0,0.9,0.0,0.0,0.0,0.0,0.0,0,178.00,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,0.0,0.0,0.0,0.0,0.0,,,,,,,,,,,,,,,1,1,0,0,1
+2025-07-15,N219QS,KBUF,KTEB,,,,,,,,1.0,0.0,1.0,0.0,0.0,1.0,0.0,0.0,0.0,0.0,0.0,0,243.90,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,0.0,0.0,0.0,0.0,0.0,,,,,,,,,,,,,,,1,1,0,0,1
+2025-07-14,N219QS,KRAP,KBUF,,,,,,,,3.6,0.0,3.6,0.0,0.0,3.6,0.0,0.0,0.0,0.0,0.0,0,1060.70,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,0.0,0.0,0.0,0.0,0.0,,,,,,,,,,,,,,,1,1,0,0,1
+2025-07-13,N219QS,KJAC,KRAP,,,,,,,,1.2,0.0,1.2,0.0,0.0,1.2,0.0,0.0,0.0,0.0,0.0,0,334.50,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,0.0,0.0,0.0,0.0,0.0,,,,,,,,,,,,,,,1,1,0,0,1
+2025-07-13,N219QS,PAKN,KJAC,,,,,,,,4.5,0.0,4.5,0.0,0.0,4.5,0.0,0.0,0.0,0.0,0.0,0,1906.20,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,0.0,0.0,0.0,0.0,0.0,,,,,,,,,,,,,,,1,1,0,0,1
+2025-07-12,N219QS,PANC,PAKN,,,,,,,,1.0,0.0,1.0,0.0,0.0,1.0,0.0,0.0,0.0,0.0,0.0,0,250.60,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,0.0,0.0,0.0,0.0,0.0,,,,,,,,,,,,,,,1,1,0,0,1
+2025-07-12,N219QS,PAKT,PANC,,,,,,,,2.3,0.0,2.3,0.0,0.0,2.3,0.0,0.0,0.0,0.0,0.0,0,673.70,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,0.0,0.0,0.0,0.0,0.0,,,,,,,,,,,,,,,1,1,0,0,1
+2025-07-12,N219QS,KPHX,PAKT,,,,,,,,4.3,0.0,4.3,0.0,0.0,4.3,0.0,0.0,0.0,0.0,0.0,0,1552.50,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,0.0,0.0,0.0,0.0,0.0,,,,,,,,,,,,,,,1,1,0,0,1
+2025-07-11,N219QS,KSNA,KPHX,,,,,,,,1.1,0.0,1.1,0.0,0.0,1.1,0.0,0.0,0.0,0.0,0.0,0,294.00,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,0.0,0.0,0.0,0.0,0.0,,,,,,,,,,,,,,,1,1,0,0,1
+2025-07-11,N219QS,KEEO,KSNA,,,,,,,,1.9,0.0,1.9,0.0,0.0,1.9,0.0,0.0,0.0,0.0,0.0,0,613.20,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,0.0,0.0,0.0,0.0,0.0,,,,,,,,,,,,,,,1,1,0,0,1
+2025-07-11,N219QS,KRIL,KEEO,,,,,,,,0.6,0.0,0.6,0.0,0.0,0.6,0.0,0.0,0.0,0.0,0.0,0,32.10,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,0.0,0.0,0.0,0.0,0.0,,,,,,,,,,,,,,,1,1,0,0,1
+2025-07-10,N219QS,KSNA,KRIL,,,,,,,,2.5,0.0,2.5,0.0,0.0,2.5,0.0,0.0,0.0,0.0,0.0,0,601.80,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,0.0,0.0,0.0,0.0,0.0,,,,,,,,,,,,,,,1,1,0,0,1
+2025-07-10,N219QS,KAPC,KSNA,,,,,,,,1.2,0.0,1.2,0.0,0.0,1.2,0.0,0.0,0.0,0.0,0.0,0,346.50,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,0.0,0.0,0.0,0.0,0.0,,,,,,,,,,,,,,,1,1,0,0,1
+2025-06-30,N264QS,KBDL,KCMH,,,,,,,,1.7,0.0,1.7,0.0,0.0,1.7,0.0,0.0,0.0,0.0,0.0,0,478.00,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,0.0,0.0,0.0,0.0,0.0,,,,,,,,,,,,,,,1,1,0,0,1
+2025-06-30,N264QS,KPBI,KBDL,,,,,,,,2.9,0.0,2.9,0.0,0.0,2.9,0.0,0.0,0.0,0.0,0.0,0,984.20,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,0.0,0.0,0.0,0.0,0.0,,,,,,,,,,,,,,,1,1,0,0,1
+2025-06-29,N264QS,KBCT,KPBI,,,,,,,,0.4,0.0,0.4,0.0,0.0,0.4,0.0,0.0,0.0,0.0,0.0,0,18.20,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,0.0,0.0,0.0,0.0,0.0,,,,,,,,,,,,,,,1,1,0,0,1
+2025-06-28,N264QS,KEWR,KBCT,,,,,,,,2.7,0.0,2.7,,0.0,2.7,0.0,0.0,0.0,0.0,0.0,0,906.90,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,0.0,0.0,0.0,0.0,0.0,,,,,,,,,,,,,,,1,1,0,0,1
+2025-06-27,N258QS,KTEB,KHVN,,,,,,,,0.6,0.0,0.6,0.0,0.0,0.6,0.0,0.0,0.0,0.0,0.0,0,58.70,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,0.0,0.0,0.0,0.0,0.0,,,,,,,,,,,,,,,1,1,0,0,1
+2025-06-27,N258QS,KSFO,KTEB,,,,,,,,5.7,0.0,5.7,0.0,0.0,5.7,0.0,0.0,0.0,0.0,0.0,0,2232.20,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,0.0,0.0,0.0,0.0,0.0,,,,,,,,,,,,,,,1,1,0,0,1
+2025-06-25,N258QS,KSAN,KSFO,,,,,,,,1.4,0.0,1.4,0.0,0.0,1.4,0.0,0.0,0.0,0.0,0.0,0,388.10,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,0.0,0.0,0.0,0.0,0.0,,,,,,,,,,,,,,,1,1,0,0,1
+2025-06-25,N258QS,KLAS,KSAN,,,,,,,,1.6,0.0,1.6,0.0,0.0,1.6,0.0,0.0,0.0,0.0,0.0,0,224.50,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,0.0,0.0,0.0,0.0,0.0,,,,,,,,,,,,,,,1,1,0,0,1
+2025-06-17,N250QS,KTEB,KHPN,,,,,,,,0.6,0.0,0.6,0.0,0.0,0.6,0.0,0.0,0.0,0.0,0.0,0,20.70,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,0.0,0.0,0.0,0.0,0.0,,,,,,,,,,,,,,,1,1,0,0,1
+2025-06-17,N250QS,KLAX,KTEB,,,,,,,,5.1,0.0,5.1,0.0,0.0,5.1,0.0,0.0,0.0,0.0,0.0,0,2137.00,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,0.0,0.0,0.0,0.0,0.0,,,,,,,,,,,,,,,1,1,0,0,1
+2025-06-16,N250QS,KSAN,KLAX,,,,,,,,0.6,0.0,0.6,0.0,0.0,0.6,0.0,0.0,0.0,0.0,0.0,0,94.80,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,0.0,0.0,0.0,0.0,0.0,,,,,,,,,,,,,,,1,1,0,0,1
+2025-06-16,N250QS,KOPF,KSAN,,,,,,,,5.0,0.0,5.0,0.0,0.0,5.0,0.0,0.0,0.0,0.0,0.0,0,1968.30,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,0.0,0.0,0.0,0.0,0.0,,,,,,,,,,,,,,,1,1,0,0,1
+2025-06-15,N250QS,KMEM,KOPF,,,,,,,,4.2,0.0,4.2,0.0,0.0,4.2,0.0,0.0,0.0,0.0,0.0,0,742.00,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,0.0,0.0,0.0,0.0,0.0,,,,,,,,,,,,,,,1,1,0,0,1
+2025-06-15,N250QS,KAPC,KMEM,,,,,,,,3.6,0.0,3.6,0.0,0.0,3.6,0.0,0.0,0.0,0.0,0.0,0,1563.70,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,0.0,0.0,0.0,0.0,0.0,,,,,,,,,,,,,,,1,1,0,0,1
+2025-06-14,N250QS,KEAT,KAPC,,,,,,,,1.7,0.0,1.7,0.0,0.0,1.7,0.0,0.0,0.0,0.0,0.0,0,558.50,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,0.0,0.0,0.0,0.0,0.0,,,,,,,,,,,,,,,1,1,0,0,1
+2025-06-13,N250QS,KBFI,KEAT,,,,,,,,1.1,0.0,1.1,0.0,0.0,1.1,0.0,0.0,0.0,0.0,0.0,0,85.70,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,0.0,0.0,0.0,0.0,0.0,,,,,,,,,,,,,,,1,1,0,0,1
+2025-06-13,N250QS,KEAT,KBFI,,,,,,,,0.7,0.0,0.7,0.0,0.0,0.7,0.0,0.0,0.0,0.0,0.0,0,85.70,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,0.0,0.0,0.0,0.0,0.0,,,,,,,,,,,,,,,1,1,0,0,1
+2025-06-13,N250QS,KSLE,KEAT,,,,,,,,0.9,0.0,0.9,0.0,0.0,0.9,0.0,0.0,0.0,0.0,0.0,0,189.50,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,0.0,0.0,0.0,0.0,0.0,,,,,,,,,,,,,,,1,1,0,0,1
+2025-06-13,N250QS,KSDL,KSLE,,,,,,,,2.3,0.0,2.3,0.0,0.0,2.3,0.0,0.0,0.0,0.0,0.0,0,849.70,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,0.0,0.0,0.0,0.0,0.0,,,,,,,,,,,,,,,1,1,0,0,1
+2025-06-13,N250QS,KCRQ,KSDL,,,,,,,,1.0,0.0,1.0,0.0,0.0,1.0,0.0,0.0,0.0,0.0,0.0,0,271.40,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,0.0,0.0,0.0,0.0,0.0,,,,,,,,,,,,,,,1,1,0,0,1
+2025-06-12,N250QS,KSNA,KCRQ,,,,,,,,0.5,0.0,0.5,0.0,0.0,0.5,0.0,0.0,0.0,0.0,0.0,0,44.10,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,0.0,0.0,0.0,0.0,0.0,,,,,,,,,,,,,,,1,1,0,0,1
+2025-06-03,N267QS,KTEB,KEGE,,,,,,,,4.1,0.0,4.1,0.0,0.0,4.1,0.0,0.0,0.0,0.0,0.0,0,1502.30,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,0.0,0.0,0.0,0.0,0.0,,,,,,,,,,,,,,,1,1,0,0,1
+2025-06-02,N267QS,KBFI,KTEB,,,,,,,,5.1,0.0,5.1,0.0,0.0,5.1,0.0,0.0,0.0,0.0,0.0,0,2086.00,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,0.0,0.0,0.0,0.0,0.0,,,,,,,,,,,,,,,1,1,0,0,1
+2025-06-02,N267QS,KSBA,KBFI,,,,,,,,2.4,0.0,2.4,0.0,0.0,2.4,0.0,0.0,0.0,0.0,0.0,0,793.60,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,0.0,0.0,0.0,0.0,0.0,,,,,,,,,,,,,,,1,1,0,0,1
+2025-06-01,N267QS,KLBF,KSBA,,,,,,,,2.8,0.0,2.8,0.0,0.0,2.8,0.0,0.0,0.0,0.0,0.0,0,993.10,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,0.0,0.0,0.0,0.0,0.0,,,,,,,,,,,,,,,1,1,0,0,1
+2025-06-01,N267QS,KICR,KLBF,,,,,,,,0.8,0.0,0.8,0.0,0.0,0.8,0.0,0.0,0.0,0.0,0.0,0,140.80,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,0.0,0.0,0.0,0.0,0.0,,,,,,,,,,,,,,,1,1,0,0,1
+2025-06-01,N267QS,KHPN,KICR,,,,,,,,3.5,0.0,3.5,0.0,0.0,3.5,0.0,0.0,0.0,0.0,0.0,0,1168.40,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,0.0,0.0,0.0,0.0,0.0,,,,,,,,,,,,,,,1,1,0,0,1
+2025-05-30,N267QS,KLAX,KHPN,,,,,,,,5.4,0.0,5.4,0.0,0.0,5.4,0.0,0.0,0.0,0.0,0.0,0,2152.20,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,0.0,0.0,0.0,0.0,0.0,,,,,,,,,,,,,,,1,1,0,0,1
+2025-05-29,N238QS,KAPC,KLGB,,,,,,,,1.2,0.0,1.2,0.0,0.0,1.2,0.0,0.0,0.0,0.0,0.0,0,331.20,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,0.0,0.0,0.0,0.0,0.0,,,,,,,,,,,,,,,1,1,0,0,1
+2025-05-29,N238QS,KIAH,KAPC,,,,,,,,3.9,0.0,3.9,0.0,0.0,3.9,0.0,0.0,0.0,0.0,0.0,0,1423.60,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,0.0,0.0,0.0,0.0,0.0,,,,,,,,,,,,,,,1,1,0,0,1
+2025-05-19,N208QS,KCXO,KDAL,,,,,,,,1.4,0.0,1.4,0.0,0.0,1.4,0.0,0.0,0.0,0.0,0.0,0,166.40,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,0.0,0.0,0.0,0.0,0.0,,,,,,,,,,,,,,,1,1,0,0,1
+2025-05-19,N208QS,MWCR,KCXO,,,,,,,,3.0,0.0,3.0,0.0,0.0,3.0,0.0,0.0,0.0,0.0,0.0,0,1011.40,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,0.0,0.0,0.0,0.0,0.0,,,,,,,,,,,,,,,1,1,0,0,1
+2025-05-19,N208QS,KPIE,MWCR,,,,,,,,1.7,0.0,1.7,0.0,0.0,1.7,0.0,0.0,0.0,0.0,0.0,0,520.40,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,0.0,0.0,0.0,0.0,0.0,,,,,,,,,,,,,,,1,1,0,0,1
+2025-05-18,N208QS,KPOU,KPIE,,,,,,,,2.8,0.0,2.8,0.0,0.0,2.8,0.0,0.0,0.0,0.0,0.0,0,928.60,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,0.0,0.0,0.0,0.0,0.0,,,,,,,,,,,,,,,1,1,0,0,1
+2025-05-18,N208QS,KBOS,KPOU,,,,,,,,1.1,0.0,1.1,0.0,0.0,1.1,0.0,0.0,0.0,0.0,0.0,0,136.10,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,0.0,0.0,0.0,0.0,0.0,,,,,,,,,,,,,,,1,1,0,0,1
+2025-05-18,N208QS,KPHL,KBOS,,,,,,,,1.9,0.0,1.9,0.0,0.0,1.9,0.0,0.0,0.0,0.0,0.0,0,243.20,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,0.0,0.0,0.0,0.0,0.0,,,,,,,,,,,,,,,1,1,0,0,1
+2025-05-18,N208QS,KPNE,KPHL,,,,,,,,0.5,0.0,0.5,0.5,0.0,0.5,0.0,0.0,0.0,0.0,0.0,0,16.50,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,0.0,0.0,0.0,0.0,0.0,,,,,,,,,,,,,,,0,0,1,1,1
+2025-05-17,N208QS,KSUN,KPNE,,,,,,,,4.0,0.0,4.0,0.0,0.0,4.0,0.0,0.0,0.0,0.0,0.0,0,1758.50,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,0.0,0.0,0.0,0.0,0.0,,,,,,,,,,,,,,,1,1,0,0,1
+2025-05-17,N208QS,KSJC,KSUN,,,,,,,,1.5,0.0,1.5,0.0,0.0,1.5,0.0,0.0,0.0,0.0,0.0,0,507.40,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,0.0,0.0,0.0,0.0,0.0,,,,,,,,,,,,,,,1,1,0,0,1
+2025-05-16,N208QS,KPHX,KSJC,,,,,,,,1.9,0.0,1.9,0.0,0.0,1.9,0.0,0.0,0.0,0.0,0.0,0,540.00,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,0.0,0.0,0.0,0.0,0.0,,,,,,,,,,,,,,,1,1,0,0,1
+2025-04-22,N253QS,KLEX,KSBA,,,,,,,,4.7,0.0,4.7,0.0,0.0,4.7,0.0,0.0,0.0,0.0,0.0,0,1713.60,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,0.0,0.0,0.0,0.0,0.0,,,,,,,,,,,,,,,1,1,0,0,1
+2025-04-22,N253QS,CYYZ,KLEX,,,,,,,,1.5,0.0,1.5,0.0,0.0,1.5,0.0,0.0,0.0,0.0,0.0,0,406.90,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,0.0,0.0,0.0,0.0,0.0,,,,,,,,,,,,,,,1,1,0,0,1
+2025-04-21,N253QS,KTEB,CYYZ,,,,,,,,1.7,0.0,1.7,0.0,0.0,1.7,0.0,0.0,0.0,0.0,0.0,0,300.40,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,0.0,0.0,0.0,0.0,0.0,,,,,,,,,,,,,,,1,1,0,0,1
+2025-04-21,N253QS,KJAX,KTEB,,,,,,,,2.1,0.0,2.1,0.0,0.0,2.1,0.0,0.0,0.0,0.0,0.0,0,723.10,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,0.0,0.0,0.0,0.0,0.0,,,,,,,,,,,,,,,1,1,0,0,1
+2025-04-20,N253QS,KAUS,KJAX,,,,,,,,2.1,0.0,2.1,0.0,0.0,2.1,0.0,0.0,0.0,0.0,0.0,0,829.30,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,0.0,0.0,0.0,0.0,0.0,,,,,,,,,,,,,,,1,1,0,0,1
+2025-04-20,N253QS,KHDC,KAUS,,,,,,,,1.3,0.0,1.3,0.0,0.0,1.3,0.0,0.0,0.0,0.0,0.0,0,376.90,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,0.0,0.0,0.0,0.0,0.0,,,,,,,,,,,,,,,1,1,0,0,1
+2025-04-20,N253QS,KAUS,KHDC,,,,,,,,1.4,0.0,1.4,0.0,0.0,1.4,0.0,0.0,0.0,0.0,0.0,0,376.90,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,0.0,0.0,0.0,0.0,0.0,,,,,,,,,,,,,,,1,1,0,0,1
+2025-04-18,N253QS,T89,KAUS,,,,,,,,1.1,0.0,1.1,0.0,0.0,1.1,0.0,0.0,0.0,0.0,0.0,0,319.00,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,0.0,0.0,0.0,0.0,0.0,,,,,,,,,,,,,,,1,1,0,0,1
+2025-04-18,N253QS,KDAL,T89,,,,,,,,1.6,0.0,1.6,0.0,0.0,1.6,0.0,0.0,0.0,0.0,0.0,0,411.80,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,0.0,0.0,0.0,0.0,0.0,,,,,,,,,,,,,,,1,1,0,0,1
+2025-04-08,N263QS,KBNA,KAUS,,,,,,,,2.0,0.0,2.0,0.0,0.0,2.0,0.0,0.0,0.0,0.0,0.0,0,657.10,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,0.0,0.0,0.0,0.0,0.0,,,,,,,,,,,,,,,1,1,0,0,1
+2025-04-08,N263QS,KBDL,KBNA,,,,,,,,2.6,0.0,2.6,0.0,0.0,2.6,0.0,0.0,0.0,0.0,0.0,0,740.00,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,0.0,0.0,0.0,0.0,0.0,,,,,,,,,,,,,,,1,1,0,0,1
+2025-04-07,N263QS,KIAD,KBDL,,,,,,,,1.2,0.0,1.2,0.0,0.0,1.2,0.0,0.0,0.0,0.0,0.0,0,282.80,1.2,0.0,0.00,0.00,0.00,0.00,0,,,,,,,0.0,0.0,0.0,0.0,0.0,,,,,,,,,,,,,,,1,1,0,0,1
+2025-04-06,N263QS,KBNA,KIAD,,,,,,,,1.6,0.0,1.6,0.0,0.0,1.6,0.0,0.0,0.0,0.0,0.0,0,471.10,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,0.0,0.0,0.0,0.0,0.0,,,,,,,,,,,,,,,1,1,0,0,1
+2025-04-06,N263QS,KPBI,KBNA,,,,,,,,3.2,0.0,3.2,0.0,0.0,3.2,0.0,0.0,0.0,0.0,0.0,0,658.20,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,0.0,0.0,0.0,0.0,0.0,,,,,,,,,,,,,,,1,1,0,0,1
+2025-04-06,N268QS,KLGA,KPBI,,,,,,,,2.3,0.0,2.3,0.0,0.0,2.3,0.0,0.0,0.0,0.0,0.0,0,899.10,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,0.0,0.0,0.0,0.0,0.0,,,,,,,,,,,,,,,1,1,0,0,1
+2025-04-04,N268QS,KHPN,KLGA,,,,,,,,0.6,0.0,0.6,0.6,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0,0.00,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,0.0,0.0,0.0,0.0,0.0,,,,,,,,,,,,,,,0,0,1,1,1
+2025-04-03,N268QS,KBOS,KHPN,,,,,,,,1.0,0.0,1.0,0.0,0.0,1.0,0.0,0.0,0.0,0.0,0.0,0,144.10,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,0.0,0.0,0.0,0.0,0.0,,,,,,,,,,,,,,,1,1,0,0,1
+2025-04-03,N268QS,KCMH,KBOS,,,,,,,,1.9,0.0,1.9,0.0,0.0,1.9,0.0,0.0,0.0,0.0,0.0,0,556.30,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,0.0,0.0,0.0,0.0,0.0,,,,,,,,,,,,,,,1,1,0,0,1
+2025-03-12,N260QS,TJSJ,KSUA,,,,,,,,2.8,0.0,2.8,0.0,0.0,2.8,0.0,0.0,0.0,0.0,0.0,0,944.60,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,0.0,0.0,0.0,0.0,0.0,,,,,,,,,,,,,,,1,1,0,0,1
+2025-03-12,N260QS,KPBI,TJSJ,,,,,,,,2.8,0.0,2.8,0.0,0.0,2.8,0.0,0.0,0.0,0.0,0.0,0,923.90,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,0.0,0.0,0.0,0.0,0.0,,,,,,,,,,,,,,,1,1,0,0,1
+2025-03-12,N260QS,KPIE,KPBI,,,,,,,,0.8,0.0,0.8,0.0,0.0,0.8,0.0,0.0,0.0,0.0,0.0,0,156.70,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,0.0,0.0,0.0,0.0,0.0,,,,,,,,,,,,,,,1,1,0,0,1
+2025-03-11,N260QS,KBCT,KPIE,,,,,,,,0.8,0.0,0.8,0.0,0.0,0.8,0.0,0.0,0.0,0.0,0.0,0,165.60,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,0.0,0.0,0.0,0.0,0.0,,,,,,,,,,,,,,,1,1,0,0,1
+2025-03-11,N260QS,KSBA,KBCT,,,,,,,,4.3,0.0,4.3,0.0,0.0,4.3,0.0,0.0,0.0,0.0,0.0,0,2103.10,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,0.0,0.0,0.0,0.0,0.0,,,,,,,,,,,,,,,1,1,0,0,1
+2025-02-24,N219QS,KBZN,KSJC,,,,,,,,2.4,0.0,2.4,0.0,0.0,2.4,0.0,0.0,0.0,0.0,0.0,0,698.90,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,0.0,0.0,0.0,0.0,0.0,,,,,,,,,,,,,,,1,1,0,0,1
+2025-02-23,N219QS,KAUS,KBZN,,,,,,,,3.5,0.0,3.5,0.0,0.0,3.5,0.0,0.0,0.0,0.0,0.0,0,1128.40,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,0.0,0.0,0.0,0.0,0.0,,,,,,,,,,,,,,,1,1,0,0,1
+2025-02-23,N219QS,KSJC,KAUS,,,,,,,,3.3,0.0,3.3,0.0,0.0,3.3,0.0,0.0,0.0,0.0,0.0,0,1282.50,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,0.0,0.0,0.0,0.0,0.0,,,,,,,,,,,,,,,1,1,0,0,1
+2025-02-23,N219QS,KOAK,KSJC,,,,,,,,0.8,0.0,0.8,0.8,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0,0.00,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,0.0,0.0,0.0,0.0,0.0,,,,,,,,,,,,,,,0,0,1,1,1
+2025-02-21,N219QS,PHKO,KOAK,,,,,,,,5.5,0.0,5.5,0.0,0.0,5.5,0.0,0.0,0.0,0.0,0.0,0,2066.00,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,0.0,0.0,0.0,0.0,0.0,,,,,,,,,,,,,,,1,1,0,0,1
+2025-02-20,N219QS,PHOG,PHKO,,,,,,,,0.7,0.0,0.7,0.0,0.0,0.7,0.0,0.0,0.0,0.0,0.0,0,72.30,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,0.0,0.0,0.0,0.0,0.0,,,,,,,,,,,,,,,1,1,0,0,1
+2025-02-20,N219QS,KSJC,PHOG,,,,,,,,5.2,0.0,5.2,0.0,0.0,5.2,0.0,0.0,0.0,0.0,0.0,0,2046.80,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,0.0,0.0,0.0,0.0,0.0,,,,,,,,,,,,,,,1,1,0,0,1
+2025-02-19,N219QS,KDEN,KSJC,,,,,,,,3.0,0.0,3.0,0.0,0.0,3.0,0.0,0.0,0.0,0.0,0.0,0,823.80,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,0.0,0.0,0.0,0.0,0.0,,,,,,,,,,,,,,,1,1,0,0,1
+2025-02-19,N216QS,KMKY,KPDK,,,,,,,,1.5,0.0,1.5,0.0,0.0,1.5,0.0,0.0,0.0,0.0,0.0,0,491.20,0.9,0.0,0.00,0.00,0.00,0.00,0,1;RNAV (RNP) Z RWY 21L;21L;KPDK;;,,,,,,0.0,0.0,0.0,0.0,0.0,,,,,,,,,,,,,,,1,1,0,0,1
+2025-02-11,N216QS,KOPF,KMKY,,,,,,,,0.6,0.0,0.6,0.0,0.0,0.6,0.0,0.0,0.0,0.0,0.0,0,75.60,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,0.0,0.0,0.0,0.0,0.0,,,,,,,,,,,,,,,1,1,0,0,1
+2025-02-11,N216QS,KTEB,KOPF,,,,,,,,2.1,0.0,2.1,0.0,0.0,2.1,0.0,0.0,0.0,0.0,0.0,0,947.20,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,0.0,0.0,0.0,0.0,0.0,,,,,,,,,,,,,,,1,1,0,0,1
+2025-02-10,N216QS,KPDK,KTEB,,,,,,,,1.8,0.0,1.8,0.0,0.0,1.8,0.0,0.0,0.0,0.0,0.0,0,643.10,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,0.0,0.0,0.0,0.0,0.0,,,,,,,,,,,,,,,1,1,0,0,1
+2025-02-10,N216QS,KROC,KPDK,,,,,,,,2.1,0.0,2.1,0.0,0.0,2.1,0.0,0.0,0.0,0.0,0.0,0,635.50,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,0.0,0.0,0.0,0.0,0.0,,,,,,,,,,,,,,,1,1,0,0,1
+2025-02-09,N216QS,KDSM,KROC,,,,,,,,1.6,0.0,1.6,0.0,0.0,1.6,0.0,0.0,0.0,0.0,0.0,0,716.90,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,0.0,0.0,0.0,0.0,0.0,,,,,,,,,,,,,,,1,1,0,0,1
+2025-02-09,N216QS,KTEX,KDSM,,,,,,,,1.6,0.0,1.6,0.0,0.0,1.6,0.0,0.0,0.0,0.0,0.0,0,692.40,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,0.0,0.0,0.0,0.0,0.0,,,,,,,,,,,,,,,1,1,0,0,1
+2025-02-09,N216QS,KSDL,KTEX,,,,,,,,1.0,0.0,1.0,0.0,0.0,1.0,0.0,0.0,0.0,0.0,0.0,0,324.70,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,0.0,0.0,0.0,0.0,0.0,,,,,,,,,,,,,,,1,1,0,0,1
+2025-02-08,N216QS,MMSL,KSDL,,,,,,,,1.9,0.0,1.9,0.0,0.0,1.9,0.0,0.0,0.0,0.0,0.0,0,647.20,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,0.0,0.0,0.0,0.0,0.0,,,,,,,,,,,,,,,1,1,0,0,1
+2025-02-07,N216QS,KDAL,MMSL,,,,,,,,2.9,0.0,2.9,0.0,0.0,2.9,0.0,0.0,0.0,0.0,0.0,0,912.20,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,0.0,0.0,0.0,0.0,0.0,,,,,,,,,,,,,,,1,1,0,0,1
+2025-02-06,N219QS,KDAL,KDAL,,,,,,,,1.2,0.0,1.2,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0,0.00,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,0.0,0.0,0.0,0.0,0.0,,,,,,,,,,,,,,,1,1,0,0,1
+2025-01-28,N200QS,KSGU,KSNA,,,,,,,,1.2,0.0,1.2,0.0,0.0,1.2,0.0,0.0,0.0,0.0,0.0,0,293.70,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,0.0,0.0,0.0,0.0,0.0,,,,,,,,,,,,,,,1,1,0,0,1
+2025-01-28,N200QS,KLAS,KSGU,,,,,,,,0.7,0.0,0.7,0.0,0.0,0.7,0.0,0.0,0.0,0.0,0.0,0,97.90,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,0.0,0.0,0.0,0.0,0.0,,,,,,,,,,,,,,,1,1,0,0,1
+2025-01-25,N200QS,KLVK,KLAS,,,,,,,,3.5,0.0,3.5,0.0,0.0,3.5,0.0,0.0,0.0,0.0,0.0,0,335.10,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,0.0,0.0,0.0,0.0,0.0,,,,,,,,,,,,,,,1,1,0,0,1
+2025-01-25,N200QS,KMRY,KLVK,,,,,,,,0.7,0.0,0.7,0.0,0.0,0.7,0.0,0.0,0.0,0.0,0.0,0,66.30,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,0.0,0.0,0.0,0.0,0.0,,,,,,,,,,,,,,,1,1,0,0,1
+2025-01-25,N200QS,KBDN,KMRY,,,,,,,,1.6,0.0,1.6,0.0,0.0,1.6,0.0,0.0,0.0,0.0,0.0,0,451.10,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,0.0,0.0,0.0,0.0,0.0,,,,,,,,,,,,,,,1,1,0,0,1
+2025-01-25,N200QS,KSFO,KBDN,,,,,,,,1.4,0.0,1.4,0.0,0.0,1.4,0.0,0.0,0.0,0.0,0.0,0,392.00,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,0.0,0.0,0.0,0.0,0.0,,,,,,,,,,,,,,,1,1,0,0,1
+2025-01-24,N200QS,KASE,KLAS,,,,,,,,1.8,0.0,1.8,0.0,0.0,1.8,0.0,0.0,0.0,0.0,0.0,0,437.10,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,0.0,0.0,0.0,0.0,0.0,,,,,,,,,,,,,,,1,1,0,0,1
+2025-01-24,N200QS,KAPA,KASE,,,,,,,,1.0,0.0,1.0,0.0,0.0,1.0,0.0,0.0,0.0,0.0,0.0,0,96.20,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,0.0,0.0,0.0,0.0,0.0,,,,,,,,,,,,,,,1,1,0,0,1
+2025-01-24,N200QS,KCRQ,KAPA,,,,,,,,1.9,0.0,1.9,0.0,0.0,1.9,0.0,0.0,0.0,0.0,0.0,0,714.50,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,0.0,0.0,0.0,0.0,0.0,,,,,,,,,,,,,,,1,1,0,0,1
+2025-01-24,N200QS,KSAN,KCRQ,,,,,,,,0.5,0.0,0.5,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0,0.00,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,0.0,0.0,0.0,0.0,0.0,,,,,,,,,,,,,,,1,1,0,0,1
+2025-01-23,N200QS,KSJC,KSAN,,,,,,,,1.5,0.0,1.5,0.0,0.0,1.5,0.0,0.0,0.0,0.0,0.0,0,362.40,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,0.0,0.0,0.0,0.0,0.0,,,,,,,,,,,,,,,1,1,0,0,1
+2025-01-23,N200QS,KLAS,KSJC,,,,,,,,1.8,0.0,1.8,0.0,0.0,1.8,0.0,0.0,0.0,0.0,0.0,0,335.70,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,0.0,0.0,0.0,0.0,0.0,,,,,,,,,,,,,,,1,1,0,0,1
+2025-01-14,N228QS,KSFO,KBZN,,,,,,,,2.3,0.0,2.3,0.0,0.0,2.3,0.0,0.0,0.0,0.0,0.0,0,701.50,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,0.0,0.0,0.0,0.0,0.0,,,,,,,,,,,,,,,1,1,0,0,1
+2025-01-14,N235QS,KLAX,KSFO,,,,,,,,1.4,0.0,1.4,0.0,0.0,1.4,0.0,0.0,0.0,0.0,0.0,0,293.20,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,0.0,0.0,0.0,0.0,0.0,,,,,,,,,,,,,,,1,1,0,0,1
+2025-01-12,N235QS,KSFO,KLAX,,,,,,,,1.2,0.0,1.2,0.0,0.0,1.2,0.0,0.0,0.0,0.0,0.0,0,293.20,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,0.0,0.0,0.0,0.0,0.0,,,,,,,,,,,,,,,1,1,0,0,1
+2025-01-12,N235QS,KPDX,KSFO,,,,,,,,1.4,0.0,1.4,0.0,0.0,1.4,0.0,0.0,0.0,0.0,0.0,0,478.10,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,0.0,0.0,0.0,0.0,0.0,,,,,,,,,,,,,,,1,1,0,0,1
+2025-01-12,N235QS,KBFI,KPDX,,,,,,,,0.7,0.0,0.7,0.0,0.0,0.7,0.0,0.0,0.0,0.0,0.0,0,117.20,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,0.0,0.0,0.0,0.0,0.0,,,,,,,,,,,,,,,1,1,0,0,1
+2025-01-11,N235QS,KSBA,KBFI,,,,,,,,2.7,0.0,2.7,0.0,0.0,2.7,0.0,0.0,0.0,0.0,0.0,0,793.60,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,0.0,0.0,0.0,0.0,0.0,,,,,,,,,,,,,,,1,1,0,0,1
+2025-01-10,N235QS,KSFO,KLAX,,,,,,,,1.2,0.0,1.2,0.0,0.0,1.2,0.0,0.0,0.0,0.0,0.0,0,293.20,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,0.0,0.0,0.0,0.0,0.0,,,,,,,,,,,,,,,1,1,0,0,1
+2025-01-10,N235QS,KOAK,KSBA,,,,,,,,0.9,0.0,0.9,0.0,0.0,0.9,0.0,0.0,0.0,0.0,0.0,0,228.80,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,0.0,0.0,0.0,0.0,0.0,,,,,,,,,,,,,,,1,1,0,0,1
+2025-01-10,N235QS,KSAN,KOAK,,,,,,,,1.3,0.0,1.3,0.0,0.0,1.3,0.0,0.0,0.0,0.0,0.0,0,387.70,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,0.0,0.0,0.0,0.0,0.0,,,,,,,,,,,,,,,1,1,0,0,1
+2025-01-10,N235QS,KLAS,KSAN,,,,,,,,1.1,0.0,1.1,0.0,0.0,1.1,0.0,0.0,0.0,0.0,0.0,0,224.50,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,0.0,0.0,0.0,0.0,0.0,,,,,,,,,,,,,,,1,1,0,0,1
+2025-01-10,N235QS,KVGT,KLAS,,,,,,,,0.6,0.0,0.6,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0,0.00,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,0.0,0.0,0.0,0.0,0.0,,,,,,,,,,,,,,,1,1,0,0,1
+2025-01-10,N235QS,KVNY,KVGT,,,,,,,,1.1,0.0,1.1,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0,0.00,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,0.0,0.0,0.0,0.0,0.0,,,,,,,,,,,,,,,0,0,0,0,0
+2025-01-02,N249QS,KSUN,KPDX,,,,,,,,1.7,0.0,1.7,0.0,0.0,1.7,0.0,0.0,0.0,0.0,0.0,0,377.30,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,0.0,0.0,0.0,0.0,0.0,,,,,,,,,,,,,,,1,1,0,0,1
+2025-01-02,N249QS,KTWF,KSUN,,,,,,,,0.5,0.0,0.5,0.0,0.0,0.5,0.0,0.0,0.0,0.0,0.0,0,61.90,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,0.0,0.0,0.0,0.0,0.0,,,,,,,,,,,,,,,1,1,0,0,1
+2025-01-01,N249QS,KBFI,KTWF,,,,,,,,2.7,0.0,2.7,0.0,0.0,2.7,0.0,0.0,0.0,0.0,0.0,0,449.50,1.5,0.0,0.00,0.00,0.00,0.00,1,,,,,,,0.0,0.0,0.0,0.0,0.0,,,,,,,,,,,,,,,0,0,0,0,0
+2025-01-01,N249QS,CYLW,KBFI,,,,,,,,0.8,0.0,0.8,0.0,0.0,0.8,0.0,0.0,0.0,0.0,0.0,0,186.30,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,0.0,0.0,0.0,0.0,0.0,,,,,,,,,,,,,,,1,1,0,0,1
+2024-12-31,N249QS,KSUN,CYLW,,,,,,,,1.8,0.0,1.8,0.0,0.0,1.8,0.0,0.0,0.0,0.0,0.0,0,440.30,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,0.0,0.0,0.0,0.0,0.0,,,,,,,,,,,,,,,1,1,0,0,1
+2024-12-31,N249QS,KMTJ,KSUN,,,,,,,,1.4,0.0,1.4,0.0,0.0,1.4,0.0,0.0,0.0,0.0,0.0,0,417.20,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,0.0,0.0,0.0,0.0,0.0,,,,,,,,,,,,,,,1,1,0,0,1
+2024-12-30,N249QS,KCHS,KMTJ,,,,,,,,4.4,0.0,4.4,0.0,0.0,4.4,0.0,0.0,0.0,0.0,0.0,0,1396.10,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,0.0,0.0,0.0,0.0,0.0,,,,,,,,,,,,,,,1,1,0,0,1
+2024-12-30,N249QS,KECP,KCHS,,,,,,,,1.2,0.0,1.2,1.2,0.0,1.2,0.0,0.0,0.0,0.0,0.0,0,331.70,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,0.0,0.0,0.0,0.0,0.0,,,,,,,,,,,,,,,0,0,1,1,1
+2024-12-30,N249QS,KSUS,KECP,,,,,,,,1.6,0.0,1.6,0.0,0.0,1.6,0.0,0.0,0.0,0.0,0.0,0,552.40,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,0.0,0.0,0.0,0.0,0.0,,,,,,,,,,,,,,,1,1,0,0,1
+2024-12-29,N249QS,KASG,KSUS,,,,,,,,0.9,0.0,0.9,0.0,0.0,0.9,0.0,0.0,0.0,0.0,0.0,0,222.80,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,0.0,0.0,0.0,0.0,0.0,,,,,,,,,,,,,,,1,1,0,0,1
+2024-12-29,N249QS,KAPA,KASG,,,,,,,,1.4,0.0,1.4,0.0,0.0,1.4,0.0,0.0,0.0,0.0,0.0,0,548.40,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,0.0,0.0,0.0,0.0,0.0,,,,,,,,,,,,,,,1,1,0,0,1
+2024-12-28,N249QS,KBZN,KAPA,,,,,,,,1.3,0.0,1.3,1.3,0.0,1.3,0.0,0.0,0.0,0.0,0.0,0,464.90,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,0.0,0.0,0.0,0.0,0.0,,,,,,,,,,,,,,,0,0,1,1,1
+2024-12-28,N249QS,KSBA,KBZN,,,,,,,,2.3,0.0,2.3,0.0,0.0,2.3,0.0,0.0,0.0,0.0,0.0,0,788.40,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,0.0,0.0,0.0,0.0,0.0,,,,,,,,,,,,,,,1,1,0,0,1
+2024-12-28,N249QS,KTRM,KSBA,,,,,,,,1.0,0.0,1.0,0.0,0.0,1.0,0.0,0.0,0.0,0.0,0.0,0,189.70,0.3,0.0,0.00,0.00,0.00,0.00,0,1;ILS OR LOC RWY 07;07;KSBA;;,,,,,,0.0,0.0,0.0,0.0,0.0,,,,,,,,,,,,,,,1,1,0,0,1
+2024-12-28,N249QS,KSFO,KTRM,,,,,,,,1.2,0.0,1.2,0.0,0.0,1.2,0.0,0.0,0.0,0.0,0.0,0,386.70,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,0.0,0.0,0.0,0.0,0.0,,,,,,,,,,,,,,,1,1,0,0,1
+2024-12-28,N249QS,KEUG,KSFO,,,,,,,,1.3,0.0,1.3,0.0,0.0,1.3,0.0,0.0,0.0,0.0,0.0,0,392.00,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,0.0,0.0,0.0,0.0,0.0,,,,,,,,,,,,,,,1,1,0,0,1
+2024-12-28,N249QS,KBZN,KEUG,,,,,,,,1.9,0.0,1.9,0.0,0.0,1.9,0.0,0.0,0.0,0.0,0.0,0,522.90,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,0.0,0.0,0.0,0.0,0.0,,,,,,,,,,,,,,,1,1,0,0,1
+2024-12-28,N249QS,KDZB,KBZN,,,,,,,,3.3,0.0,3.3,0.0,0.0,3.3,0.0,0.0,0.0,0.0,0.0,0,1093.20,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,0.0,0.0,0.0,0.0,0.0,,,,,,,,,,,,,,,1,1,0,0,1
+2024-12-28,N249QS,KLAX,KDZB,,,,,,,,2.5,0.0,2.5,0.0,0.0,2.5,0.0,0.0,0.0,0.0,0.0,0,1038.80,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,0.0,0.0,0.0,0.0,0.0,,,,,,,,,,,,,,,1,1,0,0,1
+2024-12-28,N225QS,KHPN,KORL,,,,,,,,2.9,0.0,2.9,0.0,0.0,2.9,0.0,0.0,0.0,0.0,0.0,0,838.50,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,0.0,0.0,0.0,0.0,0.0,,,,,,,,,,,,,,,1,1,0,0,1
+2024-12-28,N244QS,KFXE,KTEB,,,,,,,,3.1,,3.1,0.0,0.0,3.1,0.0,0.0,0.0,0.0,0.0,0,928.90,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,0.0,0.0,0.0,0.0,0.0,,,,,,,,,,,,,,,1,1,0,0,1
+2024-12-28,N261QS,KSGJ,KPBI,,,,,,,,1.1,0.0,1.1,0.0,0.0,1.1,0.0,0.0,0.0,0.0,0.0,0,206.80,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,0.0,0.0,0.0,0.0,0.0,,,,,,,,,,,,,,,1,1,0,0,1
+2024-12-28,N261QS,KMIA,KSGJ,,,,,,,,1.1,0.0,1.1,0.0,0.0,1.1,0.0,0.0,0.0,0.0,0.0,0,255.30,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,0.0,0.0,0.0,0.0,0.0,,,,,,,,,,,,,,,1,1,0,0,1
+2024-12-28,N261QS,KOPF,KMIA,,,,,,,,0.5,0.0,0.5,0.5,0.0,,0.0,0.0,0.0,0.0,0.0,0,0.00,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,0.0,0.0,0.0,0.0,0.0,,,,,,,,,,,,,,,0,0,1,1,1
+2024-12-12,N261QS,KEWR,KOPF,,,,,,,,3.3,0.0,3.3,0.0,0.0,3.3,0.0,0.0,0.0,0.0,0.0,0,936.60,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,0.0,0.0,0.0,0.0,0.0,,,,,,,,,,,,,,,1,1,0,0,1
+2024-12-12,N261QS,KMSY,KEWR,,,,,,,,3.6,0.0,3.6,0.0,0.0,3.6,0.0,0.0,0.0,0.0,0.0,0,1014.20,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,0.0,0.0,0.0,0.0,0.0,,,,,,,,,,,,,,,1,1,0,0,1
+2024-12-11,N261QS,KDAL,KMSY,,,,,,,,1.4,0.0,1.4,1.4,0.0,1.4,0.0,0.0,0.0,0.0,0.0,0,379.00,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,0.0,0.0,0.0,0.0,0.0,,,,,,,,,,,,,,,0,0,1,1,1
+2024-12-04,N246QS,KAPA,KLEX,,,,,,,,2.5,0.0,2.5,0.0,0.0,2.5,0.0,0.0,0.0,0.0,0.0,0,951.80,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,0.0,0.0,0.0,0.0,0.0,,,,,,,,,,,,,,,1,1,0,0,1
+2024-12-04,N246QS,KTRM,KAPA,,,,,,,,2.0,0.0,2.0,0.0,0.0,2.0,0.0,0.0,0.0,0.0,0.0,0,651.40,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,0.0,0.0,0.0,0.0,0.0,,,,,,,,,,,,,,,1,1,0,0,1
+2024-12-04,N246QS,KCRQ,KTRM,,,,,,,,0.8,0.0,0.8,0.0,0.0,0.8,0.0,0.0,0.0,0.0,0.0,0,63.70,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,0.0,0.0,0.0,0.0,0.0,,,,,,,,,,,,,,,1,1,0,0,1
+2024-12-04,N246QS,KSJC,KCRQ,,,,,,,,1.5,0.0,1.5,0.0,0.0,1.5,0.0,0.0,0.0,0.0,0.0,0,341.30,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,0.0,0.0,0.0,0.0,0.0,,,,,,,,,,,,,,,1,1,0,0,2
+2024-12-04,N246QS,KSFO,KSJC,,,,,,,,0.6,0.0,0.6,0.6,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0,0.00,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,0.0,0.0,0.0,0.0,0.0,,,,,,,,,,,,,,,0,0,1,1,1
+2024-12-04,N246QS,PHKO,KSFO,,,,,,,,5.2,0.0,5.2,0.0,0.0,5.2,0.0,0.0,0.0,0.0,0.0,0,2057.20,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,0.0,0.0,0.0,0.0,0.0,,,,,,,,,,,,,,,1,1,0,0,1
+2024-11-30,N246QS,KSAN,PHKO,,,,,,,,6.3,0.0,6.3,0.0,0.0,6.3,0.0,0.0,0.0,0.0,0.0,0,2220.80,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,0.0,0.0,0.0,0.0,0.0,,,,,,,,,,,,,,,1,1,0,0,1
+2024-11-29,N246QS,PAFA,KSAN,,,,,,,,5.0,0.0,5.0,1.5,0.0,5.0,0.0,0.0,0.0,0.0,0.0,0,2231.30,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,0.0,0.0,0.0,0.0,0.0,,,,,,,,,,,,,,,1,0,0,1,1
+2024-11-27,N246QS,KSAN,PAFA,,,,,,,,6.3,0.0,6.3,0.0,0.0,6.3,0.0,0.0,0.0,0.0,0.0,0,2231.30,0.1,0.0,0.00,0.00,0.00,0.00,0,,,,,,,0.0,0.0,0.0,0.0,0.0,,,,,,,,,,,,,,,1,1,0,0,1
+2024-11-18,N225QS,KBED,KPBI,,,,,,,,2.9,0.0,2.9,0.0,0.0,2.9,0.0,0.0,0.0,0.0,0.0,0,1040.00,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,0.0,0.0,0.0,0.0,,,,,,,,,,,,,,,,1,1,0,0,1
+2024-11-18,N225QS,KMDW,KBED,,,,,,,,2.7,0.0,2.7,0.0,0.0,2.7,0.0,0.0,0.0,0.0,0.0,0,735.00,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,0.0,0.0,0.0,0.0,,,,,,,,,,,,,,,,1,1,0,0,1
+2024-11-17,N225QS,KBOS,KMDW,,,,,,,,2.8,0.0,2.8,0.0,0.0,2.8,0.0,0.0,0.0,0.0,0.0,0,747.90,0.2,0.0,0.00,0.00,0.00,0.00,0,,,,,,,0.0,0.0,0.0,0.0,,,,,,,,,,,,,,,,1,1,0,0,1
+2024-11-16,N225QS,KHPN,KBOS,,,,,,,,0.9,0.0,0.9,0.0,0.0,0.9,0.0,0.0,0.0,0.0,0.0,0,144.10,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,0.0,0.0,0.0,0.0,,,,,,,,,,,,,,,,1,1,0,0,1
+2024-11-16,N225QS,KISM,KHPN,,,,,,,,2.8,0.0,2.8,0.0,0.0,2.8,0.0,0.0,0.0,0.0,0.0,0,854.70,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,0.0,0.0,0.0,0.0,,,,,,,,,,,,,,,,1,1,0,0,1
+2024-11-15,N225QS,KSFO,KISM,,,,,,,,4.9,,4.9,0.0,0.0,4.9,0.0,0.0,0.0,0.0,0.0,0,2123.00,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,0.0,0.0,0.0,0.0,,,,,,,,,,,,,,,,1,1,0,0,1
+2024-11-14,N225QS,KLAX,KSFO,,,,,,,,1.4,0.0,1.4,0.0,0.0,1.4,0.0,0.0,0.0,0.0,0.0,0,293.20,0.4,0.0,0.00,0.00,0.00,0.00,0,,,,,,,0.0,0.0,0.0,0.0,,,,,,,,,,,,,,,,1,1,0,0,1
+2024-11-14,N225QS,KLAS,KLAX,,,,,,,,1.3,0.0,1.3,0.0,0.0,1.3,0.0,0.0,0.0,0.0,0.0,0,205.30,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,0.0,0.0,0.0,0.0,,,,,,,,,,,,,,,,1,1,0,0,1
+2024-11-14,N225QS,KTRM,KLAS,,,,,,,,1.1,0.0,1.1,0.0,0.0,1.1,0.0,0.0,0.0,0.0,0.0,0,155.10,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,0.0,0.0,0.0,0.0,,,,,,,,,,,,,,,,1,1,0,0,1
+2024-11-14,N225QS,KBFI,KTRM,,,,,,,,2.5,0.0,2.5,0.0,0.0,2.5,0.0,0.0,0.0,0.0,0.0,0,878.90,0.1,0.0,0.00,0.00,0.00,0.00,0,,,,,,,0.0,0.0,0.0,0.0,,,,,,,,,,,,,,,,1,1,0,0,1
+2024-11-13,N225QS,KBUR,KBFI,,,,,,,,2.4,0.0,2.4,0.0,0.0,2.4,0.0,0.0,0.0,0.0,0.0,0,818.90,0.5,0.0,0.00,0.00,0.00,0.00,0,,,,,,,0.0,0.0,0.0,0.0,,,,,,,,,,,,,,,,1,1,0,0,1
+2024-11-05,N240QS,KBOS,KTEB,,,,,,,,1.2,0.0,1.2,0.0,0.0,1.2,0.0,0.0,0.0,0.0,0.0,0,164.70,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,0.0,0.0,0.0,0.0,,,,,,,,,,,,,,,,1,1,0,0,1
+2024-11-05,N240QS,KTEB,KBOS,,,,,,,,1.2,0.0,1.2,0.0,0.0,1.2,0.0,0.0,0.0,0.0,0.0,0,164.70,0.1,,0.00,0.00,0.00,0.00,0,,,,,,,0.0,0.0,0.0,0.0,,,,,,,,,,,,,,,,1,1,0,0,1
+2024-11-05,N260QS,KBED,KTEB,,,,,,,,1.0,0.0,1.0,0.0,0.0,1.0,0.0,0.0,0.0,0.0,0.0,0,158.00,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,0.0,0.0,0.0,0.0,,,,,,,,,,,,,,,,1,1,0,0,1
+2024-11-05,N260QS,KBJC,KBED,,,,,,,,3.4,0.0,3.4,1.0,0.0,3.4,0.0,0.0,0.0,0.0,0.0,0,1529.90,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,0.0,0.0,0.0,0.0,,,,,,,,,,,,,,,,1,0,0,1,1
+2024-11-03,N260QS,KCDS,KBJC,,,,,,,,1.5,0.0,1.5,0.0,0.0,1.5,0.0,0.0,0.0,0.0,0.0,0,401.40,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,0.0,0.0,0.0,0.0,,,,,,,,,,,,,,,,1,1,0,0,1
+2024-11-03,N225QS,KGCN,KTEB,,,,,,,,4.2,0.0,4.2,1.6,0.0,4.2,0.0,0.0,0.0,0.0,0.0,0,1805.70,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,0.0,0.0,0.0,0.0,,,,,,,,,,,,,,,,1,0,0,1,1
+2024-11-03,N260QS,KDAL,KCDS,,,,,,,,0.9,0.0,0.9,0.0,0.0,0.9,0.0,0.0,0.0,0.0,0.0,0,196.70,0.5,0.0,0.00,0.00,0.00,0.00,1,,,,,,,0.0,0.0,0.0,0.0,,,,,,,,,,,,,,,,1,1,0,0,1
+2024-10-26,N225QS,KELP,KGCN,,,,,,,,1.4,0.0,1.4,0.0,0.0,1.4,0.0,0.0,0.0,0.0,0.0,0,380.30,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,0.0,0.0,0.0,0.0,,,,,,,,,,,,,,,,1,1,0,0,1
+2024-10-25,N225QS,MMCU,KELP,,,,,,,,0.8,0.0,0.8,0.0,0.0,0.8,0.0,0.0,0.0,0.0,0.0,0,187.10,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,0.0,0.0,0.0,0.0,,,,,,,,,,,,,,,,1,1,0,0,1
+2024-10-25,N225QS,MMTO,MMCU,,,,,,,,2.1,0.0,2.1,0.0,0.0,2.1,0.0,0.0,0.0,0.0,0.0,0,660.90,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,0.0,0.0,0.0,0.0,,,,,,,,,,,,,,,,1,1,0,0,1
+2024-10-24,N225QS,KSFO,MMTO,,,,,,,,4.1,0.0,4.1,4.1,0.0,4.1,0.0,0.0,0.0,0.0,0.0,0,1619.80,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,0.0,0.0,0.0,0.0,,,,,,,,,,,,,,,,0,0,1,1,1
+2024-10-24,N225QS,KSBA,KSFO,,,,,,,,1.0,0.0,1.0,0.0,0.0,1.0,0.0,0.0,0.0,0.0,0.0,0,227.60,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,0.0,0.0,0.0,0.0,,,,,,,,,,,,,,,,1,1,0,0,1
+2024-10-23,N225QS,KTEB,KSBA,,,,,,,,5.7,0.0,5.7,5.7,0.0,5.7,0.0,0.0,0.0,0.0,0.0,0,2190.20,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,0.0,0.0,0.0,0.0,,,,,,,,,,,,,,,,0,0,1,1,1
+2024-10-23,N225QS,KSVH,KTEB,,,,,,,,1.6,0.0,1.6,1.6,0.0,1.6,0.0,0.0,0.0,0.0,0.0,0,445.70,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,0.0,0.0,0.0,0.0,,,,,,,,,,,,,,,,0,0,1,1,1
+2024-10-14,N258QS,KHOU,KDAL,,,,,,,,1.0,0.0,1.0,0.0,0.0,1.0,0.0,0.0,0.0,0.0,0.0,0,208.00,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,0.0,0.0,0.0,0.0,,,,,,,,,,,,,,,,1,1,0,0,1
+2024-10-14,N258QS,KCHO,KHOU,,,,,,,,2.9,0.0,2.9,0.0,0.0,2.9,0.0,0.0,0.0,0.0,0.0,0,980.00,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,0.0,0.0,0.0,0.0,,,,,,,,,,,,,,,,1,1,0,0,1
+2024-10-14,N258QS,KBGR,KCHO,,,,,,,,2.0,0.0,2.0,0.0,0.0,2.0,0.0,0.0,0.0,0.0,0.0,0,589.40,0.3,0.0,0.00,0.00,0.00,0.00,0,,,,,,,0.0,0.0,0.0,0.0,,,,,,,,,,,,,,,,1,1,0,0,1
+2024-10-13,N258QS,EGLF,KBGR,,,,,,,,6.9,0.0,6.9,0.0,0.0,6.9,0.0,0.0,0.0,0.0,0.0,0,2667.50,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,0.0,0.0,0.0,0.0,,,,,,,,,,"""First flight, IOE""",,,,,,1,1,0,0,1
+2024-03-25,N276EA,KLNK,KTUS,,,,,,,,2.5,0.0,2.5,0.0,0.0,2.5,,,,,0.0,0,861.10,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,0.0,0.0,0.0,0.0,,,,,,,,,,,,,,,,1,1,0,0,1
+2024-03-24,N276EA,KEUG,KLNK,,,,,,,,3.5,0.0,3.5,2.0,0.0,3.5,,,,,0.0,0,1185.30,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,0.0,0.0,0.0,0.0,,,,,,,,,,,,,,,,1,0,0,1,1
+2024-03-24,N276EA,KCRP,KEUG,,,,,,,,4.4,0.0,4.4,0.0,0.0,4.4,,,,,0.0,0,1578.50,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,0.0,0.0,0.0,0.0,,,,,,,,,,,,,,,,1,1,0,0,1
+2024-03-23,N276EA,KLAX,KCRP,,,,,,,,3.1,0.0,3.1,0.0,0.0,3.1,,,,,0.0,0,1138.60,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,0.0,0.0,0.0,0.0,,,,,,,,,,,,,,,,0,0,1,1,1
+2024-03-02,N471BS,SEGU,MPTO,,,,,,,,2.3,0.0,2.3,2.3,0.0,2.3,,,,,0.0,0,671.20,0.0,0.0,0.00,0.00,0.00,0.00,0,1;VOR/DME;03L;MPTO;;,,,,,,0.0,0.0,0.0,0.0,,,,,,,,,,,,,,,,0,0,1,1,1
+2024-03-01,N471BS,MPTO,SEGU,,,,,,,,2.2,0.0,2.2,2.2,0.0,2.2,,,,,0.0,0,671.20,0.0,0.0,0.00,0.00,0.00,0.00,0,1;ILS;21;SEGU;;,,,,,,0.0,0.0,0.0,0.0,,,,,,,,,,,,,,,,0,0,1,1,1
+2024-03-01,N471BS,SEGU,MPTO,,,,,,,,2.3,0.0,2.3,2.3,0.0,2.3,,,,,0.0,0,671.20,0.0,0.0,0.00,0.00,0.00,0.00,0,1;VOR/DME;03L;MPTO;;,,,,,,0.0,0.0,0.0,0.0,,,,,,,,,,,,,,,,0,0,1,1,1
+2024-02-29,N471BS,MPTO,SEGU,,,,,,,,2.2,0.0,2.2,2.2,0.0,2.2,,,,,0.0,0,671.20,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,0.0,0.0,0.0,0.0,,,,,,,,,,,,,,,,0,0,1,1,1
+2024-02-29,N471BS,SEGU,MPTO,,,,,,,,2.1,0.0,2.1,2.1,0.0,2.1,,,,,0.0,0,671.20,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,0.0,0.0,0.0,0.0,,,,,,,,,,,,,,,,0,0,1,1,1
+2024-02-28,N471BS,MPTO,SEGU,,,,,,,,2.2,0.0,2.2,2.2,0.0,2.2,,,,,0.0,0,671.20,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,0.0,0.0,0.0,0.0,,,,,,,,,,,,,,,,0,0,1,1,1
+2024-02-28,N471BS,SEGU,MPTO,,,,,,,,2.2,0.0,2.2,2.2,0.0,2.2,,,,,0.0,0,671.20,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,0.0,0.0,0.0,0.0,,,,,,,,,,,,,,,,0,0,1,1,1
+2024-02-27,N471BS,MPTO,SEGU,,,,,,,,2.4,0.0,2.4,2.4,0.0,2.4,,,,,0.0,0,671.20,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,0.0,0.0,0.0,0.0,,,,,,,,,,,,,,,,0,0,1,1,1
+2024-02-23,N67TC,KRNO,KPHX,,,,,,,,1.9,0.0,1.9,1.9,0.0,1.9,,,,,0.0,0,522.10,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,0.0,0.0,0.0,0.0,,,,,,,,,,,,,,,,0,0,1,1,1
+2024-02-23,N67TC,KPHX,KRNO,,,,,,,,1.9,0.0,1.9,0.0,0.0,1.9,,,,,0.0,0,522.10,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,0.0,0.0,0.0,0.0,,,,,,,,,,,,,,,,1,1,0,0,1
+2024-02-22,N67TC,KRNO,KPHX,,,,,,,,2.1,0.0,2.1,1.7,0.0,2.1,0.0,0.0,0.0,0.0,0.0,0,522.10,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,0.0,0.0,0.0,0.0,0.0,,,,,,,,,,,,,,,1,0,0,1,1
+2024-02-22,N67TC,KPHX,KRNO,,,,,,,,2.2,0.0,2.2,0.0,0.0,2.2,0.0,0.0,0.0,0.0,0.0,0,522.10,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,0.0,0.0,0.0,0.0,0.0,,,,,,,,,,,,,,,1,1,0,0,1
+2024-02-21,N67TC,KRNO,KPHX,,,,,,,,2.2,0.0,2.2,2.2,0.0,2.2,,,,,0.0,0,522.10,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,0.0,0.0,0.0,0.0,,,,,,,,,,,,,,,,0,0,1,1,1
+2024-02-21,N67TC,KPHX,KRNO,,,,,,,,2.1,0.0,2.1,,,2.1,,,,,0.0,0,522.10,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,0.0,0.0,0.0,0.0,,,,,,,,,,,,,,,,1,1,0,0,1
+2024-02-20,N67TC,KRNO,KPHX,,,,,,,,2.0,0.0,2.0,2.0,0.0,2.0,,,,,0.0,0,522.10,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,0.0,0.0,0.0,0.0,,,,,,,,,,,,,,,,0,0,1,1,1
+2024-02-20,N67TC,KPHX,KRNO,,,,,,,,2.1,0.0,2.1,0.0,0.0,2.1,,,,,0.0,0,522.10,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,0.0,0.0,0.0,0.0,,,,,,,,,,,,,,,,1,1,0,0,1
+2024-02-14,N276EA,MHLM,KAEX,,00:00,,,00:00,,,3.6,0.0,3.6,11.7,0.0,3.6,,,,,0.0,0,982.80,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,0.0,0.0,0.0,0.0,,,,,,,,,,,,,,,,0,0,1,1,1
+2024-02-14,N276EA,SEGU,MHLM,,19:53,,,23:05,,,4.1,0.0,4.1,0.0,0.0,4.1,,,,,0.0,0,1155.20,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,0.0,0.0,0.0,0.0,,,,,,,,,,,,,,,,1,1,0,0,1
+2024-02-07,N859AM,KPHX,KLAX,,,,,,,,1.6,0.0,1.6,1.6,0.0,1.5,,,,,0.0,0,321.60,1.1,0.0,0.00,0.00,0.00,0.00,0,,,,,,,0.0,0.0,0.0,0.0,,,,,,,,,,,,,,,,0,0,1,1,1
+2024-02-03,SCA28,KSDL,KSDL,,,,,,,,1.2,1.2,0.0,0.0,0.0,0.0,,,,,0.0,0,0.00,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,1.2,0.0,0.0,0.0,,,,,,,,,,"""FAR 61.56 complete""",,,,,,0,0,0,0,0
+2024-01-24,N623SW,KLUK,KSWO,,,,,,,,2.4,0.0,2.4,2.4,0.0,2.4,,,,,0.0,0,628.30,2.4,0.0,0.00,0.00,0.00,0.00,0,,,,,,,0.0,0.0,0.0,0.0,,,,,,,,,,,,,,,,0,0,1,1,1
+2024-01-24,N623SW,KMDW,KLUK,,,,,,,,1.4,0.0,1.4,1.4,0.0,1.4,,,,,0.0,0,221.80,1.4,0.0,0.00,0.00,0.00,0.00,0,,,,,,,0.0,0.0,0.0,0.0,,,,,,,,,,,,,,,,0,0,1,1,1
+2024-01-24,N623SW,KFRG,KMDW,,,,,,,,2.8,0.0,2.8,0.0,0.0,2.8,,,,,0.0,0,651.20,2.8,0.0,0.00,0.00,0.00,0.00,0,,,,,,,0.0,0.0,0.0,0.0,,,,,,,,,,,,,,,,1,1,0,0,1
+2024-01-23,N808TJ,KFLL,KEWR,,,,,,,,3.1,0.0,3.1,3.1,3.1,0.0,,,,,0.0,0,0.00,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,0.0,0.0,0.0,0.0,,,,,,,,,,,,,,,,1,0,0,1,1
+2024-01-23,N808TJ,KPHX,KFLL,,,,,,,,4.8,0.0,4.8,0.0,,4.8,,,,,0.0,0,1714.00,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,0.0,0.0,0.0,0.0,,,,,,,,,,,,,,,,1,1,0,0,1
+2024-01-22,N859AM,KLAX,KRNO,,,,,,,,2.0,0.0,2.0,2.0,0.0,2.0,,,,,0.0,0,339.30,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,0.0,0.0,0.0,0.0,,,,,,,,,,,,,,,,0,0,1,1,1
+2024-01-21,N804TJ,KBNA,KCMH,,,,,,,,1.4,0.0,1.4,1.4,0.0,1.4,,,,,0.0,0,293.30,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,0.0,0.0,0.0,0.0,,,,,,,,,,,,,,,,0,0,1,1,1
+2024-01-20,N804TJ,KPHX,KBNA,,,,,,,,3.6,0.0,3.6,3.6,0.0,3.6,,,,,0.0,0,1258.80,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,0.0,0.0,0.0,0.0,,,,,,,,,,,,,,,,0,0,1,1,1
+2024-01-19,N804TJ,CYVR,KPHX,,,,,,,,4.2,0.0,4.2,4.2,0.0,4.2,,,,,0.0,0,1068.90,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,0.0,0.0,0.0,0.0,,,,,,,,,,,,,,,,0,0,1,1,1
+2024-01-16,N804TJ,CYYC,CYVR,,,,,,,,2.6,0.0,2.6,2.6,0.0,2.3,,,,,0.0,0,372.00,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,0.0,0.0,0.0,0.0,,,,,,,,,,,,,,,,0,0,1,1,1
+2024-01-14,N917XA,CYYC,KORD,,,,,,,,4.5,0.0,4.5,4.5,0.0,4.5,,,,,0.0,0,1203.50,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,0.0,0.0,0.0,0.0,,,,,,,,,,,,,,,,0,0,1,1,1
+2024-01-14,N917XA,KMSP,CYYC,,,,,,,,3.5,0.0,3.5,3.5,0.0,3.5,,,,,0.0,0,913.60,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,0.0,0.0,0.0,0.0,,,,,,,,,,,,,,,,0,0,1,1,1
+2024-01-12,N917XA,KPHX,KMSP,,,,,,,,3.5,0.0,3.5,0.0,0.0,3.5,,,,,0.0,0,1108.80,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,0.0,0.0,0.0,0.0,,,,,,,,,,,,,,,,1,1,0,0,1
+2024-01-03,N314XA,KPIT,KBOS,,,,,,,,1.7,0.0,1.7,0.0,0.0,1.7,,,,,0.0,0,431.00,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,0.0,0.0,0.0,0.0,,,,,,,,,,,,,,,,1,1,0,0,1
+2023-12-30,N313XA,KLAX,KPHX,,,,,,,,1.7,0.0,1.7,1.7,0.0,0.0,,,,,0.0,0,0.00,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,0.0,0.0,0.0,0.0,,,,,,,,,,,,,,,,0,0,1,1,1
+2023-12-28,N313XA,KLGB,KLAX,,,,,,,,1.0,0.0,1.0,0.0,0.0,0.0,,,,,0.0,0,14.80,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,0.0,0.0,0.0,0.0,,,,,,,,,,,,,,,,1,1,0,0,1
+2023-12-28,N313XA,KPHX,KLGB,,,,,,,,1.7,0.0,1.7,0.0,0.0,1.7,,,,,0.0,0,308.40,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,0.0,0.0,0.0,0.0,,,,,,,,,,,,,,,,1,1,0,0,1
+2023-12-01,N935BL,KSDL,KSDL,,,,,,,,1.7,1.7,0.0,0.0,0.0,0.0,,,,,0.0,0,0.00,0.7,0.0,0.00,0.00,0.00,0.00,1,1;RNAV (GPS) RWY 25L;25L;KDVT;;,,,,,,1.7,0.0,0.0,0.0,,,,,,,,,,,,,,,,1,1,0,0,1
+2023-11-30,N313XA,KMFE,KTUS,,,,,,,,2.8,0.0,2.8,0.0,0.0,0.0,,,,,0.0,0,0.00,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,0.0,0.0,0.0,0.0,,,,,,,,,,,,,,,,1,1,0,0,1
+2023-11-30,N529AU,KTUS,KMFE,,,,,,,,2.7,0.0,2.7,0.0,0.0,2.7,,,,,0.0,0,755.40,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,0.0,0.0,0.0,0.0,,,,,,,,,,,,,,,,1,1,0,0,1
+2023-11-29,N529AU,KMFE,KTUS,,,,,,,,2.8,0.0,2.8,0.0,0.0,2.8,,,,,0.0,0,755.40,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,0.0,0.0,0.0,0.0,,,,,,,,,,,,,,,,1,1,0,0,1
+2023-11-29,N529AU,KTUS,KMFE,,,,,,,,2.7,0.0,2.7,0.0,0.0,2.7,,,,,0.0,0,755.40,0.5,0.0,0.00,0.00,0.00,0.00,0,,,,,,,0.0,0.0,0.0,0.0,,,,,,,,,,,,,,,,1,1,0,0,1
+2023-11-27,N529AU,KMFE,KTUS,,,,,,,,2.6,0.0,2.6,0.0,0.0,2.6,,,,,0.0,0,755.40,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,0.0,0.0,0.0,0.0,,,,,,,,,,,,,,,,1,1,0,0,1
+2023-11-27,N529AU,KTUS,KMFE,,,,,,,,2.7,0.0,2.7,0.0,0.0,2.7,,,,,0.0,0,755.40,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,0.0,0.0,0.0,0.0,,,,,,,,,,,,,,,,1,1,0,0,1
+2023-11-23,N986AS,KLAX,KPHX,,,,,,,,1.5,0.0,1.5,1.5,0.0,1.5,,,,,0.0,0,321.60,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,0.0,0.0,0.0,0.0,,,,,,,,,,,,,,,,0,0,1,1,1
+2023-11-22,N986AS,KPHX,KLAX,,,,,,,,1.4,0.0,1.4,1.4,0.0,1.4,,,,,0.0,0,321.60,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,0.0,0.0,0.0,0.0,,,,,,,,,,,,,,,,0,0,1,1,1
+2023-11-22,N986AS,KLAX,KPHX,,,,,,,,1.5,0.0,1.5,1.5,0.0,1.5,,,,,0.0,0,321.60,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,0.0,0.0,0.0,0.0,,,,,,,,,,,,,,,,0,0,1,1,1
+2023-11-21,N986AS,KPHX,KLAX,,,,,,,,1.3,0.0,1.3,1.3,0.0,1.3,,,,,0.0,0,321.60,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,0.0,0.0,0.0,0.0,,,,,,,,,,,,,,,,0,0,1,1,1
+2023-11-21,N986AS,KLAX,KPHX,,,,,,,,1.6,0.0,1.6,1.6,0.0,1.6,,,,,0.0,0,321.60,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,0.0,0.0,0.0,0.0,,,,,,,,,,,,,,,,0,0,1,1,1
+2023-11-21,N986AS,KPHX,KLAX,,,,,,,,1.3,0.0,1.3,1.3,0.0,1.3,,,,,0.0,0,321.60,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,0.0,0.0,0.0,0.0,,,,,,,,,,,,,,,,0,0,1,1,1
+2023-11-21,N986AS,KLAX,KPHX,,,,,,,,1.4,0.0,1.4,1.4,0.0,1.4,,,,,0.0,0,321.60,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,0.0,0.0,0.0,0.0,,,,,,,,,,,,,,,,0,0,1,1,1
+2023-11-20,SCA40,KSDL,KSDL,KCHD,,,,,,,1.1,1.1,0.0,0.0,0.0,0.0,,,,,0.0,0,0.00,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,1.1,0.0,0.0,0.0,,,,,,,,,,,,,,,,1,0,1,0,2
+2023-11-14,N986AS,KLAX,KPHX,,,,,,,,1.6,0.0,1.6,1.6,0.0,1.6,,,,,0.0,0,321.60,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,0.0,0.0,0.0,0.0,,,,,,,,,,,,,,,,0,0,1,1,1
+2023-11-14,N986AS,KPHX,KLAX,,,,,,,,1.5,0.0,1.5,1.5,0.0,1.5,,,,,0.0,0,321.60,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,0.0,0.0,0.0,0.0,,,,,,,,,,,,,,,,0,0,1,1,1
+2023-11-09,N314XA,KLRD,KTUS,,,,,,,,1.9,0.0,1.9,0.0,0.0,1.9,,,,,0.0,0,658.10,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,0.0,0.0,0.0,0.0,,,,,,,,,,,,,,,,1,1,0,0,1
+2023-11-02,N314XA,KPHX ,KSAT,,,,,,,,2.1,0.0,2.1,2.1,0.0,2.0,,,,,0.0,0,732.30,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,0.0,0.0,0.0,0.0,,,,,,,,,,,,,,,,0,0,1,1,1
+2023-11-02,N314XA,KLAX,KPHX ,,,,,,,,1.7,0.0,1.7,1.7,0.0,1.7,,,,,0.0,0,321.60,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,0.0,0.0,0.0,0.0,,,,,,,,,,,,,,,,0,0,0,0,0
+2023-11-01,N314XA,KLGB,KLAX,,,,,,,,0.8,0.0,0.8,0.0,0.0,0.0,,,,,0.0,0,0.00,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,0.0,0.0,0.0,0.0,,,,,,,,,,,,,,,,1,1,0,0,1
+2023-10-31,N314XA,KPHX,KLGB,,,,,,,,1.4,0.0,1.4,0.0,0.0,1.4,,,,,0.0,0,308.40,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,0.0,0.0,0.0,0.0,,,,,,,,,,,,,,,,1,1,0,0,1
+2023-10-15,N807TJ,KLGB,KSJC,,,,,,,,1.1,0.0,1.1,1.1,0.0,1.1,,,,,0.0,0,281.50,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,0.0,0.0,0.0,0.0,,,,,,,,,,,,,,,,0,0,1,1,1
+2023-10-13,N807TJ,KLAX,KLGB,,,,,,,,1.0,0.0,0.0,0.7,0.0,0.0,,,,,0.0,0,0.00,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,0.0,0.0,0.0,0.0,,,,,,,,,,,,,,,,1,0,0,1,1
+2023-10-13,N807TJ,KSLN,KLAX,,,,,,,,3.3,0.0,3.3,0.0,0.0,3.3,,,,,0.0,0,1044.30,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,0.0,0.0,0.0,0.0,,,,,,,,,,,,,,,,0,0,0,0,0
+2023-10-13,N807TJ,KRDU,KSLN,,,,,,,,3.0,0.0,3.0,0.0,0.0,3.0,,,,,0.0,0,917.70,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,0.0,0.0,0.0,0.0,,,,,,,,,,,,,,,,1,1,0,0,1
+2023-10-12,N807TJ,KPHX,KEWR,,,,,,,,5.0,0.0,5.0,0.0,0.0,5.0,,,,,0.0,0,1853.40,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,0.0,0.0,0.0,0.0,,,,,,,,,,,,,,,,1,1,0,0,1
+2023-10-12,N807TJ,KEWR,KRDU,,00:00,,,00:00,,,1.6,0.0,1.6,0.5,0.0,1.6,,,,,0.0,0,361.70,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,0.0,0.0,0.0,0.0,,,,,,,,,,,,,,,,1,0,0,1,2
+2023-10-01,N804TJ,KPSP,KPHX,,,,,,,,1.4,0.0,1.4,1.4,0.0,1.4,,,,,0.0,0,226.40,0.0,0.0,0.00,0.00,0.00,0.00,0,1;ILS OR LOC RWY 25L;25L;KPHX;;,,,,,,0.0,0.0,0.0,0.0,,,,,,,,,,,,,,,,0,0,1,1,1
+2023-10-01,N804TJ,KPHX,KPSP,,,,,,,,1.3,0.0,1.3,0.0,0.0,0.0,,,,,0.0,0,0.00,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,0.0,0.0,0.0,0.0,,,,,,,,,,,,,,,,1,1,0,0,1
+2023-09-26,N276EA,KMDT,KAEX,,,,,,,,2.9,0.0,2.9,0.0,0.0,2.9,,,,,0.0,0,933.80,0.0,0.0,0.00,0.00,0.00,0.00,0,1;RNAV (GPS) RWY 18;18;KAEX;;,,,,,,0.0,0.0,0.0,0.0,,,,,,,,,,,,,,,,1,1,0,0,1
+2023-09-26,N276EA,KBUF,KMDT,,,,,,,,1.0,0.0,1.0,0.0,,1.0,,,,,0.0,0,187.10,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,0.0,0.0,0.0,0.0,,,,,,,,,,,,,,,,1,1,0,0,1
+2023-09-23,N276EA,KSAN,KAEX,,,,,,,,3.2,0.0,3.2,0.0,0.0,3.2,,,,,0.0,0,1256.80,0.0,0.0,0.00,0.00,0.00,0.00,0,1;RNAV (GPS) RWY 18;18;KAEX;;,,,,,,0.0,0.0,0.0,0.0,,,,,,,,,,,,,,,,1,1,0,0,1
+2023-09-21,N797EJ,KCHD ,KCHD,SEZ SDL,,,,,,,2.4,2.4,0.0,0.0,0.0,2.4,,,,,0.0,0,190.00,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,0.0,0.0,0.0,0.0,,,,,,,,,,,,,,,,5,2,0,0,5
+2023-09-20,SCA17,KSDL,KSDL,DVT,,,,,,,1.7,1.7,0.0,0.0,0.0,0.0,,,,,0.0,0,0.00,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,1.7,0.0,0.0,0.0,,,,,,,,,,,,,,,,5,1,0,0,5
+2023-09-19,SCA69,KSDL,KSDL,,,,,,,,1.8,1.8,0.0,0.0,0.0,,,,,,0.0,0,0.00,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,1.8,0.0,0.0,0.0,,,,,,,,,,,,,,,,3,1,0,0,3
+2023-09-18,N797EJ,KCHD,KCHD,KPAN,,,,,,,2.1,2.1,0.0,0.0,0.0,2.1,,,,,0.0,0,127.40,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,0.0,0.0,0.0,0.0,,,,,,,,,,,,,,,,2,2,0,0,2
+2023-09-13,N313XA,MHLM,KHRL,,,,,,,,2.8,0.0,2.8,0.0,0.0,2.8,,,,,0.0,0,844.20,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,0.0,0.0,0.0,0.0,,,,,,,,,,,,,,,,1,1,0,0,1
+2023-09-13,N313XA,KHRL,MHLM,,,,,,,,3.0,0.0,3.0,0.0,0.0,3.0,,,,,0.0,0,844.20,0.0,0.0,0.00,0.00,0.00,0.00,0,1;ILS;22;MHLM;;,,,,,,0.0,0.0,0.0,0.0,,,,,,,,,,,,,,,,0,0,0,0,0
+2023-09-12,N438US,KAEX,KHRL,,,,,,,,1.5,0.0,1.5,0.0,0.0,1.5,,,,,0.0,0,406.90,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,0.0,0.0,0.0,0.0,,,,,,,,,,,,,,,,0,0,0,0,0
+2023-09-12,N438US,KRIC,KAEX,,,,,,,,3.3,0.0,3.3,0.0,,3.3,,,,,0.0,0,840.20,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,0.0,0.0,0.0,0.0,,,,,,,,,,,,,,,,1,1,0,0,1
+2023-09-05,N440US,KSAN,KIWA,,,,,,,,1.2,0.0,1.2,0.0,0.0,1.2,,,,,0.0,0,281.30,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,0.0,0.0,0.0,0.0,,,,,,,,,,,,,,,,1,1,0,0,1
+2023-09-05,N440US,KSAT,KSAN,,,,,,,,3.2,0.0,3.2,0.0,0.0,3.2,,,,,0.0,0,981.50,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,0.0,0.0,0.0,0.0,,,,,,,,,,,,,,,,1,1,0,0,1
+2023-09-04,N623SW,MHLM,KSAT,,,,,,,,3.2,0.0,3.2,0.0,0.0,3.2,,,,,0.0,0,1024.50,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,0.0,0.0,0.0,0.0,,,,,,,,,,,,,,,,1,1,0,0,1
+2023-09-04,N623SW,KIAH,MHLM,,,,,,,,3.0,0.0,3.0,0.0,0.0,3.0,,,,,0.0,0,960.70,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,0.0,0.0,0.0,0.0,,,,,,,,,,,,,,,,1,1,0,0,1
+2023-09-04,N623SW,KSAT,KIAH,,,,,,,,1.1,0.0,1.1,0.0,0.0,1.1,,,,,0.0,0,165.50,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,0.0,0.0,0.0,0.0,,,,,,,,,,,,,,,,1,1,0,0,1
+2023-09-02,N797EJ,KSDL,KCHD,,,,,,,,2.0,2.0,0.0,0.0,0.0,0.0,,,,,0.0,0,0.00,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,0.0,0.0,0.0,0.0,,,,,,,,,,,,,,,,4,1,0,0,4
+2023-08-31,N797EJ,KTUS,KSDL,,,,,,,,1.2,1.2,0.0,0.0,1.2,1.2,,,,,0.0,0,102.70,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,0.0,0.0,0.0,0.0,,,,,,,,,,,,,,,,1,1,0,0,1
+2023-08-30,N545CC,KAEX,KGSO,,,,,,,,2.7,0.0,2.7,0.0,0.0,2.4,,,,,0.0,0,692.00,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,0.0,0.0,0.0,0.0,,,,,,,,,,,,,,,,1,1,0,0,1
+2023-08-29,N797EJ,KCHD,KTUS,,,,,,,,1.2,1.2,0.0,0.0,1.2,1.2,,,,,0.0,0,81.90,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,0.0,0.0,0.0,0.0,,,,,,,,,,,,,,,,1,1,0,0,1
+2023-08-27,N623SW,MGGT,KIWA,,,,,,,,4.7,0.0,4.7,0.0,0.0,4.7,0.0,0.0,0.0,0.0,0.0,0,1606.50,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,0.0,0.0,0.0,0.0,0.0,,,,,,,,,,,,,,,1,1,0,0,1
+2023-08-27,N623SW,KELP,MGGT,,,,,,,,3.5,0.0,3.5,0.0,0.0,3.5,0.0,0.0,0.0,0.0,0.0,0,1348.60,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,0.0,0.0,0.0,0.0,0.0,,,,,,,,,,,,,,,1,1,0,0,1
+2023-08-25,N797EJ,KCHD,KCHD,,,,,,,,1.3,1.3,0.0,0.0,0.0,0.0,,,,,0.0,0,0.00,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,0.0,0.0,0.0,0.0,,,,,,,,,,,,,,,,4,1,0,0,4
+2023-08-24,N797EJ,KCHD,KCHD,,,,,,,,1.4,1.4,0.0,0.0,0.0,0.0,,,,,0.0,0,0.00,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,0.0,0.0,0.0,0.0,,,,,,,,,,,,,,,,3,1,0,0,3
+2023-08-23,N529AU,KAEX,KIWA,,,,,,,,2.8,0.0,2.8,0.0,0.0,2.8,,,,,0.0,0,977.30,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,0.0,0.0,0.0,0.0,,,,,,,,,,,,,,,,1,1,0,0,1
+2023-08-23,N529AU,KIWA,KAEX,,,,,,,,3.2,0.0,3.2,0.0,0.0,3.2,,,,,0.0,0,977.30,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,0.0,0.0,0.0,0.0,,,,,,,,,,,,,,,,1,1,0,0,1
+2023-08-22,N802TJ,KELP,KIWA,,,,,,,,2.2,0.0,2.2,0.0,0.0,2.2,,,,,0.0,0,282.30,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,0.0,0.0,0.0,0.0,,,,,,,,,,,,,,,,1,1,0,0,1
+2023-08-21,N529AU,KAEX,KIWA,,,,,,,,3.2,0.0,3.2,0.0,0.0,3.2,,,,,0.0,0,977.30,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,0.0,0.0,0.0,0.0,,,,,,,,,,,,,,,,1,1,0,0,1
+2023-08-21,N529AU,KIWA,KAEX,,,,,,,,2.7,0.0,2.7,0.0,0.0,2.7,,,,,0.0,0,977.30,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,0.0,0.0,0.0,0.0,,,,,,,,,,,,,,,,1,1,0,0,1
+2023-08-20,N797EJ,KSDL,KCHD,,,,,,,,1.3,1.3,0.0,,0.0,0.0,,,,,0.0,0,0.00,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,0.0,0.0,0.0,0.0,,,,,,,,,,,,,,,,2,1,0,0,2
+2023-08-13,N709MB,KRNO,KPHX,,,,,,,,2.3,0.0,2.3,0.0,0.0,2.3,,,,,0.0,0,522.10,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,0.0,0.0,0.0,0.0,,,,,,,,,,,,,,,,1,1,0,0,1
+2023-08-13,N709MB,KLAX,KRNO,,,,,,,,1.1,0.0,1.1,0.0,0.0,1.1,,,,,0.0,0,339.30,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,0.0,0.0,0.0,0.0,,,,,,,,,,,,,,,,0,1,1,0,1
+2023-08-12,N709MB,KPHX,KLAX,,,,,,,,1.2,0.0,1.2,0.0,0.0,1.2,,,,,0.0,0,321.60,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,0.0,0.0,0.0,0.0,,,,,,,,,,,,,,,,1,1,0,0,1
+2023-08-11,N529AU,MGGT,KIWA,,,,,,,,4.9,0.0,4.9,0.0,0.0,4.9,,,,,0.0,0,1606.50,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,0.0,0.0,0.0,0.0,,,,,,,,,,,,,,,,1,1,0,0,1
+2023-08-10,N529AU,KIAH,MGGT,,,,,,,,3.0,0.0,3.0,0.0,0.0,3.0,,,,,0.0,0,958.70,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,0.0,0.0,0.0,0.0,,,,,,,,,,,,,,,,1,1,0,0,1
+2023-08-09,N529AU,KIWA,KIAH,,,,,,,,2.6,0.0,2.6,1.5,0.0,2.6,,,,,0.0,0,857.90,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,0.0,0.0,0.0,0.0,,,,,,,,,,,,,,,,0,1,1,0,1
+2023-07-30,N797EJ,KCHD,KCHD,A39 IWA,,,,,,,2.1,2.1,0.0,1.0,0.0,0.0,,,,,0.0,0,48.90,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,0.0,0.0,0.0,0.0,,,,,,,,,,,,,,,,4,0,3,2,4
+2023-07-25,N797EJ,KCHD,KCHD,SEZ FFZ,,,,,,,2.6,2.6,0.0,0.0,0.0,2.6,,,,,0.0,0,190.00,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,0.0,0.0,0.0,0.0,,,,,,,,,,,,,,,,5,2,0,0,5
+2023-07-21,N709MB,KLAX,KPHX,,,,,,,,1.2,0.0,1.2,1.2,0.0,0.0,,,,,0.0,0,0.00,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,0.0,0.0,0.0,0.0,,,,,,,,,,,,,,,,0,0,1,1,1
+2023-07-20,N709MB,KPHX,KLAX,,,,,,,,1.4,0.0,1.4,1.4,0.0,1.4,,,,,0.0,0,321.60,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,0.0,0.0,0.0,0.0,,,,,,,,,,,,,,,,0,0,1,1,1
+2023-07-17,N623SW,KIWA,KMDT,,,,,,,,4.6,0.0,4.6,0.0,0.0,4.6,,,,,0.0,0,1720.40,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,0.0,0.0,0.0,0.0,,,,,,,,,,,,,,,,1,1,0,0,1
+2023-07-14,N623SW,KAEX,KIWA,,,,,,,,2.7,0.0,2.7,0.0,0.0,2.7,,,,,0.0,0,977.30,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,0.0,0.0,0.0,0.0,,,,,,,,,,,,,,,,1,1,0,0,1
+2023-07-14,N623SW,KNYL,KAEX,,,,,,,,3.1,0.0,3.1,0.0,0.0,3.1,,,,,0.0,0,1126.30,0.0,0.0,0.00,0.00,0.00,0.00,0,1;RNAV (GPS) RWY 32;32;KAEX;;,,,,,,0.0,0.0,0.0,0.0,,,,,,,,,,,,,,,,1,1,0,0,1
+2023-07-14,N623SW,KIWA,KNYL,,,,,,,,0.8,0.0,0.8,,0.0,0.8,,,,,0.0,0,153.90,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,0.0,0.0,0.0,0.0,,,,,,,,,,,,,,,,1,1,0,0,1
+2023-07-10,N803TJ,MGGT,KIWA,,,,,,,,4.7,0.0,4.7,0.0,0.0,4.7,,,,,0.0,0,1606.50,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,0.0,0.0,0.0,0.0,,,,,,,,,,,,,,,,1,1,0,0,1
+2023-07-10,N803TJ,KELP,MGGT,,,,,,,,3.7,0.0,3.7,0.0,0.0,3.7,,,,,0.0,0,1348.60,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,0.0,0.0,0.0,0.0,,,,,,,,,,,,,,,,1,1,0,0,1
+2023-07-08,N804TJ,KADW,KINT,,,,,,,,1.2,0.0,1.2,1.2,0.0,1.2,,,,,0.0,0,226.70,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,0.0,0.0,0.0,0.0,,,,,,,,,,,,,,,,0,0,1,1,1
+2023-07-05,N623SW,MGGT,KIWA,,,,,,,,4.7,0.0,4.7,0.0,0.0,4.7,0.0,0.0,0.0,0.0,0.0,0,1606.50,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,0.0,0.0,0.0,0.0,0.0,,,,,,,,,,,,,,,1,1,0,0,1
+2023-07-05,N623SW,KELP,MGGT,,,,,,,,3.4,0.0,3.4,0.0,0.0,3.4,0.0,0.0,0.0,0.0,0.0,0,1348.60,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,0.0,0.0,0.0,0.0,0.0,,,,,,,,,,,,,,,1,1,0,0,1
+2023-07-01,N804TJ,KSJC,KHRL,,,,,,,,3.6,0.0,3.6,2.0,0.0,3.6,,,,,0.0,0,1402.90,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,0.0,0.0,0.0,0.0,,,,,,,,,,,,,,,,1,0,0,1,1
+2023-07-01,N804TJ,KPHX,KSJC,,,,,,,,1.8,0.0,1.8,0.0,0.0,1.8,,,,,0.0,0,540.00,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,0.0,0.0,0.0,0.0,,,,,,,,,,,,,,,,1,1,0,0,1
+2023-06-29,N623SW,KDEN,KIWA,,,,,,,,2.0,0.0,2.0,0.0,0.0,2.0,,,,,0.0,0,517.40,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,0.0,0.0,0.0,0.0,,,,,,,,,,,,,,,,1,1,0,0,1
+2023-06-29,N623SW,KIWA,KDEN,,,,,,,,2.1,0.0,2.1,0.0,0.0,2.1,,,,,0.0,0,517.40,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,0.0,0.0,0.0,0.0,,,,,,,,,,,,,,,,1,1,0,0,1
+2023-06-25,N797EJ,KCHD,KCHD,,,,,,,,2.0,2.0,0.0,0.0,0.0,0.0,,,,,0.0,0,0.00,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,0.0,0.0,0.0,0.0,,,,,,,,,,,,,,,,3,1,0,0,3
+2023-06-25,N797EJ,KSNA,KCHD,,,,,,,,2.5,2.5,0.0,0.0,0.0,2.5,,,,,0.0,0,304.90,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,0.0,0.0,0.0,0.0,,,,,,,,,,,,,,,,1,1,0,0,1
+2023-06-24,N797EJ,KCHD,KSNA,,,,,,,,2.5,2.5,0.0,0.0,0.0,2.5,,,,,0.0,0,304.90,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,0.0,0.0,0.0,0.0,,,,,,,,,,,,,,,,1,1,0,0,1
+2023-06-21,N623SW,MGGT,KIWA,,,,,,,,4.3,0.0,4.3,0.0,0.0,4.3,,,,,0.0,0,1606.50,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,0.0,0.0,0.0,0.0,,,,,,,,,,,,,,,,1,1,0,0,1
+2023-06-20,N623SW,KAEX,MGGT,,,,,,,,3.2,0.0,3.2,0.0,0.0,3.2,,,,,0.0,0,1007.50,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,0.0,0.0,0.0,0.0,,,,,,,,,,,,,,,,1,1,0,0,1
+2023-06-20,N623SW,KIWA,KAEX,,,,,,,,2.8,0.0,2.8,0.0,0.0,2.8,,,,,0.0,0,977.30,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,0.0,0.0,0.0,0.0,,,,,,,,,,,,,,,,1,1,0,0,1
+2023-06-19,N797EJ,KCHD,KCHD,SEZ FFZ IWA,,,,,,,3.9,3.9,0.0,0.0,0.0,3.9,,,,,0.0,0,196.30,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,0.0,0.0,0.0,0.0,,,,,,,,,,,,,,,,4,3,0,0,4
+2023-06-15,N797EJ,KCHD,KCHD,KCHD KTUS KCHD,,,,,,,1.7,1.7,0.0,0.0,0.0,0.0,,,,,0.0,0,0.00,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,1.7,0.0,0.0,0.0,,,,,,,,,,,,,,,,0,0,0,0,0
+2023-06-14,N952SC,KSDL,KSDL,KCHD,,,,,,,1.7,0.0,0.0,0.0,0.0,0.0,,,,,0.0,0,0.00,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,1.7,0.0,0.0,0.0,,,,,,,,,,,,,,,,0,0,0,0,0
+2023-06-13,N797EJ,KCHD,KCHD,KCHD A39 KCHD,,,,,,,1.3,1.3,0.0,0.0,0.0,0.0,,,,,0.0,0,0.00,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,1.3,0.0,0.0,0.0,,,,,,,,,,,,,,,,0,0,0,0,0
+2023-06-09,N623SW,MGGT,KIWA,,,,,,,,4.7,0.0,4.7,0.0,0.0,4.7,,,,,0.0,0,1606.50,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,0.0,0.0,0.0,0.0,,,,,,,,,,,,,,,,1,1,0,0,1
+2023-06-09,N623SW,KELP,MGGT,,,,,,,,3.7,0.0,3.7,0.0,0.0,3.7,,,,,0.0,0,1348.60,0.0,0.0,0.00,0.00,0.00,0.00,0,1;ILS;02;MGGT;;,,,,,,0.0,0.0,0.0,0.0,,,,,,,,,,,,,,,,1,1,0,0,1
+2023-06-08,N623SW,KIWA,KELP,,,,,,,,1.5,0.0,1.5,,0.0,1.5,,,,,0.0,0,282.30,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,0.0,0.0,0.0,0.0,,,,,,,,,,,,,,,,1,1,0,0,1
+2023-06-06,N623SW,KDEN,KLAS,,,,,,,,2.0,0.0,2.0,0.0,0.0,2.0,,,,,0.0,0,545.90,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,0.0,0.0,0.0,0.0,,,,,,,,,,,,,,,,1,1,0,0,1
+2023-06-06,N623SW,KIWA,KDEN,,,,,,,,2.7,0.0,2.7,0.0,0.0,2.7,,,,,0.0,0,517.40,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,0.0,0.0,0.0,0.0,,,,,,,,,,,,,,,,1,1,0,0,1
+2023-06-03,N797EJ,KSZP,KDVT,,,,,,,,5.0,5.0,0.0,2.2,0.0,5.0,,,,,0.0,0,350.20,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,0.0,0.0,0.0,0.0,,,,,,,,,,,,,,,,1,0,1,2,2
+2023-06-03,N797EJ,KDVT,KSZP,,,,,,,,2.7,2.7,0.0,0.0,0.0,2.7,,,,,0.0,0,350.20,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,0.0,0.0,0.0,0.0,,,,,,,,,,,,,,,,1,1,0,0,1
+2023-06-01,N797EJ,KDVT,KDVT,KDVT KSDL KFFZ KIWA KCHD KGYR KGEU KDVT,,,,,,,1.8,1.8,0.0,0.0,0.0,0.0,,,,,0.0,0,0.00,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,1.8,0.0,0.0,0.0,,,,,,,,,,,,,,,,0,0,0,0,0
+2023-05-25,N438US,KIWA,KELP,,,,,,,,1.1,0.0,1.1,1.1,0.0,1.1,,,,,0.0,0,282.30,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,0.0,0.0,0.0,0.0,,,,,,,,,,,,,,,,0,0,1,1,1
+2023-05-23,N916SC,KLAX,KPHX,,,,,,,,1.2,0.0,1.2,1.2,0.0,1.2,,,,,0.0,0,321.60,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,0.0,0.0,0.0,0.0,,,,,,,,,,,,,,,,0,0,1,1,1
+2023-05-23,N916SC,KPHX,KLAX,,,,,,,,1.3,0.0,1.3,1.3,0.0,1.3,,,,,0.0,0,321.60,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,0.0,0.0,0.0,0.0,,,,,,,,,,,,,,,,0,0,1,1,1
+2023-05-23,N797EJ,KDVT,KDVT,"DVT , FFZ, IWA, CHD, P19, KGYR KGEU KFFZ",,,,,,,1.9,1.9,0.0,0.0,0.0,0.0,,,,,0.0,0,0.00,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,1.9,0.0,0.0,0.0,,,,,,,,,,,,,,,,0,0,0,0,0
+2023-05-21,N916SC,KPHX,KCVG,,,,,,,,3.3,0.0,3.3,0.0,0.0,3.3,,,,,0.0,0,1363.40,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,0.0,0.0,0.0,0.0,,,,,,,,,,,,,,,,1,1,0,0,1
+2023-05-20,N797EJ,KPAN,KDVT,,,,,,,,0.7,0.7,0.0,0.0,0.0,0.7,,,,,0.0,0,50.40,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,0.7,0.0,0.0,0.0,,,,,,,,,,,,,,,,0,0,0,0,0
+2023-05-17,N797EJ,KSEZ,KDVT,,,,,,,,0.9,0.9,0.0,0.0,0.0,0.9,,,,,0.0,0,71.00,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,0.9,0.0,0.0,0.0,,,,,,,,,,,,,,,,0,0,0,0,0
+2023-05-17,N797EJ,KDVT,KSEZ,,,,,,,,0.9,0.9,0.0,0.0,0.0,0.9,,,,,0.0,0,71.00,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,0.9,0.0,0.0,0.0,,,,,,,,,,,,,,,,0,0,0,0,0
+2023-05-15,N797EJ,KDVT,KSNA,,,,,,,,2.3,2.3,0.0,,0.0,2.3,,,,,0.0,0,289.60,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,0.0,0.0,0.0,0.0,,,,,,,,,,,,,,,,1,1,0,0,1
+2023-05-12,N802TJ,KIWA,KAEX,,,,,,,,3.1,0.0,3.1,0.0,0.0,3.1,0.0,0.0,0.0,0.0,0.0,0,977.30,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,0.0,0.0,0.0,0.0,0.0,,,,,,,,,,,,,,,1,1,0,0,1
+2023-05-11,N802TJ,KIWA,KELP,,,,,,,,1.2,0.0,1.2,0.8,0.0,1.2,,,,,0.0,0,282.30,0.0,0.0,0.00,0.00,0.00,0.00,0,1;ILS OR LOC RWY 22;22;KELP;;,,,,,,0.0,0.0,0.0,0.0,,,,,,,,,,,,,,,,0,1,1,0,1
+2023-05-11,N797EJ,KZZV,KUMP,,,,,,,,1.8,1.8,0.0,0.0,0.0,1.8,,,,,0.0,0,0.00,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,1.8,0.0,0.0,0.0,,,,,,,,,,,,,,,,0,0,0,0,0
+2023-05-11,N797EJ,KLNS,KZZV,,,,,,,,2.4,2.4,0.0,0.0,0.0,0.0,,,,,0.0,0,0.00,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,2.4,0.0,0.0,0.0,,,,,,,,,,,,,,,,0,0,0,0,0
+2023-05-10,N797EJ,KSDL,KSDL,,,,,,,,1.0,1.0,0.0,0.0,0.0,0.0,,,,,0.0,0,0.00,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,1.0,0.0,0.0,0.0,,,,,,,,,,,,,,,,0,0,0,0,0
+2023-05-09,N797EJ,KTUS,KSDL,,,,,,,,1.2,1.2,0.0,1.2,0.0,1.2,,,,,0.0,0,102.70,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,0.0,0.0,0.0,0.0,,,,,,,,,,,,,,,,0,0,1,1,1
+2023-05-09,N797EJ,KHOB,KTUS,,,,,,,,3.4,3.4,0.0,3.4,0.0,3.4,,,,,0.0,0,393.80,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,0.0,0.0,0.0,0.0,,,,,,,,,,,,,,,,0,0,1,1,1
+2023-05-09,N797EJ,1K4,KHOB,,,,,,,,2.8,2.8,0.0,2.8,0.0,2.8,,,,,0.0,0,322.70,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,2.8,0.0,0.0,0.0,,,,,,,,,,,,,,,,0,0,2,2,2
+2023-05-09,N797EJ,KMIE,KDXE,,,,,,,,2.2,2.2,0.0,2.2,0.0,2.2,,,,,0.0,0,298.30,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,2.2,0.0,0.0,0.0,,,,,,,,,,,,,,,,0,0,1,1,1
+2023-05-09,N797EJ,KZZV,KUMP,,,,,,,,1.8,1.8,0.0,0.0,0.0,1.8,,,,,0.0,0,0.00,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,1.8,0.0,0.0,0.0,,,,,,,,,,,,,,,,0,0,0,0,0
+2023-05-08,N797EJ,KLNS,KZZV,,,,,,,,2.4,2.4,0.0,0.0,0.0,2.4,,,,,0.0,0,0.00,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,2.4,0.0,0.0,0.0,,,,,,,,,,,,,,,,0,0,0,0,0
+2023-05-08,N797EJ,KLNS,KLNS ,MQS S37 58N,,,,,,,3.0,3.0,0.0,0.0,0.0,0.0,,,,,0.0,0,0.00,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,0.0,3.0,0.0,0.0,,Brad Bowser,"""Full checkout""",,,,,,,,,,,,,9,3,0,0,9
+2023-05-07,SCA54,KSDL,KSDL,,,,,,,,1.7,1.7,0.0,0.0,0.0,0.0,,,,,0.0,0,0.00,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,1.7,0.0,0.0,0.0,,,,,,,,,,,,,,,,6,1,0,0,6
+2023-05-06,N811TJ,KTUS,KONT,,,,,,,,1.5,0.0,1.5,1.5,0.0,1.5,,,,,0.0,0,355.20,0.0,0.0,0.00,0.00,0.00,0.00,0,1;ILS OR LOC RWY 26L;26L;KONT;;,,,,,,0.0,0.0,0.0,0.0,,,,,,,,,,,,,,,,0,0,1,1,1
+2023-05-04,N802TJ,KNYL,KTOL,,,,,,,,3.8,0.0,3.8,0.0,0.0,3.8,,,,,0.0,0,1561.70,0.0,0.0,0.00,0.00,0.00,0.00,0,1;HI-ILS Y OR LOC Y RWY 25;25;KTOL;;,,,,,,0.0,0.0,0.0,0.0,,,,,,,,,,,,,,,,1,1,0,0,1
+2023-05-04,N802TJ,KIWA,KNYL,,,,,,,,1.0,0.0,1.0,0.0,0.0,1.0,,,,,0.0,0,153.90,0.0,0.0,0.00,0.00,0.00,0.00,0,1;ILS OR LOC/DME RWY 21R;21R;KNYL;;,,,,,,0.0,0.0,0.0,0.0,,,,,,,,,,,,,,,,1,1,0,0,1
+2023-04-28,N438US,KDEN,KIWA,,,,,,,,2.0,0.0,2.0,0.0,0.0,2.0,,,,,0.0,0,517.40,0.0,0.0,0.00,0.00,0.00,0.00,0,1;RNAV (GPS) RWY 30L;30L;KIWA;;,,,,,,0.0,0.0,0.0,0.0,,,,,,,,,,,,,,,,1,1,0,0,1
+2023-04-28,N438US,KHRL,KDEN,,,,,,,,2.9,0.0,2.9,0.0,0.0,2.9,,,,,0.0,0,889.10,0.0,0.0,0.00,0.00,0.00,0.00,0,1;ILS OR LOC RWY 34L;34L;KDEN;;,,,,,,0.0,0.0,0.0,0.0,,,,,,,,,,,,,,,,1,1,0,0,1
+2023-04-27,N438US,KIWA,KHRL,,,,,,,,2.7,0.0,2.7,0.0,0.0,2.7,,,,,0.0,0,843.90,0.0,0.0,0.00,0.00,0.00,0.00,0,1;VOR/DME Y OR TACAN RWY 31;31;KHRL;;,,,,,,0.0,0.0,0.0,0.0,,,,,,,,,,,,,,,,1,1,0,0,1
+2023-04-26,N438US,MGGT,KIWA,,,,,,,,4.7,0.0,4.7,0.0,0.0,4.7,,,,,0.0,0,1606.50,0.0,0.0,0.00,0.00,0.00,0.00,0,1;RNAV (GPS) RWY 30L;30L;KIWA;;,,,,,,0.0,0.0,0.0,0.0,,,,,,,,,,,,,,,,1,1,0,0,1
+2023-04-26,N438US,KELP,MGGT,,,,,,,,3.5,0.0,3.5,0.0,0.0,3.5,,,,,0.0,0,1348.60,0.0,0.0,0.00,0.00,0.00,0.00,0,1;VORTAC;20;MGGT;;,,,,,,0.0,0.0,0.0,0.0,,,,,,,,,,,,,,,,1,1,0,0,1
+2023-04-25,N438US,MGGT,KIWA,,,,,,,,4.7,0.0,4.7,0.0,0.0,4.7,,,,,0.0,0,1606.50,0.0,0.0,0.00,0.00,0.00,0.00,0,1;RNAV (GPS) RWY 30L;30L;KIWA;;,,,,,,0.0,0.0,0.0,0.0,,,,,,,,,,,,,,,,1,1,0,0,1
+2023-04-24,N438US,KELP,MGGT,,,,,,,,3.8,0.0,3.8,0.0,0.0,3.8,,,,,0.0,0,1348.60,0.0,0.0,0.00,0.00,0.00,0.00,0,1;VORTAC;20;MGGT;;,,,,,,0.0,0.0,0.0,0.0,,,,,,,,,,,,,,,,1,1,0,0,1
+2023-04-20,SCA ALSIM AL172,KSDL,KSDL,,,,,,,,0.0,0.0,0.0,0.0,0.0,0.0,,,,,0.0,0,0.00,0.0,1.8,0.00,0.00,0.00,0.00,2,1;VOR/DME-A;;KSDL;;,1;RNAV (RNP) RWY 21;21;KSDL;;,1;ILS OR LOC RWY 05;05;KCGZ;;CIRCLE,1;RNAV (GPS) RWY 05;05;KCGZ;;,1;RNAV (GPS) RWY 05;05;KHMT;;,1;VOR RWY 05;05;KCGZ;;,0.0,0.0,1.8,0.0,,,,,,,,,,"""ALSIM KSDL """,,,,,,0,0,0,0,0
+2023-04-19,N438US,KAEX,KIWA,,,,,,,,3.0,0.0,3.0,0.0,0.0,3.0,,,,,0.0,0,977.30,0.0,0.0,0.00,0.00,0.00,0.00,0,1;RNAV (GPS) RWY 30L;30L;KIWA;;,,,,,,0.0,0.0,0.0,0.0,,,,,,,,,,,,,,,,1,1,0,0,1
+2023-04-19,N438US,KSAN,KAEX,,,,,,,,3.0,0.0,3.0,0.0,0.0,3.0,,,,,0.0,0,1256.80,0.0,0.0,0.00,0.00,0.00,0.00,0,1;ILS OR LOC RWY 14;14;KAEX;;,,,,,,0.0,0.0,0.0,0.0,,,,,,,,,,,,,,,,1,1,0,0,1
+2023-04-19,N438US,KIWA,KSAN,,,,,,,,1.4,0.0,1.4,0.0,0.0,1.4,,,,,0.0,0,281.30,0.0,0.0,0.00,0.00,0.00,0.00,0,1;ILS Y OR LOC Y RWY 09;09;KSAN;;,,,,,,0.0,0.0,0.0,0.0,,,,,,,,,,,,,,,,1,1,0,0,1
+2023-04-17,N397SW,MGGT,KIWA,,,,,,,,4.9,0.0,4.9,0.0,0.0,4.9,,,,,0.0,0,1606.50,0.0,0.0,1500.00,0.00,1810.00,0.00,0,1;RNAV (GPS) RWY 30L;30L;KIWA;;,,,,,,0.0,0.0,0.0,0.0,,,,,,,,,,,,,,,,1,1,0,0,1
+2023-04-17,N397SW,KELP,MGGT,,,,,,,,3.4,0.0,3.4,0.0,0.0,3.4,,,,,0.0,0,1348.60,0.0,0.0,1445.00,1500.00,1800.00,1810.00,0,1;ILS;02;MGGT;;,,,,,,0.0,0.0,0.0,0.0,,,,,,,,,,,,,,,,1,1,0,0,1
+2023-04-15,N803TJ,KIWA,KAEX,,,,,,,,3.1,0.0,3.1,0.0,0.0,3.1,0.0,0.0,0.0,0.0,0.0,0,977.30,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,0.0,0.0,0.0,0.0,0.0,,,,,,,,,,,,,,,1,1,0,0,1
+2023-04-14,N397SW,KIWA,KELP,,,,,,,,1.1,0.0,1.1,1.1,0.0,1.1,,,,,0.0,0,282.30,0.0,0.0,0.00,0.00,0.00,0.00,0,1;ILS OR LOC RWY 22;22;KELP;;,,,,,,0.0,0.0,0.0,0.0,,,,,,,,,,,,,,,,0,0,1,1,1
+2023-04-14,N803TJ,KIWA,KAEX,,,,,,,,2.9,0.0,2.9,2.9,0.0,2.9,,,,,0.0,0,977.30,0.0,0.0,0.00,0.00,0.00,0.00,0,1;ILS OR LOC RWY 14;14;KAEX;;,,,,,,0.0,0.0,0.0,0.0,,,,,,,,,,,,,,,,0,0,1,1,1
+2023-04-06,N916SC,KLAX,KPHX,,,,,,,,1.6,0.0,1.6,1.6,0.0,1.6,0.0,0.0,0.0,0.0,0.0,0,321.60,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,0.0,0.0,0.0,0.0,0.0,,,,,,,,,,,,,,,0,0,1,1,1
+2023-04-05,N209QS,KPHX,KLAX,,,,,,,,1.3,0.0,1.3,1.3,,1.3,0.0,0.0,0.0,0.0,0.0,0,321.60,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,0.0,0.0,0.0,0.0,0.0,,,,,,,,,,,,,,,0,0,1,1,1
+2023-04-05,N916SC,KLAX,KPHX,,,,,,,,1.6,0.0,1.6,1.6,0.0,1.6,0.0,0.0,0.0,0.0,0.0,0,321.60,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,0.0,0.0,0.0,0.0,0.0,,,,,,,,,,,,,,,0,0,1,1,1
+2023-04-04,N916SC,KPHX,KLAX,,,,,,,,1.4,0.0,1.4,1.4,0.0,1.4,0.0,0.0,0.0,0.0,0.0,0,321.60,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,0.0,0.0,0.0,0.0,0.0,,,,,,,,,,,,,,,0,0,1,1,1
+2023-04-03,N802TJ,KIWA,KELP,,,,,,,,1.2,0.0,1.2,1.2,0.0,1.2,,,,,0.0,0,282.30,0.0,0.0,0.00,0.00,0.00,0.00,0,1;ILS OR LOC RWY 22;22;KELP;;,,,,,,0.0,0.0,0.0,0.0,,,,,,,,,,,,,,,,0,0,1,1,1
+2023-04-02,N916SC,KPHX,KLAX,,,,,,,,1.2,0.0,1.2,1.2,0.0,1.2,,,,,0.0,0,321.60,0.0,0.0,0.00,0.00,0.00,0.00,0,1;ILS OR LOC RWY 25L;25L;KLAX;;,,,,,,0.0,0.0,0.0,0.0,,,,,,,,,,,,,,,,0,0,1,1,1
+2023-04-02,N916SC,KLAX,KPHX,,,,,,,,1.4,0.0,1.4,1.4,0.0,0.0,,,,,0.0,0,0.00,0.0,0.0,0.00,0.00,0.00,0.00,0,1;ILS OR LOC RWY 07R;07R;KPHX;;,,,,,,0.0,0.0,0.0,0.0,,,,,,,,,,,,,,,,1,1,0,0,1
+2023-03-30,N802TJ,MGGT,KIWA,,,,,,,,4.4,0.0,4.4,,0.0,4.4,,,,,0.0,0,1606.50,0.0,0.0,0.00,0.00,0.00,0.00,0,1;RNAV (GPS) RWY 30L;30L;KIWA;;,,,,,,0.0,0.0,0.0,0.0,,,,,,,,,,,,,,,,1,1,0,0,1
+2023-03-30,N802TJ,KELP,MGGT,,,,,,,,3.9,0.0,3.9,0.0,0.0,3.9,,,,,0.0,0,1348.60,0.0,0.0,0.00,0.00,0.00,0.00,0,1;ILS;02;MGGT;;,,,,,,0.0,0.0,0.0,0.0,,,,,,,,,,,,,,,,1,1,0,0,1
+2023-03-29,N802TJ,KIWA,KELP,,,,,,,,1.2,0.0,1.2,1.2,0.0,0.0,,,,,0.0,0,0.00,0.0,0.0,0.00,0.00,0.00,0.00,0,1;ILS OR LOC RWY 22;22;KELP;;,,,,,,0.0,0.0,0.0,0.0,,,,,,,,,,,,,,,,1,1,0,0,1
+2023-03-27,N802TJ,KBFI,KIWA,,,,,,,,2.4,0.0,2.4,0.0,0.0,2.4,,,,,0.0,0,980.30,0.0,0.0,0.00,0.00,0.00,0.00,0,1;RNAV (GPS) RWY 30L;30L;KIWA;;,,,,,,0.0,0.0,0.0,0.0,,,,,,,,,,,,,,,,1,1,0,0,1
+2023-03-27,N802TJ,KSAN,KBFI,,,,,,,,2.8,0.0,2.8,0.0,0.0,2.8,,,,,0.0,0,917.30,0.0,0.0,0.00,0.00,0.00,0.00,1,1;ILS OR LOC RWY 32L;32L;KBFI;;,,,,,,0.0,0.0,0.0,0.0,,,,,,,,,,,,,,,,1,1,0,0,1
+2023-03-22,SCA52,KSDL,KSDL,,,,,,,,2.1,2.1,0.0,0.0,0.0,0.0,,,,,0.0,0,0.00,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,2.1,0.0,0.0,0.0,,,,,,,,,,,,,,,,3,1,0,0,3
+2023-03-16,N916SC,KLAX,KPHX,,,,,,,,1.1,0.0,1.1,1.1,0.0,1.1,,,,,0.0,0,321.60,0.0,0.0,0.00,0.00,0.00,0.00,0,1;ILS OR LOC RWY 07R;07R;KPHX;;,,,,,,0.0,0.0,0.0,0.0,,,,,,,,,,,,,,,,1,1,0,0,1
+2023-03-15,N916SC,KPHX,KLAX,,,,,,,,1.5,0.0,1.5,1.5,0.0,1.5,,,,,0.0,0,321.60,0.0,0.0,0.00,0.00,0.00,0.00,0,1;ILS OR LOC RWY 25L;25L;KLAX;;,,,,,,0.0,0.0,0.0,0.0,,,,,,,,,,,,,,,,1,1,0,0,1
+2023-03-15,N916SC,KLAX,KPHX,,,,,,,,1.3,0.0,1.3,1.3,0.0,1.3,,,,,0.0,0,321.60,1.1,0.0,0.00,0.00,0.00,0.00,0,1;ILS OR LOC/DME RWY 07L;07L;KPHX;;,,,,,,0.0,0.0,0.0,0.0,,,,,,,,,,,,,,,,1,1,0,0,1
+2023-03-14,N916SC,KPHX,KLAX,,,,,,,,1.4,0.0,1.4,1.4,0.0,1.4,,,,,0.0,0,321.60,0.0,0.0,0.00,0.00,0.00,0.00,0,1;ILS OR LOC RWY 07R;07R;KLAX;;,,,,,,0.0,0.0,0.0,0.0,,,,,,,,,,,,,,,,1,1,0,0,1
+2023-03-14,N916SC,KLAX,KPHX,,,,,,,,1.1,0.0,1.1,1.1,0.0,1.1,,,,,0.0,0,321.60,0.0,0.0,0.00,0.00,0.00,0.00,0,1;ILS OR LOC/DME RWY 07L;07L;KPHX;;,,,,,,0.0,0.0,0.0,0.0,,,,,,,,,,,,,,,,1,1,0,0,1
+2023-03-14,N916SC,KPHX,KLAX,,,,,,,,1.5,0.0,1.5,1.5,0.0,1.5,,,,,0.0,0,321.60,0.0,0.0,0.00,0.00,0.00,0.00,0,1;ILS OR LOC RWY 24R;24R;KLAX;;,,,,,,0.0,0.0,0.0,0.0,,,,,,,,,,,,,,,,1,1,0,0,1
+2023-03-12,N916SC,KPHX,KLAX,,,,,,,,1.5,0.0,1.5,0.0,0.0,1.5,,,,,0.0,0,321.60,0.5,0.0,0.00,0.00,0.00,0.00,0,1;ILS OR LOC RWY 25L;25L;KLAX;;,,,,,,0.0,0.0,0.0,0.0,,,,,,,,,,,,,,,,1,1,0,0,1
+2023-03-12,N916SC,KLAX,KPHX,,,,,,,,1.5,0.0,1.5,1.5,0.0,1.5,,,,,0.0,0,321.60,0.0,0.0,0.00,0.00,0.00,0.00,0,1;ILS OR LOC RWY 25L;25L;KPHX;;,,,,,,0.0,0.0,0.0,0.0,,,,,,,,,,,,,,,,1,1,0,0,1
+2023-03-11,N916SC,KPHX,KLAX,,,,,,,,1.6,0.0,1.6,1.6,0.0,1.6,,,,,0.0,0,321.60,0.5,0.0,0.00,0.00,0.00,0.00,0,1;ILS OR LOC RWY 07R;07R;KLAX;;,,,,,,0.0,0.0,0.0,0.0,,,,,,,,,,,,,,,,1,1,0,0,1
+2023-03-11,N916SC,KPHX,KPHX,,,,,,,,2.1,0.0,2.1,2.1,0.0,0.0,,,,,0.0,0,0.00,0.0,0.0,0.00,0.00,0.00,0.00,1,1;RNAV (GPS) Y RWY 25R;25R;KPHX;;,,,,,,0.0,0.0,0.0,0.0,,,,,,,,,,"""Diversion, high mine captain""",,,,,,1,1,0,0,1
+2023-03-09,N227EA,KMIA,KAEX,,,,,,,,2.5,2.5,0.0,0.0,0.0,0.0,,,,,0.0,0,0.00,0.0,0.0,0.00,0.00,0.00,0.00,0,1;RNAV (GPS) RWY 18;18;KAEX;;,,,,,,0.0,0.0,0.0,0.0,,,,,,,,,,,,,,,,1,1,0,0,1
+2023-03-09,N227EA,KSAT,KMIA,,,,,,,,2.6,0.0,2.6,0.0,0.0,2.6,,,,,0.0,0,992.80,0.0,0.0,0.00,0.00,0.00,0.00,0,1;ILS OR LOC RWY 12;12;KMIA;;,,,,,,0.0,0.0,0.0,0.0,,,,,,,,,,,,,,,,1,1,0,0,1
+2023-03-09,N227EA,KAEX,KSAT,,,,,,,,1.4,0.0,1.4,0.0,0.0,1.4,,,,,0.0,0,325.30,0.0,0.0,0.00,0.00,0.00,0.00,0,1;ILS OR LOC RWY 04;04;KSAT;;,,,,,,0.0,0.0,0.0,0.0,,,,,,,,,,,,,,,,1,1,0,0,1
+2023-03-08,N227EA,MGGT,KAEX,,,,,,,,3.9,,3.9,0.0,0.0,3.9,,,,,0.0,0,1007.50,0.0,0.0,0.00,0.00,0.00,0.00,0,1;ILS OR LOC RWY 14;14;KAEX;;,,,,,,0.0,0.0,0.0,0.0,,,,,,,,,,,,,,,,1,1,0,0,1
+2023-03-08,N227EA,KIWA,MGGT,,,,,,,,4.1,0.0,4.1,0.0,0.0,4.1,,,,,0.0,0,1606.50,0.0,0.0,0.00,0.00,0.00,0.00,0,1;ILS;02;MGGT;;,,,,,,0.0,0.0,0.0,0.0,,,,,,,,,,,,,,,,1,1,0,0,1
+2023-03-04,SCA69,KSDL,KSEZ,,,,,,,,1.7,1.7,0.0,0.0,0.0,1.7,,,,,0.0,0,73.70,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,0.0,0.0,0.0,0.0,,,,,,,,,,,,,,,,2,2,0,0,2
+2023-02-22,N916SC,KLAX,KPHX,,,,,,,,1.4,0.0,1.4,1.4,0.0,1.4,,,,,0.0,0,321.60,0.0,0.0,0.00,0.00,0.00,0.00,0,1;ILS OR LOC RWY 07R;07R;KPHX;;,,,,,,0.0,0.0,0.0,0.0,,,,,,,,,,"""SWQ1914""",,,,,,1,1,0,0,1
+2023-02-20,N916SC,KPHX,KLAX,,,,,,,,1.5,0.0,1.5,1.5,0.0,1.5,,,,,0.0,0,321.60,0.0,0.0,0.00,0.00,0.00,0.00,0,1;ILS OR LOC RWY 25L;25L;KLAX;;,,,,,,0.0,0.0,0.0,0.0,,,,,,,,,,"""SWQ1814""",,,,,,1,1,0,0,1
+2023-02-19,N438US,KBWI,KSLC,,,,,,,,5.0,0.0,5.0,5.0,0.0,5.0,,,,,0.0,0,1620.30,0.0,0.0,0.00,0.00,0.00,0.00,0,1;ILS OR LOC RWY 34R;34R;KSLC;;,,,,,,0.0,0.0,0.0,0.0,,,,,,,,,,"""SWQ872""",,,,,,1,1,0,0,1
+2023-02-19,N438US,KLAN,KBWI,,,,,,,,1.5,0.0,1.5,1.5,0.0,1.5,,,,,0.0,0,419.40,0.0,0.0,0.00,0.00,0.00,0.00,0,1;ILS OR LOC RWY 28;28;KBWI;;,,,,,,0.0,0.0,0.0,0.0,,,,,,,,,,"""SWQ871""",,,,,,1,1,0,0,1
+2023-02-15,N916SC,KLAX,KPHX,,,,,,,,1.5,0.0,1.5,1.5,0.0,1.5,,,,,0.0,0,321.60,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,0.0,0.0,0.0,0.0,,,,,,,,,,,,,,,,0,0,1,1,1
+2023-02-15,N916SC,KPHX,KLAX,,,,,,,,1.4,0.0,1.4,1.4,0.0,1.4,,,,,0.0,0,321.60,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,0.0,0.0,0.0,0.0,,,,,,,,,,,,,,,,0,0,1,1,1
+2023-02-14,N916SC,KLAX,KPHX,,,,,,,,1.2,0.0,1.2,1.2,0.0,1.2,,,,,0.0,0,321.60,0.0,0.0,0.00,0.00,0.00,0.00,0,1;ILS OR LOC RWY 07R;07R;KPHX;;,,,,,,0.0,0.0,0.0,0.0,,,,,,,,,,,,,,,,1,1,0,0,1
+2023-02-14,N916SC,KPHX,KLAX,,,,,,,,1.3,0.0,1.3,1.3,0.0,1.3,,,,,0.0,0,321.60,0.0,0.0,0.00,0.00,0.00,0.00,0,1;ILS OR LOC RWY 24L;24L;KLAX;;,,,,,,0.0,0.0,0.0,0.0,,,,,,,,,,,,,,,,1,1,0,0,1
+2023-02-12,N753SC,KSDL,KSDL,KCHD,,,,,,,1.1,1.1,0.0,0.0,0.0,0.0,,,,,0.0,0,0.00,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,1.1,0.0,0.0,0.0,,,,,,,,,,,,,,,,2,1,0,0,2
+2023-02-06,N529AU,KIWA,KELP,,,,,,,,1.2,,1.2,0.0,0.0,1.2,,,,,0.0,0,282.30,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,0.0,0.0,0.0,0.0,,,,,,,,,,,,,,,,1,1,0,0,1
+2023-02-03,N280SC,KSDL,KSDL,,,,,,,,0.8,0.8,0.0,0.0,0.0,0.0,,,,,0.0,0,0.00,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,0.8,0.0,0.0,0.0,,,,,,,,,,,,,,,,1,1,0,0,1
+2023-01-30,N811TJ,KOKC,KONT,,,,,,,,3.3,0.0,3.3,0.0,0.0,3.3,,,,,0.0,0,990.70,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,0.0,0.0,0.0,0.0,,,,,,,,,,,,,,,,1,1,0,0,1
+2023-01-30,N811TJ,KGSO,KOKC,,,,,,,,3.1,0.0,3.1,0.0,0.0,2.7,,,,,0.0,0,862.30,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,0.0,0.0,0.0,0.0,,,,,,,,,,,,,,,,1,1,0,0,1
+2023-01-29,N811TJ,KONT,KGSO,,,,,,,,4.5,0.0,4.5,0.0,,4.5,,,,,0.0,0,1847.00,0.0,0.0,0.00,0.00,0.00,0.00,0,1;RNAV (GPS) RWY 23L;23L;KGSO;;,,,,,,0.0,0.0,0.0,0.0,,,,,,,,,,,,,,,,1,1,0,0,1
+2023-01-28,N811TJ,KOKC,KONT,,,,,,,,3.1,0.0,3.1,0.0,0.0,3.1,,,,,0.0,0,990.70,0.0,0.0,0.00,0.00,0.00,0.00,0,1;ILS OR LOC RWY 26R;26R;KONT;;,,,,,,0.0,0.0,0.0,0.0,,,,,,,,,,,,,,,,1,1,0,0,1
+2023-01-28,N811TJ,KGSO,KOKC,,,,,,,,3.2,0.0,3.2,0.0,0.0,3.2,,,,,0.0,0,862.30,0.0,0.0,0.00,0.00,0.00,0.00,0,1;ILS OR LOC RWY 17R;17R;KOKC;;,,,,,,0.0,0.0,0.0,0.0,,,,,,,,,,,,,,,,1,1,0,0,1
+2023-01-26,N624XA,MGGT,KAEX,,,,,,,,3.1,0.0,3.1,0.0,0.0,3.1,,,,,0.0,0,1007.50,0.0,0.0,0.00,0.00,0.00,0.00,0,1;RNAV (GPS) RWY 18;18;KAEX;;,,,,,,0.0,0.0,0.0,0.0,,,,,,,,,,,,,,,,1,1,0,0,1
+2023-01-26,N624XA,KIWA,MGGT,,,,,,,,3.9,0.0,3.9,0.0,0.0,3.9,,,,,0.0,0,1606.50,0.0,0.0,0.00,0.00,0.00,0.00,0,1;VORTAC;20;MGGT;;,,,,,,0.0,0.0,0.0,0.0,,,,,,,,,,,,,,,,1,1,0,0,1
+2023-01-18,N227EA,KIWA,KAEX,,,,,,,,2.6,0.0,2.6,0.0,0.0,2.6,,,,,0.0,0,977.30,0.0,0.0,0.00,0.00,0.00,0.00,0,1;RNAV (GPS) RWY 18;18;KAEX;;,,,,,,0.0,0.0,0.0,0.0,,,,,,,,,,,,,,,,1,1,0,0,1
+2023-01-12,N227EA,MGGT,KAEX,,,,,,,,3.9,0.0,3.9,0.0,0.0,3.9,0.0,0.0,0.0,0.0,0.0,0,1007.50,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,0.0,0.0,0.0,0.0,0.0,,,,,,,,,,,,,,,1,1,0,0,1
+2023-01-12,N227EA,KIWA,MGGT,,,,,,,,4.2,0.0,4.2,0.0,0.0,4.2,0.0,0.0,0.0,0.0,0.0,0,1606.50,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,0.0,0.0,0.0,0.0,0.0,,,,,,,,,,,,,,,1,1,0,0,1
+2023-01-09,N627SW,MSLP,SEGU,,18:21,18:35,21:18,21:27,,,3.1,0.0,3.1,0.0,0.0,3.1,,,,,0.0,0,1080.20,0.0,0.0,0.00,0.00,0.00,0.00,0,1;ILS;21;SEGU;;,,,,,,0.0,0.0,0.0,0.0,,,,,,,,,,,,,,,,1,1,0,0,1
+2023-01-09,N627SW,KELP,KAEX,,17:54,18:12,20:02,20:09,,,2.2,0.0,2.2,0.0,0.0,0.0,,,,,0.0,0,0.00,0.0,0.0,0.00,0.00,0.00,0.00,0,1;RNAV (GPS) RWY 14;14;KAEX;;,,,,,,0.0,0.0,0.0,0.0,,,,,,,,,,,,,,,,1,1,0,0,1
+2023-01-09,N627SW,KAEX,MSLP,,14:21,14:40,17:34,17:41,,,3.3,0.0,3.3,0.0,0.0,3.3,,,,,0.0,0,0.00,0.0,0.0,0.00,0.00,0.00,0.00,0,1;ILS;07;MSLP;;,,,,,,0.0,0.0,0.0,0.0,,,,,,,,,,,,,,,,1,1,0,0,1
+2023-01-09,N627SW,KAEX,KELP,,13:58,14:41,16:46,16:54,,,3.0,,3.0,0.0,0.0,3.0,,,,,0.0,0,708.90,0.0,0.0,0.00,0.00,0.00,0.00,0,1;ILS OR LOC RWY 22;22;KELP;;,,,,,,0.0,0.0,0.0,0.0,,,,,,,,,,,,,,,,0,0,0,0,0
+2023-01-07,SCA17,KSDL,KSDL,,,,,,,,1.7,1.7,0.0,0.0,0.0,0.0,,,,,0.0,0,0.00,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,1.7,0.0,0.0,0.0,,,,,,,,,,,,,,,,5,1,0,0,5
+2023-01-05,N627SW,KAEX,MSLP,,,,,,,,0.0,0.0,0.0,0.0,0.0,0.0,,,,,0.0,0,0.00,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,0.0,0.0,0.0,0.0,,,,,,,,,,,,,,,,0,0,0,0,0
+2022-12-23,N714SC,KSDL,KSDL,,,,,,,,1.5,1.5,0.0,0.0,0.0,0.0,,,,,0.0,0,0.00,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,1.5,0.0,0.0,0.0,,,,,,,,,,,,,,,,2,1,0,0,2
+2022-12-19,SCA17,KSDL,KSDL,,,,,,,,0.8,0.8,0.0,0.0,0.0,0.0,,,,,0.0,0,0.00,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,0.8,0.0,0.0,0.0,,,,,,,,,,,,,,,,2,1,0,0,2
+2022-12-16,N859AM,KLAX,KPHX,,12:40,12:50,13:51,13:58,,,1.3,0.0,1.3,1.3,0.0,1.3,,,,,0.0,0,321.60,0.0,0.0,0.00,0.00,0.00,0.00,0,1;ILS OR LOC RWY 07R;07R;KPHX;;,,,,,,0.0,0.0,0.0,0.0,,,,,,,,,,,,,,,,0,0,1,1,1
+2022-12-15,N859AM,KPHX,KLAX,,05:10,05:25,06:23,06:34,,,1.4,0.0,1.4,1.4,0.0,1.4,,,,,0.0,0,321.60,0.0,0.0,0.00,0.00,0.00,0.00,0,1;RNAV (GPS) Y RWY 25L;25L;KLAX;;,,,,,,0.0,0.0,0.0,0.0,,,,,,,,,,,,,,,,0,0,1,1,1
+2022-12-13,N859AM,KLAX,KPHX,,12:30,12:40,13:41,13:48,,,1.3,0.0,1.3,1.3,0.0,1.3,,,,,0.0,0,321.60,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,0.0,0.0,0.0,0.0,,,,,,,,,,,,,,,,0,0,1,1,1
+2022-12-13,N859AM,KPHX,KLAX,,05:15,05:30,06:35,06:39,,,1.4,0.0,1.4,0.0,0.0,1.4,,,,,0.0,0,321.60,0.0,0.0,0.00,0.00,0.00,0.00,0,1;ILS OR LOC RWY 07L;07L;KLAX;;,,,,,,0.0,0.0,0.0,0.0,,,,,,,,,,,,,,,,0,0,1,1,1
+2022-12-08,N623SW,MSLP,SEGU,,16:22,16:30,19:03,19:11,,,2.8,0.0,2.8,0.0,0.0,2.8,,,,,0.0,0,1080.20,0.0,0.0,0.00,0.00,0.00,0.00,0,1;ILS;21;SEGU;;,,,,,,0.0,0.0,0.0,0.0,,,,,,,,,,,,,,,,1,1,0,0,1
+2022-12-08,N623SW,KAEX,MSLP,,12:45,12:53,15:35,15:41,,,2.9,0.0,2.9,0.0,0.0,2.9,,,,,0.0,0,1086.80,0.0,0.0,0.00,0.00,0.00,0.00,0,1;ILS;07;MSLP;;,,,,,,0.0,0.0,0.0,0.0,,,,,,,,,,,,,,,,1,1,0,0,1
+2022-12-06,N623SW,KMDT,KBED,,,16:28,16:36,17:30,17:34,,1.1,0.0,1.1,0.0,0.0,1.1,,,,,0.0,0,282.50,0.6,0.0,0.00,0.00,0.00,0.00,0,1;ILS OR LOC RWY 11;11;KBED;;,,,,,,0.0,0.0,0.0,0.0,,,,,,,,,,,,,,,,1,1,0,0,1
+2022-12-06,N623SW,KAEX,KMDT,,12:35,12:42,14:52,15:08,,,2.5,0.0,2.5,0.0,0.0,2.5,,,,,0.0,0,933.80,0.5,0.0,0.00,0.00,0.00,0.00,0,1;ILS OR LOC RWY 13;13;KMDT;;,,,,,,0.0,0.0,0.0,0.0,,,,,,,,,,,,,,,,1,1,0,0,1
+2022-11-23,N854SC,KSDL,KSDL,,,,,,,,1.5,1.5,0.0,0.0,0.0,0.0,,,,,0.0,0,0.00,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,1.5,0.0,0.0,0.0,,,,,,,,,,,,,,,,1,1,0,0,1
+2022-11-10,SIM 29/8/7,KMIA,KMIA,,,,,,,,0.0,0.0,0.0,0.0,0.0,0.0,,,,,0.0,0,0.00,0.0,0.0,0.00,0.00,0.00,0.00,2,2;ILS OR LOC RWY 04L;04L;KJFK;;,,,,,,0.0,4.0,4.0,0.0,,,,,,,,,,,,,,,,2,1,0,0,2
+2022-11-09,SIM 29/8/7,KMIA,KMIA,,,,,,,,0.0,0.0,0.0,0.0,0.0,0.0,,,,,0.0,0,0.00,0.0,3.2,0.00,0.00,0.00,0.00,2,1;VOR RWY 04R;04R;KJFK;;,1;VOR RWY 04L;04L;KJFK;;,,,,,0.0,0.0,4.0,0.0,,,,,,,,,,,,,,,,2,1,0,0,2
+2022-11-08,SIM 29/8/7,KMIA,KMIA,,,,,,,,0.0,0.0,0.0,0.0,0.0,0.0,,,,,0.0,0,0.00,0.0,3.2,0.00,0.00,0.00,0.00,2,1;ILS OR LOC RWY 04L;04L;KJFK;;,1;VOR RWY 04R;04R;KJFK;;,,,,,0.0,4.0,4.0,0.0,,,,,,,,,,,,,,,,2,1,0,0,2
+2022-11-07,SIM 29/8/7,KMIA,KMIA,,,,,,,,0.0,0.0,0.0,0.0,0.0,0.0,,,,,0.0,0,0.00,0.0,0.0,0.00,0.00,0.00,0.00,2,2;ILS OR LOC RWY 04R;04R;KJFK;;,,,,,,0.0,4.0,4.0,0.0,,,,,,,,,,,,,,,,2,1,0,0,2
+2022-11-06,SIM 29/8/7,KMIA,KMIA,,,,,,,,0.0,0.0,0.0,0.0,0.0,0.0,,,,,0.0,0,0.00,0.0,4.0,0.00,0.00,0.00,0.00,2,1;ILS OR LOC RWY 04L;4R;KJFK;;,1;VOR RWY 04R;04R;KJFK;;,,,,,0.0,4.0,4.0,0.0,,,,,,,,,,,,,,,,2,1,0,0,2
+2022-11-05,SIM 29/8/7,KMIA,KMIA,,,,,,,,0.0,0.0,0.0,0.0,0.0,0.0,,,,,0.0,0,0.00,0.0,0.0,0.00,0.00,0.00,0.00,2,1;ILS OR LOC RWY 04L;04L;KJFK;;,1;VOR RWY 04R;04R;KJFK;;,,,,,0.0,4.0,4.0,0.0,,,,,,,,,,,,,,,,2,1,0,0,2
+2022-11-04,SIM 29/8/7,KMIA,KMIA,PAN AM,,,,,,,0.0,0.0,0.0,0.0,0.0,0.0,,,,,0.0,0,0.00,0.0,3.5,0.00,0.00,0.00,0.00,2,1;ILS OR LOC RWY 04R;04R;KJFK;;,,,,,,0.0,4.0,4.0,0.0,,,,,,,,,,"""Sim 7""",,,,,,2,1,0,0,2
+2022-10-29,SCA17,KSDL,KSDL,KTUS,,,,,,,2.3,2.3,0.0,2.3,0.0,2.3,,,,,0.0,0,0.00,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,2.3,0.0,0.0,0.0,,,,,,,,,,,,,,,,0,0,0,0,0
+2022-10-28,SCA18,KSDL,KSDL,KDVT,,,,,,,2.5,2.5,0.0,0.0,0.0,0.0,,,,,0.0,0,0.00,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,2.5,0.0,0.0,0.0,,,,,,,,,,,,,,,,0,0,0,0,0
+2022-10-21,SCA17,KSDL,KSDL,,,,,,,,0.9,0.9,0.0,0.0,0.0,0.0,,,,,0.0,0,0.00,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,0.9,0.0,0.0,0.0,,,,,,,,,,,,,,,,1,1,0,0,1
+2022-10-07,SCA77,KSDL,KSDL,P08 E60,,,,,,,2.5,2.5,0.0,0.0,0.0,2.5,,,,,0.0,0,0.00,0.0,2.2,0.00,0.00,0.00,0.00,0,1;VOR/DME-A;21;KSDL;;CIRCLE,1;ILS OR LOC RWY 05;05;KCGZ;;,1;VOR RWY 05;05;P08;;,1;VOR RWY 05;05;KCGZ;;,,,2.5,0.0,0.0,0.0,,,,,,,,,,,,,,,,0,0,0,0,0
+2022-09-22,SCA54,KSDL,KSDL,,,,,,,,1.7,1.7,0.0,0.0,0.0,0.0,,,,,0.0,0,0.00,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,1.7,0.0,0.0,0.0,,,,,,,,,,,,,,,,0,0,0,0,0
+2022-09-21,SCA54,KSDL,KSDL,KDVT,,,,,,,1.6,1.6,0.0,0.0,0.0,0.0,,,,,0.0,0,0.00,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,1.6,0.0,0.0,0.0,,,,,,,,,,,,,,,,0,0,0,0,0
+2022-09-20,SCA95,KSDL,KSDL,,,,,,,,1.8,1.8,0.0,0.0,0.0,0.0,,,,,0.0,0,0.00,0.0,1.6,0.00,0.00,0.00,0.00,0,1;ILS OR LOC RWY 05;05;KCGZ;;,1;RNAV (GPS) RWY 04R;04R;KCHD;;,1;VOR/DME-A;3;KSDL;;,,,,1.8,0.0,0.0,0.0,,,,,,,,,,,,,,,,0,0,0,0,0
+2022-09-19,N714SC,KSDL,KSDL,,,,,,,,1.1,1.1,0.0,0.0,0.0,0.0,,,,,0.0,0,0.00,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,1.1,0.0,0.0,0.0,,,,,,,,,,,,,,,,2,1,0,0,2
+2022-09-19,SCA23 ,KSDL,KSDL,,,,,,,,1.1,1.1,0.0,0.0,0.0,0.0,,,,,0.0,0,0.00,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,1.1,0.0,0.0,0.0,,,,,,,,,,,,,,,,2,1,0,0,2
+2022-09-19,SCA18,KSDL,KSDL,KDVT,,,,,,,1.9,1.9,0.0,0.0,0.0,0.0,,,,,0.0,0,0.00,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,1.9,0.0,0.0,0.0,,,,,,,,,,,,,,,,0,0,0,0,0
+2022-09-15,N714SC,KSDL,KSDL,KFLG,,,,,,,2.1,2.1,0.0,0.0,0.0,2.1,,,,,0.0,0,0.00,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,0.0,0.0,0.0,0.0,,,,,,,,,,,,,,,,2,1,0,0,2
+2022-09-13,N714SC,KSDL,KSDL,KDVT,,,,,,,1.7,0.0,0.0,0.0,0.0,0.0,,,,,0.0,0,0.00,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,1.7,0.0,0.0,0.0,,,,,,,,,,,,,,,,0,0,0,0,0
+2022-09-12,N854SC,KSDL,KSDL,KDVT,,,,,,,1.8,0.0,0.0,0.0,0.0,0.0,,,,,0.0,0,0.00,0.0,0.2,0.00,0.00,0.00,0.00,0,,,,,,,1.8,0.0,0.0,0.0,,,,,,,,,,,,,,,,0,0,0,0,0
+2022-09-05,SCA17,KSDL,KSDL,,,,,,,,1.0,1.0,0.0,0.0,0.0,0.0,,,,,0.0,0,0.00,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,1.0,0.0,0.0,0.0,,,,,,,,,,,,,,,,2,1,0,0,2
+2022-09-05,N714SC,KSDL,KSDL,P13,,,,,,,1.9,1.9,0.0,0.0,0.0,1.9,,,,,0.0,0,0.00,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,1.9,0.0,0.0,0.0,,,,,,,,,,,,,,,,2,1,0,0,2
+2022-09-04,SCA75,KSDL,KSDL,,,,,,,,1.1,1.1,0.0,0.0,0.0,0.0,,,,,0.0,0,0.00,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,0.0,0.0,0.0,0.0,,,,,,,,,,,,,,,,1,1,0,0,1
+2022-09-04,SCA75,KSDL,KSDL,,,,,,,,0.9,0.9,0.0,0.0,0.0,0.0,,,,,0.0,0,0.00,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,0.0,0.0,0.0,0.0,,,,,,,,,,,,,,,,1,1,0,0,1
+2022-09-04,N714SC,KSDL,KSDL,,,,,,,,2.0,2.0,0.0,0.0,0.0,0.0,,,,,0.0,0,0.00,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,0.0,0.0,0.0,0.0,,,,,,,,,,,,,,,,1,1,0,0,1
+2022-08-31,SCA54,KSDL,KSDL,,,,,,,,1.8,1.8,0.0,0.0,0.0,0.0,,,,,0.0,0,0.00,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,1.8,0.0,0.0,0.0,,,,,,,,,,,,,,,,5,1,0,0,5
+2022-08-30,SCA52,KSDL,KSDL,KDVT,,,,,,,1.4,0.0,0.0,0.0,0.0,0.0,,,,,0.0,0,0.00,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,1.4,0.0,0.0,0.0,,,,,,,,,,,,,,,,0,0,0,0,0
+2022-08-30,SCA52,KSDL,KSDL,,,,,,,,1.4,1.4,0.0,0.0,0.0,0.0,,,,,0.0,0,0.00,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,1.4,0.0,0.0,0.0,,,,,,,,,,,,,,,,1,1,0,0,1
+2022-08-27,SCA95,KSDL,KSDL,KPRC,,,,,,,1.8,1.8,0.0,0.0,0.0,0.0,,,,,0.0,0,0.00,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,1.8,0.0,0.0,0.0,,,,,,,,,,,,,,,,2,1,0,0,2
+2022-08-26,N714SC,KSDL,KSDL,,,,,,,,1.8,1.8,0.0,0.0,0.0,0.0,,,,,0.0,0,0.00,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,1.8,0.0,0.0,0.0,,,,,,,,,,,,,,,,2,1,0,0,2
+2022-08-26,SCA54,KSDL,KSDL,,21:28,,,22:12,,,0.5,0.0,0.0,0.0,0.0,0.0,,,,,0.0,0,0.00,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,0.5,0.0,0.0,0.2,,,,,,,,,,,,,,,,0,0,0,0,0
+2022-08-25,SCA16,KSDL,KSDL,KDVT,,,,,,,1.6,0.0,0.0,0.0,0.0,0.0,,,,,0.0,0,0.00,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,1.6,0.0,0.0,1.0,,,,,,,,,,,,,,,,0,0,0,0,0
+2022-08-24,N181SC,KSDL,KSDL,KDVT,,,,,,,1.7,0.0,0.0,0.0,0.0,0.0,,,,,0.0,0,0.00,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,1.7,0.0,0.0,0.0,,,,,,,,,,,,,,,,0,0,0,0,0
+2022-08-24,SCA16,KSDL,KSDL,KDVT,,,,,,,1.6,0.0,0.0,0.0,0.0,0.0,,,,,0.0,0,0.00,0.0,0.2,0.00,0.00,0.00,0.00,0,,,,,,,1.6,0.0,0.0,1.0,,,,,,,,,,,,,,,,0,0,0,0,0
+2022-08-24,N181SC,KSDL,KSDL,DVT,,,,,,,1.7,1.7,0.0,0.0,0.0,0.0,,,,,0.0,0,0.00,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,1.7,0.0,0.0,0.0,,,,,,,,,,,,,,,,9,1,0,0,9
+2022-08-23,N423SC,KSDL,KSDL,KDVT,,,,,,,1.7,0.0,0.0,0.0,0.0,0.0,,,,,0.0,0,0.00,0.0,0.2,0.00,0.00,0.00,0.00,0,,,,,,,1.7,0.0,0.0,0.0,,,,,,,,,,,,,,,,0,0,0,0,0
+2022-08-22,N423SC,KSDL,KSDL,,,,,,,,1.9,0.0,0.0,0.0,0.0,0.0,,,,,0.0,0,0.00,0.0,0.3,0.00,0.00,0.00,0.00,0,,,,,,,1.9,0.0,0.0,0.0,,,,,,,,,,,,,,,,0,0,0,0,0
+2022-08-18,SCA95,KSDL,KSDL,,,,,,,,1.8,1.8,0.0,0.0,0.0,0.0,,,,,0.0,0,0.00,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,1.8,0.0,0.0,0.0,,,,,,,,,,,,,,,,2,1,0,0,2
+2022-08-18,N171SC,KSDL,KSDL,KDVT,,,,,,,1.7,0.0,0.0,0.0,0.0,0.0,,,,,0.0,0,0.00,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,1.7,0.0,0.0,0.0,,,,,,,,,,,,,,,,0,0,0,0,0
+2022-08-17,N181SC,KSDL,KSDL,KDVT,,,,,,,1.5,0.0,0.0,0.0,0.0,0.0,,,,,0.0,0,0.00,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,1.5,0.0,0.0,0.0,,,,,,,,,,,,,,,,0,0,0,0,0
+2022-08-16,SCA52,KSDL,KSDL,,,,,,,,1.6,1.6,0.0,0.0,0.0,0.0,,,,,0.0,0,0.00,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,1.6,0.0,0.0,0.0,,,,,,,,,,,,,,,,2,1,0,0,2
+2022-08-16,SCA17,KSDL,KSDL,KDVT,,,,,,,1.9,1.9,0.0,0.0,0.0,0.0,,,,,0.0,0,0.00,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,1.9,0.0,0.0,0.0,,,,,,,,,,,,,,,,0,0,0,0,0
+2022-08-15,SCA54,KSDL,KSDL,,,,,,,,1.2,1.2,0.0,0.0,0.0,0.0,,,,,0.0,0,0.00,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,1.2,0.0,0.0,0.0,,,,,,,,,,,,,,,,0,0,0,0,0
+2022-08-13,N776SC,KSDL,KSDL,,,,,,,,1.4,1.4,0.0,0.0,0.0,0.0,,,,,0.0,0,0.00,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,1.4,0.0,0.0,0.0,,,,,,,,,,,,,,,,1,1,0,0,1
+2022-08-11,N747SC,KCHD,KSDL,KCHD TFD KCGZ PXR KSDL ,,,,,,,1.8,1.8,0.0,0.0,0.0,0.0,,,,,0.0,0,0.00,0.0,1.2,0.00,0.00,0.00,0.00,0,1;VOR/DME-A;21;KSDL;;CIRCLE,1;ILS OR LOC RWY 05;05;KCGZ;;,1;RNAV (GPS) RWY 05;05;KCGZ;;,,,,1.8,0.0,0.0,0.0,,,,,,,,,,,,,,,,0,0,0,0,0
+2022-08-11,N694SC,KSDL KCGZ,KCHD,,,,,,,,1.8,1.8,0.0,0.0,0.0,0.0,,,,,0.0,0,0.00,0.0,1.0,0.00,0.00,0.00,0.00,4,1;VOR RWY 05;05;KCGZ;;CIRCLE,1;ILS OR LOC RWY 05;05;KCGZ;Missed;,,,,,1.8,0.0,0.0,0.0,,,,,,,,,,,,,,,,0,0,0,0,0
+2022-08-10,N747SC,KCHD P08,KSDL,,,,,,,,2.0,2.0,0.0,0.0,0.0,0.0,,,,,0.0,0,0.00,0.0,1.2,0.00,0.00,0.00,0.00,4,1;VOR RWY 05;05;P08;;CIRCLE,1;ILS OR LOC RWY 05;05;KCGZ;Missed;,,,,,2.0,0.0,0.0,0.0,,,,,,,,,,,,,,,,0,0,0,0,0
+2022-08-10,N747SC,KSDL,KSDL,KSDL KCGZ P08 KCHD ,,,,,,,2.0,2.0,0.0,0.0,0.0,2.0,,,,,0.0,0,0.00,0.0,1.2,0.00,0.00,0.00,0.00,0,1;ILS OR LOC RWY 05;05;KCGZ;;,1;RNAV (GPS) RWY 05;05;KCGZ;;,1;RNAV (GPS) RWY 04R;04R;KCHD;;,,,,2.0,0.0,0.0,0.0,,,,,,,,,,,,,,,,0,0,0,0,0
+2022-08-08,SCA54,KTUS,KSDL,,,,,,,,2.0,2.0,0.0,2.0,0.0,2.0,,,,,0.0,0,0.00,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,2.0,0.0,0.0,0.0,,,,,,,,,,"""Commercial night XC""",,,,,,0,0,0,0,0
+2022-08-08,SCA54,KSDL,KTUS,,,,,,,,2.0,2.0,0.0,0.0,0.0,2.0,,,,,0.0,0,0.00,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,2.0,0.0,0.0,,,,,,,,,,,"""2 hour day XC""",,,,,,0,0,0,0,0
+2022-08-04,SCA40,KSDL,KSDL,KPRC,,,,,,,2.1,2.1,0.0,0.0,0.0,2.1,,,,,0.0,0,0.00,1.0,0.0,0.00,0.00,0.00,0.00,0,1;ILS OR LOC/DME RWY 21L;21L;KPRC;;,,,,,,2.1,0.0,0.0,0.0,,,,,,,,,,,,,,,,0,0,0,0,0
+2022-08-04,N171SC,KSDL,KSDL,KDVT,,,,,,,1.7,0.0,0.0,0.0,0.0,0.0,,,,,0.0,0,0.00,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,1.7,0.0,0.0,0.0,,,,,,,,,,,,,,,,0,0,0,0,0
+2022-08-02,N716SC,KSDL,KSDL,KPRC,,,,,,,1.8,0.0,0.0,0.0,0.0,1.8,,,,,0.0,0,133.20,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,1.8,0.0,0.0,0.5,,,,,,,,,,,,,,,,0,0,0,0,0
+2022-08-02,SCA52,KSDL,KSDL,KDVT,,,,,,,1.8,1.8,0.0,0.0,0.0,0.0,,,,,0.0,0,0.00,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,1.8,0.0,0.0,0.0,,,,,,,,,,,,,,,,0,0,0,0,0
+2022-08-01,SCA40,KSDL,KSDL,KDVT,,,,,,,1.8,1.8,0.0,0.0,0.0,0.0,,,,,0.0,0,0.00,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,1.8,0.0,0.0,0.0,,,,,,,,,,,,,,,,0,0,0,0,0
+2022-07-22,SCA54,KSDL,KSDL,KDVT,,,,,,,1.7,1.7,0.0,0.0,0.0,0.0,,,,,0.0,0,0.00,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,1.7,0.0,0.0,0.0,,,,,,,,,,"""Commercial maneuvers!""",,,,,,0,0,0,0,0
+2022-07-21,SCA95,KSDL,KSDL,,,,,,,,1.5,1.5,,0.0,0.0,0.0,,,,,0.0,0,0.00,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,1.5,0.0,0.0,0.0,,,,,,,,,,,,,,,,2,1,0,0,2
+2022-07-21,SCA95,KSDL,KSDL,,,,,,,,1.7,1.7,0.0,0.0,0.0,0.0,,,,,0.0,0,0.00,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,1.7,0.0,0.0,0.0,,,,,,,,,,"""Commercial maneuvers""",,,,,,0,0,0,0,0
+2022-07-19,N423SC,KSDL,KSDL,,,,,,,,1.9,1.9,0.0,0.0,0.0,0.0,,,,,0.0,0,0.00,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,1.9,0.0,0.0,0.0,,,,,,,,,,,,,,,,0,0,0,0,0
+2022-07-18,SCA54,KSDL,KSDL,KDVT,,,,,,,1.8,1.8,0.0,0.0,0.0,0.0,,,,,0.0,0,0.00,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,1.8,0.0,0.0,0.0,,,,,,,,,,,,,,,,0,0,0,0,0
+2022-07-11,N951SC,KSDL,KSDL,,,,,,,,1.5,1.5,0.0,0.0,0.0,0.0,,,,,0.0,0,0.00,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,1.5,0.0,0.0,0.0,,,,,,,,,,,,,,,,0,0,0,0,0
+2022-07-04,SCA69,KSDL,KSDL,KDVT KGEU,14:08,,,15:41,,,1.4,1.4,0.0,0.0,0.0,0.0,,,,,0.0,0,0.00,0.0,0.5,0.00,0.00,0.00,0.00,1,1;RNAV (GPS) RWY 19;19;KGEU;;,1;RNAV (GPS) RWY 07R;07R;KDVT;;,,,,,1.4,0.0,0.0,0.0,,,,,,,,,,,,,,,,0,0,0,0,0
+2022-07-01,N714SC,KSDL,KSDL,KDVT KGEU,18:00,,,19:42,,,1.7,1.7,0.0,0.0,0.0,0.0,,,,,0.0,0,0.00,0.0,0.0,0.00,0.00,0.00,0.00,1,1;RNAV (GPS) RWY 25L;25L;KDVT;;,1;RNAV (GPS) RWY 19;19;KGEU;;,1;VOR/DME-A;21;KSDL;;,,,,1.7,0.0,0.0,0.0,,,,,,,,,,,,,,,,0,0,0,0,0
+2022-06-30,N854SC,KSDL,KSDL,KCGZ,15:09,,,16:54,,,1.7,1.7,0.0,0.0,0.0,0.0,,,,,0.0,0,0.00,0.0,0.2,0.00,0.00,0.00,0.00,0,1;ILS OR LOC RWY 05;05;KCGZ;;,,,,,,1.7,0.0,0.0,0.0,,,,,,,,,,,,,,,,0,0,0,0,0
+2022-06-30,SCA54,KSDL,KSDL,KCGZ,15:09,,,16:54,,,1.7,1.7,0.0,0.0,0.0,0.0,,,,,0.0,0,0.00,0.0,0.2,0.00,0.00,0.00,0.00,0,1;ILS OR LOC RWY 05;05;KCGZ;;,,,,,,1.7,0.0,0.0,0.0,,,,,,,,,,,,,,,,0,0,0,0,0
+2022-06-28,ALSIM,,,,,,,,,,0.0,0.0,0.0,0.0,0.0,0.0,,,,,0.0,0,0.00,0.0,1.7,0.00,0.00,0.00,0.00,4,1;RNAV (GPS) RWY 19;19;KGEU;;,1;ILS OR LOC RWY 05;05;KCGZ;;,1;RNAV (GPS) RWY 05;05;KCGZ;;,,,,1.7,0.0,0.0,0.0,,,,,,,,,,,,,,,,0,0,0,0,0
+2022-06-23,N280SC,KSDL,KSDL,KDVT,,,,,,,1.6,0.0,0.0,0.0,0.0,0.0,,,,,0.0,0,0.00,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,1.6,0.0,0.0,0.0,,,,,,,,,,,,,,,,0,0,0,0,0
+2022-06-22,SCA16,KSDL,KSDL,,,,,,,,1.6,0.0,0.0,0.0,0.0,0.0,,,,,0.0,0,0.00,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,1.6,0.0,0.0,0.0,,,,,,,,,,,,,,,,0,0,0,0,0
+2022-06-22,SCA75,KSDL,KSDL,,,,,,,,1.6,1.6,0.0,0.0,0.0,,,,,,0.0,0,0.00,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,1.6,0.0,0.0,0.0,,,,,,,,,,,,,,,,2,2,0,0,2
+2022-06-22,SCA75,KSDL,KSDL,,,,,,,,1.6,1.6,0.0,0.0,0.0,0.0,,,,,0.0,0,0.00,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,1.6,0.0,0.0,0.0,,,,,,,,,,,,,,,,2,1,0,0,2
+2022-06-22,SCA75,KSDL,KSDL,,,,,,,,1.7,1.7,0.0,0.0,0.0,0.0,,,,,0.0,0,0.00,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,1.7,0.0,0.0,0.0,,,,,,,,,,,,,,,,6,1,0,0,6
+2022-06-22,SCA75,KSDL,KSDL,,,,,,,,1.7,1.7,0.0,0.0,0.0,0.0,,,,,0.0,0,0.00,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,1.7,0.0,0.0,0.0,,,,,,,,,,,,,,,,2,1,0,0,2
+2022-06-22,SCA54,KSDL,KSDL,,,,,,,,1.7,1.7,0.0,0.0,0.0,0.0,,,,,0.0,0,0.00,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,1.7,0.0,0.0,0.0,,,,,,,,,,,,,,,,8,1,0,0,8
+2022-06-20,SCA69,KSDL,KSDL,,,,,,,,1.4,0.0,0.0,0.0,0.0,0.0,,,,,0.0,0,0.00,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,0.0,0.0,0.0,0.0,,,,,,,,,,,,,,,,0,0,0,0,0
+2022-06-16,N747SC,KSDL,KSDL,KDVT,,,,,,,1.7,0.0,0.0,0.0,0.0,0.0,,,,,0.0,0,0.00,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,1.7,0.0,0.0,0.0,,,,,,,,,,,,,,,,0,0,0,0,0
+2022-06-15,N747SC,KSDL,KSDL,,,,,,,,1.5,1.5,0.0,0.0,0.0,0.0,,,,,0.0,0,0.00,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,1.5,0.0,0.0,0.0,,,,,,,,,,,,,,,,8,1,0,0,8
+2022-06-11,SCA69,KSDL,KSDL,CHD,,,,,,,1.0,1.0,0.0,0.0,0.0,0.0,,,,,0.0,0,0.00,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,1.0,0.0,0.0,0.0,,,,,,,,,,,,,,,,2,2,0,0,2
+2022-06-11,SCA40,KSDL,KSDL,CHD CGZ,,,,,,,2.0,2.0,0.0,0.0,0.0,0.0,,,,,0.0,0,0.00,0.0,1.2,0.00,0.00,0.00,0.00,4,1;ILS OR LOC RWY 05;05;KCGZ;;,1;VOR/DME-A;21;KSDL;;,1;VOR RWY 05;05;KCGZ;;,,,,0.0,0.0,0.0,0.0,,,,,,,,,,"""Anneli safety pilot""",,,,,,4,2,0,0,4
+2022-05-26,,KSDL,KSDL,KCGZ E60 ,,,,,,,2.5,2.5,0.0,0.0,0.0,2.5,,,,,0.0,0,0.00,0.0,2.2,0.00,0.00,0.00,0.00,0,1;ILS OR LOC RWY 05;05;KCGZ;;,1;RNAV (GPS) RWY 05;05;KCGZ;;,1;VOR RWY 05;05;KCGZ;;,,,,2.5,0.0,0.0,0.0,,,,,,,,,,"""61.129 Instrument""",,,,,,0,0,0,0,0
+2022-05-16,N747SC,KSDL,KSDL,,,,,,,,1.7,1.7,0.0,0.0,0.0,0.0,,,,,0.0,0,0.00,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,1.7,0.0,0.0,0.0,,,,,,,,,,,,,,,,0,0,0,0,0
+2022-05-12,SCA40,KSDL,KSDL,E60 ,,,,,,,2.5,2.5,0.0,0.0,0.0,2.5,,,,,0.0,0,0.00,0.0,2.2,0.00,0.00,0.00,0.00,0,1;ILS OR LOC RWY 05;05;KCGZ;;,1;RNAV (GPS) RWY 05;05;KCGZ;;,1;VOR RWY 05;05;KCGZ;;,,,,2.5,0.0,0.0,0.0,,,,,,,,,,"""61.129""",,,,,,0,0,0,0,0
+2022-05-10,SCA54,KSDL,KSDL,KCGZ E60,,,,,,,2.5,2.5,0.0,0.0,0.0,2.5,,,,,0.0,0,0.00,0.0,2.2,0.00,0.00,0.00,0.00,0,1;ILS OR LOC RWY 05;05;KCGZ;;,1;RNAV (GPS) RWY 05;05;KCGZ;;,1;VOR RWY 05;05;KCGZ;;,,,,2.5,0.0,0.0,0.0,,,,,,,,,,,,,,,,0,0,0,0,0
+2022-05-10,SCA95,KSDL,KSDL,KDVT,,,,,,,1.8,1.8,0.0,0.0,0.0,0.0,,,,,0.0,0,0.00,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,1.8,0.0,0.0,0.0,,,,,,,,,,,,,,,,0,0,0,0,0
+2022-05-09,SCA42,KSDL,KSDL,KTUS,,,,,,,2.4,2.4,0.0,2.4,0.0,2.4,,,,,0.0,0,205.30,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,2.4,0.0,0.0,0.0,,,,,,,,,,,,,,,,0,0,0,0,0
+2022-05-06,SCA54,KSDL,KSDL,KCGZ ,,,,,,,2.5,2.5,0.0,0.0,0.0,0.0,,,,,0.0,0,0.00,0.0,0.0,0.00,0.00,0.00,0.00,4,,,,,,,2.5,0.0,0.0,0.0,,,,,,,,,,,,,,,,0,0,0,0,0
+2022-05-06,N280SC,KSDL KDVT,KSDL,,,,,,,,1.5,1.5,0.0,0.0,0.0,0.0,,,,,0.0,0,0.00,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,1.5,0.0,0.0,0.0,,,,,,,,,,,,,,,,0,0,0,0,0
+2022-05-06,N407SC,KSDL,KSDL,,,,,,,,1.3,0.0,0.0,0.0,0.0,0.0,,,,,0.0,0,0.00,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,1.3,0.0,0.0,0.0,,,,,,,,,,,,,,,,0,0,0,0,0
+2022-05-05,SCA14,KSDL,KSDL,E60 P08,,,,,,,2.5,2.5,0.0,0.0,0.0,2.5,,,,,0.0,0,0.00,0.0,2.2,0.00,0.00,0.00,0.00,1,,,,,,,2.5,0.0,0.0,0.0,,,,,,,,,,,,,,,,0,0,0,0,0
+2022-05-04,SCA77,KSDL,KSDL,E60 P08,,,,,,,2.5,2.5,0.0,0.0,0.0,2.5,,,,,0.0,0,0.00,0.0,2.2,0.00,0.00,0.00,0.00,0,,,,,,,2.5,0.0,0.0,0.0,,,,,,,,,,,,,,,,0,0,0,0,0
+2022-05-04,SCA77,KSDL,KSDL,KDVT,,,,,,,1.8,1.8,0.0,0.0,0.0,0.0,,,,,0.0,0,0.00,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,1.8,0.0,0.0,0.0,,,,,,,,,,"""Hit 1000""",,,,,,1,1,0,0,2
+2022-05-04,SCA77,KSDL,KSDL,KDVT,,,,,,,1.7,1.7,0.0,0.0,0.0,0.0,,,,,0.0,0,0.00,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,1.7,0.0,0.0,0.0,,,,,,,,,,,,,,,,0,0,0,0,0
+2022-05-03,SCA77,KSDL,KSDL,P08,,,,,,,2.5,2.5,0.0,0.0,0.0,2.5,,,,,0.0,0,0.00,0.0,2.2,0.00,0.00,0.00,0.00,0,1;RNAV (GPS) RWY 23;23;P08;;,1;VOR/DME-A;21;KSDL;;CIRCLE,1;ILS OR LOC RWY 05;05;KCGZ;;,1;RNAV (GPS) RWY 05;05;KCGZ;;,1;VOR RWY 05;05;KCGZ;;,,2.5,0.0,0.0,0.0,,,,,,,,,,,,,,,,0,0,0,0,0
+2022-05-03,SCA77,KSDL,KSDL,E60 P08 KIWA ,,,,,,,2.5,0.0,0.0,0.5,0.0,2.5,,,,,0.0,0,0.00,0.0,2.2,0.00,0.00,0.00,0.00,0,,,,,,,2.5,0.0,0.0,0.0,,,,,,,,,,,,,,,,0,0,0,0,0
+2022-05-03,SCA69,KSDL,KSDL,KDVT,,,,,,,1.7,1.7,0.0,0.0,0.0,0.0,,,,,0.0,0,0.00,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,1.7,0.0,0.0,0.0,,,,,,,,,,,,,,,,0,0,0,0,0
+2022-05-02,SCA52,KSDL,KSDL,KDVT,,,,,,,1.8,1.8,0.0,0.0,0.0,0.0,,,,,0.0,0,0.00,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,1.8,0.0,0.0,0.0,,,,,,,,,,,,,,,,0,0,0,0,0
+2022-05-01,SCA14,KSDL,KSDL,KPAN,,,,,,,1.4,1.4,0.0,0.0,0.0,0.0,,,,,0.0,0,0.00,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,0.0,0.0,0.0,0.0,,,,,,,,,,,,,,,,2,1,0,0,2
+2022-04-29,ALSIM172,KSDL,KSDL,,,,,,,,,0.0,0.0,0.0,0.0,0.0,,,,,0.0,0,0.00,0.0,1.6,0.00,0.00,0.00,0.00,2,1;ILS OR LOC RWY 05;05;KCGZ;;,1;RNAV (GPS) RWY 04R;04R;KCHD;;,1;RNAV (GPS)-D;;KSDL;;CIRCLE,,,,0.0,0.0,0.0,0.0,,,,,,,,,,,,,,,,0,0,0,0,0
+2022-04-29,SCA69,KSDL,KSDL,KDVT,,,,,,,1.7,1.7,0.0,0.0,0.0,0.0,,,,,0.0,0,0.00,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,1.7,0.0,0.0,0.0,,,,,,,,,,,,,,,,0,0,0,0,0
+2022-04-27,SCA17,KSDL,KSDL,KDVT,,,,,,,1.7,1.7,0.0,0.0,0.0,0.0,,,,,0.0,0,0.00,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,1.7,0.0,0.0,0.0,,,,,,,,,,,,,,,,0,0,0,0,0
+2022-04-26,SCA42,KSDL,KSDL,KDVT,,,,,,,1.8,1.8,0.0,0.0,0.0,0.0,,,,,0.0,0,0.00,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,1.8,0.0,0.0,0.0,,,,,,,,,,"""Comm maneuvers""",,,,,,0,0,0,0,0
+2022-04-25,SCA52,KSDL,KSDL,E60 KIWA,,,,,,,2.5,2.5,0.0,2.5,0.0,2.5,,,,,0.0,0,0.00,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,2.5,0.0,0.0,0.0,,,,,,,,,,,,,,,,0,0,0,0,0
+2022-04-25,SCA14,KSDL,KSDL,KDVT,,,,,,,1.5,1.5,0.0,0.0,0.0,0.0,,,,,0.0,0,0.00,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,1.5,0.0,0.0,0.0,,,,,,,,,,,,,,,,0,0,0,0,0
+2022-04-25,N171SC,KSDL,KSDL,KSDL CHD KSDL ,,,,,,,1.9,1.9,0.0,0.0,0.0,0.0,,,,,0.0,0,0.00,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,1.9,0.0,0.0,0.0,,,,,,,,,,,,,,,,2,1,0,0,2
+2022-04-22,N776SC,KSDL KIWA KDVT,KSDL,,,,,,,,1.7,1.7,0.0,0.0,0.0,0.0,,,,,0.0,0,0.00,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,1.7,0.0,0.0,0.0,,,,,,,,,,,,,,,,0,0,0,0,0
+2022-04-21,SCA40,KSDL,KSDL,E60 P08 KIWI ,,,,,,,2.5,2.5,0.0,2.5,0.0,2.5,,,,,0.0,0,0.00,0.0,0.0,0.00,0.00,0.00,0.00,3,,,,,,,2.5,0.0,0.0,0.0,,,,,,,,,,,,,,,,0,0,2,1,3
+2022-04-21,N280SC,KSDL,KSDL,,,,,,,,1.7,1.7,0.0,0.0,0.0,0.0,,,,,0.0,0,0.00,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,1.7,0.0,0.0,0.0,,,,,,,,,,,,,,,,2,1,0,0,2
+2022-04-20,SCA40,KSDL,KSDL,KPRC KHII,,,,,,,5.2,5.2,0.0,0.0,0.0,5.2,,,,,0.0,0,0.00,0.0,0.0,0.00,0.00,0.00,0.00,1,,,,,,,5.2,0.0,0.0,0.0,,,,,,,,,,"""61.65 (d)(ii)(A-C) Instrument long XC""",,,,,,1,3,0,0,3
+2022-04-19,SCA40,KSDL,KSDL,E60 P08 KCGZ,,,,,,,2.5,2.5,0.0,0.5,0.0,2.5,,,,,0.0,0,0.00,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,2.5,0.0,0.0,0.0,,,,,,,,,,,,,,,,0,0,0,0,0
+2022-04-18,N951SC,KSDL,KSDL,P08  E60 IWA ,,,,,,,2.6,2.6,0.0,2.6,0.0,2.6,,,,,0.0,0,0.00,0.0,0.0,0.00,0.00,0.00,0.00,3,,,,,,,2.6,0.0,0.0,0.0,,,,,,,,,,,,,,,,1,0,3,3,4
+2022-04-17,SCA69,KSDL,KSDL,NYL MYF TOA RIV REI PSP,,,,,,,11.1,11.1,0.0,,0.0,11.1,,,,,0.0,0,0.00,3.3,0.0,0.00,0.00,0.00,0.00,4,1;PAR;21R;KNYL;;,1;ILS OR LOC RWY 28R;28R;KMYF;;,1;ILS OR LOC RWY 20R;20R;KSNA;;,1;ILS OR LOC RWY 29R;29R;KTOA;;,,,11.1,0.0,0.0,0.0,,,,,,,,,,"""Cali Rally""",,,,,,8,4,0,0,8
+2022-04-15,SCA54,KSDL,KSDL,KCGZ ,,,,,,,1.8,1.8,0.0,0.0,0.0,0.0,,,,,0.0,0,0.00,0.0,0.0,0.00,0.00,0.00,0.00,2,,,,,,,1.8,0.0,0.0,0.0,,,,,,,,,,,,,,,,0,0,0,0,0
+2022-04-13,SCA54,KSDL,KSDL,CGZ P08,,,,,,,2.6,2.6,0.0,0.0,0.0,0.0,,,,,0.0,0,0.00,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,2.6,0.0,0.0,0.0,,,,,,,,,,,,,,,,3,1,0,0,3
+2022-04-13,SCA18,KSDL,KSDL,,,,,,,,2.5,2.5,0.0,2.5,0.0,0.0,,,,,0.0,0,0.00,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,2.5,0.0,0.0,0.0,,,,,,,,,,,,,,,,0,0,2,1,2
+2022-04-08,SCA18,KSDL,KSDL, CGZ E60,,,,,,,2.5,2.5,0.0,0.0,0.0,2.5,,,,,0.0,0,0.00,0.0,0.0,0.00,0.00,0.00,0.00,2,,,,,,,2.5,0.0,0.0,0.0,,,,,,,,,,"""VOR approaches and into to missed approach procedures!""",,,,,,0,0,0,0,0
+2022-04-08,SCA17,KSDL,KSDL,KDVT ,,,,,,,1.7,1.7,0.0,0.0,0.0,0.0,,,,,0.0,0,0.00,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,1.7,0.0,0.0,0.0,,,,,,,,,,,,,,,,7,1,0,0,7
+2022-04-07,N951SC,KSDL,KSDL,KHII KNYL,,,,,,,6.7,6.7,0.0,0.0,0.0,6.7,,,,,0.0,0,0.00,0.0,5.1,0.00,0.00,0.00,0.00,0,,,,,,,6.7,0.0,0.0,0.0,,,,,,,,,,,,,,,,0,0,0,0,0
+2022-04-06,N776SC,KSDL,KSDL,KAVQ ,,,,,,,2.6,2.6,0.0,0.0,0.0,2.6,,,,,0.0,0,0.00,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,2.6,0.0,0.0,0.0,,,,,,,,,,"""XC to AVQ. Filed and worked on navigation and comms. """,,,,,,2,1,0,0,2
+2022-04-06,SCA69,KSDL,KSDL,DVT ,,,,,,,1.8,1.8,0.0,0.0,0.0,0.0,,,,,0.0,0,0.00,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,1.8,0.0,0.0,0.0,,,,,,,,,,,,,,,,9,1,0,0,9
+2022-04-05,SCA18,KSDL,KSDL,DVT,,,,,,,1.9,1.9,0.0,0.0,0.0,0.0,,,,,0.0,0,0.00,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,1.9,0.0,0.0,0.0,,,,,,,,,,"""Tim recheck""",,,,,,1,1,0,0,1
+2022-04-04,SCA18,KSDL,KSDL,CGZ P08 IWA,,,,,,,2.5,2.5,0.0,0.8,0.0,0.0,,,,,0.0,0,0.00,0.0,2.2,0.00,0.00,0.00,0.00,2,,,,,,,2.5,0.0,0.0,0.0,,,,,,,,,,"""Checkride prep Lexi """,,,,,,0,0,0,0,0
+2022-04-03,N952SC,KSDL,KSDL,A39 CHD,,,,,,,1.9,1.9,0.0,0.0,0.0,0.0,,,,,0.0,0,0.00,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,1.9,0.0,0.0,0.0,,,,,,,,,,,,,,,,7,1,0,0,7
+2022-04-02,SCA95,KSDL,KSDL,KCGZ,,,,,,,2.5,2.5,0.0,0.0,0.0,0.0,,,,,0.0,0,0.00,0.0,2.2,0.00,0.00,0.00,0.00,0,,,,,,,2.5,0.0,0.0,0.0,,,,,,,,,,,,,,,,0,0,0,0,0
+2022-04-02,N171SC,KSDL KCGZ P08,KSDL,,,,,,,,2.5,2.5,0.0,0.0,0.0,0.0,,,,,0.0,0,0.00,0.0,0.0,0.00,0.00,0.00,0.00,5,,,,,,,2.5,0.0,0.0,0.0,,,,,,,,,,,,,,,,0,0,0,0,0
+2022-04-01,SCA14,KSDL,KSDL,IWA CHD ,,,,,,,2.5,2.5,0.0,1.5,0.0,0.0,,,,,0.0,0,0.00,0.0,0.0,0.00,0.00,0.00,0.00,4,,,,,,,2.5,0.0,0.0,0.0,,,,,,,,,,,,,,,,1,0,0,2,2
+2022-04-01,SCA54,KSDL,KSDL,CGZ,,,,,,,1.9,1.9,0.0,0.0,0.0,0.0,,,,,0.0,0,0.00,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,1.9,0.0,0.0,0.0,,,,,,,,,,"""Shane flight""",,,,,,2,2,0,0,2
+2022-04-01,SCA14,KSDL,KSDL,,,,,,,,2.4,2.4,0.0,0.0,0.0,0.0,,,,,0.0,0,0.00,0.0,0.0,0.00,0.00,0.00,0.00,3,,,,,,,2.4,0.0,0.0,0.0,,,,,,,,,,,,,,,,0,0,0,0,0
+2022-03-31,N698FL,KFFZ,KFFZ,,,,,,,,2.1,2.1,0.0,0.0,0.0,0.0,,,,,0.0,0,0.00,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,2.1,0.0,0.0,0.0,,,,,,,,,,,,,,,,2,2,0,0,2
+2022-03-30,SCA54,KSDL,KSDL,E60,,,,,,,2.5,2.5,0.0,2.5,0.0,2.5,,,,,0.0,0,0.00,0.0,,0.00,0.00,0.00,0.00,2,,,,,,,2.5,0.0,,0.0,,,,,,,,,,,,,,,,0,0,3,1,3
+2022-03-29,SCA52,KSDL,KSDL,P08  IWA,,,,,,,2.5,2.5,0.0,1.0,0.0,0.0,,,,,0.0,0,0.00,0.0,0.0,0.00,0.00,0.00,0.00,2,,,,,,,2.5,0.0,0.0,0.0,,,,,,,,,,,,,,,,0,0,0,0,0
+2022-03-29,SCA54,KSDL,KSDL,E60,,,,,,,2.4,2.4,0.0,0.0,0.0,2.4,,,,,0.0,0,0.00,0.0,2.1,0.00,0.00,0.00,0.00,5,,,,,,,2.4,0.0,0.0,0.0,,,,,,,,,,,,,,,,0,0,0,0,0
+2022-03-28,SCA54,KSDL,KSDL,KCGZ P08,,,,,,,2.5,2.5,0.0,0.0,0.0,0.0,,,,,0.0,0,0.00,0.0,0.0,0.00,0.00,0.00,0.00,2,,,,,,,2.5,0.0,0.0,0.0,,,,,,,,,,,,,,,,0,0,0,0,0
+2022-03-24,SCA77,KSDL,KSDL,KCGZ KIWA,,,,,,,2.5,2.5,0.0,0.9,0.0,0.0,,,,,0.0,0,0.00,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,2.5,0.0,0.0,0.0,,,,,,,,,,,,,,,,1,0,2,1,3
+2022-03-23,SCA17,KSDL,KSDL,FLG GCN,,,,,,,4.9,4.9,0.0,0.0,0.0,4.9,,,,,0.0,0,0.00,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,4.9,0.0,0.0,0.0,,,,,,,,,,,,,,,,3,3,0,0,3
+2022-03-22,SCA16,KSDL,KSDL,E60,,,,,,,2.7,2.7,0.0,0.0,0.0,2.7,,,,,0.0,0,0.00,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,2.7,0.0,0.0,0.0,,,,,,,,,,,,,,,,2,0,0,0,2
+2022-03-22,SCA95,KSDL,KSDL,KDVT,,,,,,,1.7,1.7,0.0,0.0,0.0,0.0,,,,,0.0,0,0.00,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,1.7,0.0,0.0,0.0,,,,,,,,,,,,,,,,7,1,0,0,7
+2022-03-21,SCA52,KSDL,KSDL,KCGZ P08,,,,,,,2.5,2.5,0.0,1.2,0.0,0.0,,,,,0.0,0,0.00,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,2.5,0.0,0.0,0.0,,,,,,,,,,,,,,,,0,0,0,0,0
+2022-03-21,SCA18,KSDL,KSDL,,,,,,,,2.1,2.1,,0.0,0.0,2.1,,,,,0.0,0,0.00,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,2.1,0.0,0.0,0.0,,,,,,,,,,,,,,,,0,0,0,0,0
+2022-03-11,SCA77,KSDL,KSDL,E60,,,,,,,2.5,2.5,0.0,2.5,0.0,2.5,,,,,0.0,0,0.00,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,2.5,0.0,0.0,0.0,,,,,,,,,,,,,,,,0,0,3,1,3
+2022-03-11,SCA14,KSDL,KSDL,E60,,,,,,,2.7,2.7,0.0,0.0,0.0,2.7,,,,,0.0,0,0.00,0.0,2.4,0.00,0.00,0.00,0.00,0,,,,,,,2.7,0.0,0.0,0.0,,,,,,,,,,,,,,,,2,1,0,0,2
+2022-03-11,N952SC,KSDL,KSDL,,,,,,,,2.6,2.6,0.0,0.0,0.0,0.0,,,,,0.0,0,0.00,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,2.6,0.0,0.0,0.0,,,,,,,,,,,,,,,,9,1,0,0,9
+2022-03-10,N698FL,KFFZ,KFFZ,,,,,,,,1.8,1.8,0.0,0.0,0.0,0.0,,,,,0.0,0,0.00,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,1.8,0.0,0.0,0.0,,,,,,,,,,,,,,,,2,2,0,0,2
+2022-03-10,N952SC,KSDL,KSDL,,,,,,,,1.6,1.6,0.0,0.0,0.0,0.0,,,,,0.0,0,0.00,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,1.6,0.0,0.0,0.0,,,,,,,,,,,,,,,,1,1,0,0,1
+2022-03-09,SCA54,KSDL,KSDL,P08 E60,,,,,,,2.4,2.4,0.0,0.0,0.0,2.4,,,,,0.0,0,0.00,0.0,0.0,0.00,0.00,0.00,0.00,2,,,,,,,2.4,0.0,0.0,0.0,,,,,,,,,,,,,,,,3,2,0,0,3
+2022-03-09,N854SC,KSDL,KSDL,,,,,,,,1.7,1.7,0.0,0.0,0.0,0.0,,,,,0.0,0,0.00,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,1.7,0.0,0.0,0.0,,,,,,,,,,,,,,,,0,0,0,0,0
+2022-03-08,SCA47,KSDL,KSDL,KCGZ P08 E60 KIWA,,,,,,,2.5,2.5,0.0,1.0,0.0,2.5,,,,,0.0,0,0.00,0.0,0.0,0.00,0.00,0.00,0.00,2,,,,,,,2.5,0.0,0.0,0.0,,,,,,,,,,,,,,,,3,1,1,1,3
+2022-03-08,N407SC,KSDL,KSDL,,,,,,,,1.7,1.7,0.0,0.0,0.0,0.0,,,,,0.0,0,0.00,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,1.7,0.0,0.0,0.0,,,,,,,,,,,,,,,,1,1,0,0,1
+2022-03-08,SCA17,KSDL,KSDL,,,,,,,,2.5,2.5,0.0,0.0,,0.0,,,,,0.0,0,0.00,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,2.5,0.0,0.0,0.0,,,,,,,,,,,,,,,,1,1,0,0,1
+2022-03-07,SCA18,KSDL,KSDL,E60,,,,,,,2.6,2.6,0.0,0.0,0.0,2.6,,,,,0.0,0,0.00,0.0,0.0,0.00,0.00,0.00,0.00,3,,,,,,,2.6,0.0,0.0,0.0,,,,,,,,,,,,,,,,0,0,0,0,0
+2022-03-07,N714SC,KSDL,KSDL,,,,,,,,1.7,1.7,0.0,0.0,0.0,0.0,,,,,0.0,0,0.00,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,1.7,0.0,0.0,0.0,,,,,,,,,,,,,,,,7,1,0,0,7
+2022-03-07,SCA52,KSDL,KSDL,SDL DVT SDL,,,,,,,1.8,1.8,0.0,0.0,0.0,0.0,,,,,0.0,0,0.00,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,1.8,0.0,0.0,0.0,,,,,,,,,,,,,,,,4,1,0,0,4
+2022-03-04,N423SC,KSDL,KSDL,,,,,,,,1.7,1.7,0.0,0.0,0.0,0.0,,,,,0.0,0,0.00,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,1.7,0.0,0.0,0.0,,,,,,,,,,,,,,,,2,1,0,0,2
+2022-03-03,SCA52,KSDL,KSDL,KCGZ KAVQ,,,,,,,2.5,2.5,0.0,0.0,0.0,2.5,,,,,0.0,0,0.00,0.0,0.0,0.00,0.00,0.00,0.00,1,,,,,,,2.5,0.0,0.0,0.0,,,,,,,,,,,,,,,,3,1,0,0,3
+2022-03-03,N776SC,KSDL,KSDL,,,,,,,,1.6,1.6,0.0,0.0,0.0,0.0,,,,,0.0,0,0.00,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,1.6,0.0,0.0,0.0,,,,,,,,,,,,,,,,2,1,0,0,2
+2022-03-01,SCA52,KSDL,KSDL,SDL SDL,,,,,,,2.2,2.2,0.0,0.0,0.0,0.0,,,,,0.0,0,0.00,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,2.2,0.0,0.0,0.0,,,,,,,,,,,,,,,,1,1,0,0,1
+2022-02-28,N854SC,KSDL,KSDL,,,,,,,,1.7,0.0,0.0,0.0,0.0,0.0,,,,,0.0,0,0.00,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,1.7,,0.0,0.0,,,,,,,,,,,,,,,,2,1,0,0,2
+2022-02-26,SCA52,KSDL,KSDL,SDL RYN SDL,,,,,,,3.0,3.0,0.0,1.2,0.0,3.0,,,,,0.0,0,0.00,0.0,0.0,0.00,0.00,0.00,0.00,1,,,,,,,3.0,0.0,0.0,0.0,,,,,,,,,,,,,,,,2,1,0,1,2
+2022-02-25,SCA75,KSDL,KSDL,KRYN,,,,,,,2.9,2.9,0.0,0.0,0.0,2.9,,,,,0.0,0,0.00,0.0,,0.00,0.00,0.00,0.00,1,,,,,,,2.9,0.0,0.0,0.0,,,,,,,,,,,,,,,,0,0,0,0,0
+2022-02-25,SCA17,KSDL,KSDL,SDL P52 ,,,,,,,2.4,2.4,0.0,0.0,0.0,2.4,,,,,0.0,0,0.00,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,2.4,0.0,0.0,0.0,,,,,,,,,,,,,,,,2,1,0,0,2
+2022-02-24,SCA18,KSDL,KSDL,E60,,,,,,,2.5,2.5,0.0,0.0,0.0,2.5,,,,,0.0,0,0.00,0.0,0.0,0.00,0.00,0.00,0.00,5,,,,,,,2.5,0.0,0.0,0.0,,,,,,,,,,,,,,,,0,0,0,0,0
+2022-02-23,N698FL,KFFZ,KFFZ,,,,,,,,1.9,1.9,,0.0,0.0,0.0,,,,,0.0,0,0.00,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,1.9,0.0,0.0,0.0,,,,,,,,,,,,,,,,1,1,0,0,1
+2022-02-22,N694SC,KSDL,KSDL,E60,,,,,,,2.5,2.5,0.0,0.0,0.0,2.5,,,,,0.0,0,0.00,0.1,2.1,0.00,0.00,0.00,0.00,5,,,,,,,2.5,0.0,0.0,0.0,,,,,,,,,,,,,,,,0,0,0,0,0
+2022-02-20,N698FL,KFFZ,KFFZ,,,,,,,,1.8,1.8,0.0,0.0,0.0,0.0,,,,,0.0,0,0.00,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,1.8,0.0,0.0,0.0,,,,,,,,,,,,,,,,1,1,0,0,1
+2022-02-18,N753SC,KSDL,KSDL,KDVT,,,,,,,1.8,1.8,0.0,0.0,0.0,0.0,,,,,0.0,0,0.00,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,1.8,0.0,0.0,0.0,,,,,,,,,,,,,,,,11,1,0,0,11
+2022-02-17,N854SC,KSDL,KSDL,E60,,,,,,,2.4,2.4,0.0,0.1,0.0,2.4,,,,,0.0,0,0.00,0.0,,0.00,0.00,0.00,0.00,0,,,,,,,2.4,0.0,0.0,0.0,,,,,,,,,,,,,,,,0,0,0,0,0
+2022-02-15,N423SC,KSDL,KSDL,,,,,,,,1.8,1.8,0.0,0.0,0.0,0.0,,,,,0.0,0,0.00,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,1.8,0.0,0.0,0.0,,,,,,,,,,,,,,,,1,1,0,0,1
+2022-02-15,N776SC,KSDL,KSDL,E60,,,,,,,2.5,2.5,0.0,0.0,0.0,2.5,,,,,0.0,0,0.00,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,2.5,0.0,0.0,0.0,,,,,,,,,,,,,,,,0,0,0,0,0
+2022-02-14,N952SC,KSDL,KSDL,,,,,,,,1.6,1.6,0.0,0.0,0.0,0.0,,,,,0.0,0,0.00,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,1.6,0.0,0.0,0.0,,,,,,,,,,,,,,,,4,1,0,0,4
+2022-02-14,N716SC,KSDL,KSDL,E60 KCHD,,,,,,,2.5,2.5,0.0,0.0,0.0,2.5,,,,,0.0,0,0.00,0.0,0.0,0.00,0.00,0.00,0.00,1,,,,,,,2.5,0.0,0.0,0.0,,,,,,,,,,,,,,,,0,0,0,0,0
+2022-02-11,N407SC,KSDL,KSDL,,,,,,,,1.4,1.4,0.0,0.0,0.0,0.0,,,,,0.0,0,0.00,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,1.4,0.0,0.0,0.0,,,,,,,,,,,,,,,,1,1,0,0,1
+2022-02-10,N747SC,KSDL,KSDL,SDL E60 SDL,,,,,,,2.4,2.4,,0.0,0.0,2.4,,,,,0.0,0,0.00,0.0,2.2,0.00,0.00,0.00,0.00,0,,,,,,,2.4,0.0,0.0,0.0,,,,,,,,,,,,,,,,0,0,0,0,0
+2022-02-09,N776SC,KSDL,KSDL,,,,,,,,1.7,1.7,0.0,0.0,0.0,0.0,,,,,0.0,0,0.00,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,1.7,0.0,0.0,0.0,,,,,,,,,,,,,,,,5,1,0,0,5
+2022-02-09,N181SC,KCHD,KCHD,,,,,,,,1.6,1.6,0.0,0.0,0.0,0.0,,,,,0.0,0,0.00,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,1.6,0.0,0.0,0.0,,,,,,,,,,,,,,,,4,1,0,0,4
+2022-02-08,N698FL,KFFZ,KFFZ,,,,,,,,1.8,1.8,0.0,0.0,0.0,0.0,,,,,0.0,0,0.00,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,1.8,0.0,0.0,0.0,,,,,,,,,,,,,,,,1,1,0,0,1
+2022-02-08,N423SC,KSDL,KSDL,,,,,,,,1.8,1.8,0.0,0.0,0.0,0.0,,,,,0.0,0,0.00,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,1.8,0.0,0.0,0.0,,,,,,,,,,,,,,,,6,1,0,0,6
+2022-02-07,N776SC,KSDL,KSDL,,,,,,,,1.7,1.7,0.0,0.0,0.0,0.0,,,,,0.0,0,0.00,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,1.7,0.0,0.0,0.0,,,,,,,,,,,,,,,,2,1,0,0,2
+2022-02-05,N753SC,KSDL,KSDL,SDL DVT SDL,,,,,,,1.7,1.7,0.0,0.0,0.0,0.0,,,,,0.0,0,0.00,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,1.7,0.0,0.0,0.0,,,,,,,,,,,,,,,,9,1,0,0,9
+2022-02-05,N181SC,KCHD,KCHD,,,,,,,,1.0,1.0,0.0,0.0,0.0,0.0,,,,,0.0,0,0.00,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,1.0,0.0,0.0,0.0,,,,,,,,,,,,,,,,2,1,0,0,2
+2022-02-04,SCA17,KSDL,KSDL,SDL P08 E60 CHD SDL,,,,,,,2.6,2.6,0.0,2.6,0.0,2.6,,,,,0.0,0,0.00,0.0,0.0,0.00,0.00,0.00,0.00,4,,,,,,,2.6,0.0,0.0,0.0,,,,,,,,,,,,,,,,0,0,3,2,3
+2022-02-02,N714SC,KSDL,KSDL,SDL DVT SDL,,,,,,,1.7,1.7,0.0,0.0,0.0,0.0,,,,,0.0,0,0.00,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,1.7,0.0,0.0,0.0,,,,,,,,,,,,,,,,8,1,0,0,8
+2022-02-02,N407SC,KCHD,KCHD,,,,,,,,1.8,1.8,0.0,0.0,0.0,0.0,,,,,0.0,0,0.00,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,1.8,0.0,0.0,0.0,,,,,,,,,,,,,,,,3,1,0,0,3
+2022-02-01,N280SC,KCHD,KCHD,CHD P08 CHD,,,,,,,1.8,1.8,0.0,0.0,0.0,0.0,,,,,0.0,0,0.00,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,1.8,0.0,0.0,0.0,,,,,,,,,,,,,,,,5,1,0,0,5
+2022-02-01,N423SC,KSDL,KSDL,,,,,,,,1.6,1.6,0.0,0.0,0.0,0.0,,,,,0.0,0,0.00,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,1.6,0.0,0.0,0.0,,,,,,,,,,,,,,,,6,1,0,0,6
+2022-02-01,N714SC,KSDL,KSDL,,,,,,,,1.8,1.8,0.0,0.0,0.0,0.0,,,,,0.0,0,0.00,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,1.8,0.0,0.0,0.0,,,,,,,,,,,,,,,,2,1,0,0,2
+2022-01-31,N951SC,KSDL,KSDL,,,,,,,,1.5,1.5,0.0,0.0,0.0,0.0,,,,,0.0,0,0.00,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,1.5,0.0,0.0,0.0,,,,,,,,,,,,,,,,4,1,0,0,4
+2022-01-31,N716SC,KSDL,KSDL,,,,,,,,1.9,1.9,0.0,0.0,0.0,0.0,,,,,0.0,0,0.00,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,1.9,0.0,0.0,0.0,,,,,,,,,,,,,,,,1,1,0,0,1
+2022-01-30,N181SC,KSDL,KSDL,,,,,,,,1.0,1.0,0.0,0.0,0.0,0.0,,,,,0.0,0,0.00,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,1.0,0.0,0.0,0.0,,,,,,,,,,,,,,,,2,1,0,0,2
+2022-01-29,N716SC,KSDL,KSDL,,,,,,,,1.8,1.8,0.0,0.0,0.0,0.0,,,,,0.0,0,0.00,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,1.8,0.0,0.0,0.0,,,,,,,,,,,,,,,,1,1,0,0,1
+2022-01-29,SCA17,KCHD,KCHD,,,,,,,,1.7,1.7,0.0,0.0,0.0,0.0,,,,,0.0,0,0.00,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,1.7,0.0,0.0,0.0,,,,,,,,,,,,,,,,6,1,0,0,6
+2022-01-28,N952SC,KSDL,KSDL,,,,,,,,1.8,1.8,0.0,0.0,0.0,0.0,,,,,0.0,0,0.00,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,1.8,0.0,0.0,0.0,,,,,,,,,,,,,,,,4,1,0,0,4
+2022-01-26,N423SC,KSDL,KSDL,,,,,,,,1.8,1.8,0.0,0.0,0.0,0.0,,,,,0.0,0,0.00,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,1.8,0.0,0.0,0.0,,,,,,,,,,,,,,,,5,1,0,0,5
+2022-01-26,N423SC,KSDL,KSDL,,,,,,,,1.7,1.7,0.0,0.0,0.0,0.0,,,,,0.0,0,0.00,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,1.7,0.0,0.0,0.0,,,,,,,,,,,,,,,,4,1,0,0,4
+2022-01-24,N747SC,KSDL,KSDL,SDL FFZ SDL,,,,,,,1.6,1.6,0.0,0.0,0.0,0.0,,,,,0.0,0,0.00,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,1.6,0.0,0.0,0.0,,,,,,,,,,,,,,,,3,1,0,0,3
+2022-01-24,N747SC,KCHD,KCHD,,,,,,,,1.7,1.7,0.0,0.0,0.0,0.0,,,,,0.0,0,0.00,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,1.7,0.0,0.0,0.0,,,,,,,,,,,,,,,,2,1,0,0,2
+2022-01-21,N854SC,KSDL,KSDL,,,,,,,,1.7,1.7,0.0,0.0,0.0,0.0,,,,,0.0,0,0.00,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,1.7,0.0,0.0,0.0,,,,,,,,,,,,,,,,3,1,0,0,3
+2022-01-20,N854SC,KSDL,KSDL,,,,,,,,1.8,1.8,0.0,0.0,0.0,0.0,,,,,0.0,0,0.00,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,1.8,0.0,0.0,0.0,,,,,,,,,,,,,,,,4,1,0,0,4
+2022-01-20,N854SC,KSDL,KSDL,,,,,,,,1.7,1.7,0.0,0.0,0.0,0.0,,,,,0.0,0,0.00,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,1.7,0.0,0.0,0.0,,,,,,,,,,,,,,,,4,1,0,0,4
+2022-01-19,N694SC,KSDL,KSDL,,,,,,,,1.8,1.8,0.0,0.0,0.0,0.0,,,,,0.0,0,0.00,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,1.8,0.0,0.0,0.0,,,,,,,,,,,,,,,,2,1,0,0,2
+2022-01-19,N716SC,KSDL,KSDL,,,,,,,,2.4,2.4,0.0,2.4,0.0,0.0,,,,,0.0,0,0.00,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,2.4,0.0,0.0,0.0,,,,,,,,,,,,,,,,0,0,3,1,3
+2022-01-14,SCA17,KCHD,KCHD,CHD P08 AVQ CHD,,,,,,,1.9,1.9,0.0,1.9,0.0,1.9,,,,,0.0,0,0.00,0.0,0.0,0.00,0.00,0.00,0.00,2,1;VOR RWY 05;05;P08;;CIRCLE,1;ILS OR LOC RWY 05;05;KCGZ;;,1;RNAV (GPS) RWY 12;12;KAVQ;;CIRCLE,,,,1.9,0.0,0.0,0.0,,,,,,,,,,,,,,,,0,0,3,3,3
+2022-01-12,N694SC,KSDL,KSDL,SDL FFZ SDL,,,,,,,1.9,1.9,0.0,0.0,0.0,0.0,,,,,0.0,0,0.00,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,1.9,0.0,0.0,0.0,,,,,,,,,,,,,,,,2,1,0,0,2
+2022-01-12,N747SC,KCHD,KCHD,CHD AVQ CHD,,,,,,,2.1,2.1,0.0,2.1,0.0,2.1,,,,,0.0,0,0.00,0.0,0.0,0.00,0.00,0.00,0.00,1,1;RNAV (GPS) RWY 12;12;KAVQ;;,1;ILS OR LOC RWY 05;05;KCGZ;Missed;,,,,,2.1,0.0,0.0,0.0,,,,,,,,,,,,,,,,2,1,0,0,2
+2022-01-10,N952SC,KCHD,KCHD,CHD AVQ CHD,,,,,,,2.1,2.1,0.0,0.5,0.0,2.1,,,,,0.0,0,0.00,0.0,0.0,0.00,0.00,0.00,0.00,2,1;RNAV (GPS) RWY 12;12;KAVQ;;,1;ILS OR LOC RWY 05;05;KCGZ;Missed;,,,,,2.1,0.0,0.0,0.0,,,,,,,,,,,,,,,,2,1,0,0,2
+2022-01-10,N952SC,KCHD,KCHD,CHD AVQ RYN CHD,,,,,,,2.6,2.6,0.0,0.0,0.0,2.6,,,,,0.0,0,0.00,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,2.6,0.0,0.0,0.0,,,,,,,,,,,,,,,,3,3,0,0,3
+2022-01-07,N747SC,KCHD,KCHD,,,,,,,,2.5,2.5,0.0,0.0,0.0,0.0,,,,,0.0,0,0.00,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,2.5,0.0,0.0,0.0,,,,,,,,,,,,,,,,3,1,0,0,3
+2022-01-06,N747SC,KCHD,KCHD,,,,,,,,1.8,1.8,0.0,0.0,0.0,0.0,,,,,0.0,0,0.00,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,1.8,0.0,0.0,0.0,,,,,,,,,,,,,,,,5,1,0,0,5
+2022-01-05,SCA18,KSDL,KSDL,,,,,,,,1.7,1.7,0.0,0.0,0.0,0.0,,,,,0.0,0,0.00,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,1.7,0.0,0.0,0.0,,,,,,,,,,,,,,,,4,1,0,0,4
+2022-01-05,N952SC,KCHD,KCHD,CHD AVQ CHD,,,,,,,1.9,1.9,0.0,0.0,0.0,1.9,,,,,0.0,0,0.00,0.0,0.0,0.00,0.00,0.00,0.00,2,1;RNAV (GPS) RWY 05;05;KCGZ;Missed;,1;RNAV (GPS) RWY 12;12;KAVQ;;CIRCLE,,,,,1.9,0.0,0.0,0.0,,,,,,,,,,,,,,,,2,1,0,0,2
+2022-01-05,N747SC,KCHD,KCHD,,,,,,,,1.7,1.7,0.0,0.0,0.0,0.0,,,,,0.0,0,0.00,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,1.7,0.0,0.0,0.0,,,,,,,,,,,,,,,,4,1,0,0,4
+2022-01-05,SCA17,KCHD,KCHD,CHD SDL CHD,,,,,,,2.0,2.0,0.0,0.0,2.0,0.0,,,,,0.0,0,0.00,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,0.0,0.0,0.0,0.0,,,,,,,,,,,,,,,,2,2,0,0,2
+2022-01-04,N747SC,KCHD,KCHD,,,,,,,,1.8,1.8,0.0,0.0,0.0,0.0,,,,,0.0,0,0.00,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,1.8,0.0,0.0,0.0,,,,,,,,,,,,,,,,4,1,0,0,4
+2022-01-03,N747SC,KCHD,KCHD,,,,,,,,2.1,2.1,0.0,2.1,0.0,2.1,,,,,0.0,0,0.00,0.0,0.0,0.00,0.00,0.00,0.00,1,2;RNAV (GPS) RWY 12;12;KAVQ;;CIRCLE,1;ILS OR LOC RWY 05;05;KCGZ;;,,,,,2.1,0.0,0.0,0.0,,,,,,,,,,,,,,,,2,1,0,0,2
+2022-01-03,N747SC,KCHD,KCHD,,,,,,,,1.5,1.5,0.0,0.0,0.0,0.0,,,,,0.0,0,0.00,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,1.5,0.0,0.0,0.0,,,,,,,,,,,,,,,,2,1,0,0,2
+2021-12-29,N747SC,KCHD,KCHD,,,,,,,,1.0,1.0,0.0,0.0,0.0,0.0,,,,,0.0,0,0.00,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,1.0,0.0,0.0,0.0,,,,,,,,,,,,,,,,6,1,0,0,6
+2021-12-28,N747SC,KCHD,KCHD,,,,,,,,1.8,1.8,0.0,0.0,0.0,0.0,,,,,0.0,0,0.00,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,1.8,0.0,0.0,0.0,,,,,,,,,,,,,,,,1,1,0,0,1
+2021-12-28,N747SC,KCHD,KCHD,,,,,,,,1.6,1.6,,0.0,,0.0,,,,,0.0,0,0.00,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,1.6,0.0,0.0,0.0,,,,,,,,,,,,,,,,8,1,0,0,8
+2021-12-27,SCA17,KCHD,KCHD,,,,,,,,1.9,1.9,0.0,0.0,0.0,0.0,,,,,0.0,0,0.00,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,1.9,0.0,0.0,0.0,,,,,,,,,,,,,,,,5,2,0,0,5
+2021-12-27,SCA17,KCHD,KCHD,,,,,,,,1.8,1.8,0.0,0.0,0.0,0.0,,,,,0.0,0,0.00,0.0,0.0,0.00,0.00,0.00,0.00,3,1;RNAV (GPS) RWY 05;05;KCGZ;Missed;,1;VOR RWY 05;05;P08;;CIRCLE,1;ILS OR LOC RWY 05;05;KCGZ;Missed;,,,,1.8,0.0,0.0,0.0,,,,,,,,,,,,,,,,2,1,0,0,2
+2021-12-27,N747SC,KCHD,KCHD,,,,,,,,1.9,1.9,0.0,0.0,0.0,0.0,,,,,0.0,0,0.00,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,1.9,0.0,0.0,0.0,,,,,,,,,,,,,,,,8,1,0,0,8
+2021-12-23,N747SC,KCHD,KCHD,,,,,,,,2.0,2.0,0.0,0.0,0.0,0.0,,,,,0.0,0,0.00,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,2.0,0.0,0.0,0.0,,,,,,,,,,,,,,,,11,1,0,0,11
+2021-12-22,N952SC,KCHD,KCHD,,,,,,,,1.7,1.7,0.0,0.0,0.0,0.0,,,,,0.0,0,0.00,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,1.7,0.0,0.0,0.0,,,,,,,,,,,,,,,,9,1,0,0,9
+2021-12-21,N747SC,KCHD,KCHD,CHD RYN TUS CHD,,,,,,,2.2,2.2,0.0,0.0,0.0,0.0,,,,,0.0,0,0.00,0.0,0.0,0.00,0.00,0.00,0.00,2,1;ILS OR LOC RWY 06R;06R;KRYN;;,1;ILS OR LOC RWY 11L;11L;KTUS;;,,,,,2.2,0.0,0.0,0.0,,,,,,,,,,,,,,,,2,1,0,0,2
+2021-12-21,N952SC,KCHD,KCHD,,,,,,,,1.9,1.9,0.0,0.0,0.0,0.0,,,,,0.0,0,0.00,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,1.9,0.0,0.0,0.0,,,,,,,,,,,,,,,,6,1,0,0,6
+2021-12-21,N952SC,KCHD,KCHD,,,,,,,,1.7,1.7,0.0,0.0,0.0,0.0,,,,,0.0,0,0.00,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,1.7,0.0,0.0,0.0,,,,,,,,,,,,,,,,12,1,0,0,12
+2021-12-20,N952SC,KCHD,KCHD,CHD TUS CHD,,,,,,,1.9,1.9,0.0,0.0,0.0,1.9,,,,,0.0,0,0.00,0.0,0.0,0.00,0.00,0.00,0.00,1,1;ILS OR LOC RWY 11L;11L;KTUS;;,,,,,,1.9,0.0,0.0,0.0,,,,,,,,,,,,,,,,1,0,1,1,2
+2021-12-20,SCA17,KCHD,KCHD,,,,,,,,1.7,1.7,0.0,0.0,0.0,0.0,,,,,0.0,0,0.00,0.0,0.0,0.00,0.00,0.00,0.00,2,1;VOR RWY 05;05;KCGZ;;CIRCLE,1;ILS OR LOC RWY 05;05;KCGZ;;CIRCLE,1;VOR RWY 05;05;KCGZ;Missed;,,,,1.7,0.0,0.0,0.0,,,,,,,,,,,,,,,,1,1,0,0,1
+2021-12-20,N747SC,KCHD,KCHD,,,,,,,,1.6,1.6,0.0,0.0,0.0,0.0,,,,,0.0,0,0.00,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,1.6,0.0,0.0,0.0,,,,,,,,,,,,,,,,12,1,0,0,12
+2021-12-19,N747SC,KCHD,KCHD,,,,,,,,2.2,2.2,0.0,0.0,0.0,0.0,,,,,0.0,0,0.00,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,2.2,0.0,0.0,0.0,,,,,,,,,,,,,,,,4,1,0,0,4
+2021-12-17,N952SC,KCHD,KCHD,CHD A39 CHD,,,,,,,1.9,1.9,0.0,,0.0,0.0,,,,,0.0,0,0.00,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,1.9,0.0,0.0,0.0,,,,,,,,,,,,,,,,5,2,0,0,5
+2021-12-17,N952SC,KCHD,KCHD,,,,,,,,1.8,1.8,0.0,0.0,0.0,0.0,,,,,0.0,0,0.00,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,1.8,0.0,0.0,0.0,,,,,,,,,,,,,,,,2,1,0,0,2
+2021-12-16,N747SC,KCHD,KCHD,CHD A39  CHD,,,,,,,1.9,1.9,0.0,0.0,0.0,0.0,,,,,0.0,0,0.00,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,1.9,0.0,0.0,0.0,,,,,,,,,,,,,,,,6,1,0,0,6
+2021-12-15,N952SC,KCHD,KCHD,KCHD KHII KCHD,,,,,,,4.2,4.2,0.0,1.5,0.0,4.2,,,,,0.0,0,0.00,0.0,0.0,0.00,0.00,0.00,0.00,1,1;RNAV (GPS) RWY 32;32;KHII;;,,,,,,4.2,0.0,0.0,0.0,,,,,,,,,,,,,,,,2,1,0,1,2
+2021-12-15,SCA17,KCHD,KCHD,,,,,,,,1.7,1.7,0.0,0.0,0.0,0.0,,,,,0.0,0,0.00,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,1.7,0.0,0.0,0.0,,,,,,,,,,,,,,,,11,8,0,0,11
+2021-12-15,SCA17,KCHD,KCHD,,,,,,,,1.4,1.4,0.0,0.0,0.0,0.0,,,,,0.0,0,0.00,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,1.4,0.0,0.0,0.0,,,,,,,,,,,,,,,,7,1,0,0,7
+2021-12-14,SCA17,KCHD,KCHD,,,,,,,,1.6,1.6,0.0,0.0,0.0,0.0,,,,,0.0,0,0.00,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,1.6,0.0,0.0,0.0,,,,,,,,,,,,,,,,4,1,0,0,4
+2021-12-13,SCA17,KCHD,KCHD,,,,,,,,1.7,1.7,0.0,0.0,0.0,0.0,,,,,0.0,0,0.00,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,1.7,0.0,0.0,0.0,,,,,,,,,,,,,,,,4,1,0,0,4
+2021-12-13,N952SC,KCHD,KCHD,,,,,,,,1.7,1.7,0.0,0.0,0.0,0.0,,,,,0.0,0,0.00,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,1.7,0.0,0.0,0.0,,,,,,,,,,,,,,,,7,1,0,0,7
+2021-12-07,N747SC,KCHD,KCHD,,,,,,,,2.0,2.0,0.0,0.0,0.0,0.0,,,,,0.0,0,0.00,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,2.0,0.0,0.0,0.0,,,,,,,,,,,,,,,,1,1,0,0,1
+2021-12-06,N747SC,KCHD,KCHD,,,,,,,,1.8,1.8,,,0.0,0.0,,,,,0.0,0,0.00,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,1.8,0.0,0.0,0.0,,,,,,,,,,,,,,,,2,1,0,0,2
+2021-12-06,N747SC,KCHD,KCHD,CHD PRC CHD,,,,,,,2.5,2.5,0.0,1.7,0.0,2.5,,,,,0.0,0,0.00,0.0,0.0,0.00,0.00,0.00,0.00,1,1;ILS OR LOC/DME RWY 21L;21L;KPRC;;,,,,,,2.5,0.0,0.0,0.0,,,,,,,,,,,,,,,,2,1,0,0,2
+2021-12-06,SCA17,KCHD,KCHD,,,,,,,,1.6,1.6,0.0,,0.0,0.0,,,,,0.0,0,0.00,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,1.6,0.0,0.0,0.0,,,,,,,,,,,,,,,,3,1,0,0,3
+2021-12-04,SCA17,KCHD,KCHD,,,,,,,,1.5,1.5,0.0,,0.0,0.0,,,,,0.0,0,0.00,0.0,0.0,0.00,0.00,0.00,0.00,4,1;RNAV (GPS) RWY 05;05;KCGZ;Partial panel;,1;ILS OR LOC RWY 05;05;KCGZ;Missed;,1;ILS OR LOC RWY 05;05;KCGZ;T&G;,1;VOR RWY 05;05;KCGZ;Missed;,,,1.5,0.0,0.0,0.0,,,,,,,,,,,,,,,,2,1,0,0,2
+2021-12-03,SCA17,KCHD,KCHD,,,,,,,,1.7,1.7,0.0,0.0,0.0,0.0,,,,,0.0,0,0.00,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,1.7,0.0,0.0,0.0,,,,,,,,,,,,,,,,1,1,0,0,1
+2021-12-01,N747SC,KCHD,KCHD,CHD AVQ IWA CHD,,,,,,,2.1,2.1,0.0,2.1,0.0,0.0,,,,,0.0,0,0.00,0.0,0.0,0.00,0.00,0.00,0.00,1,1;RNAV (GPS) RWY 03;03;KAVQ;;,1;ILS OR LOC RWY 30C;30C;KIWA;;,,,,,2.1,0.0,0.0,0.0,,,,,,,,,,,,,,,,0,0,2,1,2
+2021-12-01,N747SC,KCHD,KCHD,,,,,,,,1.8,1.8,0.0,0.0,0.0,0.0,,,,,0.0,0,0.00,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,1.8,0.0,0.0,0.0,,,,,,,,,,,,,,,,3,1,0,0,3
+2021-12-01,N747SC,KCHD,KCHD,,,,,,,,1.8,1.8,0.0,0.0,0.0,0.0,,,,,0.0,0,0.00,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,1.8,0.0,0.0,0.0,,,,,,,,,,,,,,,,4,1,0,0,4
+2021-11-30,N747SC,KCHD,KCHD,CHD AVQ CGZ CHD ,,,,,,,1.9,1.9,0.0,1.9,0.0,1.9,,,,,0.0,0,0.00,0.0,0.0,0.00,0.00,0.00,0.00,3,1;RNAV (GPS) RWY 12;12;KAVQ;;,1;RNAV (GPS) RWY 04R;04R;KCHD;;,1;VOR RWY 05;05;KCGZ;;,,,,1.9,0.0,0.0,0.0,,,,,,,,,,,,,,,,0,0,3,1,3
+2021-11-30,N747SC,KCHD,KCHD,,,,,,,,1.9,1.9,0.0,0.0,0.0,0.0,,,,,0.0,0,0.00,0.0,0.0,0.00,0.00,0.00,0.00,2,1;ILS OR LOC RWY 05;05;KCGZ;;,1;RNAV (GPS) RWY 05;05;KCGZ;;,,,,,1.9,0.0,0.0,0.0,,,,,,,,,,,,,,,,4,2,0,0,4
+2021-11-30,N747SC,KCHD,KCHD,,,,,,,,1.7,1.7,0.0,0.0,0.0,0.0,,,,,0.0,0,0.00,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,1.7,0.0,0.0,0.0,,,,,,,,,,,,,,,,2,1,0,0,2
+2021-11-29,N747SC,KCHD,KCHD,,,,,,,,1.6,1.6,0.0,0.0,0.0,0.0,,,,,0.0,0,0.00,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,1.6,0.0,0.0,0.0,,,,,,,,,,,,,,,,4,1,0,0,3
+2021-11-29,N747SC,KCHD,KCHD,CHD RYN CHD,,,,,,,2.0,2.0,0.0,0.0,0.0,2.0,,,,,0.0,0,0.00,0.0,0.0,0.00,0.00,0.00,0.00,1,1;ILS OR LOC RWY 06R;06R;KRYN;;,,,,,,2.0,0.0,0.0,0.0,,,,,,,,,,,,,,,,2,2,0,0,2
+2021-11-29,N747SC,KCHD,KCHD,,,,,,,,1.9,1.9,0.0,0.0,0.0,0.0,,,,,0.0,0,0.00,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,1.9,0.0,0.0,0.0,,,,,,,,,,,,,,,,1,1,0,0,1
+2021-11-18,N952SC,KCHD,KCHD,CHD AVQ CHD,,,,,,,1.9,1.9,0.0,1.9,0.0,1.9,,,,,0.0,0,0.00,0.0,0.0,0.00,0.00,0.00,0.00,1,1;RNAV (GPS) RWY 12;12;KAVQ;;,1;RNAV (GPS) RWY 04R;04R;KCHD;;,,,,,1.9,0.0,0.0,0.0,,,,,,,,,,,,,,,,0,0,2,1,2
+2021-11-18,N952SC,KCHD,KCHD,,,,,,,,1.7,1.7,0.0,0.0,0.0,0.0,,,,,0.0,0,0.00,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,1.7,0.0,0.0,0.0,,,,,,,,,,,,,,,,2,1,0,0,2
+2021-11-18,N747SC,KCHD,KCHD,,,,,,,,1.8,1.8,0.0,0.0,0.0,0.0,,,,,0.0,0,0.00,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,1.8,0.0,0.0,0.0,,,,,,,,,,,,,,,,2,1,0,0,2
+2021-11-17,SCA17,KCHD,KCHD,,,,,,,,2.0,2.0,0.0,2.0,0.0,2.0,,,,,0.0,0,0.00,0.0,0.0,0.00,0.00,0.00,0.00,2,1;RNAV (GPS) RWY 03;03;KAVQ;;,1;ILS OR LOC RWY 05;05;KCGZ;Missed;,,,,,2.0,0.0,0.0,0.0,,,,,,,,,,,,,,,,0,0,2,2,2
+2021-11-17,SCA17,KCHD,KCHD,,,,,,,,1.7,1.7,0.0,0.0,0.0,0.0,,,,,0.0,0,0.00,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,1.7,0.0,0.0,0.0,,,,,,,,,,,,,,,,2,1,0,0,2
+2021-11-17,N747SC,KCHD,KCHD,CHD SDL,,,,,,,0.5,0.5,0.0,0.0,,0.0,,,,,0.0,0,0.00,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,0.5,0.0,0.0,0.0,,,,,,,,,,,,,,,,1,1,0,0,1
+2021-11-16,N747SC,KCHD,KCHD,,,,,,,,1.7,1.7,0.0,0.0,0.0,0.0,,,,,0.0,0,0.00,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,1.7,0.0,0.0,0.0,,,,,,,,,,,,,,,,1,1,0,0,1
+2021-11-15,SCA17,KCHD,KCHD,,,,,,,,2.0,2.0,0.0,2.0,0.0,2.0,,,,,0.0,0,0.00,0.0,0.0,0.00,0.00,0.00,0.00,1,1;ILS OR LOC RWY 06R;06R;KRYN;;,,,,,,2.0,0.0,0.0,0.0,,,,,,,,,,,,,,,,2,1,0,0,2
+2021-11-15,N747SC,KCHD,KCHD,CHD P13 CHD ,,,,,,,1.7,1.7,0.0,0.0,0.0,1.7,,,,,0.0,0,0.00,0.0,0.0,0.00,0.00,0.00,0.00,1,1;RNAV (GPS) RWY 27;27;P13;;,,,,,,1.7,0.0,0.0,0.0,,,,,,,,,,,,,,,,1,1,0,0,2
+2021-11-15,N747SC,KCHD,KCHD,,,,,,,,1.7,1.7,0.0,0.0,0.0,0.0,,,,,0.0,0,0.00,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,1.7,0.0,0.0,0.0,,,,,,,,,,,,,,,,1,1,0,0,1
+2021-11-14,SCA17,KCHD,KCHD,,,,,,,,2.4,2.4,0.0,2.4,0.0,0.0,,,,,0.0,0,0.00,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,2.4,0.0,0.0,0.0,,,,,,,,,,,,,,,,0,0,3,1,3
+2021-11-12,SCA17,KCHD,KCHD,CHD RYN CHD,,,,,,,2.2,2.2,0.0,0.0,0.0,2.2,,,,,0.0,0,0.00,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,2.2,0.0,0.0,0.0,,,,,,,,,,,,,,,,2,2,0,0,2
+2021-11-11,SCA17,KCHD,KCHD,,,,,,,,2.0,2.0,0.0,1.6,0.0,2.0,,,,,0.0,0,0.00,0.0,0.0,0.00,0.00,0.00,0.00,1,1;RNAV (GPS) RWY 05;05;KCGZ;Missed;,1;RNAV (GPS) RWY 12;12;KAVQ;;,,,,,2.0,0.0,0.0,0.0,,,,,,,,,,,,,,,,0,0,2,1,1
+2021-11-11,N952SC,KCHD,KCHD,,,,,,,,1.8,1.8,0.0,0.0,0.0,0.0,,,,,0.0,0,0.00,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,1.8,0.0,0.0,0.0,,,,,,,,,,,,,,,,3,1,0,0,3
+2021-11-10,SCA17,KCHD,KCHD,,,,,,,,1.6,1.6,0.0,0.0,0.0,,,,,,0.0,0,0.00,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,1.6,0.0,0.0,0.0,,,,,,,,,,"""Hayden""",,,,,,2,2,0,0,2
+2021-11-10,N952SC,KCHD,KCHD,,,,,,,,2.1,2.1,0.0,0.0,0.0,2.1,,,,,0.0,0,0.00,0.0,0.0,0.00,0.00,0.00,0.00,1,1;RNAV (GPS) RWY 12;12;KAVQ;;,1;ILS OR LOC RWY 05;05;KCGZ;Missed;,,,,,2.1,0.0,0.0,0.0,,,,,,,,,,,,,,,,2,2,0,0,2
+2021-11-09,SCA17,KCHD,KCHD,,,,,,,,1.7,1.7,0.0,0.0,0.0,0.0,,,,,0.0,0,0.00,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,1.7,0.0,0.0,0.0,,,,,,,,,,,,,,,,2,2,0,0,2
+2021-11-09,SCA17,KCHD,KCHD,,,,,,,,0.8,0.8,0.0,0.0,,0.0,,,,,0.0,0,0.00,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,0.8,0.0,0.0,0.0,,,,,,,,,,,,,,,,1,1,0,0,1
+2021-11-08,SCA17,KCHD,KCHD,,,,,,,,1.2,1.2,0.0,0.0,0.0,0.0,,,,,0.0,0,0.00,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,1.2,0.0,0.0,0.0,,,,,,,,,,,,,,,,2,2,0,0,2
+2021-11-05,SCA17,KCHD,KCHD,,,,,,,,1.6,1.6,0.0,0.0,0.0,0.0,,,,,0.0,0,0.00,0.0,0.0,0.00,0.00,0.00,0.00,2,1;VOR RWY 05;05;KCGZ;T & G;,1;VOR RWY 05;05;KCGZ;Missed;,,,,,1.6,0.0,0.0,0.0,,,,,,,,,,,,,,,,2,2,0,0,2
+2021-11-05,SCA17,KCHD,KCHD,,,,,,,,1.7,1.7,0.0,0.0,0.0,0.0,,,,,0.0,0,0.00,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,1.7,0.0,0.0,0.0,,,,,,,,,,,,,,,,2,2,0,0,2
+2021-11-04,SCA17,KCHD,KCHD,,,,,,,,1.9,1.9,0.0,0.8,0.0,0.0,,,,,0.0,0,0.00,0.0,0.0,0.00,0.00,0.00,0.00,4,,,,,,,1.9,0.0,0.0,0.0,,,,,,,,,,,,,,,,1,0,0,1,1
+2021-11-04,N423SC,KSDL,KSDL,,,,,,,,1.1,1.1,0.0,0.0,0.0,0.0,,,,,0.0,0,0.00,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,0.0,0.0,0.0,0.0,,,,,,,,,,,,,,,,1,1,0,0,1
+2021-11-03,N952SC,KCHD,KCHD,,,,,,,,1.6,1.6,0.0,0.0,0.0,0.0,,,,,0.0,0,0.00,0.0,0.0,0.00,0.00,0.00,0.00,3,2;ILS OR LOC RWY 05;05;KCGZ;Missed;,1;RNAV (GPS) RWY 04R;04R;KCHD;;,1;VOR RWY 05;05;KCGZ;;,,,,1.6,0.0,0.0,0.0,,,,,,,,,,,,,,,,2,1,0,0,2
+2021-10-29,N952SC,KCHD,KCHD,,,,,,,,1.5,1.5,0.0,0.0,0.0,0.0,,,,,0.0,0,0.00,0.0,0.0,0.00,0.00,0.00,0.00,3,1;ILS OR LOC RWY 05;05;KCGZ;;,1;GPS RWY 23;23;P08;;,1;VOR RWY 05;05;P08;;,,,,1.5,0.0,0.0,0.0,,,,,,,,,,,,,,,,0,1,0,0,3
+2021-10-29,N952SC,KCHD,KCHD,,,,,,,,2.0,2.0,0.0,0.0,0.0,0.0,,,,,0.0,0,0.00,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,2.0,0.0,0.0,0.0,,,,,,,,,,,,,,,,0,2,0,0,3
+2021-10-29,N952SC,KCHD,KCHD,,,,,,,,2.0,2.0,0.0,0.0,0.0,0.0,,,,,0.0,0,0.00,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,2.0,0.0,0.0,0.0,,,,,,,,,,,,,,,,3,2,0,0,3
+2021-10-27,SCA17,KCHD,KCHD,,,,,,,,2.0,2.0,0.0,2.0,0.0,0.0,,,,,0.0,0,0.00,0.0,0.0,0.00,0.00,0.00,0.00,3,1;RNAV (GPS) RWY 05;05;KCGZ;Missed;,1;ILS OR LOC RWY 30C;30C;KIWA;;,1;GPS RWY 23;23;P08;Missed;,1;VOR RWY 05;05;KCGZ;Missed;,,,2.0,0.0,0.0,0.0,,,,,,,,,,,,,,,,2,1,0,0,2
+2021-10-27,SCA17,KCHD,KCHD,,,,,,,,2.3,2.3,0.0,0.0,0.0,0.0,,,,,0.0,0,0.00,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,2.3,0.0,0.0,0.0,,,,,,,,,,,,,,,,6,2,0,0,6
+2021-10-27,SCA17,KCHD,KCHD,,,,,,,,1.8,1.8,0.0,0.0,0.0,0.0,,,,,0.0,0,0.00,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,1.8,0.0,0.0,0.0,,,,,,,,,,,,,,,,2,1,0,0,2
+2021-10-25,SCA17,KCHD,KCHD,,,,,,,,1.9,1.9,0.0,0.0,0.0,0.0,,,,,0.0,0,0.00,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,1.9,0.0,0.0,0.0,,,,,,,,,,,,,,,,3,1,0,0,3
+2021-10-25,SCA17,KCHD,KCHD,CHD IWA FFZ SDL DVT CHD,,,,,,,1.6,1.6,0.0,0.0,0.0,0.0,,,,,0.0,0,0.00,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,1.6,0.0,0.0,0.0,,,,,,,,,,,,,,,,6,1,0,0,6
+2021-10-25,SCA17,KCHD,KCHD,,,,,,,,2.0,2.0,0.0,0.0,0.0,0.0,,,,,0.0,0,0.00,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,2.0,0.0,0.0,0.0,,,,,,,,,,,,,,,,6,1,0,0,6
+2021-10-22,SCA17,KCHD,KCHD,,,,,,,,1.8,1.8,0.0,0.0,0.0,0.0,,,,,0.0,0,0.00,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,1.8,0.0,0.0,0.0,,,,,,,,,,,,,,,,6,1,0,0,6
+2021-10-22,SCA17,KCHD,KCHD,,,,,,,,1.8,1.8,,0.0,0.0,,,,,,0.0,0,0.00,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,1.8,0.0,0.0,0.0,,,,,,,,,,,,,,,,6,1,0,0,6
+2021-10-22,SCA17,KCHD,KCHD,,,,,,,,1.1,1.1,0.0,0.0,0.0,0.0,,,,,0.0,0,0.00,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,1.1,0.0,0.0,0.0,,,,,,,,,,,,,,,,4,3,0,0,4
+2021-10-20,SCA17,KCHD,KCHD,,,,,,,,1.9,1.9,0.0,1.9,0.0,1.9,,,,,0.0,0,0.00,0.0,0.0,0.00,0.00,0.00,0.00,1,1;ILS OR LOC RWY 05;05;KCGZ;Missed;,1;RNAV (GPS) RWY 12;12;KAVQ;;CIRCLE,,,,,1.9,0.0,0.0,0.0,,,,,,,,,,,,,,,,3,1,0,0,3
+2021-10-20,SCA17,KCHD,KCHD,,,,,,,,2.0,2.0,0.0,0.0,0.0,0.0,,,,,0.0,0,0.00,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,2.0,0.0,0.0,0.0,,,,,,,,,,,,,,,,3,1,0,0,3
+2021-10-20,SCA17,KCHD,KCHD,,,,,,,,1.7,1.7,0.0,0.0,0.0,0.0,,,,,0.0,0,0.00,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,1.7,0.0,0.0,0.0,,,,,,,,,,,,,,,,4,1,0,0,4
+2021-10-18,SCA17,KCHD,KCHD,,,,,,,,2.2,2.2,0.0,0.0,0.0,2.2,,,,,0.0,0,0.00,0.0,0.0,0.00,0.00,0.00,0.00,1,1;GPS RWY 23;23;P08;;,1;RNAV (GPS) RWY 12;12;KAVQ;;CIRCLE,,,,,2.2,0.0,0.0,0.0,,,,,,,,,,,,,,,,2,1,0,0,2
+2021-10-18,SCA17,KCHD,KCHD,,,,,,,,1.6,1.6,0.0,0.0,0.0,0.0,,,,,0.0,0,0.00,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,1.6,0.0,0.0,0.0,,,,,,,,,,,,,,,,2,1,0,0,2
+2021-10-16,SCA17,KCHD,KCHD,,,,,,,,3.0,3.0,0.0,3.0,0.0,3.0,,,,,0.0,0,0.00,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,3.0,0.0,0.0,0.0,,,,,,,,,,,,,,,,0,0,15,1,15
+2021-10-16,SCA17,KCHD,KCHD,KCHD KAVQ P08 KCHD,,,,,,,2.1,2.1,0.0,0.0,,2.1,,,,,0.0,0,0.00,0.0,0.0,0.00,0.00,0.00,0.00,1,1;GPS RWY 23;23;P08;Missed;,1;RNAV (GPS) RWY 12;12;KAVQ;;CIRCLE,,,,,2.1,0.0,0.0,0.0,,,,,,,,,,,,,,,,2,1,0,0,2
+2021-10-15,SCA17,KCHD,KCHD,,,,,,,,1.8,1.8,0.0,0.0,0.0,0.0,,,,,0.0,0,0.00,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,1.8,0.0,0.0,0.0,,,,,,,,,,"""Tol's with John Meikle """,,,,,,10,2,0,0,10
+2021-10-15,SCA17,KCHD,KCHD,,,,,,,,1.8,1.8,0.0,0.0,0.0,0.0,,,,,0.0,0,0.00,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,1.8,0.0,0.0,0.0,,,,,,,,,,,,,,,,2,1,0,0,2
+2021-10-14,SCA17,KCHD,KCHD,KCHD KSDL KFFZ KCHD,,,,,,,1.8,1.8,0.0,0.0,0.0,0.0,,,,,0.0,0,0.00,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,1.8,0.0,0.0,0.0,,,,,,,,,,,,,,,,6,1,0,0,6
+2021-10-13,SCA17,KCHD,KCHD,,,,,,,,1.9,1.9,0.0,1.9,0.0,0.0,,,,,0.0,0,0.00,0.0,0.0,0.00,0.00,0.00,0.00,3,1;RNAV (GPS) RWY 05;05;KCGZ;Missed;,1;VOR RWY 05;05;KCGZ;Full stop;,1;ILS OR LOC RWY 05;05;KCGZ;Missed;,,,,1.9,0.0,0.0,0.0,,,,,,,,,,,,,,,,2,2,0,0,2
+2021-10-13,SCA17,KCHD,KCHD,KCHD KIWA KFFZ KSDL KDVT KCHD,,,,,,,1.6,1.6,0.0,0.0,0.0,0.0,,,,,0.0,0,0.00,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,1.6,0.0,0.0,0.0,,,,,,,,,,,,,,,,5,1,0,0,5
+2021-10-13,SCA17,KCHD,KCHD,,,,,,,,1.8,1.8,0.0,0.0,0.0,0.0,,,,,0.0,0,0.00,0.0,0.0,0.00,0.00,0.00,0.00,2,1;VOR RWY 05;05;P08;;CIRCLE,1;GPS RWY 23;23;P08;Missed;,1;GPS RWY 23;23;P08;Touch and go;,1;ILS OR LOC RWY 30C;30C;KIWA;Touch and go;,,,1.8,0.0,0.0,0.0,,,,,,,,,,,,,,,,4,1,0,0,4
+2021-10-12,SCA17,KCHD,KCHD,KCHD KBXK KHII KCHD,,,,,,,4.2,4.2,0.0,0.0,0.0,4.2,,,,,0.0,0,0.00,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,4.2,0.0,0.0,0.0,,,,,,,,,,,,,,,,3,1,0,0,3
+2021-10-11,SCA17,KCHD,KCHD,,,,,,,,1.8,1.8,0.0,0.0,0.0,0.0,,,,,0.0,0,0.00,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,1.8,0.0,0.0,0.0,,,,,,,,,,,,,,,,8,1,0,0,8
+2021-10-11,SCA17,KCHD,KCHD,,,,,,,,1.9,1.9,0.0,0.0,0.0,0.0,,,,,0.0,0,0.00,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,1.9,0.0,0.0,0.0,,,,,,,,,,,,,,,,2,1,0,0,2
+2021-10-10,SCA17,KCHD,KCHD,,,,,,,,1.6,1.6,0.0,0.0,0.0,0.0,,,,,0.0,0,0.00,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,1.6,0.0,0.0,0.0,,,,,,,,,,,,,,,,2,1,0,0,2
+2021-10-04,SCA17,KCHD,KCHD,,,,,,,,2.0,2.0,0.0,0.0,0.0,0.0,,,,,0.0,0,0.00,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,2.0,0.0,0.0,0.0,,,,,,,,,,,,,,,,2,2,0,0,2
+2021-10-04,SCA17,KCHD,KCHD,,,,,,,,2.0,2.0,0.0,0.0,0.0,0.0,,,,,0.0,0,0.00,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,2.0,0.0,0.0,0.0,,,,,,,,,,,,,,,,2,2,0,0,2
+2021-10-03,SCA17,KCHD,KCHD,,,,,,,,1.2,1.2,0.0,0.0,0.0,0.0,,,,,0.0,0,0.00,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,1.2,0.0,0.0,0.0,,,,,,,,,,,,,,,,3,2,0,0,2
+2021-10-02,SCA17,KCHD,KCHD,,,,,,,,0.7,0.7,0.0,0.0,0.0,0.0,,,,,0.0,0,0.00,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,0.7,0.0,0.0,0.0,,,,,,,,,,,,,,,,1,1,0,0,1
+2021-09-30,SCA17,KCHD,KCHD,KCHD AVQ CHD ,,,,,,,1.9,1.9,0.0,0.0,0.0,1.9,,,,,0.0,0,119.00,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,1.9,0.0,0.0,0.0,,,,,,,,,,,,,,,,2,2,0,0,2
+2021-09-30,SCA17,KCHD,KCHD,,,,,,,,1.8,1.8,0.0,0.0,0.0,0.0,,,,,0.0,0,0.00,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,1.8,0.0,0.0,0.0,,,,,,,,,,,,,,,,3,1,0,0,3
+2021-09-28,SCA17,KCHD,KCHD,,,,,,,,1.9,1.9,0.0,1.2,0.0,0.0,,,,,0.0,0,0.00,0.0,0.0,0.00,0.00,0.00,0.00,2,2;GPS RWY 23;23;P08;;,,,,,,1.9,0.0,0.0,0.0,,,,,,,,,,,,,,,,1,0,2,1,3
+2021-09-28,SCA17,KCHD,KCHD,,,,,,,,1.8,1.8,0.0,0.0,0.0,0.0,,,,,0.0,0,0.00,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,1.8,0.0,0.0,0.0,,,,,,,,,,,,,,,,7,1,0,0,7
+2021-09-27,SCA17,KCHD,KCHD,,,,,,,,1.7,1.7,0.0,0.0,0.0,0.0,,,,,0.0,0,0.00,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,1.7,0.0,0.0,0.0,,,,,,,,,,,,,,,,6,2,0,0,6
+2021-09-25,SCA17,KCHD,KCHD,,,,,,,,1.9,1.9,0.0,0.0,0.0,0.0,,,,,0.0,0,0.00,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,1.9,0.0,0.0,0.0,,,,,,,,,,,,,,,,2,1,0,0,2
+2021-09-25,SCA17,KCHD,KCHD,,,,,,,,1.9,1.9,0.0,0.0,0.0,0.0,,,,,0.0,0,0.00,0.0,0.0,0.00,0.00,0.00,0.00,2,1;ILS OR LOC RWY 05;05;KCGZ;Circle 23;CIRCLE,,,,,,1.9,0.0,0.0,0.0,,,,,,,,,,,,,,,,2,2,0,0,2
+2021-09-23,SCA17,KCHD,KCHD,KCHD KAVQ KCHD KFFZ KCHD,,,,,,,3.0,3.0,0.0,3.0,0.0,3.0,,,,,0.0,0,143.50,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,3.0,0.0,0.0,0.0,,,,,,,,,,,,,,,,0,0,14,10,14
+2021-09-23,SCA17,KCHD,KCHD,,,,,,,,1.7,1.7,0.0,0.0,0.0,0.0,,,,,0.0,0,0.00,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,1.7,0.0,0.0,0.0,,,,,,,,,,,,,,,,2,2,0,0,2
+2021-09-22,SCA17,KCHD,KCHD,,,,,,,,1.9,1.9,0.0,0.0,0.0,0.0,,,,,0.0,0,0.00,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,1.9,0.0,0.0,0.0,,,,,,,,,,,,,,,,5,5,0,0,5
+2021-09-21,SCA17,KCHD,KCHD,CHD BXK HII CHD,,,,,,,4.1,4.1,0.0,0.0,0.0,4.1,,,,,0.0,0,302.90,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,4.1,0.0,0.0,0.0,,,,,,,,,,,,,,,,3,3,0,0,3
+2021-09-20,SCA17,KCHD,KCHD,,,,,,,,1.4,1.4,0.0,0.0,0.0,0.0,,,,,0.0,0,0.00,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,1.4,0.0,0.0,0.0,,,,,,,,,,,,,,,,3,3,0,0,3
+2021-09-20,SCA17,KCHD,KCHD,,,,,,,,1.6,1.6,0.0,0.0,0.0,0.0,,,,,0.0,0,0.00,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,1.6,0.0,0.0,0.0,,,,,,,,,,,,,,,,8,8,0,0,8
+2021-09-17,SCA17,KCHD,KCHD,,,,,,,,1.7,1.7,0.0,0.0,0.0,0.0,,,,,0.0,0,0.00,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,1.7,0.0,0.0,0.0,,,,,,,,,,,,,,,,4,4,0,0,4
+2021-09-16,SCA17,KCHD,KCHD,,,,,,,,1.7,1.7,0.0,0.0,0.0,0.0,,,,,0.0,0,0.00,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,1.7,0.0,0.0,0.0,,,,,,,,,,,,,,,,3,3,0,0,3
+2021-09-15,SCA17,KCHD,KCHD,,,,,,,,1.6,1.6,0.0,0.0,0.0,0.0,,,,,0.0,0,0.00,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,1.6,0.0,0.0,0.0,,,,,,,,,,,,,,,,2,2,0,0,2
+2021-09-13,SCA17,KCHD,KCHD,,,,,,,,1.1,1.1,0.0,0.0,0.0,0.0,,,,,0.0,0,0.00,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,1.1,0.0,0.0,0.0,,,,,,,,,,,,,,,,2,2,0,0,2
+2021-09-13,SCA17,KCHD,KCHD,,,,,,,,1.8,1.8,0.0,0.0,0.0,0.0,,,,,0.0,0,0.00,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,1.8,0.0,0.0,0.0,,,,,,,,,,,,,,,,2,2,0,0,2
+2021-09-10,SCA17,KCHD,KCHD,,,,,,,,1.7,1.7,0.0,0.0,0.0,0.0,,,,,0.0,0,0.00,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,1.7,0.0,0.0,0.0,,,,,,,,,,,,,,,,4,4,0,0,4
+2021-09-10,SCA17,KCHD,KCHD,,,,,,,,1.8,1.8,0.0,0.0,0.0,0.0,,,,,0.0,0,0.00,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,1.8,0.0,0.0,0.0,,,,,,,,,,,,,,,,3,3,0,0,3
+2021-09-09,SCA17,KCHD,KCHD,,,,,,,,1.4,1.4,0.0,0.0,0.0,0.0,,,,,0.0,0,0.00,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,1.4,0.0,0.0,0.0,,,,,,,,,,,,,,,,3,3,0,0,3
+2021-09-08,SCA17,KCHD,KCHD,,,,,,,,1.8,1.8,0.0,1.8,0.0,0.0,,,,,0.0,0,0.00,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,1.8,0.0,0.0,0.0,,,,,,,,,,,,,,,,8,8,0,0,8
+2021-09-07,SCA17,KCHD,KCHD,,,,,,,,1.6,1.6,0.0,0.0,0.0,0.0,,,,,0.0,0,0.00,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,1.6,0.0,0.0,0.0,,,,,,,,,,,,,,,,3,3,0,0,3
+2021-08-27,SCA17,KCHD,KCHD,,,,,,,,1.7,1.7,0.0,0.0,0.0,0.0,,,,,0.0,0,0.00,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,1.7,0.0,0.0,0.0,,,,,,,,,,,,,,,,5,5,0,0,5
+2021-08-26,SCA17,KCHD,KCHD,,,,,,,,1.8,1.8,0.0,0.0,0.0,0.0,,,,,0.0,0,0.00,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,1.8,0.0,0.0,0.0,,,,,,,,,,,,,,,,6,6,0,0,6
+2021-08-26,SCA17,KCHD,KCHD,,,,,,,,0.4,0.4,0.0,0.0,0.0,0.0,,,,,0.0,0,0.00,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,0.4,0.0,0.0,0.0,,,,,,,,,,,,,,,,2,2,0,0,2
+2021-08-26,SCA17,KCHD,KCHD,,,,,,,,1.8,1.8,0.0,0.0,0.0,0.0,,,,,0.0,0,0.00,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,1.8,0.0,0.0,0.0,,,,,,,,,,,,,,,,6,6,0,0,6
+2021-08-23,SCA17,KCHD,KCHD,,,,,,,,1.8,1.8,0.0,0.0,0.0,0.0,,,,,0.0,0,0.00,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,1.8,0.0,0.0,0.0,,,,,,,,,,,,,,,,13,13,0,0,13
+2021-08-21,N423SC,KCHD,KCHD,CHD FFZ IWA CHD,,,,,,,1.8,1.8,0.0,,0.0,0.0,,,,,0.0,0,0.00,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,1.8,0.0,0.0,0.0,,,,,,,,,,,,,,,,8,8,0,0,8
+2021-08-21,N747SC,KCHD,KCHD,,,,,,,,1.6,1.6,0.0,0.0,0.0,0.0,,,,,0.0,0,0.00,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,1.6,0.0,0.0,0.0,,,,,,,,,,,,,,,,4,4,0,0,4
+2021-08-20,N423SC,KCHD,KCHD,CHD RYN E63 CHD,,,,,,,3.0,3.0,0.0,0.0,0.0,3.0,,,,,0.0,0,213.60,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,3.0,0.0,0.0,0.0,,,,,,,,,,,,,,,,3,3,0,0,3
+2021-08-20,N423SC,KCHD,KCHD,CHD RYN E63 CHD,,,,,,,3.3,3.3,0.0,0.0,0.0,3.3,,,,,0.0,0,213.60,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,3.3,0.0,0.0,0.0,,,,,,,,,,,,,,,,3,3,0,0,3
+2021-08-17,N423SC,KCHD,KCHD,CHD RYN E63 CHD,,,,,,,3.2,3.2,0.0,0.0,0.0,3.2,,,,,0.0,0,213.60,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,3.2,0.0,0.0,0.0,,,,,,,,,,,,,,,,3,3,0,0,3
+2021-08-17,N423SC,KCHD,KCHD,,,,,,,,1.8,1.8,0.0,0.0,0.0,0.0,,,,,0.0,0,0.00,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,1.8,0.0,0.0,0.0,,,,,,,,,,,,,,,,10,10,0,0,10
+2021-08-16,N423SC,KCHD,KCHD,,,,,,,,1.7,1.7,0.0,0.0,0.0,0.0,,,,,0.0,0,0.00,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,1.7,0.0,0.0,0.0,,,,,,,,,,,,,,,,9,9,0,0,9
+2021-08-16,N423SC,KCHD,KCHD,,,,,,,,1.7,1.7,0.0,0.0,0.0,0.0,,,,,0.0,0,0.00,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,1.7,0.0,0.0,0.0,,,,,,,,,,,,,,,,9,9,0,0,9
+2021-08-15,N423SC,KCHD,KCHD,,,,,,,,1.7,1.7,0.0,0.0,0.0,0.0,,,,,0.0,0,0.00,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,1.7,0.0,0.0,0.0,,,,,,,,,,,,,,,,11,11,0,0,11
+2021-08-13,N423SC,KCHD,KCHD,,,,,,,,1.8,1.8,0.0,0.0,0.0,0.0,,,,,0.0,0,0.00,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,1.8,0.0,0.0,0.0,,,,,,,,,,,,,,,,4,4,0,0,4
+2021-08-13,N423SC,KCHD,KCHD,,,,,,,,1.9,1.9,0.0,0.0,0.0,0.0,,,,,0.0,0,0.00,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,1.9,0.0,0.0,0.0,,,,,,,,,,,,,,,,8,8,0,0,8
+2021-08-12,N423SC,KCHD,KCHD,,,,,,,,1.5,1.5,0.0,0.0,,0.0,,,,,0.0,0,0.00,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,1.5,0.0,0.0,0.0,,,,,,,,,,,,,,,,10,10,0,0,10
+2021-08-11,N423SC,KCHD,KCHD,,,,,,,,1.8,1.8,0.0,0.0,0.0,0.0,,,,,0.0,0,0.00,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,1.8,0.0,0.0,0.0,,,,,,,,,,,,,,,,1,1,0,0,1
+2021-08-06,N716SC,KGEU,KGEU,,,,,,,,1.2,1.2,0.0,,0.0,0.0,,,,,0.0,0,0.00,0.0,0.6,0.00,0.00,0.00,0.00,0,,,,,,,0.0,0.0,0.0,0.0,,,,,,,,,,,,,,,,2,1,0,0,2
+2021-08-05,N423SC,KCHD,KCHD,,,,,,,,1.3,1.3,0.0,0.0,0.0,0.0,,,,,0.0,0,0.00,0.0,1.1,0.00,0.00,0.00,0.00,4,1;RNAV (GPS) RWY 04R;04R;KCHD;;CIRCLE,1;ILS OR LOC RWY 05;05;KCGZ;Missed;,1;VOR RWY 05;05;KCGZ;Missed;,,,,0.0,1.3,0.0,0.0,,,,,,,,,,,,,,,,1,1,0,0,1
+2021-08-05,N423SC,KCHD,KCHD,,,,,,,,1.3,1.3,0.0,0.0,0.0,0.0,,,,,0.0,0,0.00,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,1.3,0.0,0.0,0.0,,,,,,,,,,,,,,,,4,4,0,0,4
+2021-08-05,N423SC,KCHD,KCHD,,,,,,,,2.0,2.0,0.0,0.0,0.0,0.0,,,,,0.0,0,0.00,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,2.0,0.0,0.0,0.0,,,,,,,,,,,,,,,,3,3,0,0,3
+2021-08-04,N423SC,KCHD ,KCHD,,,,,,,,1.7,1.7,0.0,0.0,0.0,0.0,,,,,0.0,0,0.00,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,1.7,0.0,0.0,0.0,,,,,,,,,,,,,,,,1,1,0,0,1
+2021-08-03,N987SC,KAEG,KCHD ,,,,,,,,2.6,2.6,0.0,0.0,0.0,0.0,,,,,0.0,0,0.00,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,0.0,2.6,0.0,0.0,,,,,,,,,,,,,,,,1,1,0,0,1
+2021-08-03,N987SC,KBJC,KAEG,,,,,,,,3.3,3.3,0.0,0.0,0.0,3.3,,,,,0.0,0,0.00,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,0.0,3.3,0.0,0.0,,,,,,,,,,,,,,,,1,1,0,0,1
+2021-08-03,N987SC,KOMA,KBJC,,,,,,,,4.8,4.8,0.0,0.0,0.0,4.8,,,,,0.0,0,0.00,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,0.0,4.8,0.0,0.0,,,,,,,,,,,,,,,,1,1,0,0,1
+2021-08-02,N987SC,KOSH ,KOMA,,,,,,,,2.5,2.5,0.0,0.0,0.0,2.5,,,,,0.0,0,0.00,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,0.0,2.5,0.0,0.0,,,,,,,,,,,,,,,,1,1,0,0,1
+2021-07-28,N423SC,KCHD,KCHD,,,,,,,,1.4,1.4,0.0,0.0,0.0,0.0,,,,,0.0,0,0.00,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,1.4,0.0,0.0,0.0,,,,,,,,,,,,,,,,2,2,0,0,2
+2021-07-27,N423SC,KCHD,KCHD,,,,,,,,1.9,1.9,0.0,0.0,0.0,0.0,,,,,0.0,0,0.00,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,1.9,0.0,0.0,0.0,,,,,,,,,,,,,,,,3,3,0,0,3
+2021-07-27,N423SC,KCHD,KCHD,,,,,,,,1.7,1.7,0.0,0.0,0.0,0.0,,,,,0.0,0,0.00,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,1.7,0.0,0.0,0.0,,,,,,,,,,,,,,,,7,7,0,0,7
+2021-07-27,N423SC,KCHD,KCHD,,,,,,,,1.8,1.8,0.0,0.0,0.0,0.0,,,,,0.0,0,0.00,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,1.8,0.0,0.0,0.0,,,,,,,,,,,,,,,,3,3,0,0,3
+2021-07-21,N423SC,KCHD,KCHD,,,,,,,,1.9,1.9,0.0,0.0,0.0,0.0,,,,,0.0,0,0.00,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,1.9,0.0,0.0,0.0,,,,,,,,,,,,,,,,3,3,0,0,3
+2021-07-20,N423SC,KCHD,KCHD,,,,,,,,1.4,1.4,0.0,0.0,0.0,0.0,,,,,0.0,0,0.00,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,1.4,0.0,0.0,0.0,,,,,,,,,,,,,,,,2,1,0,0,2
+2021-07-20,N423SC,KCHD,KCHD,,,,,,,,1.5,1.5,0.0,0.0,0.0,0.0,,,,,0.0,0,0.00,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,1.5,0.0,0.0,0.0,,,,,,,,,,,,,,,,2,2,0,0,2
+2021-07-20,N423SC,KCHD,KCHD,,,,,,,,1.6,1.6,0.0,0.0,,0.0,,,,,0.0,0,0.00,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,1.6,0.0,0.0,0.0,,,,,,,,,,,,,,,,2,1,0,0,2
+2021-07-19,N423SC,KCHD,KCHD,,,,,,,,1.8,1.8,0.0,0.0,0.0,0.0,,,,,0.0,0,0.00,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,1.8,0.0,0.0,0.0,,,,,,,,,,,,,,,,2,2,0,0,2
+2021-07-19,N423SC,KCHD,KCHD,,,,,,,,1.4,1.4,0.0,0.0,0.0,0.0,,,,,0.0,0,0.00,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,1.4,0.0,0.0,0.0,,,,,,,,,,,,,,,,3,3,0,0,3
+2021-07-19,N423SC,KCHD,KCHD,,,,,,,,1.9,1.9,0.0,0.0,0.0,0.0,,,,,0.0,0,0.00,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,1.9,0.0,0.0,0.0,,,,,,,,,,,,,,,,3,3,0,0,3
+2021-07-16,N423SC,KCHD,KCHD,,,,,,,,1.6,1.6,0.0,0.0,0.0,0.0,,,,,0.0,0,0.00,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,1.6,0.0,0.0,0.0,,,,,,,,,,,,,,,,2,2,0,0,2
+2021-07-16,N423SC,KCHD,KCHD,,,,,,,,1.7,1.7,0.0,0.0,0.0,0.0,,,,,0.0,0,0.00,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,1.7,0.0,0.0,0.0,,,,,,,,,,,,,,,,3,3,0,0,3
+2021-07-15,N423SC,KCHD,KCHD,,,,,,,,2.5,2.5,0.0,0.0,0.0,0.0,,,,,0.0,0,0.00,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,2.5,0.0,0.0,0.0,,,,,,,,,,,,,,,,2,1,0,0,2
+2021-07-13,N423SC,KCHD,KCHD,,,,,,,,1.9,1.9,0.0,0.0,0.0,0.0,,,,,0.0,0,0.00,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,1.9,0.0,0.0,0.0,,,,,,,,,,,,,,,,3,1,0,0,3
+2021-07-12,N423SC,KCHD,KCHD,,,,,,,,1.9,1.9,0.0,0.0,0.0,0.0,,,,,0.0,0,0.00,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,1.9,0.0,0.0,0.0,,,,,,,,,,,,,,,,3,1,0,0,3
+2021-07-12,N423SC,KCHD,KCHD,,,,,,,,1.9,1.9,0.0,0.0,0.0,0.0,,,,,0.0,0,0.00,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,1.9,0.0,0.0,0.0,,,,,,,,,,,,,,,,1,1,0,0,1
+2021-07-12,N423SC,KCHD,KCHD,,,,,,,,1.8,1.8,0.0,0.0,0.0,0.0,,,,,0.0,0,0.00,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,1.8,0.0,0.0,0.0,,,,,,,,,,,,,,,,2,2,0,0,2
+2021-07-09,N423SC,KCHD,KCHD,,,,,,,,1.7,1.7,0.0,0.0,0.0,0.0,,,,,0.0,0,0.00,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,1.7,0.0,0.0,0.0,,,,,,,,,,,,,,,,1,1,0,0,1
+2021-07-08,N423SC,KCHD,KCHD,,,,,,,,1.9,1.9,0.0,0.0,0.0,0.0,,,,,0.0,0,0.00,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,1.9,0.0,0.0,0.0,,,,,,,,,,,,,,,,2,0,0,0,1
+2021-07-07,N423SC,KCHD,KCHD,,,,,,,,1.8,1.8,0.0,0.0,0.0,0.0,,,,,0.0,0,0.00,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,1.8,0.0,0.0,0.0,,,,,,,,,,,,,,,,2,1,0,0,2
+2021-07-07,N423SC,KCHD,KCHD,,,,,,,,1.7,1.7,0.0,0.0,0.0,0.0,,,,,0.0,0,0.00,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,1.7,0.0,0.0,0.0,,,,,,,,,,,,,,,,2,1,0,0,2
+2021-07-05,N423SC,KCHD,KCHD,,,,,,,,1.2,1.2,0.0,0.5,0.0,0.0,,,,,0.0,0,0.00,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,1.2,0.0,0.0,0.0,,,,,,,,,,,,,,,,3,2,0,0,3
+2021-07-05,N423SC,KCHD,KCHD,,,,,,,,1.9,1.9,0.0,0.0,0.0,0.0,,,,,0.0,0,0.00,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,1.9,0.0,0.0,0.0,,,,,,,,,,,,,,,,1,1,0,0,1
+2021-07-02,N423SC,KCHD,KCHD,,,,,,,,1.8,1.8,0.0,0.0,0.0,0.0,,,,,0.0,0,0.00,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,1.8,0.0,0.0,0.0,,,,,,,,,,,,,,,,2,1,0,0,2
+2021-07-01,N423SC,KCHD,KCHD,,,,,,,,1.8,0.0,0.0,0.0,0.0,0.0,,,,,0.0,0,0.00,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,1.8,0.0,0.0,0.0,,,,,,,,,,,,,,,,2,1,0,0,2
+2021-07-01,N423SC,KCHD,KCHD,,,,,,,,1.9,1.9,0.0,0.0,0.0,0.0,,,,,0.0,0,0.00,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,1.9,0.0,0.0,0.0,,,,,,,,,,,,,,,,6,1,0,0,6
+2021-06-28,N423SC,KCHD,KCHD,,,,,,,,1.7,1.7,0.0,0.0,0.0,0.0,,,,,0.0,0,0.00,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,1.7,0.0,0.0,0.0,,,,,,,,,,,,,,,,1,1,0,0,1
+2021-06-26,N423SC,KCHD,KCHD,,,,,,,,1.7,1.7,0.0,0.0,0.0,0.0,,,,,0.0,0,0.00,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,1.7,0.0,0.0,0.0,,,,,,,,,,,,,,,,11,3,0,0,11
+2021-06-25,N747SC,KSDL,KSDL,,,,,,,,0.4,0.4,0.0,0.0,0.0,0.0,,,,,0.0,0,0.00,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,0.4,0.0,0.0,0.0,,,,,,,,,,,,,,,,1,1,0,0,1
+2021-06-24,N747SC,KSDL,KSDL,,,,,,,,1.8,1.8,0.0,0.0,0.0,0.0,,,,,0.0,0,0.00,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,1.8,0.0,0.0,0.0,,,,,,,,,,,,,,,,2,1,0,0,2
+2021-06-23,N747SC,KSDL,KSDL,,,,,,,,1.8,1.8,0.0,0.0,0.0,0.0,,,,,0.0,0,0.00,0.0,0.0,0.00,0.00,0.00,0.00,3,1;RNAV (GPS) RWY 25L;25L;KDVT;Missed;,,,,,,0.0,1.8,0.0,0.0,,,,,,,,,,,,,,,,2,1,0,0,2
+2021-06-23,N747SC,KSDL,KSDL,,,,,,,,1.6,1.6,0.0,0.0,0.0,0.0,,,,,0.0,0,0.00,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,1.6,0.0,0.0,0.0,,,,,,,,,,,,,,,,1,1,0,0,1
+2021-06-22,N747SC,KSDL,KSDL,SDL CGZ SDL,,,,,,,2.1,2.1,0.0,0.0,0.0,0.0,,,,,0.0,0,0.00,0.0,1.5,0.00,0.00,0.00,0.00,4,1;RNAV (GPS) RWY 05;05;KCGZ;Missed;,1;VOR/DME-A;3;KSDL;;CIRCLE,1;ILS OR LOC RWY 05;05;KCGZ;Missed;,1;VOR RWY 05;05;KCGZ;Missed;,,,0.0,2.1,0.0,0.0,,,,,,,,,,,,,,,,1,1,0,0,1
+2021-06-22,N423SC,KCHD,KCHD,,,,,,,,1.8,1.8,0.0,0.0,0.0,0.0,,,,,0.0,0,0.00,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,1.8,0.0,0.0,0.0,,,,,,,,,,,,,,,,5,1,0,0,5
+2021-06-22,N423SC,KCHD,KCHD,,,,,,,,2.0,2.0,0.0,0.0,0.0,0.0,,,,,0.0,0,0.00,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,2.0,0.0,0.0,0.0,,,,,,,,,,,,,,,,5,1,0,0,5
+2021-06-19,N423SC,KSDL,KCHD,,,,,,,,1.7,1.7,,0.0,0.0,0.0,,,,,0.0,0,0.00,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,1.7,0.0,0.0,0.0,,,,,,,,,,,,,,,,1,1,0,0,1
+2021-06-19,N716SC,KCHD,KSDL,,,,,,,,0.4,0.4,0.0,0.0,0.0,0.0,,,,,0.0,0,0.00,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,0.4,0.0,0.0,0.0,,,,,,,,,,,,,,,,1,1,0,0,1
+2021-06-17,N716SC,KCHD,KCHD,,,,,,,,1.6,1.6,0.0,0.0,0.0,0.0,,,,,0.0,0,0.00,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,1.6,0.0,0.0,0.0,,,,,,,,,,,,,,,,1,1,0,0,1
+2021-06-15,N716SC,KCHD,KCHD,,,,,,,,1.7,1.7,0.0,0.0,0.0,0.0,,,,,0.0,0,0.00,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,1.7,0.0,0.0,0.0,,,,,,,,,,,,,,,,1,1,0,0,1
+2021-06-14,N716SC,KCHD,KCHD,,,,,,,,1.9,1.9,0.0,0.0,0.0,0.0,,,,,0.0,0,0.00,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,1.9,0.0,0.0,0.0,,,,,,,,,,,,,,,,5,1,0,0,5
+2021-06-14,N716SC,KCHD,KCHD,,,,,,,,0.9,0.9,0.0,0.0,0.0,0.0,,,,,0.0,0,0.00,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,0.9,0.0,0.0,0.0,,,,,,,,,,,,,,,,2,1,0,0,2
+2021-06-14,N716SC,KCHD,KCHD,,,,,,,,1.8,1.8,0.0,,0.0,0.0,,,,,0.0,0,0.00,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,1.8,0.0,0.0,0.0,,,,,,,,,,,,,,,,1,1,0,0,1
+2021-06-11,N747SC,KSDL,KSDL,SDL CHD SDL,,,,,,,1.0,1.0,0.0,0.0,0.0,0.0,,,,,0.0,0,0.00,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,1.0,0.0,0.0,0.0,,,,,,,,,,,,,,,,2,1,0,0,2
+2021-06-11,N716SC,KCHD,KCHD,,,,,,,,1.8,1.8,0.0,0.0,0.0,0.0,,,,,0.0,0,0.00,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,1.8,0.0,0.0,0.0,,,,,,,,,,,,,,,,2,1,0,0,2
+2021-06-10,N716SC,KCHD,KCHD,CHD FFZ P19 CHD,,,,,,,2.1,2.1,0.0,0.0,0.0,0.0,,,,,0.0,0,0.00,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,2.1,0.0,0.0,0.0,,,,,,,,,,,,,,,,9,2,0,0,9
+2021-06-08,N716SC,KCHD,KCHD,CHD FFZ CHD,,,,,,,1.3,1.3,0.0,0.0,0.0,0.0,,,,,0.0,0,0.00,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,1.3,0.0,0.0,0.0,,,,,,,,,,,,,,,,5,1,0,0,5
+2021-06-07,N716SC,KCHD,KCHD,,,,,,,,1.9,1.9,0.0,0.0,0.0,0.0,,,,,0.0,0,0.00,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,1.9,0.0,0.0,0.0,,,,,,,,,,,,,,,,1,1,0,0,1
+2021-06-04,N716SC,KCHD,KCHD,,,,,,,,2.4,2.4,0.0,0.0,0.0,0.0,,,,,0.0,0,0.00,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,2.4,0.0,0.0,0.0,,,,,,,,,,,,,,,,2,1,0,0,2
+2021-06-03,N716SC,KCHD,KCHD,,,,,,,,2.1,2.1,0.0,0.0,0.0,0.0,,,,,0.0,0,0.00,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,2.1,0.0,0.0,0.0,,,,,,,,,,,,,,,,5,1,0,0,5
+2021-06-02,N716SC,KCHD,KCHD,,,,,,,,1.0,1.0,0.0,0.0,0.0,0.0,,,,,0.0,0,0.00,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,1.0,0.0,0.0,0.0,,,,,,,,,,,,,,,,1,1,0,0,1
+2021-06-02,N716SC,KCHD,KCHD,,,,,,,,1.9,1.9,0.0,0.0,0.0,0.0,,,,,0.0,0,0.00,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,1.9,0.0,0.0,0.0,,,,,,,,,,,,,,,,1,1,0,0,1
+2021-06-01,N716SC,KSDL,KSDL,,,,,,,,1.9,1.9,0.0,0.0,0.0,0.0,,,,,0.0,0,0.00,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,1.9,0.0,0.0,0.0,,,,,,,,,,,,,,,,2,1,0,0,2
+2021-05-29,N21212,P19,P19,,,,,,,,2.2,2.2,0.0,0.0,,0.0,,,,,0.0,0,0.00,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,2.2,0.0,0.0,0.0,,,,,,,,,,"""Com maneuvers w/gill. Emergency procedures """,,,,,,1,1,0,0,1
+2021-05-29,N747SC,KCHD,KSDL,,,,,,,,0.4,0.4,0.0,0.0,0.0,0.0,,,,,0.0,0,0.00,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,0.4,0.0,0.0,0.0,,,,,,,,,,,,,,,,1,1,0,0,1
+2021-05-29,N747SC,KCHD,KCHD,,,,,,,,2.0,2.0,0.0,0.0,0.0,0.0,,,,,0.0,0,0.00,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,2.0,0.0,0.0,0.0,,,,,,,,,,,,,,,,1,1,0,0,1
+2021-05-29,N716SC,KSDL,KCHD,,,,,,,,1.9,1.9,0.0,0.0,0.0,0.0,,,,,0.0,0,0.00,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,1.8,0.0,0.0,0.0,,,,,,,,,,,,,,,,5,1,0,0,5
+2021-05-27,N747SC,KCHD,KCHD,,11:48,,,,,,1.9,1.9,0.0,0.0,0.0,0.0,,,,,0.0,0,0.00,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,1.9,0.0,0.0,0.0,,,,,,,,,,,,,,,,1,1,0,0,1
+2021-05-26,N747SC,KCHD,KCHD,,,,,,,,1.0,1.0,0.0,0.0,0.0,0.0,,,,,0.0,0,0.00,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,1.0,0.0,0.0,0.0,,,,,,,,,,,,,,,,4,1,0,0,4
+2021-05-26,N747SC,KCHD,KCHD,,,,,,,,1.9,1.9,0.0,0.0,0.0,0.0,,,,,0.0,0,0.00,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,1.9,0.0,0.0,0.0,,,,,,,,,,,,,,,,1,1,0,0,1
+2021-05-24,N747SC,KCHD,KCHD,,,,,,,,2.1,2.1,0.0,0.0,0.0,0.0,,,,,0.0,0,0.00,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,2.1,0.0,0.0,0.0,,,,,,,,,,,,,,,,3,1,0,0,3
+2021-05-23,N747SC,KCHD,KCHD,,,,,,,,1.0,1.0,,0.0,0.0,0.0,,,,,0.0,0,0.00,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,1.0,0.0,0.0,0.0,,,,,,,,,,,,,,,,1,1,0,0,1
+2021-05-21,N747SC,KCHD,KCHD,,,,,,,,1.9,1.9,0.0,0.0,0.0,0.0,,,,,0.0,0,0.00,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,1.9,0.0,0.0,0.0,,,,,,,,,,,,,,,,6,1,0,0,6
+2021-05-17,N747SC,KCHD,KCHD,,,,,,,,1.9,1.9,0.0,0.0,0.0,0.0,,,,,0.0,0,0.00,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,1.9,0.0,0.0,0.0,,,,,,,,,,,,,,,,1,1,0,0,1
+2021-05-13,N747SC,KCHD,KCHD,,,,,,,,1.8,1.8,0.0,0.0,0.0,0.0,,,,,0.0,0,0.00,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,1.8,0.0,0.0,0.0,,,,,,,,,,,,,,,,2,1,0,0,2
+2021-05-12,N747SC,KCHD,KCHD,,,,,,,,2.1,2.1,0.0,0.0,0.0,0.0,,,,,0.0,0,0.00,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,2.1,0.0,0.0,0.0,,,,,,,,,,,,,,,,4,1,0,0,1
+2021-05-11,N698FL,KFFZ,KFFZ,,,,,,,,1.8,1.8,0.0,1.8,0.0,0.0,,,,,0.0,0,0.00,0.0,0.0,0.00,0.00,0.00,0.00,1,1;VOR RWY 05;05;P08;;CIRCLE,1;ILS OR LOC RWY 30C;30C;KIWA;;,,,,,0.0,0.0,0.0,0.0,,,,,,,,,,"""Approaches with Jessie""",,,,,,0,0,1,1,1
+2021-05-11,N747SC,KCHD,KCHD,KCHD SDL CHD,,,,,,,0.8,0.8,0.0,0.0,0.0,0.0,,,,,0.0,0,0.00,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,0.8,0.0,0.0,0.0,,,,,,,,,,,,,,,,2,2,0,0,2
+2021-05-10,REDBIRD,KSDL,KSDL,SIERRA CHARLIE AVIATION,,,,,,,0.0,,0.0,0.0,0.0,0.0,,,,,0.0,0,0.00,0.0,1.7,0.00,0.00,0.00,0.00,4,1;VOR RWY 05;05;P08;;CIRCLE,1;ILS OR LOC RWY 30C;30C;KIWA;;,1;GPS RWY 23;23;P08;;,,,,0.0,1.7,1.7,0.0,,,,,,,,,,,,,,,,0,0,0,0,0
+2021-05-09,N280SC,KSDL,KSDL,,,,,,,,1.1,1.1,0.0,0.0,0.0,0.0,,,,,0.0,0,0.00,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,1.1,0.0,0.0,0.0,,,,,,,,,,,,,,,,1,1,0,0,1
+2021-05-06,N280SC,KCHD,KCHD,,,,,,,,1.2,1.2,0.0,0.0,0.0,0.0,,,,,0.0,0,0.00,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,1.2,0.0,0.0,0.0,,,,,,,,,,,,,,,,2,2,0,0,2
+2021-05-05,N747SC,KCHD,KCHD,,,,,,,,1.7,1.7,0.0,0.0,0.0,0.0,,,,,0.0,0,0.00,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,1.7,0.0,0.0,0.0,,,,,,,,,,,,,,,,4,4,0,0,4
+2021-05-04,N951SC,KSDL,KSDL,,,,,,,,1.8,1.8,0.0,0.0,0.0,0.0,,,,,0.0,0,0.00,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,1.8,0.0,0.0,0.0,,,,,,,,,,,,,,,,3,1,0,0,3
+2021-04-30,N747SC,KSDL,KSDL,,,,,,,,0.8,0.8,0.0,0.0,0.0,0.0,,,,,0.0,0,0.00,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,0.8,0.0,0.0,0.0,,,,,,,,,,,,,,,,2,0,0,0,2
+2021-04-29,N747SC,KCHD,KCHD,,,,,,,,1.8,1.8,0.0,0.0,0.0,0.0,,,,,0.0,0,0.00,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,1.8,0.0,0.0,0.0,,,,,,,,,,,,,,,,2,1,0,0,2
+2021-04-28,N747SC,KSDL,KSDL,,,,,,,,0.8,0.8,0.0,0.0,0.0,0.0,,,,,0.0,0,0.00,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,0.8,0.0,0.0,0.0,,,,,,,,,,,,,,,,2,1,0,0,2
+2021-04-28,N747SC,KCHD,KCHD,,,,,,,,1.0,1.0,0.0,0.0,0.0,0.0,,,,,0.0,0,0.00,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,1.0,0.0,0.0,0.0,,,,,,,,,,,,,,,,1,0,0,0,1
+2021-04-27,N747SC,KCHD,KCHD,,,,,,,,1.7,1.7,0.0,0.0,0.0,0.0,,,,,0.0,0,0.00,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,1.7,0.0,0.0,0.0,,,,,,,,,,,,,,,,0,0,0,0,0
+2021-04-25,N747SC,KSEZ,KSDL,,,,,,,,1.1,1.1,0.0,0.0,1.1,1.1,,,,,0.0,0,73.70,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,0.0,0.0,0.0,0.0,,,,,,,,,,,,,,,,0,0,0,0,0
+2021-04-24,N747SC,KSDL,KSEZ,,,,,,,,1.0,1.0,0.0,0.0,1.0,1.0,,,,,0.0,0,73.70,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,0.0,0.0,0.0,0.0,,,,,,,,,,,,,,,,1,1,0,0,1
+2021-04-20,N280SC,KSDL,KSDL,,,,,,,,1.4,1.4,0.0,0.0,0.0,0.0,,,,,0.0,0,0.00,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,1.4,0.0,0.0,0.0,,,,,,,,,,,,,,,,2,2,0,0,2
+2021-04-18,N21212,P19,P19,,,,,,,,2.1,2.1,0.0,0.0,0.0,0.0,,,,,0.0,0,0.00,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,2.1,0.0,0.0,0.0,,,,,,,,,,"""Com maneuvers w/Gill""",,,,,,3,1,0,0,3
+2021-04-17,N60372,KCHD,KCHD,CHD FFZ CHD,,,,,,,1.5,1.5,0.0,0.0,0.0,0.0,,,,,0.0,0,0.00,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,1.5,0.0,0.0,0.0,,,,,,,,,,,,,,,,2,0,0,2,2
+2021-04-17,N21212,P19,P19,P19 A39 P19,,,,,,,1.4,1.4,0.0,0.0,0.0,0.0,,,,,0.0,0,0.00,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,1.4,0.0,0.0,0.0,,,,,,,,,,,,,,,,2,0,0,2,2
+2021-04-13,N698FL,KFFZ,KFFZ,FFZ CGZ P08 IWA P08 FFZ,,,,,,,1.9,1.9,0.0,1.7,0.0,0.0,,,,,0.0,0,0.00,0.0,1.5,0.00,0.00,0.00,0.00,3,1;VOR RWY 05;05;P08;;CIRCLE,1;ILS OR LOC RWY 05;05;KCGZ;;CIRCLE,1;ILS OR LOC RWY 30C;30C;KIWA;;,,,,0.0,0.0,0.0,,,,,,,,,,,,,,,,,1,0,3,2,4
+2021-04-07,SCA28,KSDL,KSDL,,,,,,,,1.1,1.1,0.0,0.0,0.0,0.0,,,,,0.0,0,0.00,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,0.0,0.0,0.0,0.0,,,,,,,,,,,,,,,,1,1,0,0,1
+2021-03-30,N21212,P19,P19,,,,,,,,1.7,1.7,0.0,0.0,0.0,0.0,,,,,0.0,0,0.00,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,1.7,0.0,0.0,0.0,,,,,,,,,,"""Com maneuvers with gill""",,,,,,2,1,0,0,2
+2021-03-29,N280SC,KSDL,KSDL,,,,,,,,1.1,1.1,0.0,0.0,0.0,0.0,,,,,0.0,0,0.00,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,0.0,1.1,0.0,0.0,,,,,,,,,,,,,,,,2,0,0,0,2
+2021-03-27,N280SC,KSDL,KSDL,SDL FFZ SDL,,,,,,,2.1,1.1,0.0,0.0,0.0,0.0,,,,,0.0,0,26.70,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,0.0,0.0,0.0,0.0,,,,,,,,,,,,,,,,3,0,0,2,3
+2021-03-25,SCA77,KCHD,KCHD,KPAN,,,,,,,2.5,2.5,0.0,0.0,0.0,2.5,,,,,0.0,0,0.00,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,0.0,0.0,0.0,0.0,,,,,,,,,,,,,,,,2,2,0,0,2
+2021-03-24,N854SC,KSDL,,,,,,,,,1.5,1.5,0.0,0.0,0.0,0.0,,,,,0.0,0,0.00,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,0.0,1.5,0.0,0.0,,,,,,,,,,,,,,,,1,1,0,0,1
+2021-03-22,N716SC,KSDL,KSDL,SDL GYR SDL,,,,,,,1.9,1.9,0.0,0.0,0.0,0.0,,,,,0.0,0,0.00,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,0.0,1.9,0.0,0.0,,,,,,,,,,,,,,,,12,1,0,0,12
+2021-03-18,N423SC,KSDL,KSDL,,,,,,,,1.7,1.7,0.0,0.0,0.0,0.0,,,,,0.0,0,0.00,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,0.0,1.7,0.0,0.0,,,,,,,,,,,,,,,,1,1,0,0,1
+2021-03-16,N776SC,KSDL,KSDL,,,,,,,,1.6,1.6,0.0,0.0,0.0,0.0,,,,,0.0,0,0.00,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,0.0,1.6,0.0,0.0,,,,,,,,,,,,,,,,4,1,0,0,3
+2021-03-15,N60372,KCHD,KCHD,KCHD A39 KCHD,,,,,,,1.5,1.5,0.0,0.0,0.0,0.0,,,,,0.0,0,0.00,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,0.0,0.0,0.0,0.0,,,,,,,,,,,,,,,,3,0,0,0,3
+2021-02-23,N60372,KCHD,KCHD,,,,,,,,1.6,1.6,,,,,,,,,,,,,0.4,,,,,2,1;ILS;05;KCGZ;;,,,,,,,,,,,,,Ryan Jacobs;SIC;rjacobs27.12.99@gmail.com;4803224931,,,,,,,,,,,,2,2,,,2
+2021-02-14,N21212,P19,P19,P19 KCHD P19,,,,,,,1.9,1.9,0.0,0.0,0.0,0.0,,,,,0.0,0,0.00,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,0.0,0.0,0.0,0.0,,,,,,,,,,,,,,,,6,1,0,0,6
+2021-02-11,N390XD,KSDL,KSDL,,,,,,,,1.0,0.0,0.0,0.0,0.0,0.0,,,,,0.0,0,0.00,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,0.0,1.0,0.0,0.0,,,,,,,,,,,,,,,,1,1,0,0,1
+2021-01-21,N731ND,KIWA,KIWA,,,,,,,,1.5,1.5,,1.5,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,Ryan Jacobs;PIC;rjacobs27.12.99@gmail.com;4803224931,,,,,,,,,,,,,,1,1,1
+2020-12-08,N21212,P19,P19,,,,,,,,1.9,1.9,,1.9,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,Ryan Jacobs;PIC;rjacobs27.12.99@gmail.com;4803224931,,,,,,,,,,,,,,,,0
+2020-12-05,N761AG,KFFZ,KFFZ,,,,,,,,2.1,,0.0,2.1,0.0,0.0,,,,,0.0,0,0.00,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,0.0,0.0,0.0,0.0,,,,,,,,,,,,,,,,0,0,0,1,1
+2020-11-17,N836AT,KIWA,KIWA,,,,,,,,2.1,2.1,,,,,,,,,,,,,0.3,,,,,1,1;RNAV (GPS);23;P08;;,,,,,,,2.1,,,,,,Ryan Jacobs;PIC;rjacobs27.12.99@gmail.com;4803224931,,,,,,,,,,,,3,3,,,3
+2020-11-16,N836AT,KIWA,KIWA,,,,,,,,1.9,,,,,,,,,,,,,,0.6,,,,,1,2;RNAV (GPS);23;P08;;,,,,,,,1.9,,,,,,Ryan Jacobs;PIC;rjacobs27.12.99@gmail.com;4803224931,,,,,,,,,,,,6,6,,,6
+2020-11-14,N886AT,KIWA,KIWA,,,,,,,,2.1,,,,,,,,,,,,,,0.4,,,,,1,1;ILS;5;KCGZ;;,,,,,,,2.1,,,,,,Ryan Jacobs;PIC;rjacobs27.12.99@gmail.com;4803224931,,,,,,,,,,,,3,3,,,3
+2020-11-13,N886AT,KIWA,KIWA,,,,,,,,1.8,,,,,,,,,,,,,,0.3,,,,,1,1;RNAV (GPS);23;P08;;,,,,,,,1.8,,,,,,Ryan Jacobs;PIC;rjacobs27.12.99@gmail.com;4803224931,,,,,,,,,,,,2,2,,,2
+2020-11-11,N886AT,KIWA,KIWA,,,,,,,,2.1,,,,,,,,,,,,,,0.3,,,,,,1;RNAV (GPS);23;P08;;,,,,,,,2.1,,,,,,Ryan Jacobs;PIC;rjacobs27.12.99@gmail.com;4803224931,,,,,,,,,,,,2,2,,,2
+2020-11-09,N886AT,KIWA,KIWA,,,,,,,,1.9,,,,,,,,,,,,,,,,,,,,,,,,,,,1.9,,,,,,Ryan Jacobs;PIC;rjacobs27.12.99@gmail.com;4803224931,,,,,,,,,,,,2,2,,,2
+2020-10-23,N9230Y,KIWA,KIWA,KIWA P08 KIWA,,,,,,,2.0,2.0,0.0,0.0,0.0,0.0,,,,,0.0,0,0.00,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,0.0,2.0,0.0,0.0,,,,,,,,,,,,,,,,4,1,0,0,4
+2020-10-22,N20417,KIWA,KIWA,,,,,,,,1.3,1.3,0.0,0.0,0.0,,,,,,0.0,0,0.00,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,0.0,1.3,0.0,0.0,,,,,,,,,,,,,,,,1,1,0,0,1
+2020-10-21,N20417,KIWA,KIWA,,,,,,,,1.5,1.5,0.0,0.0,0.0,0.0,,,,,0.0,0,0.00,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,0.0,1.5,0.0,0.0,,,,,,,,,,,,,,,,3,1,0,0,3
+2020-10-20,N6024E,KIWA,KIWA,KIWA P08 KIWA,,,,,,,2.6,2.6,0.0,0.0,0.0,0.0,,,,,0.0,0,0.00,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,0.0,2.6,0.0,0.0,,,,,,,,,,,,,,,,4,1,0,0,4
+2020-10-07,N6024E,KIWA,KIWA,,,,,,,,1.7,1.7,0.0,0.0,0.0,0.0,,,,,0.0,0,0.00,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,0.0,1.7,0.0,0.0,,,,,,,,,,,,,,,,3,1,0,0,3
+2020-10-03,N6024E,KIWA,KIWA,,,,,,,,1.7,1.7,0.0,0.0,0.0,0.0,,,,,0.0,0,0.00,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,0.0,1.7,0.0,0.0,,,,,,,,,,,,,,,,4,1,0,0,4
+2020-09-30,N6024E,KIWA,KIWA,,,,,,,,1.7,1.7,0.0,0.0,0.0,0.0,,,,,0.0,0,0.00,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,0.0,1.7,0.0,0.0,,,,,,,,,,,,,,,,1,1,0,0,1
+2020-09-27,N20502,KIWA,KIWA,,,,,,,,1.6,1.6,0.0,0.0,0.0,0.0,,,,,0.0,0,0.00,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,0.0,1.6,0.0,0.0,,,,,,,,,,,,,,,,13,1,0,0,13
+2020-09-26,N20564,KIWA,KIWA,,,,,,,,1.8,1.8,0.0,0.0,0.0,0.0,,,,,0.0,0,0.00,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,0.0,1.8,0.0,0.0,,,,,,,,,,,,,,,,3,1,0,0,3
+2020-08-26,N9230Y,KIWA,KIWA,KIWA KAVQ KIWA,,,,,,,2.5,2.5,0.0,0.0,0.0,2.5,,,,,0.0,0,0.00,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,0.0,2.5,0.0,0.0,,,,,,,,,,,,,,,,4,1,0,0,4
+2020-08-18,N2098A,KIWA,KIWA,KIWA KTUS KIWA,,,,,,,2.5,2.5,0.0,0.0,0.0,2.5,,,,,0.0,0,0.00,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,0.0,2.5,0.0,0.0,,,,,,,,,,,,,,,,2,1,0,0,2
+2020-08-04,N1738S,KIWA,KIWA,,,,,,,,2.1,2.1,0.0,2.1,0.0,0.0,,,,,0.0,0,0.00,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,0.0,2.1,0.0,0.0,,,,,,,,,,,,,,,,0,0,15,1,15
+2020-07-31,N6024E,KCRQ,KIWA,KCRQ KCGZ KCHD KIWA,,,,,,,3.3,3.3,0.0,3.3,0.0,3.3,,,,,0.0,0,0.00,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,0.0,3.3,0.0,0.0,,,,,,,,,,,,,,,,0,0,3,1,3
+2020-07-30,N6024E,KNYL,KCRQ,,,,,,,,2.0,2.0,0.0,0.0,0.0,2.0,,,,,0.0,0,0.00,0.0,1.8,0.00,0.00,0.00,0.00,0,1;ILS OR LOC RWY 24;24;KCRQ;;,,,,,,0.0,2.0,0.0,0.0,,,,,,,,,,,,,,,,1,1,0,0,1
+2020-07-30,N6024E,KIWA,KNYL,KIWA P08 KNYL,,,,,,,2.7,2.7,0.0,0.0,0.0,2.7,,,,,0.0,0,0.00,0.0,2.4,0.00,0.00,0.00,0.00,0,1;RNAV (GPS) RWY 17;17;KNYL;Partial panel;,1;VOR RWY 05;05;P08;;,,,,,0.0,2.7,0.0,0.0,,,,,,,,,,,,,,,,2,1,0,0,2
+2020-07-30,N698FL,KFFZ,KFFZ,,,,,,,,2.5,2.5,,2.5,,,,,,,,,,,,,,,,,1;ILS;5;KFFZ;;,,,,,,,,,,,,,Ryan Jacobs;PIC;rjacobs27.12.99@gmail.com;4803224931,,,,,,,,,,,,,,,,0
+2020-07-06,N9230Y,KHII,KIWA,,,,,,,,3.2,3.2,0.0,3.2,0.0,3.2,,,,,0.0,0,0.00,0.0,2.7,0.00,0.00,0.00,0.00,0,1;ILS OR LOC RWY 30C;30C;KIWA;;,,,,,,0.0,3.2,0.0,0.0,,,,,,,,,,,,,,,,0,0,1,1,1
+2020-07-06,N6024E,KIWA,KHII,,,,,,,,2.4,2.4,0.0,0.0,0.0,2.4,,,,,0.0,0,0.00,0.0,2.0,0.00,0.00,0.00,0.00,0,1;RNAV (GPS) RWY 32;32;KHII;;,,,,,,0.0,2.4,0.0,0.0,,,,,,,,,,,,,,,,1,1,0,0,1
+2020-06-29,N1754T,KIWA,KIWA,,,,,,,,2.1,2.1,0.0,0.0,0.0,0.0,,,,,0.0,0,0.00,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,0.0,2.1,0.0,0.0,,,,,,,,,,,,,,,,5,1,0,0,5
+2020-06-17,N1726T,KIWA,KIWA,,,,,,,,1.9,1.9,0.0,0.0,0.0,0.0,,,,,0.0,0,0.00,0.0,0.7,0.00,0.00,0.00,0.00,0,,,,,,,0.0,1.9,0.0,0.0,,,,,,,,,,,,,,,,5,1,0,0,5
+2020-06-09,N1754T,KIWA,KIWA,,,,,,,,2.1,2.1,0.0,0.0,0.0,0.0,,,,,0.0,0,0.00,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,0.0,2.1,0.0,0.0,,,,,,,,,,,,,,,,1,1,0,0,1
+2020-06-05,N6024E,KIWA,KIWA,,,,,,,,1.9,1.9,0.0,0.0,0.0,0.0,,,,,0.0,0,0.00,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,0.0,1.9,0.0,0.0,,,,,,,,,,,,,,,,2,1,0,0,2
+2020-06-01,N21212,P19,P19,,,,,,,,2.0,2.0,,2.0,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,Ryan Jacobs;PIC;rjacobs27.12.99@gmail.com;4803224931,,,,,,,,,,,,0,0,,4,4
+2020-05-21,N5013R,KCHD,KCHD,,,,,,,,1.6,1.6,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,Ryan Jacobs;PIC;rjacobs27.12.99@gmail.com;4803224931,,,,,,,,,,,,4,4,,,4
+2020-04-19,N21212,P19,P19,,,,,,,,2.1,2.1,,1.7,,,,,,,,,,,,,,,,,1;ILS;30C;KIWA;;,,,,,,,,,,,,,Ryan Jacobs;PIC;rjacobs27.12.99@gmail.com;4803224931,,,,,,,,,,,,3,3,,,3
+2020-03-25,N1727T,KIWA,KIWA,,,,,,,,2.0,2.0,,,,,,,,,,,,,1.7,,,,,,1;RNAV (GPS);23;P08;;,1;VOR;5;P08;;,1;ILS;5;KCGZ;;,,,,,2.0,,,,,,Ryan Jacobs;PIC;rjacobs27.12.99@gmail.com;4803224931,,,,,,,,,,,,2,2,,,2
+2020-03-21,N92266,KIWA,KIWA,KIWA KCGZ KIWA ,,,,,,,1.4,1.4,0.0,0.0,0.0,0.0,,,,,0.0,0,0.00,0.0,0.9,0.00,0.00,0.00,0.00,0,1;ILS OR LOC RWY 05;05;KCGZ;;,,,,,,0.0,1.4,0.0,0.0,,,,,,,,,,,,,,,,1,1,0,0,1
+2020-03-18,N21212,KIWA,KIWA,,,,,,,,1.8,1.8,,,,,,,,,,,,,1.5,,,,,,1;VOR;5;P08;;,1;RNAV (GPS);5;KCGZ;;,1;ILS;5;KCGZ;;,,,,,,,,,,,Ryan Jacobs;PIC;rjacobs27.12.99@gmail.com;4803224931,,,,,,,,,,,,2,2,,,2
+2020-03-17,N92228,KIWA,KIWA,KIWA P08 KAVQ KIWA,,,,,,,2.7,2.7,0.0,0.0,0.0,2.7,,,,,0.0,0,0.00,0.0,2.2,0.00,0.00,0.00,0.00,3,1;RNAV (GPS) RWY 03;03;KAVQ;;,1;RNAV (GPS) RWY 12;12;KAVQ;;,1;VOR RWY 05;05;P08;;,,,,0.0,2.7,0.0,0.0,,,,,,,,,,,,,,,,3,2,0,0,3
+2020-03-15,N9466X,KIWA,KIWA,,,,,,,,5.6,5.6,,,,5.6,,,,,,,,,4.0,,,,,,1;VOR/DME;17;KNYL;;,1;ILS;6R;KRYN;;,1;RNAV (GPS);29L;KTUS;;,,,,,5.6,,,,,,Ryan Jacobs;PIC;rjacobs27.12.99@gmail.com;4803224931,,,,,,,,,,,,3,3,,,3
+2020-03-15,N21212,KTUS,KIWA,,,,,,,,1.3,1.3,,,,1.3,,,,,,,,,,,,,,,,,,,,,,,,,,,,Ryan Jacobs;PIC;rjacobs27.12.99@gmail.com;4803224931,,,,,,,,,,,,,,,,0
+2020-02-20,N21212,KIWA,KIWA,,,,,,,,1.8,1.8,,,,,,,,,,,,,1.5,,,,,,1;RNAV (GPS);30C;KIWA;;,1;ILS;30C;KIWA;;,,,,,,1.8,,,,,,Ryan Jacobs;PIC;rjacobs27.12.99@gmail.com;4803224931,,,,,,,,,,,,1,1,,,1
+2020-02-13,N1727T,KIWA,KIWA,,,,,,,,2.2,2.2,,,,,,,,,,,,,1.8,,,,,,1;RNAV (GPS);23;P08;;,1;VOR;5;P08;;,1;RNAV (GPS);4R;KCHD;;,,,,,2.2,,,,,,Ryan Jacobs;PIC;rjacobs27.12.99@gmail.com;4803224931,,,,,,,,,,,,3,3,,,3
+2020-02-10,N117SV,KIWA,KIWA,,,,,,,,2.0,2.0,,,,,,,,,,,,,1.6,,,,,,1;RNAV (GPS);23;P08;;,1;VOR;5;P08;;,,,,,,2.0,,,,,,Ryan Jacobs;PIC;rjacobs27.12.99@gmail.com;4803224931,,,,,,,,,,,,1,1,,,1
+2020-01-31,N9223C,KIWA,KIWA,,,,,,,,2.0,2.0,,,,,,,,,,,,,,,,,,,1;RNAV (GPS);4R;KCHD;;,,,,,,,2.0,,,,,,Ryan Jacobs;PIC;rjacobs27.12.99@gmail.com;4803224931,,,,,,,,,,,,2,2,,,2
+2020-01-24,N894KC,KIWA,KIWA,KIWA KRYN KIWA,,,,,,,2.3,2.3,0.0,0.0,0.0,2.3,,,,,0.0,0,0.00,0.0,2.0,0.00,0.00,0.00,0.00,0,1;ILS OR LOC RWY 06R;06R;KRYN;;,,,,,,0.0,2.3,0.0,0.0,,,,,,,,,,,,,,,,2,1,0,0,2
+2020-01-23,N894KC,KIWA,KIWA,KIWA P13 KAVQ KIWA,,,,,,,2.8,2.8,0.0,0.0,0.0,2.8,,,,,0.0,0,0.00,0.0,2.4,0.00,0.00,0.00,0.00,2,1;GPS RWY 27;27;P13;;,1;RNAV (GPS) RWY 12;12;KAVQ;;,,,,,0.0,2.8,0.0,0.0,,,,,,,,,,,,,,,,3,1,0,0,3
+2020-01-22,N894KC,KNYL,KIWA,,,,,,,,2.3,2.3,0.0,0.0,0.0,2.3,,,,,0.0,0,0.00,0.6,1.4,0.00,0.00,0.00,0.00,1,1;ILS OR LOC RWY 30C;30C;KIWA;;,,,,,,0.0,2.3,0.0,0.0,,,,,,,,,,,,,,,,1,1,0,0,1
+2020-01-22,N894KC,KIWA,KNYL,,,,,,,,2.6,2.6,0.0,0.0,0.0,2.6,,,,,0.0,0,0.00,,2.3,0.00,0.00,0.00,0.00,1,1;ASR/SRA;3R;KNYL;;,,,,,,0.0,2.6,0.0,0.0,,,,,,,,,,,,,,,,1,1,0,0,1
+2020-01-15,N9370R,KIWA,KIWA,KIWA KSAD KIWA,,,,,,,3.0,3.0,0.0,0.0,0.0,3.0,,,,,0.0,0,0.00,0.0,2.2,0.00,0.00,0.00,0.00,2,1;GPS RWY 27;27;P13;Missed;,1;RNAV (GPS) RWY 12;12;KSAD;;,,,,,0.0,3.0,0.0,0.0,,,,,,,,,,,,,,,,2,1,0,0,2
+2020-01-14,N9230Y,KIWA,KIWA,KIWA KAVQ P08 KIWA,,,,,,,2.0,2.0,0.0,0.0,0.0,2.0,,,,,0.0,0,0.00,0.0,1.6,0.00,0.00,0.00,0.00,2,1;RNAV (GPS) RWY 12;12;KAVQ;;,1;GPS RWY 23;23;P08;;,,,,,0.0,2.0,0.0,0.0,,,,,,,,,,,,,,,,2,1,0,0,2
+2020-01-10,N1760T,KIWA,KIWA,KIWA KRYN KIWA,,,,,,,2.1,2.1,0.0,0.0,0.0,2.1,,,,,0.0,0,0.00,0.0,1.6,0.00,0.00,0.00,0.00,1,1;ILS OR LOC RWY 06R;06R;KRYN;;CIRCLE,,,,,,0.0,2.1,0.0,0.0,,,,,,,,,,,,,,,,2,1,0,0,2
+2020-01-09,N1715T,KIWA,KIWA,KIWA KAVQ KIWA,,,,,,,2.9,2.9,0.0,0.0,0.0,2.9,,,,,0.0,0,0.00,0.1,2.3,0.00,0.00,0.00,0.00,0,1;RNAV (GPS) RWY 12;12;KAVQ;;,1;VOR RWY 05;05;P08;Missed;,,,,,0.0,2.9,0.0,0.0,,,,,,,,,,,,,,,,2,1,0,0,2
+2020-01-03,N1760T,KIWA,KIWA,KIWA P13 KIWA,,,,,,,2.3,2.3,0.0,0.0,0.0,2.3,,,,,0.0,0,0.00,0.0,1.9,0.00,0.00,0.00,0.00,2,1;GPS RWY 27;27;P13;;,1;GPS RWY 23;23;P08;;,,,,,0.0,2.3,0.0,0.0,,,,,,,,,,,,,,,,2,1,0,0,2
+2019-12-30,N92266,KDUG,KIWA,,,,,,,,1.6,1.6,0.0,0.0,0.0,1.6,,,,,0.0,0,0.00,0.0,1.2,0.00,0.00,0.00,0.00,0,,,,,,,0.0,1.6,0.0,0.0,,,,,,,,,,,,,,,,1,1,0,0,1
+2019-12-30,N92266,KIWA,KIWA,,,,,,,,3.8,3.8,,,,3.8,,,,,,,,,3.8,,,,,,1;ILS;30C;KIWA;;,1;RNAV (GPS);6;OLS;;,1;VOR/DME;3;KDUG;;,,,,,3.8,,,,,,Ryan Jacobs;PIC;rjacobs27.12.99@gmail.com;4803224931,,,,,,,,,,,,3,3,,,3
+2019-12-28,N21212,P19,P19,,,,,,,,1.0,1.0,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,Ryan Jacobs;PIC;rjacobs27.12.99@gmail.com;4803224931,,,,,,,,,,,,3,3,,,3
+2019-12-18,N802NM,KIWA,KIWA,KIWA KAVQ KIWA,,,,,,,2.4,2.4,0.0,0.0,0.0,2.4,,,,,0.0,0,0.00,0.0,2.0,0.00,0.00,0.00,0.00,1,1;RNAV (GPS) RWY 12;12;KAVQ;;,1;VOR RWY 05;05;P08;Missed;,,,,,0.0,2.4,0.0,0.0,,,,,,,,,,,,,,,,2,1,0,0,2
+2019-12-11,N9222H,KIWA,KIWA,,,,,,,,2.8,2.8,,,,2.8,,,,,,,,,2.2,,,,,,1;RNAV (GPS);23;P08;;,1;ILS;6R;KRYN;;,,,,,,2.8,,,,,,Ryan Jacobs;PIC;rjacobs27.12.99@gmail.com;4803224931,,,,,,,,,,,,2,2,,,2
+2019-11-26,N1742S,KIWA,KIWA,KIWA KTUS KIWA,,,,,,,2.7,2.7,0.0,0.0,0.0,2.7,,,,,0.0,0,0.00,0.0,2.2,0.00,0.00,0.00,0.00,1,1;ILS OR LOC RWY 30C;30C;KIWA;;,1;LOC BC RWY 29R;29R;KTUS;;,,,,,0.0,2.7,0.0,0.0,,,,,,,,,,,,,,,,2,1,0,0,2
+2019-11-22,N117SV,KIWA,KIWA,KIWA KAVQ KIWA,,,,,,,2.0,2.0,0.0,0.0,0.0,2.0,,,,,0.0,0,0.00,0.1,1.5,0.00,0.00,0.00,0.00,1,1;RNAV (GPS) RWY 12;12;KAVQ;;,,,,,,0.0,2.0,0.0,0.0,,,,,,,,,,,,,,,,2,1,0,0,2
+2019-11-15,N1760T,KIWA,KIWA,,,,,,,,1.8,1.8,,,,,,,,,,,,,1.5,,,,,,1;RNAV (GPS);23;P08;;,1;VOR;5;P08;;,1;ILS;5;KCGZ;;,,,,,,,,,,,Ryan Jacobs;PIC;rjacobs27.12.99@gmail.com;4803224931,,,,,,,,,,,,3,3,,,3
+2019-10-24,N1738S,KIWA,KIWA,KIWA KOLS KIWA,,,,,,,3.5,3.5,0.0,0.0,0.0,3.5,,,,,0.0,0,0.00,0.0,2.5,0.00,0.00,0.00,0.00,2,1;ILS OR LOC RWY 30C;30C;KIWA;;,1;VOR/DME OR GPS-B;3;KOLS;;CIRCLE,,,,,0.0,3.5,0.0,0.0,,,,,,,,,,,,,,,,2,2,0,0,2
+2019-10-19,N1738S,KIWA,KIWA,KIWA KAVQ P08 KIWA,,,,,,,2.7,2.7,0.0,0.0,0.0,2.7,,,,,0.0,0,0.00,0.0,2.4,0.00,0.00,0.00,0.00,0,,,,,,,0.0,2.7,0.0,0.0,,,,,,,,,,,,,,,,3,0,0,0,3
+2019-10-15,N6024E,KIWA,KIWA,,,,,,,,2.1,2.1,,,,,,,,,,,,,1.7,,,,,,1;RNAV (GPS);23;P08;;,1;RNAV (GPS);30C ;KIWA;;,,,,,,2.1,,,,,,Ryan Jacobs;PIC;rjacobs27.12.99@gmail.com;4803224931,,,,,,,,,,,,1,1,,,1
+2019-10-10,N9223C,KIWA,KIWA,KIWA KAVQ P08 KIWA,,,,,,,2.1,2.1,0.0,0.0,0.0,2.1,,,,,0.0,0,0.00,0.0,1.8,0.00,0.00,0.00,0.00,0,,,,,,,0.0,2.1,0.0,0.0,,,,,,,,,,,,,,,,3,0,0,0,3
+2019-10-08,N94618,KIWA,KIWA,KIWA KRYN KAVQ KIWA,,,,,,,2.7,2.7,0.0,0.0,0.0,2.7,,,,,0.0,0,0.00,0.0,2.2,0.00,0.00,0.00,0.00,0,1;ILS OR LOC RWY 06R;06R;KRYN;;,1;RNAV (GPS) RWY 03;03;KAVQ;Missed;,,,,,0.0,2.7,0.0,0.0,,,,,,,,,,,,,,,,2,0,0,0,2
+2019-10-02,N21212,P19,P19,,,,,,,,1.2,1.2,,0.7,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,Ryan Jacobs;PIC;rjacobs27.12.99@gmail.com;4803224931,,,,,,,,,,,,1,1,,,1
+2019-09-26,N345CS,KIWA,KIWA,"IWA,P13,P08,KIWA",,,,,,,2.3,2.3,,0.0,,2.3,,,,,,,,,1.9,,,,,,1;RNAV (GPS);23;P08;;,1;RNAV (GPS);21;KAVQ;;,,,,,,2.3,,,,,,Ryan Jacobs;SIC;rjacobs27.12.99@gmail.com;4803224931,,,,,,,,,,,,3,3,,,3
+2019-09-22,N94618,KPRC,KIWA,,,,,,,,1.7,1.7,,,,1.7,,,,,,,,,1.4,,,,,,1;ILS;30C;KIWA;;,,,,,,,1.7,,,,,,Ryan Jacobs;SIC;rjacobs27.12.99@gmail.com;4803224931,,,,,,,,,,,,1,1,,,1
+2019-09-22,N94618,KIWA,KPRC,,,,,,,,1.9,1.9,,,,1.9,,,,,,,,,1.6,,,,,,1;ILS;21l;KPRC;;,,,,,,,1.9,,,,,,Ryan Jacobs;SIC;rjacobs27.12.99@gmail.com;4803224931,,,,,,,,,,,,1,1,,,1
+2019-09-18,N9230Y,KIWA,KIWA,,,,,,,,2.0,2.0,,,,,,,,,,,,,1.7,,,,,,1;RNAV (GPS);23;P08;;,,,,,,,,,,,,,Ryan Jacobs;PIC;rjacobs27.12.99@gmail.com;4803224931,,,,,,,,,,,,1,1,,,1
+2019-09-10,N1754T,KIWA,KIWA,,,,,,,,2.9,2.9,,,,,,,,,,,,,2.4,,,,,,1;ILS;11L;KTUS;;,,,,,,,2.9,,,,,,Ryan Jacobs;SIC;rjacobs27.12.99@gmail.com;4803224931,,,,,,,,,,,,1,1,,,1
+2019-09-09,N117SV,KIWA,KIWA,,,,,,,,2.0,2.0,,,,2.0,,,,,,,,,1.6,,,,,,1;RNAV (GPS);12;KAVQ;;,,,,,,,2.0,,,,,,Ryan Jacobs;PIC;rjacobs27.12.99@gmail.com;4803224931,,,,,,,,,,,,2,2,,,2
+2019-09-05,N6024E,KIWA,KIWA,,,,,,,,2.6,2.6,,,,2.6,,,,,,,,,2.1,,,,,,1;RNAV (GPS);6R;KRYN;;,1;VOR;5;P08;;,,,,,,2.6,,,,,,Ryan Jacobs;SIC;rjacobs27.12.99@gmail.com;4803224931,,,,,,,,,,,,3,3,,,3
+2019-09-03,N117SV,KIWA,KIWA,,,,,,,,2.5,2.5,,,,2.5,,,,,,,,,2.0,,,,,,1;RNAV (GPS);27;P13;;,,,,,,,2.5,,,,,,Ryan Jacobs;SIC;rjacobs27.12.99@gmail.com;4803224931,,,,,,,,,,,,2,2,,,2
+2019-08-29,N445BW,KIWA,KIWA,,,,,,,,2.1,2.1,,,,2.1,,,,,,,,,1.7,,,,,,1;ILS;30C;KIWA;;,,,,,,,2.1,,,,,,Ryan Jacobs;PIC;rjacobs27.12.99@gmail.com;4803224931,,,,,,,,,,,,2,2,,,2
+2019-08-26,N445BW,KIWA,KIWA,,,,,,,,2.4,2.4,,,,,,,,,,,,,1.9,,,,,,1;RNAV (GPS);23;P08;;,1;VOR;5;P08;;,,,,,,2.4,,,,,,Ryan Jacobs;SIC;rjacobs27.12.99@gmail.com;4803224931,,,,,,,,,,,,2,2,,,2
+2019-08-23,N1742S,KIWA,KIWA,,,,,,,,2.2,2.2,,,,2.2,,,,,,,,,1.8,,,,,,1;RNAV (GPS);12;KAVQ;;,,,,,,,2.2,,,,,,Ryan Jacobs;SIC;rjacobs27.12.99@gmail.com;4803224931,,,,,,,,,,,,2,2,,,2
+2019-08-21,N4190V,KIWA,KIWA,,,,,,,,2.2,2.2,,,,2.2,,,,,,,,,1.8,,,,,,1;ILS;30C;KIWA;;,1;RNAV (GPS);12;KAVQ;;,,,,,,2.2,,,,,,Ryan Jacobs;SIC;rjacobs27.12.99@gmail.com;4803224931,,,,,,,,,,,,2,2,,,2
+2019-08-14,PCFFRASCA,KIWA,KIWA,KIWA,,,,,,,0.0,0.0,0.0,,0.0,0.0,,,,,0.0,0,0.00,0.0,0.0,0.00,0.00,0.00,0.00,0,,,,,,,0.0,49.0,49.0,0.0,,,,,,,,,,"""All SIM time is located within paper logbook from ATP.""",,,,,,0,0,0,0,0
+2019-08-02,N21212,P19,P19,,,,,,,,1.2,1.2,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,Ryan Jacobs;PIC;rjacobs27.12.99@gmail.com;4803224931,,,,,,,,,,,,6,6,,,6
+2019-07-07,N21212,P19,P19,,,,,,,,1.1,1.1,,0.7,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,Ryan Jacobs;PIC;rjacobs27.12.99@gmail.com;4803224931,,,,,,,,,,,,3,3,,,3
+2019-06-28,N21212,P19,P19,,,,,,,,0.7,0.7,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,Ryan Jacobs;PIC;rjacobs27.12.99@gmail.com;4803224931,,,,,,,,,,,,4,4,,,4
+2019-06-03,N21212,P19,P19,,,,,,,,1.0,1.0,,0.7,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,Ryan Jacobs;PIC;rjacobs27.12.99@gmail.com;4803224931,,,,,,,,,,,,5,5,,,5
+2019-05-31,N5438E,KFFZ,KFFZ,,,,,,,,1.9,1.0,,,,,,,,,,,,,,,,,,,,,,,,,,1.9,,,,,,Ryan Jacobs;PIC;rjacobs27.12.99@gmail.com;4803224931,,,,,,,,,,,,9,9,,,9
+2019-04-15,N21212,P19,P19,,,,,,,,2.5,2.5,,,,2.5,,,,,,,,,,,,,,,,,,,,,,,,,,,,Ryan Jacobs;PIC;rjacobs27.12.99@gmail.com;4803224931,,,,,,,,,,,,2,2,,,2
+2019-04-12,N21212,P19,P19,,,,,,,,0.8,0.8,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,Ryan Jacobs;PIC;rjacobs27.12.99@gmail.com;4803224931,,,,,,,,,,,,2,2,,,2
+2019-04-06,N21212,P19,P19,,,,,,,,1.4,1.4,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,Ryan Jacobs;PIC;rjacobs27.12.99@gmail.com;4803224931,,,,,,,,,,,,4,4,,,4
+2019-04-04,N21212,P19,P19,,,,,,,,1.1,1.1,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,Ryan Jacobs;PIC;rjacobs27.12.99@gmail.com;4803224931,,,,,,,,,,,,4,4,,,4
+2019-04-01,N21212,P19,P19,,,,,,,,1.0,1.0,,1.0,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,Ryan Jacobs;PIC;rjacobs27.12.99@gmail.com;4803224931,,,,,,,,,,,,,,,,0
+2019-03-14,N21212,P19,P19,,,,,,,,1.4,1.4,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,Ryan Jacobs;PIC;rjacobs27.12.99@gmail.com;4803224931,,,,,,,,,,,,6,6,,,6
+2019-03-01,N1727T,KIWA,KIWA,KIWA P13 P08 KIWA,,,,,,,2.3,2.3,0.0,0.0,0.0,2.3,,,,,0.0,0,0.00,0.0,1.9,0.00,0.00,0.00,0.00,0,1;GPS RWY 27;27;P13;;,1;GPS RWY 23;23;P08;;,,,,,0.0,2.3,0.0,0.0,,,,,,,,,,,,,,,,3,0,0,0,3
+2019-02-18,N21212,P19,P19,,,,,,,,1.5,,,,,,,,,,,,,0.9,,,,,,,,,,,,,,0.6,,,,,,Ryan Jacobs;PIC;rjacobs27.12.99@gmail.com;4803224931,,,,,,,,,,,,5,5,,,5
+2019-02-17,N21212,P19,P19,,,,,,,,1.4,1.4,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,Ryan Jacobs;PIC;rjacobs27.12.99@gmail.com;4803224931,,,,,,,,,,,,5,5,,,5
+2019-02-11,N21212,P19,P19,,,,,,,,1.4,1.4,,1.4,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,Ryan Jacobs;PIC;rjacobs27.12.99@gmail.com;4803224931,,,,,,,,,,,,,,,,0
+2019-01-25,N21212,P19,P19,,,,,,,,2.0,2.0,,,,2.0,,,,,,,,,,,,,,,,,,,,,,,,,,,,Ryan Jacobs;PIC;rjacobs27.12.99@gmail.com;4803224931,,,,,,,,,,,,7,7,,,7
+2019-01-22,N21212,P19,P19,,,,,,,,0.4,0.4,,0.4,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,Ryan Jacobs;PIC;rjacobs27.12.99@gmail.com;4803224931,,,,,,,,,,,,,,,,0
+2018-12-08,N21212,P19,P19,,,,,,,,0.8,0.8,,0.8,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,Ryan Jacobs;PIC;rjacobs27.12.99@gmail.com;4803224931,,,,,,,,,,,,,,,,0
+2018-12-07,N21212,P19,P19,,,,,,,,1.0,1.0,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,Ryan Jacobs;PIC;rjacobs27.12.99@gmail.com;4803224931,,,,,,,,,,,,3,3,,,3
+2018-12-05,N21212,P19,P19,,,,,,,,0.3,0.3,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,Ryan Jacobs;PIC;rjacobs27.12.99@gmail.com;4803224931,,,,,,,,,,,,2,2,,,2
+2018-12-03,N21212,P19,P19,,,,,,,,1.2,1.2,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,Ryan Jacobs;PIC;rjacobs27.12.99@gmail.com;4803224931,,,,,,,,,,,,2,2,,,2
+2018-12-03,N21212,P19,P19,,,,,,,,0.8,0.8,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,Ryan Jacobs;PIC;rjacobs27.12.99@gmail.com;4803224931,,,,,,,,,,,,3,3,,,3
+2018-11-16,N21212,P19,P19,,,,,,,,1.0,1.0,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,Ryan Jacobs;PIC;rjacobs27.12.99@gmail.com;4803224931,,,,,,,,,,,,5,5,,,5
+2018-11-15,N21212,P19,P19,,,,,,,,1.0,1.0,,1.0,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,Ryan Jacobs;PIC;rjacobs27.12.99@gmail.com;4803224931,,,,,,,,,,,,,,,,0
+2018-11-14,N21212,P19,P19,,,,,,,,1.3,1.3,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,Ryan Jacobs;PIC;rjacobs27.12.99@gmail.com;4803224931,,,,,,,,,,,,3,3,,,3
+2018-11-13,N21212,P19,P19,,,,,,,,1.8,,,,,,,,,,,,,,0.2,,,,,,,,,,,,,1.8,,,,,,Ryan Jacobs;PIC;rjacobs27.12.99@gmail.com;4803224931,,,,,,,,,,,,3,3,,,3
+2018-11-08,N21212,P19,P19,,,,,,,,1.6,,,,,,,,,,,,,,1.6,,,,,,,,,,,,,1.6,,,,,,Ryan Jacobs;PIC;rjacobs27.12.99@gmail.com;4803224931,,,,,,,,,,,,2,2,,,2
+2018-11-07,N21212,P19,P19,,,,,,,,1.2,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,Ryan Jacobs;PIC;rjacobs27.12.99@gmail.com;4803224931,,,,,,,,,,,,1,1,,,1
+2018-11-06,N21212,P19,P19,,,,,,,,2.7,,,,,,,,,,,,,,0.3,,,,,,,,,,,,,2.7,,,,,,Ryan Jacobs;PIC;rjacobs27.12.99@gmail.com;4803224931,,,,,,,,,,,,6,6,,,6
+2018-10-28,N21212,P19,P19,,,,,,,,1.1,1.1,,,1.1,,,,,,,,,,,,,,,,,,,,,,,,,,,,,Ryan Jacobs;PIC;rjacobs27.12.99@gmail.com;4803224931,,,,,,,,,,,,4,4,,,4
+2018-10-14,N21212,P19,P19,,,,,,,,1.1,1.1,,,1.1,,,,,,,,,,,,,,,,,,,,,,,,,,,,,Ryan Jacobs;PIC;rjacobs27.12.99@gmail.com;4803224931,,,,,,,,,,,,4,4,,,4
+2018-10-12,N21212,P19,P19,,,,,,,,1.0,,,0.3,,,,,,,,,,,,,,,,,,,,,,,,1.0,,,,,,Ryan Jacobs;PIC;rjacobs27.12.99@gmail.com;4803224931,,,,,,,,,,,,2,2,,,2
+2018-10-09,N21212,P19,P19,,,,,,,,1.8,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,Ryan Jacobs;PIC;rjacobs27.12.99@gmail.com;4803224931,,,,,,,,,,,,6,6,,,6
+2018-10-03,N21212,P19,P19,,,,,,,,2.3,2.3,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,Ryan Jacobs;PIC;rjacobs27.12.99@gmail.com;4803224931,,,,,,,,,,,,6,6,,,6
+2018-09-29,N21212,P19,P19,,,,,,,,1.3,,,,,,,,,,,,,,,,,,,,,,,,,,,1.3,,,,,,Ryan Jacobs;PIC;rjacobs27.12.99@gmail.com;4803224931,,,,,,,,,,,,2,2,,,2
+2018-08-26,N21212,P19,P19,,,,,,,,0.8,0.8,,,0.8,,,,,,,,,,,,,,,,,,,,,,,,,,,,,Ryan Jacobs;PIC;rjacobs27.12.99@gmail.com;4803224931,,,,,,,,,,,,4,4,,,4
+2018-08-24,N21212,P19,P19,,,,,,,,2.3,2.3,,,2.3,,,,,,,,,,,,,,,,,,,,,,,2.3,,,,,,Ryan Jacobs;PIC;rjacobs27.12.99@gmail.com;4803224931,,,,,,,,,,,,2,2,,,2
+2018-08-21,N21212,P19,P19,,,,,,,,3.0,3.0,,,3.0,3.0,,,,,,,,,,,,,,,,,,,,,,,,,,,,Ryan Jacobs;PIC;rjacobs27.12.99@gmail.com;4803224931,,,,,,,,,,,,3,3,,,3
+2018-08-19,N21212,P19,P19,,,,,,,,3.0,,,,,3.0,,,,,,,,,1.4,,,,,,,,,,,,,3.0,,,,,,Ryan Jacobs;PIC;rjacobs27.12.99@gmail.com;4803224931,,,,,,,,,,,,3,3,,,3
+2018-08-17,N21212,P19,P19,,,,,,,,1.6,1.6,,,1.6,,,,,,,,,,,,,,,,,,,,,,,,,,,,,Ryan Jacobs;PIC;rjacobs27.12.99@gmail.com;4803224931,,,,,,,,,,,,9,9,,,9
+2018-08-16,N21212,P19,P19,,,,,,,,3.2,,,3.2,,3.2,,,,,,,,,,,,,,,,,,,,,,3.2,,,,,,Ryan Jacobs;PIC;rjacobs27.12.99@gmail.com;4803224931,,,,,,,,,,,,,,,,0
+2018-08-15,N21212,P19,P19,,,,,,,,1.1,1.1,,,1.1,,,,,,,,,,,,,,,,,,,,,,,,,,,,,Ryan Jacobs;PIC;rjacobs27.12.99@gmail.com;4803224931,,,,,,,,,,,,1,1,,,1
+2018-08-10,N21212,P19,P19,,,,,,,,0.7,0.7,,,0.7,,,,,,,,,,,,,,,,,,,,,,,,,,,,,Ryan Jacobs;PIC;rjacobs27.12.99@gmail.com;4803224931,,,,,,,,,,,,4,4,,,4
+2018-08-07,N21212,P19,P19,,,,,,,,1.1,,,,,,,,,,,,,,,,,,,,,,,,,,,1.1,,,,,,Ryan Jacobs;PIC;rjacobs27.12.99@gmail.com;4803224931,,,,,,,,,,,,7,7,,,7
+2018-08-05,N21212,P19,P19,,,,,,,,1.4,,,,,,,,,,,,,,,,,,,,,,,,,,,1.4,,,,,,Ryan Jacobs;PIC;rjacobs27.12.99@gmail.com;4803224931,,,,,,,,,,,,6,6,,,6
+2018-06-27,N21212,P19,P19,,,,,,,,1.7,,,,,,,,,,,,,,,,,,,,,,,,,,,1.7,,,,,,Ryan Jacobs;PIC;rjacobs27.12.99@gmail.com;4803224931,,,,,,,,,,,,15,15,,,15
+2018-06-17,N21212,P19,P19,,,,,,,,2.1,,,,,,,,,,,,,,,,,,,,,,,,,,,2.1,,,,,,Ryan Jacobs;PIC;rjacobs27.12.99@gmail.com;4803224931,,,,,,,,,,,,14,14,,,14
+2018-06-15,N21212,P19,P19,,,,,,,,2.0,,,,,,,,,,,,,,,,,,,,,,,,,,,2.0,,,,,,Ryan Jacobs;PIC;rjacobs27.12.99@gmail.com;4803224931,,,,,,,,,,,,15,15,,,15
+2018-06-01,N21212,P19,,,,,,,,,1.8,,,,,,,,,,,,,,,,,,,,,,,,,,,1.8,,,,,,Ryan Jacobs;PIC;rjacobs27.12.99@gmail.com;4803224931,,,,,,,,,,,,11,11,,,11
+2018-05-30,N21212,P19,P19,,,,,,,,1.3,,,,,,,,,,,,,,,,,,,,,,,,,,,1.3,,,,,,Ryan Jacobs;PIC;rjacobs27.12.99@gmail.com;4803224931,,,,,,,,,,,,8,8,,,8
+2018-04-28,N21212,P19,P19,,,,,,,,1.7,,,,,,,,,,,,,,,,,,,,,,,,,,,1.7,,,,,,Ryan Jacobs;PIC;rjacobs27.12.99@gmail.com;4803224931,,,,,,,,,,,,5,5,,,5
+2018-04-06,N21212,P19,P19,,,,,,,,1.9,,,,,,,,,,,,,,,,,,,,,,,,,,,1.9,,,,,,Ryan Jacobs;PIC;rjacobs27.12.99@gmail.com;4803224931,,,,,,,,,,,,13,13,,,13
+2018-03-25,N21212,P19,P19,,,,,,,,1.5,,,,,,,,,,,,,,,,,,,,,,,,,,,1.5,,,,,,,,,,,,,,,,,,5,5,,,5
+2018-03-18,N738EA,KFFZ,KFFZ,,,,,,,,1.5,,,,,,,,,,,,,,,,,,,,,,,,,,,1.5,,,,,,Ryan Jacobs;PIC;rjacobs27.12.99@gmail.com;4803224931,,,,,,,,,,,,2,2,,,2
+2018-02-20,N738EA,KFFZ,KFFZ,,,,,,,,1.5,,,,,,,,,,,,,,,,,,,,,,,,,,,1.5,,,,,,Ryan Jacobs;PIC;rjacobs27.12.99@gmail.com;4803224931,,,,,,,,,,,,1,1,,,1
+2018-02-06,N738EA,KFFZ,KFFZ,,,,,,,,1.1,,,,,,,,,,,,,,,,,,,,,,,,,,,1.1,,,,,,Ryan Jacobs;PIC;rjacobs27.12.99@gmail.com;4803224931,,,,,,,,,,,,2,2,,,2
