@@ -6,13 +6,14 @@ import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
-import { Plus, Search, Filter, Download, Plane } from "lucide-react";
+import { Plus, Search, Filter, Download, Plane, Upload } from "lucide-react";
 import { useState, useEffect } from "react";
 import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import { useNavigate } from "react-router-dom";
 import { AddFlightDialog } from "@/components/forms/AddFlightDialog";
+import { CSVImportDialog } from "@/components/forms/CSVImportDialog";
 
 interface FlightEntry {
   id: string;
@@ -55,6 +56,7 @@ const Logbook = () => {
   const [flights, setFlights] = useState<FlightEntry[]>([]);
   const [isLoadingFlights, setIsLoadingFlights] = useState(true);
   const [showAddFlightDialog, setShowAddFlightDialog] = useState(false);
+  const [showCSVImportDialog, setShowCSVImportDialog] = useState(false);
   const [editingFlight, setEditingFlight] = useState<FlightEntry | null>(null);
 
   // Redirect to sign in if not authenticated
@@ -185,10 +187,16 @@ const Logbook = () => {
             <h1 className="text-3xl font-bold text-foreground mb-2">Flight Logbook</h1>
             <p className="text-muted-foreground">Track and manage your flight hours and experience</p>
           </div>
-          <Button className="w-fit" onClick={() => setShowAddFlightDialog(true)}>
-            <Plus className="h-4 w-4 mr-2" />
-            Add Flight
-          </Button>
+          <div className="flex gap-2">
+            <Button variant="outline" onClick={() => setShowCSVImportDialog(true)}>
+              <Upload className="h-4 w-4 mr-2" />
+              Import CSV
+            </Button>
+            <Button onClick={() => setShowAddFlightDialog(true)}>
+              <Plus className="h-4 w-4 mr-2" />
+              Add Flight
+            </Button>
+          </div>
         </div>
 
         {/* Stats Cards */}
@@ -376,6 +384,12 @@ const Logbook = () => {
         onOpenChange={handleCloseDialog}
         onFlightAdded={fetchFlights}
         editingFlight={editingFlight}
+      />
+
+      <CSVImportDialog
+        open={showCSVImportDialog}
+        onOpenChange={setShowCSVImportDialog}
+        onImportComplete={fetchFlights}
       />
     </div>
   );
