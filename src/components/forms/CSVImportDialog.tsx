@@ -619,11 +619,19 @@ export function CSVImportDialog({ open, onOpenChange, onImportComplete }: CSVImp
                       </TableRow>
                     </TableHeader>
                     <TableBody>
-                      {csvData.slice(0, 10).map((row, index) => (
+                       {csvData.slice(0, 10).map((row, index) => (
                         <TableRow key={index}>
                           <TableCell>{index + 1}</TableCell>
                           {fieldMappings.map(mapping => {
-                            const value = row[csvHeaders.indexOf(mapping.csvColumn)];
+                            // Handle both object-based data (ForeFlight) and array-based data (standard CSV)
+                            let value: string;
+                            if (isForeFlight) {
+                              // ForeFlight rows are objects
+                              value = (row as Record<string, string>)[mapping.csvColumn];
+                            } else {
+                              // Standard CSV rows are arrays
+                              value = (row as unknown as string[])[csvHeaders.indexOf(mapping.csvColumn)];
+                            }
                             const hasError = validationErrors.some(e => e.row === index + 1 && e.field === mapping.dbField);
                             return (
                               <TableCell key={mapping.dbField} className={hasError ? 'bg-destructive/10 text-destructive' : ''}>
