@@ -264,11 +264,11 @@ export function CSVImportDialog({ open, onOpenChange, onImportComplete }: CSVImp
     setFieldMappings(prev => {
       const existing = prev.find(m => m.csvColumn === csvColumn);
       if (existing) {
-        if (dbField === '') {
+        if (dbField === '__skip__' || dbField === '') {
           return prev.filter(m => m.csvColumn !== csvColumn);
         }
         return prev.map(m => m.csvColumn === csvColumn ? { ...m, dbField } : m);
-      } else if (dbField !== '') {
+      } else if (dbField !== '' && dbField !== '__skip__') {
         return [...prev, { csvColumn, dbField }];
       }
       return prev;
@@ -527,15 +527,15 @@ export function CSVImportDialog({ open, onOpenChange, onImportComplete }: CSVImp
                   {csvHeaders.map(header => (
                     <div key={header} className="space-y-2">
                       <Label className="text-sm font-medium">{header}</Label>
-                      <Select
-                        value={fieldMappings.find(m => m.csvColumn === header)?.dbField || ''}
-                        onValueChange={(value) => handleMappingChange(header, value)}
-                      >
+                        <Select
+                          value={fieldMappings.find(m => m.csvColumn === header)?.dbField || '__skip__'}
+                          onValueChange={(value) => handleMappingChange(header, value)}
+                        >
                         <SelectTrigger>
                           <SelectValue placeholder="Select field..." />
                         </SelectTrigger>
                         <SelectContent>
-                          <SelectItem value="">Don't import</SelectItem>
+                          <SelectItem value="__skip__">Don't import</SelectItem>
                           {DATABASE_FIELDS.map(field => (
                             <SelectItem key={field.key} value={field.key}>
                               {field.label}
