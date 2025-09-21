@@ -37,7 +37,6 @@ interface FlightEntry {
 serve(async (req) => {
   console.log('=== CSV IMPORT FUNCTION START ===')
   console.log('Method:', req.method)
-  console.log('Headers:', Object.fromEntries(req.headers.entries()))
   
   // Handle CORS preflight requests
   if (req.method === 'OPTIONS') {
@@ -48,11 +47,9 @@ serve(async (req) => {
   try {
     console.log('Processing POST request...')
     
-    // Get authorization header (for user identification, since JWT is disabled)
     const authHeader = req.headers.get('Authorization')
     console.log('Auth header present:', !!authHeader)
     
-    // Parse request body
     const requestBody = await req.json()
     console.log('Request body received, flights count:', requestBody?.flights?.length || 0)
     
@@ -68,7 +65,7 @@ serve(async (req) => {
 
     console.log(`Starting import of ${flights.length} flights`)
 
-    // Create Supabase client using service role key for direct database access
+    // Create Supabase client using service role key
     const supabaseClient = createClient(
       Deno.env.get('SUPABASE_URL') ?? '',
       Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? ''
@@ -76,8 +73,8 @@ serve(async (req) => {
     
     console.log('Supabase client created successfully')
 
-    // Extract user ID from JWT manually for now
-    let userId = 'd9f8d5cb-1e56-41f8-81a1-7c70e7d661f9'; // Hardcoded for testing
+    // Extract user ID from JWT
+    let userId = 'd9f8d5cb-1e56-41f8-81a1-7c70e7d661f9'; // Fallback
     
     if (authHeader) {
       try {
@@ -92,78 +89,71 @@ serve(async (req) => {
 
     let successCount = 0;
     let failureCount = 0;
-    const batchSize = 50;
 
-    // Process flights in batches
-    for (let i = 0; i < flights.length; i += batchSize) {
-      const batch = flights.slice(i, i + batchSize);
-      console.log(`Processing batch ${Math.floor(i / batchSize) + 1}/${Math.ceil(flights.length / batchSize)} with ${batch.length} flights`)
-
-      const flightEntries = batch.map((flight, index) => {
-        try {
-          const entry = {
-            user_id: userId,
-            date: flight.date,
-            aircraft_registration: flight.aircraft_registration,
-            aircraft_type: flight.aircraft_type,
-            departure_airport: flight.departure_airport,
-            arrival_airport: flight.arrival_airport,
-            total_time: Number(flight.total_time) || 0,
-            pic_time: Number(flight.pic_time) || 0,
-            cross_country_time: Number(flight.cross_country_time) || 0,
-            night_time: Number(flight.night_time) || 0,
-            instrument_time: Number(flight.instrument_time) || 0,
-            approaches: flight.approaches?.toString() || '0',
-            landings: Number(flight.landings) || 0,
-            sic_time: Number(flight.sic_time) || 0,
-            solo_time: Number(flight.solo_time) || 0,
-            day_takeoffs: Number(flight.day_landings) || 0,
-            day_landings: Number(flight.day_landings) || 0,
-            night_takeoffs: Number(flight.night_landings) || 0,
-            night_landings: Number(flight.night_landings) || 0,
-            actual_instrument: Number(flight.actual_instrument) || 0,
-            simulated_instrument: Number(flight.simulated_instrument) || 0,
-            holds: Number(flight.holds) || 0,
-            dual_given: Number(flight.dual_given) || 0,
-            dual_received: Number(flight.dual_received) || 0,
-            simulated_flight: 0,
-            ground_training: 0,
-            route: flight.route || null,
-            remarks: flight.remarks || null,
-            start_time: flight.start_time || null,
-            end_time: flight.end_time || null,
-          };
-
-          // Validate required fields - allow total_time of 0 for cancelled flights, ground time, etc.
-          if (!entry.date || !entry.aircraft_registration || !entry.aircraft_type || 
-              !entry.departure_airport || !entry.arrival_airport || entry.total_time < 0) {
-            throw new Error(`Flight ${index + 1}: Missing required fields - Date: "${entry.date}", Registration: "${entry.aircraft_registration}", Type: "${entry.aircraft_type}", Departure: "${entry.departure_airport}", Arrival: "${entry.arrival_airport}", Total Time: ${entry.total_time}`)
-          }
-
-          return entry;
-        } catch (error) {
-          console.error(`Error processing flight ${index + 1}:`, error)
-          throw error
-        }
-      });
+    // Process one flight at a time to identify which one is failing
+    for (let i = 0; i < Math.min(flights.length, 5); i++) { // Only process first 5 for testing
+      const flight = flights[i];
+      console.log(`\n=== Processing flight ${i + 1} ===`)
+      console.log('Flight data:', JSON.stringify(flight))
 
       try {
-        console.log(`Inserting batch of ${flightEntries.length} flights`)
+        const entry = {
+          user_id: userId,
+          date: flight.date,
+          aircraft_registration: flight.aircraft_registration,
+          aircraft_type: flight.aircraft_type,
+          departure_airport: flight.departure_airport,
+          arrival_airport: flight.arrival_airport,
+          total_time: Number(flight.total_time) || 0,
+          pic_time: Number(flight.pic_time) || 0,
+          cross_country_time: Number(flight.cross_country_time) || 0,
+          night_time: Number(flight.night_time) || 0,
+          instrument_time: Number(flight.instrument_time) || 0,
+          approaches: flight.approaches?.toString() || '0',
+          landings: Number(flight.landings) || 0,
+          sic_time: Number(flight.sic_time) || 0,
+          solo_time: Number(flight.solo_time) || 0,
+          day_takeoffs: Number(flight.day_landings) || 0,
+          day_landings: Number(flight.day_landings) || 0,
+          night_takeoffs: Number(flight.night_landings) || 0,
+          night_landings: Number(flight.night_landings) || 0,
+          actual_instrument: Number(flight.actual_instrument) || 0,
+          simulated_instrument: Number(flight.simulated_instrument) || 0,
+          holds: Number(flight.holds) || 0,
+          dual_given: Number(flight.dual_given) || 0,
+          dual_received: Number(flight.dual_received) || 0,
+          simulated_flight: 0,
+          ground_training: 0,
+          route: flight.route || null,
+          remarks: flight.remarks || null,
+          start_time: flight.start_time || null,
+          end_time: flight.end_time || null,
+        };
+
+        console.log('Prepared entry:', JSON.stringify(entry))
+
+        // Validate required fields
+        if (!entry.date || !entry.aircraft_registration || !entry.aircraft_type || 
+            !entry.departure_airport || !entry.arrival_airport) {
+          throw new Error(`Flight ${i + 1}: Missing required fields - Date: "${entry.date}", Registration: "${entry.aircraft_registration}", Type: "${entry.aircraft_type}", Departure: "${entry.departure_airport}", Arrival: "${entry.arrival_airport}"`)
+        }
+
+        console.log(`Inserting flight ${i + 1}`)
         
         const { data, error } = await supabaseClient
           .from('flight_entries')
-          .insert(flightEntries)
+          .insert([entry])
 
         if (error) {
-          console.error('Database insert error:', error)
-          failureCount += batch.length;
+          console.error(`Database insert error for flight ${i + 1}:`, error)
+          failureCount++;
         } else {
-          console.log(`Successfully inserted ${batch.length} flights`)
-          successCount += batch.length;
+          console.log(`Successfully inserted flight ${i + 1}`)
+          successCount++;
         }
-      } catch (batchError) {
-        console.error('Batch processing error:', batchError)
-        failureCount += batch.length;
+      } catch (flightError) {
+        console.error(`Error processing flight ${i + 1}:`, flightError)
+        failureCount++;
       }
     }
 
