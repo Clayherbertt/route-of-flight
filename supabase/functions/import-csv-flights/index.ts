@@ -120,6 +120,12 @@ async function processFlightImport(flights: FlightEntry[], userId: string, supab
             onConflict: 'user_id,date,aircraft_registration,departure_airport,arrival_airport'
           })
 
+        const { data, error } = await supabaseClient
+          .from('flight_entries')
+          .upsert([entry], {
+            onConflict: 'user_id,date,aircraft_registration,departure_airport,arrival_airport'
+          })
+
         if (error) {
           console.error(`Failed to insert flight ${flightIndex}:`, {
             error: error.message,
@@ -134,7 +140,16 @@ async function processFlightImport(flights: FlightEntry[], userId: string, supab
           })
           failureCount++;
         } else {
-          successCount++;
+          // Check if this was actually inserted or just matched existing
+          const isNewEntry = data && data.length > 0;
+          if (isNewEntry) {
+            successCount++;
+            console.log(`Flight ${flightIndex} imported successfully: ${entry.date} ${entry.aircraft_registration} ${entry.departure_airport}->${entry.arrival_airport} ${entry.total_time}h`)
+          } else {
+            console.log(`Flight ${flightIndex} already exists (duplicate): ${entry.date} ${entry.aircraft_registration} ${entry.departure_airport}->${entry.arrival_airport}`)
+            // Don't count as failure, but track separately
+          }
+          
           if (successCount % 50 === 0) {
             console.log(`Progress: ${successCount}/${flights.length} flights imported`)
           }
@@ -150,8 +165,18 @@ async function processFlightImport(flights: FlightEntry[], userId: string, supab
   }
 
   console.log(`=== BACKGROUND IMPORT COMPLETED ===`)
-  console.log(`Final results: ${successCount} successful, ${failureCount} failed`)
-  return { success: successCount, failed: failureCount };
+  console.log(`Final results: ${successCount} new flights imported, ${failureCount} failed`)
+  
+  // Query final totals to verify
+  const { data: finalStats } = await supabaseClient
+    .from('flight_entries')
+    .select('id')
+    .eq('user_id', userId)
+  
+  const totalFlightsNow = finalStats?.length || 0
+  console.log(`Database now contains ${totalFlightsNow} total flights for user`)
+  
+  return { success: successCount, failed: failureCount, total_in_db: totalFlightsNow };
 }
 
 serve(async (req) => {
