@@ -89,71 +89,78 @@ serve(async (req) => {
 
     let successCount = 0;
     let failureCount = 0;
+    const batchSize = 50;
 
-    // Process one flight at a time to identify which one is failing
-    for (let i = 0; i < Math.min(flights.length, 5); i++) { // Only process first 5 for testing
-      const flight = flights[i];
-      console.log(`\n=== Processing flight ${i + 1} ===`)
-      console.log('Flight data:', JSON.stringify(flight))
+    // Process flights in batches
+    for (let i = 0; i < flights.length; i += batchSize) {
+      const batch = flights.slice(i, i + batchSize);
+      console.log(`Processing batch ${Math.floor(i / batchSize) + 1}/${Math.ceil(flights.length / batchSize)} with ${batch.length} flights`)
+
+      const flightEntries = batch.map((flight, index) => {
+        try {
+          const entry = {
+            user_id: userId,
+            date: flight.date,
+            aircraft_registration: flight.aircraft_registration,
+            aircraft_type: flight.aircraft_type,
+            departure_airport: flight.departure_airport,
+            arrival_airport: flight.arrival_airport,
+            total_time: Number(flight.total_time) || 0,
+            pic_time: Number(flight.pic_time) || 0,
+            cross_country_time: Number(flight.cross_country_time) || 0,
+            night_time: Number(flight.night_time) || 0,
+            instrument_time: Number(flight.instrument_time) || 0,
+            approaches: flight.approaches?.toString() || '0',
+            landings: Number(flight.landings) || 0,
+            sic_time: Number(flight.sic_time) || 0,
+            solo_time: Number(flight.solo_time) || 0,
+            day_takeoffs: Number(flight.day_landings) || 0,
+            day_landings: Number(flight.day_landings) || 0,
+            night_takeoffs: Number(flight.night_landings) || 0,
+            night_landings: Number(flight.night_landings) || 0,
+            actual_instrument: Number(flight.actual_instrument) || 0,
+            simulated_instrument: Number(flight.simulated_instrument) || 0,
+            holds: Number(flight.holds) || 0,
+            dual_given: Number(flight.dual_given) || 0,
+            dual_received: Number(flight.dual_received) || 0,
+            simulated_flight: 0,
+            ground_training: 0,
+            route: flight.route || null,
+            remarks: flight.remarks || null,
+            start_time: flight.start_time || null,
+            end_time: flight.end_time || null,
+          };
+
+          // Validate required fields
+          if (!entry.date || !entry.aircraft_registration || !entry.aircraft_type || 
+              !entry.departure_airport || !entry.arrival_airport) {
+            throw new Error(`Flight ${i + index + 1}: Missing required fields`)
+          }
+
+          return entry;
+        } catch (error) {
+          console.error(`Error processing flight ${i + index + 1}:`, error)
+          throw error
+        }
+      });
 
       try {
-        const entry = {
-          user_id: userId,
-          date: flight.date,
-          aircraft_registration: flight.aircraft_registration,
-          aircraft_type: flight.aircraft_type,
-          departure_airport: flight.departure_airport,
-          arrival_airport: flight.arrival_airport,
-          total_time: Number(flight.total_time) || 0,
-          pic_time: Number(flight.pic_time) || 0,
-          cross_country_time: Number(flight.cross_country_time) || 0,
-          night_time: Number(flight.night_time) || 0,
-          instrument_time: Number(flight.instrument_time) || 0,
-          approaches: flight.approaches?.toString() || '0',
-          landings: Number(flight.landings) || 0,
-          sic_time: Number(flight.sic_time) || 0,
-          solo_time: Number(flight.solo_time) || 0,
-          day_takeoffs: Number(flight.day_landings) || 0,
-          day_landings: Number(flight.day_landings) || 0,
-          night_takeoffs: Number(flight.night_landings) || 0,
-          night_landings: Number(flight.night_landings) || 0,
-          actual_instrument: Number(flight.actual_instrument) || 0,
-          simulated_instrument: Number(flight.simulated_instrument) || 0,
-          holds: Number(flight.holds) || 0,
-          dual_given: Number(flight.dual_given) || 0,
-          dual_received: Number(flight.dual_received) || 0,
-          simulated_flight: 0,
-          ground_training: 0,
-          route: flight.route || null,
-          remarks: flight.remarks || null,
-          start_time: flight.start_time || null,
-          end_time: flight.end_time || null,
-        };
-
-        console.log('Prepared entry:', JSON.stringify(entry))
-
-        // Validate required fields
-        if (!entry.date || !entry.aircraft_registration || !entry.aircraft_type || 
-            !entry.departure_airport || !entry.arrival_airport) {
-          throw new Error(`Flight ${i + 1}: Missing required fields - Date: "${entry.date}", Registration: "${entry.aircraft_registration}", Type: "${entry.aircraft_type}", Departure: "${entry.departure_airport}", Arrival: "${entry.arrival_airport}"`)
-        }
-
-        console.log(`Inserting flight ${i + 1}`)
+        console.log(`Inserting batch of ${flightEntries.length} flights`)
         
         const { data, error } = await supabaseClient
           .from('flight_entries')
-          .insert([entry])
+          .insert(flightEntries)
 
         if (error) {
-          console.error(`Database insert error for flight ${i + 1}:`, error)
-          failureCount++;
+          console.error('Database insert error:', error)
+          failureCount += batch.length;
         } else {
-          console.log(`Successfully inserted flight ${i + 1}`)
-          successCount++;
+          console.log(`Successfully inserted ${batch.length} flights`)
+          successCount += batch.length;
         }
-      } catch (flightError) {
-        console.error(`Error processing flight ${i + 1}:`, flightError)
-        failureCount++;
+      } catch (batchError) {
+        console.error('Batch processing error:', batchError)
+        failureCount += batch.length;
       }
     }
 
