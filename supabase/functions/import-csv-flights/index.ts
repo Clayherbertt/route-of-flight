@@ -35,19 +35,28 @@ interface FlightEntry {
 }
 
 serve(async (req) => {
+  console.log('CSV import function called with method:', req.method)
+  console.log('Request headers:', Object.fromEntries(req.headers.entries()))
+  
   // Handle CORS preflight requests
   if (req.method === 'OPTIONS') {
+    console.log('Handling CORS preflight request')
     return new Response(null, { headers: corsHeaders });
   }
 
   try {
-    // Get the authorization header
+    console.log('Starting CSV import function execution')
+    
+    // Get the authorization header for user identification
     const authHeader = req.headers.get('Authorization')
+    console.log('Auth header present:', !!authHeader)
+    
     if (!authHeader) {
+      console.error('No authorization header provided')
       throw new Error('No authorization header provided')
     }
 
-    // Create Supabase client with anon key and pass the auth header
+    // Create Supabase client with anon key
     const supabaseClient = createClient(
       Deno.env.get('SUPABASE_URL') ?? '',
       Deno.env.get('SUPABASE_ANON_KEY') ?? '',
@@ -57,13 +66,16 @@ serve(async (req) => {
         },
       }
     )
+    
+    console.log('Supabase client created')
 
     // Get the current user
     const { data: { user }, error: userError } = await supabaseClient.auth.getUser()
+    console.log('User authentication result:', { user: !!user, error: userError?.message })
 
     if (userError || !user) {
       console.error('Authentication error:', userError)
-      throw new Error('User not authenticated')
+      throw new Error(`User not authenticated: ${userError?.message}`)
     }
 
     console.log('Processing CSV import for user:', user.id)
@@ -171,15 +183,21 @@ serve(async (req) => {
 
   } catch (error) {
     console.error('CSV import error:', error)
+    console.error('Error stack:', error.stack)
+    
+    const errorMessage = error.message || 'An error occurred during CSV import'
+    console.log('Returning error response:', errorMessage)
+    
     return new Response(
       JSON.stringify({
-        error: error.message || 'An error occurred during CSV import',
+        error: errorMessage,
         success: 0,
-        failed: 0
+        failed: 0,
+        details: error.stack
       }),
       {
         headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-        status: 400,
+        status: 500,
       }
     )
   }
