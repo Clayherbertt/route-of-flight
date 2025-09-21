@@ -338,7 +338,10 @@ export function CSVImportDialog({ open, onOpenChange, onImportComplete }: CSVImp
         // Clean up the value
         value = value?.trim?.() || '';
         
+        console.log(`Row ${index + 1}, Field ${mapping.dbField}, Value: "${value}"`);
+        
         if (DATABASE_FIELDS.find(f => f.key === mapping.dbField)?.required && !value) {
+          console.log(`Validation error: Required field ${mapping.dbField} is empty on row ${index + 1}`);
           errors.push({
             row: index + 1,
             field: mapping.dbField,
@@ -350,6 +353,7 @@ export function CSVImportDialog({ open, onOpenChange, onImportComplete }: CSVImp
         if (mapping.dbField === 'date' && value) {
           const date = new Date(value);
           if (isNaN(date.getTime())) {
+            console.log(`Validation error: Invalid date "${value}" on row ${index + 1}`);
             errors.push({
               row: index + 1,
               field: mapping.dbField,
@@ -358,16 +362,35 @@ export function CSVImportDialog({ open, onOpenChange, onImportComplete }: CSVImp
           }
         }
         
-        if (mapping.dbField.includes('time') && value && isNaN(Number(value))) {
-          errors.push({
-            row: index + 1,
-            field: mapping.dbField,
-            message: 'Invalid number format'
-          });
+        // Improved time validation - handle decimal numbers and empty values
+        if (mapping.dbField.includes('time') && value) {
+          const numValue = parseFloat(value);
+          if (isNaN(numValue) || numValue < 0) {
+            console.log(`Validation error: Invalid time "${value}" on row ${index + 1} for field ${mapping.dbField}`);
+            errors.push({
+              row: index + 1,
+              field: mapping.dbField,
+              message: 'Invalid time format (must be a positive number)'
+            });
+          }
+        }
+        
+        // Validate numeric fields (approaches, landings, holds)
+        if (['approaches', 'landings', 'day_landings', 'night_landings', 'holds'].includes(mapping.dbField) && value) {
+          const numValue = parseInt(value);
+          if (isNaN(numValue) || numValue < 0) {
+            console.log(`Validation error: Invalid number "${value}" on row ${index + 1} for field ${mapping.dbField}`);
+            errors.push({
+              row: index + 1,
+              field: mapping.dbField,
+              message: 'Invalid number format (must be a positive integer)'
+            });
+          }
         }
       });
     });
 
+    console.log(`Total validation errors: ${errors.length}`);
     setValidationErrors(errors);
     
     if (errors.length > 0) {
