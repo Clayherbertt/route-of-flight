@@ -40,32 +40,31 @@ async function processFlightImport(flights: FlightEntry[], userId: string, supab
   
   let successCount = 0;
   let failureCount = 0;
-  const batchSize = 25; // Smaller batches for better reliability
+  let duplicateCount = 0;
+  const batchSize = 10; // Much smaller batches to prevent timeouts
+  
+  // Parse numeric fields with better error handling
+  const parseNumericField = (value: any, fieldName: string, defaultValue: number = 0): number => {
+    if (value === undefined || value === null || value === '' || value === 'null') {
+      return defaultValue;
+    }
+    const parsed = Number(value);
+    if (isNaN(parsed)) {
+      console.log(`Invalid ${fieldName} value "${value}", using ${defaultValue}`)
+      return defaultValue;
+    }
+    return parsed;
+  };
   
   // Process flights in smaller batches
   for (let i = 0; i < flights.length; i += batchSize) {
     const batch = flights.slice(i, i + batchSize);
-    console.log(`Processing batch ${Math.floor(i / batchSize) + 1}/${Math.ceil(flights.length / batchSize)} with ${batch.length} flights`)
+    console.log(`Processing batch ${Math.floor(i / batchSize) + 1}/${Math.ceil(flights.length / batchSize)} (flights ${i + 1}-${i + batch.length})`)
 
-    // Process each flight individually within the batch to identify failures
-    for (let j = 0; j < batch.length; j++) {
-      const flight = batch[j];
-      const flightIndex = i + j + 1;
-      
-      try {
-        // Parse numeric fields with better error handling
-        const parseNumericField = (value: any, fieldName: string, defaultValue: number = 0): number => {
-          if (value === undefined || value === null || value === '' || value === 'null') {
-            return defaultValue;
-          }
-          const parsed = Number(value);
-          if (isNaN(parsed)) {
-            console.log(`Flight ${flightIndex}: Invalid ${fieldName} value "${value}", using ${defaultValue}`)
-            return defaultValue;
-          }
-          return parsed;
-        };
-
+    try {
+      // Prepare batch entries
+      const entries = [];
+      for (const flight of batch) {
         const entry = {
           user_id: userId,
           date: flight.date,
@@ -99,7 +98,7 @@ async function processFlightImport(flights: FlightEntry[], userId: string, supab
           end_time: flight.end_time || null,
         };
 
-        // Validate required fields (more lenient approach)
+        // Validate required fields
         const missingFields = [];
         if (!entry.date || entry.date === '') missingFields.push('date');
         if (!entry.aircraft_registration || entry.aircraft_registration.trim() === '') missingFields.push('aircraft_registration');
@@ -108,75 +107,70 @@ async function processFlightImport(flights: FlightEntry[], userId: string, supab
         if (!entry.arrival_airport || entry.arrival_airport.trim() === '') missingFields.push('arrival_airport');
         
         if (missingFields.length > 0) {
-          console.log(`Skipping flight ${flightIndex}: Missing required fields: ${missingFields.join(', ')}`)
-          console.log(`Flight data:`, JSON.stringify(flight, null, 2))
+          console.log(`Skipping flight: Missing ${missingFields.join(', ')} - ${entry.date || 'no date'} ${entry.aircraft_registration || 'no tail'}`)
           failureCount++;
           continue;
         }
 
-        const { data, error } = await supabaseClient
-          .from('flight_entries')
-          .upsert([entry], {
-            onConflict: 'user_id,date,aircraft_registration,departure_airport,arrival_airport'
-          })
+        entries.push(entry);
+      }
 
+      // Insert valid entries in batch
+      if (entries.length > 0) {
+        console.log(`Inserting ${entries.length} valid flights from batch`)
+        
         const { data, error } = await supabaseClient
           .from('flight_entries')
-          .upsert([entry], {
+          .upsert(entries, {
             onConflict: 'user_id,date,aircraft_registration,departure_airport,arrival_airport'
           })
 
         if (error) {
-          console.error(`Failed to insert flight ${flightIndex}:`, {
-            error: error.message,
+          console.error(`Batch insert failed:`, {
+            message: error.message,
             code: error.code,
-            details: error.details,
-            flight_data: {
-              date: entry.date,
-              aircraft: entry.aircraft_registration,
-              total_time: entry.total_time,
-              airports: `${entry.departure_airport} -> ${entry.arrival_airport}`
-            }
+            details: error.details
           })
-          failureCount++;
+          failureCount += entries.length;
         } else {
-          // Check if this was actually inserted or just matched existing
-          const isNewEntry = data && data.length > 0;
-          if (isNewEntry) {
-            successCount++;
-            console.log(`Flight ${flightIndex} imported successfully: ${entry.date} ${entry.aircraft_registration} ${entry.departure_airport}->${entry.arrival_airport} ${entry.total_time}h`)
-          } else {
-            console.log(`Flight ${flightIndex} already exists (duplicate): ${entry.date} ${entry.aircraft_registration} ${entry.departure_airport}->${entry.arrival_airport}`)
-            // Don't count as failure, but track separately
-          }
+          console.log(`Batch processed successfully: ${entries.length} flights`)
+          successCount += entries.length;
           
-          if (successCount % 50 === 0) {
-            console.log(`Progress: ${successCount}/${flights.length} flights imported`)
+          if (successCount % 100 === 0) {
+            console.log(`Progress: ${successCount} flights processed so far`)
           }
         }
-      } catch (flightError) {
-        console.error(`Error processing flight ${flightIndex}:`, flightError)
-        failureCount++;
       }
+
+    } catch (batchError) {
+      console.error(`Error processing batch:`, batchError.message)
+      failureCount += batch.length;
     }
 
-    // Small delay between batches to avoid overwhelming the database
+    // Brief delay to prevent overwhelming the database
     await new Promise(resolve => setTimeout(resolve, 100));
   }
 
   console.log(`=== BACKGROUND IMPORT COMPLETED ===`)
-  console.log(`Final results: ${successCount} new flights imported, ${failureCount} failed`)
+  console.log(`Final results: ${successCount} processed, ${failureCount} failed`)
   
   // Query final totals to verify
-  const { data: finalStats } = await supabaseClient
-    .from('flight_entries')
-    .select('id')
-    .eq('user_id', userId)
+  try {
+    const { data: finalStats, error: statsError } = await supabaseClient
+      .from('flight_entries')
+      .select('total_time')
+      .eq('user_id', userId)
+    
+    if (!statsError && finalStats) {
+      const totalFlightsNow = finalStats.length
+      const totalHoursNow = finalStats.reduce((sum, f) => sum + (parseFloat(f.total_time) || 0), 0)
+      console.log(`Database now contains ${totalFlightsNow} flights with ${totalHoursNow.toFixed(1)} total hours`)
+    }
+  } catch (e) {
+    console.log(`Could not query final stats: ${e.message}`)
+  }
   
-  const totalFlightsNow = finalStats?.length || 0
-  console.log(`Database now contains ${totalFlightsNow} total flights for user`)
-  
-  return { success: successCount, failed: failureCount, total_in_db: totalFlightsNow };
+  return { success: successCount, failed: failureCount };
 }
 
 serve(async (req) => {
@@ -238,7 +232,7 @@ serve(async (req) => {
     const result = {
       success: 0, // Will be updated in background
       failed: 0,  // Will be updated in background
-      message: `Import started for ${flights.length} flights. This will continue in the background.`
+      message: `Import started for ${flights.length} flights. Processing in background with improved error handling.`
     };
 
     console.log('Returning immediate response:', result)
