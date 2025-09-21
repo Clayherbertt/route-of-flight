@@ -34,6 +34,94 @@ interface FlightEntry {
   end_time?: string;
 }
 
+async function processFlightImport(flights: FlightEntry[], userId: string, supabaseClient: any) {
+  console.log(`=== BACKGROUND IMPORT STARTED ===`)
+  console.log(`Processing ${flights.length} flights for user ${userId}`)
+  
+  let successCount = 0;
+  let failureCount = 0;
+  const batchSize = 25; // Smaller batches for better reliability
+  
+  // Process flights in smaller batches
+  for (let i = 0; i < flights.length; i += batchSize) {
+    const batch = flights.slice(i, i + batchSize);
+    console.log(`Processing batch ${Math.floor(i / batchSize) + 1}/${Math.ceil(flights.length / batchSize)} with ${batch.length} flights`)
+
+    // Process each flight individually within the batch to identify failures
+    for (let j = 0; j < batch.length; j++) {
+      const flight = batch[j];
+      const flightIndex = i + j + 1;
+      
+      try {
+        const entry = {
+          user_id: userId,
+          date: flight.date,
+          aircraft_registration: flight.aircraft_registration,
+          aircraft_type: flight.aircraft_type,
+          departure_airport: flight.departure_airport,
+          arrival_airport: flight.arrival_airport,
+          total_time: Number(flight.total_time) || 0,
+          pic_time: Number(flight.pic_time) || 0,
+          cross_country_time: Number(flight.cross_country_time) || 0,
+          night_time: Number(flight.night_time) || 0,
+          instrument_time: Number(flight.instrument_time) || 0,
+          approaches: flight.approaches?.toString() || '0',
+          landings: Number(flight.landings) || 0,
+          sic_time: Number(flight.sic_time) || 0,
+          solo_time: Number(flight.solo_time) || 0,
+          day_takeoffs: Number(flight.day_landings) || 0,
+          day_landings: Number(flight.day_landings) || 0,
+          night_takeoffs: Number(flight.night_landings) || 0,
+          night_landings: Number(flight.night_landings) || 0,
+          actual_instrument: Number(flight.actual_instrument) || 0,
+          simulated_instrument: Number(flight.simulated_instrument) || 0,
+          holds: Number(flight.holds) || 0,
+          dual_given: Number(flight.dual_given) || 0,
+          dual_received: Number(flight.dual_received) || 0,
+          simulated_flight: 0,
+          ground_training: 0,
+          route: flight.route || null,
+          remarks: flight.remarks || null,
+          start_time: flight.start_time || null,
+          end_time: flight.end_time || null,
+        };
+
+        // Validate required fields
+        if (!entry.date || !entry.aircraft_registration || !entry.aircraft_type || 
+            !entry.departure_airport || !entry.arrival_airport) {
+          console.log(`Skipping flight ${flightIndex}: Missing required fields`)
+          failureCount++;
+          continue;
+        }
+
+        const { data, error } = await supabaseClient
+          .from('flight_entries')
+          .insert([entry])
+
+        if (error) {
+          console.error(`Failed to insert flight ${flightIndex}:`, error.message)
+          failureCount++;
+        } else {
+          successCount++;
+          if (successCount % 50 === 0) {
+            console.log(`Progress: ${successCount}/${flights.length} flights imported`)
+          }
+        }
+      } catch (flightError) {
+        console.error(`Error processing flight ${flightIndex}:`, flightError)
+        failureCount++;
+      }
+    }
+
+    // Small delay between batches to avoid overwhelming the database
+    await new Promise(resolve => setTimeout(resolve, 100));
+  }
+
+  console.log(`=== BACKGROUND IMPORT COMPLETED ===`)
+  console.log(`Final results: ${successCount} successful, ${failureCount} failed`)
+  return { success: successCount, failed: failureCount };
+}
+
 serve(async (req) => {
   console.log('=== CSV IMPORT FUNCTION START ===')
   console.log('Method:', req.method)
@@ -63,8 +151,6 @@ serve(async (req) => {
       )
     }
 
-    console.log(`Starting import of ${flights.length} flights`)
-
     // Create Supabase client using service role key
     const supabaseClient = createClient(
       Deno.env.get('SUPABASE_URL') ?? '',
@@ -87,91 +173,19 @@ serve(async (req) => {
       }
     }
 
-    let successCount = 0;
-    let failureCount = 0;
-    const batchSize = 50;
+    // Start the background import process
+    console.log('Starting background import process...')
+    EdgeRuntime.waitUntil(processFlightImport(flights, userId, supabaseClient))
 
-    // Process flights in batches
-    for (let i = 0; i < flights.length; i += batchSize) {
-      const batch = flights.slice(i, i + batchSize);
-      console.log(`Processing batch ${Math.floor(i / batchSize) + 1}/${Math.ceil(flights.length / batchSize)} with ${batch.length} flights`)
-
-      const flightEntries = batch.map((flight, index) => {
-        try {
-          const entry = {
-            user_id: userId,
-            date: flight.date,
-            aircraft_registration: flight.aircraft_registration,
-            aircraft_type: flight.aircraft_type,
-            departure_airport: flight.departure_airport,
-            arrival_airport: flight.arrival_airport,
-            total_time: Number(flight.total_time) || 0,
-            pic_time: Number(flight.pic_time) || 0,
-            cross_country_time: Number(flight.cross_country_time) || 0,
-            night_time: Number(flight.night_time) || 0,
-            instrument_time: Number(flight.instrument_time) || 0,
-            approaches: flight.approaches?.toString() || '0',
-            landings: Number(flight.landings) || 0,
-            sic_time: Number(flight.sic_time) || 0,
-            solo_time: Number(flight.solo_time) || 0,
-            day_takeoffs: Number(flight.day_landings) || 0,
-            day_landings: Number(flight.day_landings) || 0,
-            night_takeoffs: Number(flight.night_landings) || 0,
-            night_landings: Number(flight.night_landings) || 0,
-            actual_instrument: Number(flight.actual_instrument) || 0,
-            simulated_instrument: Number(flight.simulated_instrument) || 0,
-            holds: Number(flight.holds) || 0,
-            dual_given: Number(flight.dual_given) || 0,
-            dual_received: Number(flight.dual_received) || 0,
-            simulated_flight: 0,
-            ground_training: 0,
-            route: flight.route || null,
-            remarks: flight.remarks || null,
-            start_time: flight.start_time || null,
-            end_time: flight.end_time || null,
-          };
-
-          // Validate required fields
-          if (!entry.date || !entry.aircraft_registration || !entry.aircraft_type || 
-              !entry.departure_airport || !entry.arrival_airport) {
-            throw new Error(`Flight ${i + index + 1}: Missing required fields`)
-          }
-
-          return entry;
-        } catch (error) {
-          console.error(`Error processing flight ${i + index + 1}:`, error)
-          throw error
-        }
-      });
-
-      try {
-        console.log(`Inserting batch of ${flightEntries.length} flights`)
-        
-        const { data, error } = await supabaseClient
-          .from('flight_entries')
-          .insert(flightEntries)
-
-        if (error) {
-          console.error('Database insert error:', error)
-          failureCount += batch.length;
-        } else {
-          console.log(`Successfully inserted ${batch.length} flights`)
-          successCount += batch.length;
-        }
-      } catch (batchError) {
-        console.error('Batch processing error:', batchError)
-        failureCount += batch.length;
-      }
-    }
-
+    // Return immediate response
     const result = {
-      success: successCount,
-      failed: failureCount,
-      message: `Import completed: ${successCount} flights imported successfully${failureCount > 0 ? `, ${failureCount} failed` : ''}`
+      success: 0, // Will be updated in background
+      failed: 0,  // Will be updated in background
+      message: `Import started for ${flights.length} flights. This will continue in the background.`
     };
 
-    console.log('Import completed:', result)
-    console.log('=== CSV IMPORT FUNCTION END ===')
+    console.log('Returning immediate response:', result)
+    console.log('=== CSV IMPORT FUNCTION END (background processing continues) ===')
 
     return new Response(
       JSON.stringify(result),
