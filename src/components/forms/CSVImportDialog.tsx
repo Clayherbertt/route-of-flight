@@ -325,7 +325,18 @@ export function CSVImportDialog({ open, onOpenChange, onImportComplete }: CSVImp
     // Validate data in each row
     csvData.forEach((row, index) => {
       fieldMappings.forEach(mapping => {
-        const value = row[csvHeaders.indexOf(mapping.csvColumn)]?.trim();
+        // Handle both object-based data (ForeFlight) and array-based data (standard CSV)
+        let value: string;
+        if (isForeFlight) {
+          // ForeFlight rows are objects
+          value = (row as Record<string, string>)[mapping.csvColumn];
+        } else {
+          // Standard CSV rows are arrays
+          value = (row as unknown as string[])[csvHeaders.indexOf(mapping.csvColumn)];
+        }
+        
+        // Clean up the value
+        value = value?.trim?.() || '';
         
         if (DATABASE_FIELDS.find(f => f.key === mapping.dbField)?.required && !value) {
           errors.push({
