@@ -6,7 +6,9 @@ import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
-import { Plus, Search, Filter, Download, Plane, Upload } from "lucide-react";
+import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from "@/components/ui/alert-dialog";
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
+import { Plus, Search, Filter, Download, Plane, Upload, MoreHorizontal, Edit, Trash2 } from "lucide-react";
 import { useState, useEffect } from "react";
 import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
@@ -58,6 +60,7 @@ const Logbook = () => {
   const [showAddFlightDialog, setShowAddFlightDialog] = useState(false);
   const [showCSVImportDialog, setShowCSVImportDialog] = useState(false);
   const [editingFlight, setEditingFlight] = useState<FlightEntry | null>(null);
+  const [deletingFlight, setDeletingFlight] = useState<FlightEntry | null>(null);
 
   // Redirect to sign in if not authenticated
   useEffect(() => {
@@ -108,6 +111,38 @@ const Logbook = () => {
     setShowAddFlightDialog(open);
     if (!open) {
       setEditingFlight(null);
+    }
+  };
+
+  const handleDeleteFlight = async () => {
+    if (!deletingFlight) return;
+
+    try {
+      const { error } = await supabase
+        .from('flight_entries')
+        .delete()
+        .eq('id', deletingFlight.id);
+
+      if (error) {
+        throw error;
+      }
+
+      toast({
+        title: "Flight deleted",
+        description: "Flight entry has been successfully deleted.",
+      });
+
+      // Refresh the flights list
+      fetchFlights();
+    } catch (error) {
+      console.error('Error deleting flight:', error);
+      toast({
+        title: "Error",
+        description: "Failed to delete flight entry. Please try again.",
+        variant: "destructive",
+      });
+    } finally {
+      setDeletingFlight(null);
     }
   };
   
@@ -331,16 +366,13 @@ const Logbook = () => {
                     <TableHead>Approaches</TableHead>
                     <TableHead>Landings</TableHead>
                     <TableHead>Remarks</TableHead>
+                    <TableHead className="w-[50px]">Actions</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
                   {flights.length > 0 ? (
                     flights.map((flight) => (
-                      <TableRow 
-                        key={flight.id} 
-                        className="hover:bg-muted/50 cursor-pointer"
-                        onClick={() => handleEditFlight(flight)}
-                      >
+                      <TableRow key={flight.id} className="hover:bg-muted/50">
                         <TableCell className="font-medium">{flight.date}</TableCell>
                         <TableCell>
                           <Badge variant="outline">{flight.aircraft_registration}</Badge>
@@ -359,11 +391,33 @@ const Logbook = () => {
                         <TableCell>{flight.approaches}</TableCell>
                         <TableCell>{flight.landings}</TableCell>
                         <TableCell className="max-w-xs truncate">{flight.remarks || '-'}</TableCell>
+                        <TableCell>
+                          <DropdownMenu>
+                            <DropdownMenuTrigger asChild>
+                              <Button variant="ghost" size="sm" className="h-8 w-8 p-0">
+                                <MoreHorizontal className="h-4 w-4" />
+                              </Button>
+                            </DropdownMenuTrigger>
+                            <DropdownMenuContent align="end">
+                              <DropdownMenuItem onClick={() => handleEditFlight(flight)}>
+                                <Edit className="h-4 w-4 mr-2" />
+                                Edit
+                              </DropdownMenuItem>
+                              <DropdownMenuItem 
+                                onClick={() => setDeletingFlight(flight)}
+                                className="text-destructive focus:text-destructive"
+                              >
+                                <Trash2 className="h-4 w-4 mr-2" />
+                                Delete
+                              </DropdownMenuItem>
+                            </DropdownMenuContent>
+                          </DropdownMenu>
+                        </TableCell>
                       </TableRow>
                     ))
                   ) : (
                     <TableRow>
-                      <TableCell colSpan={12} className="h-32 text-center">
+                      <TableCell colSpan={13} className="h-32 text-center">
                         <div className="flex flex-col items-center justify-center text-muted-foreground">
                           <Plane className="h-8 w-8 mb-2 opacity-50" />
                           <p className="text-lg font-medium">No flights recorded yet</p>
@@ -391,6 +445,30 @@ const Logbook = () => {
         onOpenChange={setShowCSVImportDialog}
         onImportComplete={fetchFlights}
       />
+
+      <AlertDialog open={!!deletingFlight} onOpenChange={() => setDeletingFlight(null)}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Delete Flight Entry</AlertDialogTitle>
+            <AlertDialogDescription>
+              Are you sure you want to delete this flight entry? This action cannot be undone.
+              {deletingFlight && (
+                <div className="mt-2 p-2 bg-muted rounded text-sm">
+                  <strong>Date:</strong> {deletingFlight.date}<br />
+                  <strong>Aircraft:</strong> {deletingFlight.aircraft_registration}<br />
+                  <strong>Route:</strong> {deletingFlight.departure_airport} → {deletingFlight.arrival_airport}
+                </div>
+              )}
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogAction onClick={handleDeleteFlight} className="bg-destructive hover:bg-destructive/90">
+              Delete
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 };
