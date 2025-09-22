@@ -177,11 +177,35 @@ const Logbook = () => {
     }
   };
   
-  // Calculate totals from actual flight data with better null handling
-  const totalHours = flights.reduce((sum, flight) => {
-    const time = Number(flight.total_time) || 0;
-    return sum + time;
+  // Calculate totals from actual flight data with comprehensive debugging
+  console.log('DEBUG: Calculating totals for', flights.length, 'flights');
+  
+  // Debug first few flights to see their data structure
+  const firstFiveFlights = flights.slice(0, 5).map(flight => ({
+    date: flight.date,
+    total_time: flight.total_time,
+    parsed: Number(flight.total_time) || 0
+  }));
+  console.log('DEBUG: First 5 flights total_time values:', firstFiveFlights);
+  
+  const totalHours = flights.reduce((sum, flight, index) => {
+    const originalValue = flight.total_time;
+    const parsedValue = Number(flight.total_time) || 0;
+    const newSum = sum + parsedValue;
+    
+    // Debug first few flights
+    if (index < 5) {
+      console.log(`DEBUG: Flight ${index + 1}: ${originalValue} -> ${parsedValue}, running sum: ${newSum}`);
+    }
+    
+    return newSum;
   }, 0);
+  
+  console.log('DEBUG: Final total hours calculated:', totalHours);
+  
+  // Manual verification - let's also check if we can sum the first 5 manually
+  const manualSum = flights.slice(0, 5).reduce((sum, flight) => sum + (Number(flight.total_time) || 0), 0);
+  console.log('DEBUG: Manual verification - sum of first 5:', manualSum);
   const totalPIC = flights.reduce((sum, flight) => {
     const time = Number(flight.pic_time) || 0;
     return sum + time;
