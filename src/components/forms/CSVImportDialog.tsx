@@ -441,7 +441,7 @@ export function CSVImportDialog({ open, onOpenChange, onImportComplete }: CSVImp
   };
 
   const startImport = async () => {
-    if (!user) {
+    if (!user || !session) {
       toast({
         title: "Authentication required",
         description: "You must be logged in to import flights. Please sign in and try again.",
@@ -451,7 +451,7 @@ export function CSVImportDialog({ open, onOpenChange, onImportComplete }: CSVImp
     }
 
     console.log('Starting import with user:', user.id);
-    console.log('User session present:', !!session);
+    console.log('Session access token present:', !!session.access_token);
     
     setStep('importing');
     setImportProgress(0);
@@ -507,11 +507,16 @@ export function CSVImportDialog({ open, onOpenChange, onImportComplete }: CSVImp
       console.log('About to call edge function with data:', { 
         flights: mappedData.slice(0, 2),
         userLoggedIn: !!user,
-        sessionExists: !!session 
+        sessionExists: !!session,
+        accessToken: session.access_token ? 'present' : 'missing'
       });
       
+      // Call edge function with explicit authorization header
       const { data, error } = await supabase.functions.invoke('import-csv-flights', {
-        body: { flights: mappedData }
+        body: { flights: mappedData },
+        headers: {
+          Authorization: `Bearer ${session.access_token}`
+        }
       });
 
       console.log('Edge function response:', { data, error });

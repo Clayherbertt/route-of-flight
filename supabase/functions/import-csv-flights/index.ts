@@ -221,6 +221,18 @@ serve(async (req) => {
     
     console.log('Supabase client created successfully')
 
+    // Validate authentication header
+    if (!authHeader || !authHeader.startsWith('Bearer ')) {
+      console.error('Missing or invalid Authorization header')
+      return new Response(
+        JSON.stringify({ error: 'Missing or invalid authorization token. Please sign in and try again.', success: 0, failed: flights.length }),
+        { headers: { ...corsHeaders, 'Content-Type': 'application/json' }, status: 401 }
+      )
+    }
+
+    const jwt = authHeader.replace('Bearer ', '')
+    console.log('JWT token received, length:', jwt.length)
+    
     // Create authenticated client with the user's token
     const authenticatedClient = createClient(
       Deno.env.get('SUPABASE_URL') ?? '',
@@ -228,26 +240,31 @@ serve(async (req) => {
       {
         global: {
           headers: {
-            Authorization: authHeader || ''
+            Authorization: authHeader
           }
         }
       }
     )
     
-    // Get the authenticated user
+    // Get the authenticated user - this validates the JWT and extracts user info
     console.log('Getting authenticated user...')
-    const { data: { user }, error: userError } = await authenticatedClient.auth.getUser()
+    const { data: { user }, error: userError } = await authenticatedClient.auth.getUser(jwt)
     
     if (!user || userError) {
       console.error('Authentication failed:', userError)
       return new Response(
-        JSON.stringify({ error: 'User authentication failed. Please sign in and try again.', success: 0, failed: flights.length }),
+        JSON.stringify({ 
+          error: 'User authentication failed. Please sign out and sign in again.', 
+          details: userError?.message,
+          success: 0, 
+          failed: flights.length 
+        }),
         { headers: { ...corsHeaders, 'Content-Type': 'application/json' }, status: 401 }
       )
     }
     
     const userId = user.id
-    console.log('Authenticated user ID:', userId)
+    console.log('Authenticated user ID:', userId, 'Email:', user.email)
 
     // Process flights synchronously to provide accurate results
     console.log('Starting flight import process...')
