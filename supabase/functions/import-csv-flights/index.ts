@@ -244,30 +244,13 @@ serve(async (req) => {
       aircraft_type: 'TEST',
       departure_airport: 'TEST',
       arrival_airport: 'TEST',
-      total_time: 1.0,
-      pic_time: 0.0,
-      cross_country_time: 0.0,
-      night_time: 0.0,
-      instrument_time: 0.0,
+      total_time: 1,
+      pic_time: 0,
+      cross_country_time: 0,
+      night_time: 0,
+      instrument_time: 0,
       approaches: '0',
-      landings: 0,
-      sic_time: 0.0,
-      solo_time: 0.0,
-      day_takeoffs: 0,
-      day_landings: 0,
-      night_takeoffs: 0,
-      night_landings: 0,
-      actual_instrument: 0.0,
-      simulated_instrument: 0.0,
-      holds: 0,
-      dual_given: 0.0,
-      dual_received: 0.0,
-      simulated_flight: 0.0,
-      ground_training: 0.0,
-      route: null,
-      remarks: null,
-      start_time: null,
-      end_time: null,
+      landings: 0
     };
     
     const { data: testResult, error: testError } = await supabaseClient
@@ -275,9 +258,9 @@ serve(async (req) => {
       .insert([testFlight])
     
     if (testError) {
-      console.error('Test insert failed:', testError)
+      console.error('Test insert failed:', JSON.stringify(testError))
       return new Response(
-        JSON.stringify({ error: `Test insert failed: ${testError.message}`, success: 0, failed: flights.length }),
+        JSON.stringify({ error: `Database error: ${testError.message} - Code: ${testError.code}`, success: 0, failed: flights.length }),
         { headers: { ...corsHeaders, 'Content-Type': 'application/json' }, status: 500 }
       )
     } else {
