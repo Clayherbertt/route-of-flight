@@ -177,14 +177,32 @@ const Logbook = () => {
     }
   };
   
-  // Calculate totals from actual flight data
-  const totalHours = flights.reduce((sum, flight) => sum + Number(flight.total_time), 0);
-  const totalPIC = flights.reduce((sum, flight) => sum + Number(flight.pic_time), 0);
-  const totalXC = flights.reduce((sum, flight) => sum + Number(flight.cross_country_time), 0);
-  const totalNight = flights.reduce((sum, flight) => sum + Number(flight.night_time), 0);
-  const totalInstrument = flights.reduce((sum, flight) => 
-    sum + Number(flight.actual_instrument || 0) + Number(flight.simulated_instrument || 0), 0);
-  const totalSIC = flights.reduce((sum, flight) => sum + Number(flight.sic_time || 0), 0);
+  // Calculate totals from actual flight data with better null handling
+  const totalHours = flights.reduce((sum, flight) => {
+    const time = Number(flight.total_time) || 0;
+    return sum + time;
+  }, 0);
+  const totalPIC = flights.reduce((sum, flight) => {
+    const time = Number(flight.pic_time) || 0;
+    return sum + time;
+  }, 0);
+  const totalXC = flights.reduce((sum, flight) => {
+    const time = Number(flight.cross_country_time) || 0;
+    return sum + time;
+  }, 0);
+  const totalNight = flights.reduce((sum, flight) => {
+    const time = Number(flight.night_time) || 0;
+    return sum + time;
+  }, 0);
+  const totalInstrument = flights.reduce((sum, flight) => {
+    const actual = Number(flight.actual_instrument) || 0;
+    const simulated = Number(flight.simulated_instrument) || 0;
+    return sum + actual + simulated;
+  }, 0);
+  const totalSIC = flights.reduce((sum, flight) => {
+    const time = Number(flight.sic_time) || 0;
+    return sum + time;
+  }, 0);
   
   // Multi-Engine time (assuming aircraft with "twin", "multi", numbers in type, or specific models)
   const totalMultiEngine = flights.reduce((sum, flight) => {
@@ -200,7 +218,8 @@ const Logbook = () => {
                          aircraftType.includes('421') ||
                          aircraftType.includes('340') ||
                          /\d{3}/.test(aircraftType); // Contains 3-digit numbers (often jets/turboprops)
-    return isMultiEngine ? sum + Number(flight.total_time) : sum;
+    const time = Number(flight.total_time) || 0;
+    return isMultiEngine ? sum + time : sum;
   }, 0);
   
   // PIC Turbine time (assuming turbine aircraft based on type)
@@ -217,7 +236,8 @@ const Logbook = () => {
                      aircraftType.includes('phenom') ||
                      aircraftType.includes('embraer') ||
                      /\d{3}/.test(aircraftType); // Contains 3-digit numbers (often jets)
-    return isTurbine ? sum + Number(flight.pic_time) : sum;
+    const time = Number(flight.pic_time) || 0;
+    return isTurbine ? sum + time : sum;
   }, 0);
 
   // Show loading state
