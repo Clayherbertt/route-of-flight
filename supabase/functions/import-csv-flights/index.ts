@@ -127,13 +127,6 @@ async function processFlightImport(flights: FlightEntry[], userId: string, supab
         if (!entry.arrival_airport || entry.arrival_airport.trim() === '') {
           entry.arrival_airport = 'UNKN';
         }
-        
-        if (missingFields.length > 0) {
-          console.log(`Skipping flight: Missing ${missingFields.join(', ')} - ${entry.date || 'no date'} ${entry.aircraft_registration || 'no tail'}`)
-          failureCount++;
-          continue;
-        }
-
         entries.push(entry);
       }
 
