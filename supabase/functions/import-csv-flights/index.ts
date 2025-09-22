@@ -66,15 +66,15 @@ async function processFlightImport(flights: FlightEntry[], userId: string, supab
       const entries = [];
       for (const flight of batch) {
         // Log the flight data for debugging
-        console.log(`Processing flight: ${JSON.stringify(flight)}`)
+        console.log(`Processing flight: date=${flight.date}, reg=${flight.aircraft_registration}`)
         
         const entry = {
           user_id: userId,
           date: flight.date,
-          aircraft_registration: flight.aircraft_registration?.toString().trim() || '',
-          aircraft_type: flight.aircraft_type?.toString().trim() || '',
-          departure_airport: flight.departure_airport?.toString().trim() || '',
-          arrival_airport: flight.arrival_airport?.toString().trim() || '',
+          aircraft_registration: flight.aircraft_registration?.toString().trim() || 'UNKNOWN',
+          aircraft_type: flight.aircraft_type?.toString().trim() || 'UNKNOWN',
+          departure_airport: flight.departure_airport?.toString().trim() || 'UNKN',
+          arrival_airport: flight.arrival_airport?.toString().trim() || 'UNKN',
           total_time: parseNumericField(flight.total_time, 'total_time'),
           pic_time: parseNumericField(flight.pic_time, 'pic_time'),
           cross_country_time: parseNumericField(flight.cross_country_time, 'cross_country_time'),
@@ -84,9 +84,9 @@ async function processFlightImport(flights: FlightEntry[], userId: string, supab
           landings: parseNumericField(flight.landings, 'landings'),
           sic_time: parseNumericField(flight.sic_time, 'sic_time'),
           solo_time: parseNumericField(flight.solo_time, 'solo_time'),
-          day_takeoffs: parseNumericField(flight.day_landings, 'day_takeoffs'), // Note: using day_landings for takeoffs
+          day_takeoffs: parseNumericField(flight.day_takeoffs, 'day_takeoffs'), // Fixed: use correct field
           day_landings: parseNumericField(flight.day_landings, 'day_landings'),
-          night_takeoffs: parseNumericField(flight.night_landings, 'night_takeoffs'), // Note: using night_landings for takeoffs  
+          night_takeoffs: parseNumericField(flight.night_takeoffs, 'night_takeoffs'), // Fixed: use correct field
           night_landings: parseNumericField(flight.night_landings, 'night_landings'),
           actual_instrument: parseNumericField(flight.actual_instrument, 'actual_instrument'),
           simulated_instrument: parseNumericField(flight.simulated_instrument, 'simulated_instrument'),
@@ -101,32 +101,14 @@ async function processFlightImport(flights: FlightEntry[], userId: string, supab
           end_time: flight.end_time || null,
         };
 
-        // Validate required fields with better logging (relaxed validation)
-        const missingFields = [];
-        console.log(`Validating entry: date=${entry.date}, reg=${entry.aircraft_registration}, type=${entry.aircraft_type}, dep=${entry.departure_airport}, arr=${entry.arrival_airport}`)
-        
-        // Only require date and total_time - make other fields optional for now
-        if (!entry.date || entry.date === '') missingFields.push('date');
-        
-        if (missingFields.length > 0) {
-          console.log(`Skipping flight: Missing ${missingFields.join(', ')} - ${entry.date || 'no date'} ${entry.aircraft_registration || 'no tail'}`)
+        // ONLY skip if absolutely no date - everything else gets defaults
+        if (!entry.date || entry.date === '' || entry.date === 'null' || entry.date === 'undefined') {
+          console.log(`Skipping flight: No date provided`)
           failureCount++;
           continue;
         }
 
-        // Set default values for empty required fields
-        if (!entry.aircraft_registration || entry.aircraft_registration.trim() === '') {
-          entry.aircraft_registration = 'UNKNOWN';
-        }
-        if (!entry.aircraft_type || entry.aircraft_type.trim() === '') {
-          entry.aircraft_type = 'UNKNOWN';
-        }
-        if (!entry.departure_airport || entry.departure_airport.trim() === '') {
-          entry.departure_airport = 'UNKN';
-        }
-        if (!entry.arrival_airport || entry.arrival_airport.trim() === '') {
-          entry.arrival_airport = 'UNKN';
-        }
+        // Always add the flight - don't do additional validation
         entries.push(entry);
       }
 
@@ -145,8 +127,32 @@ async function processFlightImport(flights: FlightEntry[], userId: string, supab
         if (error) {
           console.error(`Batch insert failed:`, error.message)
           console.error(`Full error details:`, JSON.stringify(error, null, 2))
-          console.error(`Failed entries sample:`, JSON.stringify(entries[0], null, 2))
-          failureCount += entries.length;
+          
+          // Try individual inserts to see which specific records are failing
+          console.log(`Attempting individual inserts for ${entries.length} entries`)
+          let individualSuccessCount = 0;
+          for (const singleEntry of entries) {
+            try {
+              const { error: singleError } = await supabaseClient
+                .from('flight_entries')
+                .upsert([singleEntry], { 
+                  onConflict: 'user_id,date,aircraft_registration,departure_airport,arrival_airport',
+                  ignoreDuplicates: false 
+                })
+              
+              if (singleError) {
+                console.error(`Individual insert failed for flight ${singleEntry.date} ${singleEntry.aircraft_registration}:`, singleError.message)
+                failureCount++;
+              } else {
+                individualSuccessCount++;
+              }
+            } catch (e) {
+              console.error(`Exception during individual insert:`, e.message)
+              failureCount++;
+            }
+          }
+          successCount += individualSuccessCount;
+          console.log(`Individual inserts: ${individualSuccessCount} succeeded out of ${entries.length}`)
         } else {
           console.log(`Batch processed successfully: ${entries.length} flights`)
           successCount += entries.length;
