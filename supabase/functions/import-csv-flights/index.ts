@@ -221,50 +221,37 @@ serve(async (req) => {
     
     console.log('Supabase client created successfully')
 
-    // Extract user ID from JWT
-    let userId = 'd9f8d5cb-1e56-41f8-81a1-7c70e7d661f9'; // Fallback
+    // Extract user ID from JWT - improved parsing
+    let userId = null;
     
     if (authHeader) {
       try {
         const jwt = authHeader.replace('Bearer ', '')
-        const payload = JSON.parse(atob(jwt.split('.')[1]))
-        userId = payload.sub
-        console.log('Extracted user ID from JWT:', userId)
+        const parts = jwt.split('.')
+        if (parts.length === 3) {
+          const payload = JSON.parse(atob(parts[1]))
+          userId = payload.sub || payload.user_id
+          console.log('Extracted user ID from JWT:', userId)
+        }
       } catch (jwtError) {
-        console.warn('Could not parse JWT, using fallback user ID')
+        console.error('Could not parse JWT:', jwtError.message)
       }
     }
 
-    // Test simple insert first
-    console.log('Testing simple flight insert...')
-    const testFlight = {
-      user_id: userId,
-      date: '2025-09-01',
-      aircraft_registration: 'TEST',
-      aircraft_type: 'TEST',
-      departure_airport: 'TEST',
-      arrival_airport: 'TEST',
-      total_time: 1,
-      pic_time: 0,
-      cross_country_time: 0,
-      night_time: 0,
-      instrument_time: 0,
-      approaches: '0',
-      landings: 0
-    };
-    
-    const { data: testResult, error: testError } = await supabaseClient
-      .from('flight_entries')
-      .insert([testFlight])
-    
-    if (testError) {
-      console.error('Test insert failed:', JSON.stringify(testError))
-      return new Response(
-        JSON.stringify({ error: `Database error: ${testError.message} - Code: ${testError.code}`, success: 0, failed: flights.length }),
-        { headers: { ...corsHeaders, 'Content-Type': 'application/json' }, status: 500 }
-      )
-    } else {
-      console.log('Test insert successful, proceeding with bulk import')
+    // Fallback - get user from authenticated request using service role
+    if (!userId) {
+      console.log('No user ID from JWT, trying to get authenticated user...')
+      const { data: { user }, error: userError } = await supabaseClient.auth.getUser(authHeader?.replace('Bearer ', ''))
+      if (user && !userError) {
+        userId = user.id
+        console.log('Got user ID from auth.getUser:', userId)
+      } else {
+        console.error('Failed to get user:', userError)
+        return new Response(
+          JSON.stringify({ error: 'User authentication failed. Please sign in and try again.', success: 0, failed: flights.length }),
+          { headers: { ...corsHeaders, 'Content-Type': 'application/json' }, status: 401 }
+        )
+      }
     }
 
     // Process flights synchronously to provide accurate results
