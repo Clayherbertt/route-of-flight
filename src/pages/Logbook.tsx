@@ -177,62 +177,8 @@ const Logbook = () => {
     }
   };
   
-  // Comprehensive debugging to identify total time calculation issues
-  console.log('DEBUG: Starting flight totals calculation');
-  console.log('DEBUG: Number of flights loaded:', flights.length);
-  
-  // Check for flights with invalid total_time values
-  const invalidFlights = flights.filter(flight => 
-    flight.total_time === null || 
-    flight.total_time === undefined || 
-    isNaN(Number(flight.total_time))
-  );
-  console.log('DEBUG: Flights with invalid total_time:', invalidFlights.length);
-  if (invalidFlights.length > 0) {
-    console.log('DEBUG: First 3 invalid flights:', invalidFlights.slice(0, 3));
-  }
-  
-  // Check for flights with zero total_time
-  const zeroTimeFlights = flights.filter(flight => Number(flight.total_time) === 0);
-  console.log('DEBUG: Flights with zero total_time:', zeroTimeFlights.length);
-  
-  // Calculate total with detailed tracking
-  let runningTotal = 0;
-  let validFlightCount = 0;
-  const totalHours = flights.reduce((sum, flight, index) => {
-    const originalValue = flight.total_time;
-    const parsedValue = Number(flight.total_time) || 0;
-    
-    if (parsedValue > 0) {
-      validFlightCount++;
-      runningTotal += parsedValue;
-    }
-    
-    // Log every 100th flight for progress tracking
-    if (index % 100 === 0 && index > 0) {
-      console.log(`DEBUG: Progress at flight ${index}: running total = ${runningTotal.toFixed(1)}`);
-    }
-    
-    return sum + parsedValue;
-  }, 0);
-  
-  console.log('DEBUG: Final calculation results:');
-  console.log('- Total flights processed:', flights.length);
-  console.log('- Valid flights with time > 0:', validFlightCount);
-  console.log('- Invalid/null flights:', invalidFlights.length);
-  console.log('- Zero time flights:', zeroTimeFlights.length);
-  console.log('- Final total hours:', totalHours.toFixed(1));
-  console.log('- Expected total: 2125.3');
-  console.log('- Difference:', (2125.3 - totalHours).toFixed(1));
-  
-  // Double-check with a different calculation method
-  const doubleCheckTotal = flights
-    .map(f => Number(f.total_time) || 0)
-    .reduce((a, b) => a + b, 0);
-  console.log('DEBUG: Double-check calculation:', doubleCheckTotal.toFixed(1));
-  
-  // Check if we might be missing flights by querying for count
-  console.log('DEBUG: Fetching total flight count from database...');
+  // Calculate totals from flight data
+  const totalHours = flights.reduce((sum, flight) => sum + (Number(flight.total_time) || 0), 0);
   const totalPIC = flights.reduce((sum, flight) => {
     const time = Number(flight.pic_time) || 0;
     return sum + time;

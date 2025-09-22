@@ -41,19 +41,30 @@ async function processFlightImport(flights: FlightEntry[], userId: string, supab
   let successCount = 0;
   let failureCount = 0;
   let duplicateCount = 0;
+  let rejectedFlights: any[] = [];
   const batchSize = 10; // Much smaller batches to prevent timeouts
   
   // Parse numeric fields with better error handling
   const parseNumericField = (value: any, fieldName: string, defaultValue: number = 0): number => {
-    if (value === undefined || value === null || value === '' || value === 'null') {
+    if (value === undefined || value === null || value === '' || value === 'null' || value === 'undefined') {
       return defaultValue;
     }
-    const parsed = Number(value);
+    const parsed = parseFloat(value);
     if (isNaN(parsed)) {
       console.log(`Invalid ${fieldName} value "${value}", using ${defaultValue}`)
       return defaultValue;
     }
     return parsed;
+  };
+  
+  // Enhanced logging to track rejected flights
+  const logRejectedFlight = (flight: any, reason: string) => {
+    rejectedFlights.push({ flight, reason });
+    console.log(`REJECTED FLIGHT: ${reason}`, {
+      date: flight.date,
+      aircraft: flight.aircraft_registration,
+      total_time: flight.total_time
+    });
   };
   
   // Process flights in smaller batches
@@ -66,13 +77,20 @@ async function processFlightImport(flights: FlightEntry[], userId: string, supab
       const entries = [];
       for (const flight of batch) {
         // Log the flight data for debugging
-        console.log(`Processing flight: date=${flight.date}, reg=${flight.aircraft_registration}`)
+        console.log(`Processing flight: date=${flight.date}, reg=${flight.aircraft_registration}, total_time=${flight.total_time}`)
         
+        // Very lenient validation - only require date
+        if (!flight.date || flight.date === '' || flight.date === 'null' || flight.date === 'undefined') {
+          logRejectedFlight(flight, 'No date provided');
+          failureCount++;
+          continue;
+        }
+
         const entry = {
           user_id: userId,
           date: flight.date,
           aircraft_registration: flight.aircraft_registration?.toString().trim() || 'UNKNOWN',
-          aircraft_type: flight.aircraft_type?.toString().trim() || 'UNKNOWN',
+          aircraft_type: flight.aircraft_type?.toString().trim() || flight.aircraft_registration?.toString().trim() || 'UNKNOWN',
           departure_airport: flight.departure_airport?.toString().trim() || 'UNKN',
           arrival_airport: flight.arrival_airport?.toString().trim() || 'UNKN',
           total_time: parseNumericField(flight.total_time, 'total_time'),
@@ -84,31 +102,24 @@ async function processFlightImport(flights: FlightEntry[], userId: string, supab
           landings: parseNumericField(flight.landings, 'landings'),
           sic_time: parseNumericField(flight.sic_time, 'sic_time'),
           solo_time: parseNumericField(flight.solo_time, 'solo_time'),
-          day_takeoffs: parseNumericField(flight.day_takeoffs, 'day_takeoffs'), // Fixed: use correct field
+          day_takeoffs: parseNumericField(flight.day_takeoffs, 'day_takeoffs'),
           day_landings: parseNumericField(flight.day_landings, 'day_landings'),
-          night_takeoffs: parseNumericField(flight.night_takeoffs, 'night_takeoffs'), // Fixed: use correct field
+          night_takeoffs: parseNumericField(flight.night_takeoffs, 'night_takeoffs'),
           night_landings: parseNumericField(flight.night_landings, 'night_landings'),
           actual_instrument: parseNumericField(flight.actual_instrument, 'actual_instrument'),
           simulated_instrument: parseNumericField(flight.simulated_instrument, 'simulated_instrument'),
           holds: parseNumericField(flight.holds, 'holds'),
           dual_given: parseNumericField(flight.dual_given, 'dual_given'),
           dual_received: parseNumericField(flight.dual_received, 'dual_received'),
-          simulated_flight: 0,
-          ground_training: 0,
+          simulated_flight: parseNumericField(flight.simulated_flight, 'simulated_flight'),
+          ground_training: parseNumericField(flight.ground_training, 'ground_training'),
           route: flight.route?.toString() || null,
           remarks: flight.remarks?.toString() || null,
           start_time: flight.start_time || null,
           end_time: flight.end_time || null,
         };
 
-        // ONLY skip if absolutely no date - everything else gets defaults
-        if (!entry.date || entry.date === '' || entry.date === 'null' || entry.date === 'undefined') {
-          console.log(`Skipping flight: No date provided`)
-          failureCount++;
-          continue;
-        }
-
-        // Always add the flight - don't do additional validation
+        // Always add the flight - only skip if no date
         entries.push(entry);
       }
 
@@ -175,6 +186,27 @@ async function processFlightImport(flights: FlightEntry[], userId: string, supab
   console.log(`=== BACKGROUND IMPORT COMPLETED ===`)
   console.log(`Final results: ${successCount} processed, ${failureCount} failed`)
   
+  // Log detailed rejection analysis
+  if (rejectedFlights.length > 0) {
+    console.log(`=== REJECTED FLIGHTS ANALYSIS ===`)
+    console.log(`Total rejected: ${rejectedFlights.length}`)
+    
+    const rejectionReasons = rejectedFlights.reduce((acc, { reason }) => {
+      acc[reason] = (acc[reason] || 0) + 1;
+      return acc;
+    }, {} as Record<string, number>);
+    
+    console.log('Rejection reasons:', rejectionReasons);
+    
+    // Show sample rejected flights
+    console.log('Sample rejected flights:', rejectedFlights.slice(0, 5).map(({ flight, reason }) => ({
+      reason,
+      date: flight.date,
+      aircraft: flight.aircraft_registration,
+      total_time: flight.total_time
+    })));
+  }
+  
   // Query final totals to verify
   try {
     const { data: finalStats, error: statsError } = await supabaseClient
@@ -183,9 +215,16 @@ async function processFlightImport(flights: FlightEntry[], userId: string, supab
       .eq('user_id', userId)
     
     if (!statsError && finalStats) {
-      const totalFlightsNow = finalStats.length
-      const totalHoursNow = finalStats.reduce((sum, f) => sum + (parseFloat(f.total_time) || 0), 0)
+      const totalFlightsNow = finalStats.length;
+      const totalHoursNow = finalStats.reduce((sum, f) => sum + (parseFloat(f.total_time) || 0), 0);
       console.log(`Database now contains ${totalFlightsNow} flights with ${totalHoursNow.toFixed(1)} total hours`)
+      
+      // Calculate expected vs actual
+      const expectedTotal = flights.reduce((sum, f) => sum + (parseFloat(f.total_time) || 0), 0);
+      const difference = expectedTotal - totalHoursNow;
+      if (Math.abs(difference) > 0.1) {
+        console.log(`HOURS MISMATCH: Expected ${expectedTotal.toFixed(1)}, got ${totalHoursNow.toFixed(1)}, difference: ${difference.toFixed(1)}`);
+      }
     }
   } catch (e) {
     console.log(`Could not query final stats: ${e.message}`)

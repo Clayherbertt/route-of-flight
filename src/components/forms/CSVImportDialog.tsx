@@ -107,45 +107,93 @@ export function CSVImportDialog({ open, onOpenChange, onImportComplete }: CSVImp
     let flightRows: CSVRow[] = [];
     
     let currentSection = '';
-    let flightTableStartIndex = -1;
+    let headerRowFound = false;
+    
+    console.log('Parsing ForeFlight CSV with', allRows.length, 'total rows');
     
     for (let i = 0; i < allRows.length; i++) {
       const row = allRows[i];
-      const firstCell = row[0]?.toString().toLowerCase();
+      const firstCell = row[0]?.toString().trim();
       
-      if (firstCell === 'aircraft table') {
+      if (firstCell?.toLowerCase() === 'aircraft table') {
         currentSection = 'aircraft';
+        headerRowFound = false;
+        console.log('Found Aircraft Table at row', i);
         continue;
-      } else if (firstCell === 'flights table') {
+      } else if (firstCell?.toLowerCase() === 'flights table') {
         currentSection = 'flights';
-        flightTableStartIndex = i + 1;
+        headerRowFound = false;
+        console.log('Found Flights Table at row', i);
         continue;
       }
       
+      // Parse aircraft data
       if (currentSection === 'aircraft' && row.length >= 5 && row[0] && row[0] !== 'AircraftID') {
-        const aircraftId = row[0];
-        const typeCode = row[1] || '';
-        const make = row[3] || '';
-        const model = row[4] || '';
+        const aircraftId = row[0]?.toString().trim();
+        const typeCode = row[1]?.toString().trim() || '';
+        const make = row[3]?.toString().trim() || '';
+        const model = row[4]?.toString().trim() || '';
         
-        if (aircraftId.trim()) {
+        if (aircraftId && aircraftId !== '') {
           aircraftLookupMap.set(aircraftId, {
             aircraftId,
-            typeCode,
-            make,
-            model
+            typeCode: typeCode || model || 'Unknown',
+            make: make || 'Unknown',
+            model: model || 'Unknown'
           });
         }
-      } else if (currentSection === 'flights' && i === flightTableStartIndex) {
-        flightHeaders = row.filter(Boolean);
-      } else if (currentSection === 'flights' && i > flightTableStartIndex && row.some(cell => cell?.trim())) {
-        const rowObj: CSVRow = {};
-        flightHeaders.forEach((header, index) => {
-          rowObj[header] = row[index] || '';
-        });
-        flightRows.push(rowObj);
+      } 
+      // Parse flight section
+      else if (currentSection === 'flights') {
+        // Look for the header row (first non-empty row with multiple columns)
+        if (!headerRowFound && row.length > 10 && firstCell && firstCell.toLowerCase() === 'date') {
+          flightHeaders = row.map(header => header?.toString().trim() || '');
+          headerRowFound = true;
+          console.log('Found flight headers at row', i, ':', flightHeaders.slice(0, 10));
+          continue;
+        }
+        
+        // Parse flight data rows
+        if (headerRowFound && firstCell) {
+          // Check if this looks like a date (YYYY-MM-DD format)
+          const datePattern = /^\d{4}-\d{2}-\d{2}$/;
+          if (datePattern.test(firstCell)) {
+            const rowObj: CSVRow = {};
+            flightHeaders.forEach((header, index) => {
+              if (header && row[index] !== undefined && row[index] !== null && row[index] !== '') {
+                rowObj[header] = row[index];
+              }
+            });
+            
+            // Add aircraft type if we have it in our lookup
+            const aircraftId = rowObj['AircraftID']?.toString().trim();
+            if (aircraftId && aircraftLookupMap.has(aircraftId)) {
+              rowObj['aircraft_type'] = aircraftLookupMap.get(aircraftId)?.typeCode || aircraftId;
+            } else if (aircraftId) {
+              rowObj['aircraft_type'] = aircraftId; // Fallback to aircraft ID
+            }
+            
+            flightRows.push(rowObj);
+            
+            // Log progress every 100 flights
+            if (flightRows.length % 100 === 0) {
+              console.log('Parsed', flightRows.length, 'flights so far');
+            }
+          }
+        }
       }
     }
+    
+    console.log('ForeFlight parsing completed:', {
+      aircraftCount: aircraftLookupMap.size,
+      flightCount: flightRows.length,
+      sampleFlightHeaders: flightHeaders.slice(0, 10),
+      sampleFlight: flightRows[0],
+      totalHoursInData: flightRows.reduce((sum, flight) => {
+        const totalTime = parseFloat(flight['TotalTime']?.toString() || '0') || 0;
+        return sum + totalTime;
+      }, 0).toFixed(1)
+    });
     
     setAircraftLookup(aircraftLookupMap);
     return { headers: flightHeaders, rows: flightRows, aircraftLookup: aircraftLookupMap };
@@ -211,7 +259,7 @@ export function CSVImportDialog({ open, onOpenChange, onImportComplete }: CSVImp
           let dbField = '';
           
           if (isForeFlight) {
-            // ForeFlight-specific mappings
+            // ForeFlight-specific mappings - comprehensive set
             if (lowerHeader === 'date') dbField = 'date';
             else if (lowerHeader === 'aircraftid') dbField = 'aircraft_registration';
             else if (lowerHeader === 'from') dbField = 'departure_airport';
@@ -230,8 +278,15 @@ export function CSVImportDialog({ open, onOpenChange, onImportComplete }: CSVImp
             else if (lowerHeader === 'alllandings') dbField = 'landings';
             else if (lowerHeader === 'daylandingsfullstop') dbField = 'day_landings';
             else if (lowerHeader === 'nightlandingsfullstop') dbField = 'night_landings';
+            else if (lowerHeader === 'daytakeoffs') dbField = 'day_takeoffs';
+            else if (lowerHeader === 'nighttakeoffs') dbField = 'night_takeoffs';
             else if (lowerHeader === 'route') dbField = 'route';
             else if (lowerHeader === 'pilotcomments') dbField = 'remarks';
+            else if (lowerHeader === 'timeout') dbField = 'start_time';
+            else if (lowerHeader === 'timein') dbField = 'end_time';
+            else if (lowerHeader === 'simulatedflight') dbField = 'simulated_flight';
+            else if (lowerHeader === 'groundtraining') dbField = 'ground_training';
+            else if (lowerHeader === 'ifr') dbField = 'instrument_time'; // Additional mapping
           } else {
             // Standard mappings - including specific logbook software column names
             if (lowerHeader === 'date') dbField = 'date';
