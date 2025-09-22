@@ -79,9 +79,33 @@ async function processFlightImport(flights: FlightEntry[], userId: string, supab
         // Log the flight data for debugging
         console.log(`Processing flight: date=${flight.date}, reg=${flight.aircraft_registration}, total_time=${flight.total_time}`)
         
-        // Very lenient validation - only require date
+        // Enhanced validation and logging for failed flights
         if (!flight.date || flight.date === '' || flight.date === 'null' || flight.date === 'undefined') {
-          logRejectedFlight(flight, 'No date provided');
+          logRejectedFlight(flight, 'Missing date');
+          failureCount++;
+          continue;
+        }
+
+        // Ensure all required fields have valid values
+        const aircraftReg = flight.aircraft_registration?.toString().trim();
+        const aircraftType = flight.aircraft_type?.toString().trim();
+        const depAirport = flight.departure_airport?.toString().trim();
+        const arrAirport = flight.arrival_airport?.toString().trim();
+
+        if (!aircraftReg || aircraftReg === '' || aircraftReg === 'null') {
+          logRejectedFlight(flight, 'Missing aircraft_registration');
+          failureCount++;
+          continue;
+        }
+
+        if (!depAirport || depAirport === '' || depAirport === 'null') {
+          logRejectedFlight(flight, 'Missing departure_airport');
+          failureCount++;
+          continue;
+        }
+
+        if (!arrAirport || arrAirport === '' || arrAirport === 'null') {
+          logRejectedFlight(flight, 'Missing arrival_airport');
           failureCount++;
           continue;
         }
@@ -89,16 +113,16 @@ async function processFlightImport(flights: FlightEntry[], userId: string, supab
         const entry = {
           user_id: userId,
           date: flight.date,
-          aircraft_registration: flight.aircraft_registration?.toString().trim() || 'UNKNOWN',
-          aircraft_type: flight.aircraft_type?.toString().trim() || flight.aircraft_registration?.toString().trim() || 'UNKNOWN',
-          departure_airport: flight.departure_airport?.toString().trim() || 'UNKN',
-          arrival_airport: flight.arrival_airport?.toString().trim() || 'UNKN',
+          aircraft_registration: aircraftReg,
+          aircraft_type: aircraftType || aircraftReg, // Fallback to registration if no type
+          departure_airport: depAirport,
+          arrival_airport: arrAirport,
           total_time: parseNumericField(flight.total_time, 'total_time'),
           pic_time: parseNumericField(flight.pic_time, 'pic_time'),
           cross_country_time: parseNumericField(flight.cross_country_time, 'cross_country_time'),
           night_time: parseNumericField(flight.night_time, 'night_time'),
           instrument_time: parseNumericField(flight.instrument_time, 'instrument_time'),
-          approaches: flight.approaches?.toString() || '0',
+          approaches: (flight.approaches?.toString() || '0').substring(0, 10), // Limit length
           landings: parseNumericField(flight.landings, 'landings'),
           sic_time: parseNumericField(flight.sic_time, 'sic_time'),
           solo_time: parseNumericField(flight.solo_time, 'solo_time'),
@@ -113,13 +137,12 @@ async function processFlightImport(flights: FlightEntry[], userId: string, supab
           dual_received: parseNumericField(flight.dual_received, 'dual_received'),
           simulated_flight: parseNumericField(flight.simulated_flight, 'simulated_flight'),
           ground_training: parseNumericField(flight.ground_training, 'ground_training'),
-          route: flight.route?.toString() || null,
-          remarks: flight.remarks?.toString() || null,
+          route: flight.route?.toString()?.substring(0, 255) || null, // Limit length
+          remarks: flight.remarks?.toString()?.substring(0, 1000) || null, // Limit length
           start_time: flight.start_time || null,
           end_time: flight.end_time || null,
         };
 
-        // Always add the flight - only skip if no date
         entries.push(entry);
       }
 
@@ -147,6 +170,8 @@ async function processFlightImport(flights: FlightEntry[], userId: string, supab
               
               if (singleError) {
                 console.error(`Individual insert failed for flight ${singleEntry.date} ${singleEntry.aircraft_registration}:`, singleError.message)
+                console.error(`Failed flight data:`, JSON.stringify(singleEntry, null, 2))
+                logRejectedFlight(singleEntry, `Database error: ${singleError.message}`);
                 failureCount++;
               } else {
                 individualSuccessCount++;

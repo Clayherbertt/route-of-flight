@@ -173,6 +173,20 @@ export function CSVImportDialog({ open, onOpenChange, onImportComplete }: CSVImp
               rowObj['aircraft_type'] = aircraftId; // Fallback to aircraft ID
             }
             
+            // Ensure required fields have values (ForeFlight sometimes has empty cells)
+            if (!rowObj['AircraftID'] || rowObj['AircraftID'].toString().trim() === '') {
+              console.log(`Skipping flight on ${firstCell}: Missing Aircraft ID`);
+              continue;
+            }
+            if (!rowObj['From'] || rowObj['From'].toString().trim() === '') {
+              console.log(`Skipping flight on ${firstCell}: Missing departure airport`);
+              continue;
+            }
+            if (!rowObj['To'] || rowObj['To'].toString().trim() === '') {
+              console.log(`Skipping flight on ${firstCell}: Missing arrival airport`);
+              continue;
+            }
+            
             flightRows.push(rowObj);
             
             // Log progress every 100 flights
