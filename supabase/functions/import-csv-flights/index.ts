@@ -64,6 +64,7 @@ async function processFlightImport(flights: FlightEntry[], userId: string, supab
     try {
       // Prepare batch entries
       const entries = [];
+      for (const flight of batch) {
         // Log the flight data for debugging
         console.log(`Processing flight: ${JSON.stringify(flight)}`)
         
