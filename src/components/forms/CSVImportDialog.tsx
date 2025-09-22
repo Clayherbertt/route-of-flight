@@ -233,8 +233,31 @@ export function CSVImportDialog({ open, onOpenChange, onImportComplete }: CSVImp
             else if (lowerHeader === 'route') dbField = 'route';
             else if (lowerHeader === 'pilotcomments') dbField = 'remarks';
           } else {
-            // Standard mappings
-            if (lowerHeader.includes('date')) dbField = 'date';
+            // Standard mappings - including specific logbook software column names
+            if (lowerHeader === 'date') dbField = 'date';
+            else if (lowerHeader === 'aircraftid') dbField = 'aircraft_registration';
+            else if (lowerHeader === 'from') dbField = 'departure_airport';
+            else if (lowerHeader === 'to') dbField = 'arrival_airport';
+            else if (lowerHeader === 'route') dbField = 'route';
+            else if (lowerHeader === 'totaltime') dbField = 'total_time';
+            else if (lowerHeader === 'pic') dbField = 'pic_time';
+            else if (lowerHeader === 'sic') dbField = 'sic_time';
+            else if (lowerHeader === 'night') dbField = 'night_time';
+            else if (lowerHeader === 'solo') dbField = 'solo_time';
+            else if (lowerHeader === 'crosscountry') dbField = 'cross_country_time';
+            else if (lowerHeader === 'actualinstrument') dbField = 'actual_instrument';
+            else if (lowerHeader === 'simulated') dbField = 'simulated_instrument';
+            else if (lowerHeader === 'simulatedinstrument') dbField = 'simulated_instrument';
+            else if (lowerHeader === 'dualgiven') dbField = 'dual_given';
+            else if (lowerHeader === 'dualreceived') dbField = 'dual_received';
+            else if (lowerHeader === 'holds') dbField = 'holds';
+            else if (lowerHeader === 'alllandings' || lowerHeader === 'alllandings') dbField = 'landings';
+            else if (lowerHeader === 'daylanding' || lowerHeader === 'daylandings') dbField = 'day_landings';
+            else if (lowerHeader === 'nightlanding' || lowerHeader === 'nightlandings') dbField = 'night_landings';
+            else if (lowerHeader === 'daytakeoff' || lowerHeader === 'daytakeoffs') dbField = 'day_takeoffs';
+            else if (lowerHeader === 'nighttakeoff' || lowerHeader === 'nighttakeoffs') dbField = 'night_takeoffs';
+            // Generic pattern matching for other formats
+            else if (lowerHeader.includes('date')) dbField = 'date';
             else if (lowerHeader.includes('aircraft') && (lowerHeader.includes('reg') || lowerHeader.includes('tail') || lowerHeader.includes('n-'))) dbField = 'aircraft_registration';
             else if (lowerHeader.includes('aircraft') && lowerHeader.includes('type')) dbField = 'aircraft_type';
             else if (lowerHeader.includes('type') && !lowerHeader.includes('aircraft')) dbField = 'aircraft_type';
