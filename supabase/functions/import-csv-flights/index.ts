@@ -121,9 +121,7 @@ async function processFlightImport(flights: FlightEntry[], userId: string, supab
         
         const { data, error } = await supabaseClient
           .from('flight_entries')
-          .upsert(entries, {
-            onConflict: 'user_id,date,aircraft_registration,departure_airport,arrival_airport'
-          })
+          .insert(entries)
 
         if (error) {
           console.error(`Batch insert failed:`, {
