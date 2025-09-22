@@ -61,6 +61,7 @@ const Logbook = () => {
   const [showCSVImportDialog, setShowCSVImportDialog] = useState(false);
   const [editingFlight, setEditingFlight] = useState<FlightEntry | null>(null);
   const [deletingFlight, setDeletingFlight] = useState<FlightEntry | null>(null);
+  const [showClearAllDialog, setShowClearAllDialog] = useState(false);
 
   // Redirect to sign in if not authenticated
   useEffect(() => {
@@ -145,6 +146,36 @@ const Logbook = () => {
       setDeletingFlight(null);
     }
   };
+
+  const handleClearAllFlights = async () => {
+    try {
+      const { error } = await supabase
+        .from('flight_entries')
+        .delete()
+        .eq('user_id', user?.id);
+
+      if (error) {
+        throw error;
+      }
+
+      toast({
+        title: "All flights cleared",
+        description: "All flight entries have been successfully deleted.",
+      });
+
+      // Refresh the flights list
+      fetchFlights();
+    } catch (error) {
+      console.error('Error clearing flights:', error);
+      toast({
+        title: "Error",
+        description: "Failed to clear flight entries. Please try again.",
+        variant: "destructive",
+      });
+    } finally {
+      setShowClearAllDialog(false);
+    }
+  };
   
   // Calculate totals from actual flight data
   const totalHours = flights.reduce((sum, flight) => sum + Number(flight.total_time), 0);
@@ -226,6 +257,10 @@ const Logbook = () => {
             <Button variant="outline" onClick={() => setShowCSVImportDialog(true)}>
               <Upload className="h-4 w-4 mr-2" />
               Import CSV
+            </Button>
+            <Button variant="outline" className="text-destructive border-destructive hover:bg-destructive hover:text-destructive-foreground" onClick={() => setShowClearAllDialog(true)}>
+              <Trash2 className="h-4 w-4 mr-2" />
+              Clear All
             </Button>
             <Button onClick={() => setShowAddFlightDialog(true)}>
               <Plus className="h-4 w-4 mr-2" />
@@ -466,6 +501,27 @@ const Logbook = () => {
             <AlertDialogCancel>Cancel</AlertDialogCancel>
             <AlertDialogAction onClick={handleDeleteFlight} className="bg-destructive hover:bg-destructive/90">
               Delete
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+
+      <AlertDialog open={showClearAllDialog} onOpenChange={setShowClearAllDialog}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Clear All Flight Entries</AlertDialogTitle>
+            <AlertDialogDescription>
+              Are you sure you want to delete ALL flight entries in your logbook? This action cannot be undone.
+              <div className="mt-2 p-2 bg-muted rounded text-sm">
+                <strong>Total flights to be deleted:</strong> {flights.length}<br />
+                <strong>Total flight time:</strong> {totalHours.toFixed(1)} hours
+              </div>
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogAction onClick={handleClearAllFlights} className="bg-destructive hover:bg-destructive/90">
+              Clear All Flights
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>
