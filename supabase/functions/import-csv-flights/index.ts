@@ -222,16 +222,12 @@ serve(async (req) => {
       }
     }
 
-    // Start the background import process
-    console.log('Starting background import process...')
-    EdgeRuntime.waitUntil(processFlightImport(flights, userId, supabaseClient))
-
-    // Return immediate response
-    const result = {
-      success: 0, // Will be updated in background
-      failed: 0,  // Will be updated in background
-      message: `Import started for ${flights.length} flights. Processing in background with improved error handling.`
-    };
+    // Process flights synchronously to provide accurate results
+    console.log('Starting flight import process...')
+    const result = await processFlightImport(flights, userId, supabaseClient)
+    
+    // Add message with actual results
+    result.message = `Import completed: ${result.success} flights imported successfully, ${result.failed} flights failed.`;
 
     console.log('Returning immediate response:', result)
     console.log('=== CSV IMPORT FUNCTION END (background processing continues) ===')
