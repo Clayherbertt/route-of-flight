@@ -101,15 +101,32 @@ async function processFlightImport(flights: FlightEntry[], userId: string, supab
           end_time: flight.end_time || null,
         };
 
-        // Validate required fields with better logging
+        // Validate required fields with better logging (relaxed validation)
         const missingFields = [];
         console.log(`Validating entry: date=${entry.date}, reg=${entry.aircraft_registration}, type=${entry.aircraft_type}, dep=${entry.departure_airport}, arr=${entry.arrival_airport}`)
         
+        // Only require date and total_time - make other fields optional for now
         if (!entry.date || entry.date === '') missingFields.push('date');
-        if (!entry.aircraft_registration || entry.aircraft_registration.trim() === '') missingFields.push('aircraft_registration');
-        if (!entry.aircraft_type || entry.aircraft_type.trim() === '') missingFields.push('aircraft_type');
-        if (!entry.departure_airport || entry.departure_airport.trim() === '') missingFields.push('departure_airport');
-        if (!entry.arrival_airport || entry.arrival_airport.trim() === '') missingFields.push('arrival_airport');
+        
+        if (missingFields.length > 0) {
+          console.log(`Skipping flight: Missing ${missingFields.join(', ')} - ${entry.date || 'no date'} ${entry.aircraft_registration || 'no tail'}`)
+          failureCount++;
+          continue;
+        }
+
+        // Set default values for empty required fields
+        if (!entry.aircraft_registration || entry.aircraft_registration.trim() === '') {
+          entry.aircraft_registration = 'UNKNOWN';
+        }
+        if (!entry.aircraft_type || entry.aircraft_type.trim() === '') {
+          entry.aircraft_type = 'UNKNOWN';
+        }
+        if (!entry.departure_airport || entry.departure_airport.trim() === '') {
+          entry.departure_airport = 'UNKN';
+        }
+        if (!entry.arrival_airport || entry.arrival_airport.trim() === '') {
+          entry.arrival_airport = 'UNKN';
+        }
         
         if (missingFields.length > 0) {
           console.log(`Skipping flight: Missing ${missingFields.join(', ')} - ${entry.date || 'no date'} ${entry.aircraft_registration || 'no tail'}`)
