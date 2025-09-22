@@ -221,38 +221,33 @@ serve(async (req) => {
     
     console.log('Supabase client created successfully')
 
-    // Extract user ID from JWT - improved parsing
-    let userId = null;
-    
-    if (authHeader) {
-      try {
-        const jwt = authHeader.replace('Bearer ', '')
-        const parts = jwt.split('.')
-        if (parts.length === 3) {
-          const payload = JSON.parse(atob(parts[1]))
-          userId = payload.sub || payload.user_id
-          console.log('Extracted user ID from JWT:', userId)
+    // Create authenticated client with the user's token
+    const authenticatedClient = createClient(
+      Deno.env.get('SUPABASE_URL') ?? '',
+      Deno.env.get('SUPABASE_ANON_KEY') ?? '',
+      {
+        global: {
+          headers: {
+            Authorization: authHeader || ''
+          }
         }
-      } catch (jwtError) {
-        console.error('Could not parse JWT:', jwtError.message)
       }
+    )
+    
+    // Get the authenticated user
+    console.log('Getting authenticated user...')
+    const { data: { user }, error: userError } = await authenticatedClient.auth.getUser()
+    
+    if (!user || userError) {
+      console.error('Authentication failed:', userError)
+      return new Response(
+        JSON.stringify({ error: 'User authentication failed. Please sign in and try again.', success: 0, failed: flights.length }),
+        { headers: { ...corsHeaders, 'Content-Type': 'application/json' }, status: 401 }
+      )
     }
-
-    // Fallback - get user from authenticated request using service role
-    if (!userId) {
-      console.log('No user ID from JWT, trying to get authenticated user...')
-      const { data: { user }, error: userError } = await supabaseClient.auth.getUser(authHeader?.replace('Bearer ', ''))
-      if (user && !userError) {
-        userId = user.id
-        console.log('Got user ID from auth.getUser:', userId)
-      } else {
-        console.error('Failed to get user:', userError)
-        return new Response(
-          JSON.stringify({ error: 'User authentication failed. Please sign in and try again.', success: 0, failed: flights.length }),
-          { headers: { ...corsHeaders, 'Content-Type': 'application/json' }, status: 401 }
-        )
-      }
-    }
+    
+    const userId = user.id
+    console.log('Authenticated user ID:', userId)
 
     // Process flights synchronously to provide accurate results
     console.log('Starting flight import process...')
