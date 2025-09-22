@@ -64,7 +64,9 @@ async function processFlightImport(flights: FlightEntry[], userId: string, supab
     try {
       // Prepare batch entries
       const entries = [];
-      for (const flight of batch) {
+        // Log the flight data for debugging
+        console.log(`Processing flight: ${JSON.stringify(flight)}`)
+        
         const entry = {
           user_id: userId,
           date: flight.date,
@@ -81,9 +83,9 @@ async function processFlightImport(flights: FlightEntry[], userId: string, supab
           landings: parseNumericField(flight.landings, 'landings'),
           sic_time: parseNumericField(flight.sic_time, 'sic_time'),
           solo_time: parseNumericField(flight.solo_time, 'solo_time'),
-          day_takeoffs: parseNumericField(flight.day_landings, 'day_takeoffs'),
+          day_takeoffs: parseNumericField(flight.day_landings, 'day_takeoffs'), // Note: using day_landings for takeoffs
           day_landings: parseNumericField(flight.day_landings, 'day_landings'),
-          night_takeoffs: parseNumericField(flight.night_landings, 'night_takeoffs'),
+          night_takeoffs: parseNumericField(flight.night_landings, 'night_takeoffs'), // Note: using night_landings for takeoffs  
           night_landings: parseNumericField(flight.night_landings, 'night_landings'),
           actual_instrument: parseNumericField(flight.actual_instrument, 'actual_instrument'),
           simulated_instrument: parseNumericField(flight.simulated_instrument, 'simulated_instrument'),
@@ -98,8 +100,10 @@ async function processFlightImport(flights: FlightEntry[], userId: string, supab
           end_time: flight.end_time || null,
         };
 
-        // Validate required fields
+        // Validate required fields with better logging
         const missingFields = [];
+        console.log(`Validating entry: date=${entry.date}, reg=${entry.aircraft_registration}, type=${entry.aircraft_type}, dep=${entry.departure_airport}, arr=${entry.arrival_airport}`)
+        
         if (!entry.date || entry.date === '') missingFields.push('date');
         if (!entry.aircraft_registration || entry.aircraft_registration.trim() === '') missingFields.push('aircraft_registration');
         if (!entry.aircraft_type || entry.aircraft_type.trim() === '') missingFields.push('aircraft_type');
