@@ -139,11 +139,9 @@ async function processFlightImport(flights: FlightEntry[], userId: string, supab
           .insert(entries)
 
         if (error) {
-          console.error(`Batch insert failed:`, {
-            message: error.message,
-            code: error.code,
-            details: error.details
-          })
+          console.error(`Batch insert failed:`, error.message)
+          console.error(`Full error details:`, JSON.stringify(error, null, 2))
+          console.error(`Failed entries sample:`, JSON.stringify(entries[0], null, 2))
           failureCount += entries.length;
         } else {
           console.log(`Batch processed successfully: ${entries.length} flights`)
@@ -235,6 +233,55 @@ serve(async (req) => {
       } catch (jwtError) {
         console.warn('Could not parse JWT, using fallback user ID')
       }
+    }
+
+    // Test simple insert first
+    console.log('Testing simple flight insert...')
+    const testFlight = {
+      user_id: userId,
+      date: '2025-09-01',
+      aircraft_registration: 'TEST',
+      aircraft_type: 'TEST',
+      departure_airport: 'TEST',
+      arrival_airport: 'TEST',
+      total_time: 1.0,
+      pic_time: 0.0,
+      cross_country_time: 0.0,
+      night_time: 0.0,
+      instrument_time: 0.0,
+      approaches: '0',
+      landings: 0,
+      sic_time: 0.0,
+      solo_time: 0.0,
+      day_takeoffs: 0,
+      day_landings: 0,
+      night_takeoffs: 0,
+      night_landings: 0,
+      actual_instrument: 0.0,
+      simulated_instrument: 0.0,
+      holds: 0,
+      dual_given: 0.0,
+      dual_received: 0.0,
+      simulated_flight: 0.0,
+      ground_training: 0.0,
+      route: null,
+      remarks: null,
+      start_time: null,
+      end_time: null,
+    };
+    
+    const { data: testResult, error: testError } = await supabaseClient
+      .from('flight_entries')
+      .insert([testFlight])
+    
+    if (testError) {
+      console.error('Test insert failed:', testError)
+      return new Response(
+        JSON.stringify({ error: `Test insert failed: ${testError.message}`, success: 0, failed: flights.length }),
+        { headers: { ...corsHeaders, 'Content-Type': 'application/json' }, status: 500 }
+      )
+    } else {
+      console.log('Test insert successful, proceeding with bulk import')
     }
 
     // Process flights synchronously to provide accurate results
