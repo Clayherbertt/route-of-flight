@@ -134,9 +134,13 @@ async function processFlightImport(flights: FlightEntry[], userId: string, supab
       if (entries.length > 0) {
         console.log(`Inserting ${entries.length} valid flights from batch`)
         
+        // Use upsert to handle duplicates gracefully - will update existing records
         const { data, error } = await supabaseClient
           .from('flight_entries')
-          .insert(entries)
+          .upsert(entries, { 
+            onConflict: 'user_id,date,aircraft_registration,departure_airport,arrival_airport',
+            ignoreDuplicates: false 
+          })
 
         if (error) {
           console.error(`Batch insert failed:`, error.message)
