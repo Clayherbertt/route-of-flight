@@ -153,15 +153,34 @@ export function CSVImportDialog({ open, onOpenChange, onImportComplete }: CSVImp
           continue;
         }
         
-        // Parse flight data rows
-        if (headerRowFound && firstCell) {
-          // Check if this looks like a date (YYYY-MM-DD format)
-          const datePattern = /^\d{4}-\d{2}-\d{2}$/;
-          if (datePattern.test(firstCell)) {
+        // Parse flight data rows - MORE PERMISSIVE APPROACH
+        if (headerRowFound && firstCell && row.length >= 5) {
+          // Check if this looks like a date - MUCH more permissive patterns
+          const datePatterns = [
+            /^\d{4}-\d{1,2}-\d{1,2}$/, // YYYY-MM-DD or YYYY-M-D
+            /^\d{1,2}\/\d{1,2}\/\d{4}$/, // MM/DD/YYYY or M/D/YYYY  
+            /^\d{1,2}-\d{1,2}-\d{4}$/, // MM-DD-YYYY or M-D-YYYY
+            /^\d{4}\/\d{1,2}\/\d{1,2}$/, // YYYY/MM/DD or YYYY/M/D
+          ];
+          
+          const looksLikeDate = datePatterns.some(pattern => pattern.test(firstCell)) || 
+                              firstCell.includes('2018') || 
+                              firstCell.includes('2019') || 
+                              firstCell.includes('2020') || 
+                              firstCell.includes('2021') || 
+                              firstCell.includes('2022') || 
+                              firstCell.includes('2023') || 
+                              firstCell.includes('2024') || 
+                              firstCell.includes('2025');
+          
+          if (looksLikeDate) {
             const rowObj: CSVRow = {};
             flightHeaders.forEach((header, index) => {
-              if (header && row[index] !== undefined && row[index] !== null && row[index] !== '') {
-                rowObj[header] = row[index];
+              if (header && row[index] !== undefined && row[index] !== null) {
+                const cellValue = row[index]?.toString().trim() || '';
+                if (cellValue !== '') {
+                  rowObj[header] = cellValue;
+                }
               }
             });
             
@@ -173,24 +192,44 @@ export function CSVImportDialog({ open, onOpenChange, onImportComplete }: CSVImp
               rowObj['aircraft_type'] = aircraftId; // Fallback to aircraft ID
             }
             
-            // Ensure required fields have values (ForeFlight sometimes has empty cells)
-            if (!rowObj['AircraftID'] || rowObj['AircraftID'].toString().trim() === '') {
-              console.log(`Skipping flight on ${firstCell}: Missing Aircraft ID`);
+            // MUCH MORE PERMISSIVE validation - only reject if absolutely unusable
+            const hasAircraftId = rowObj['AircraftID']?.toString().trim() !== '';
+            const hasDate = rowObj['Date']?.toString().trim() !== '';
+            const hasSomeTimeData = (
+              (rowObj['TotalTime'] && parseFloat(rowObj['TotalTime']) > 0) ||
+              (rowObj['PIC'] && parseFloat(rowObj['PIC']) > 0) ||
+              (rowObj['SIC'] && parseFloat(rowObj['SIC']) > 0) ||
+              (rowObj['DualReceived'] && parseFloat(rowObj['DualReceived']) > 0)
+            );
+            
+            // Only skip if missing absolutely essential data
+            if (!hasDate) {
+              console.log(`Skipping row ${i}: Missing date`);
               continue;
             }
-            if (!rowObj['From'] || rowObj['From'].toString().trim() === '') {
-              console.log(`Skipping flight on ${firstCell}: Missing departure airport`);
+            if (!hasAircraftId) {
+              console.log(`Skipping row ${i}: Missing aircraft ID`);
+              continue; 
+            }
+            if (!hasSomeTimeData) {
+              console.log(`Skipping row ${i}: No flight time data`);
               continue;
+            }
+            
+            // For missing airports, use fallback values
+            if (!rowObj['From'] || rowObj['From'].toString().trim() === '') {
+              rowObj['From'] = 'UNK'; // Use unknown airport code
+              console.log(`Flight ${firstCell}: Using fallback departure airport`);
             }
             if (!rowObj['To'] || rowObj['To'].toString().trim() === '') {
-              console.log(`Skipping flight on ${firstCell}: Missing arrival airport`);
-              continue;
+              rowObj['To'] = rowObj['From'] || 'UNK'; // Use departure or unknown
+              console.log(`Flight ${firstCell}: Using fallback arrival airport`);
             }
             
             flightRows.push(rowObj);
             
-            // Log progress every 100 flights
-            if (flightRows.length % 100 === 0) {
+            // Log progress every 50 flights
+            if (flightRows.length % 50 === 0) {
               console.log('Parsed', flightRows.length, 'flights so far');
             }
           }
