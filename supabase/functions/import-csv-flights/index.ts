@@ -69,6 +69,8 @@ async function processFlightImport(flights: FlightEntry[], userId: string, supab
   
   // Helper function to normalize flight data based on format
   const normalizeFlightData = (flight: any, format: string) => {
+    console.log(`Normalizing flight with format ${format}:`, JSON.stringify(flight, null, 2));
+    
     const base = {
       date: flight.date,
       aircraft_registration: flight.aircraft_registration || flight.AircraftID,
@@ -107,11 +109,51 @@ async function processFlightImport(flights: FlightEntry[], userId: string, supab
         ground_training: parseNumericField(flight.ground_training || flight.GroundTraining, 'ground_training'),
       };
     } else {
-      // Legacy formats (2018-2019) - different column structure
+      // Legacy formats (2018-2019) - use direct CSV column names
       const totalTime = parseNumericField(flight.TotalTime, 'total_time');
       const picTime = parseNumericField(flight.PIC, 'pic_time'); 
       const sicTime = parseNumericField(flight.SIC, 'sic_time');
       const dualReceived = parseNumericField(flight.DualReceived, 'dual_received');
+      
+      // For legacy flights, infer PIC vs SIC vs Dual based on available data
+      let finalPicTime = picTime;
+      let finalSicTime = sicTime;
+      
+      // If no PIC/SIC specified but we have dual received, it's dual time
+      if (picTime === 0 && sicTime === 0 && dualReceived > 0) {
+        finalPicTime = 0;
+        finalSicTime = 0;
+      }
+      // If total time but no breakdown, assume PIC for 2018 flights (solo training)
+      else if (picTime === 0 && sicTime === 0 && totalTime > 0 && format === 'legacy2018') {
+        finalPicTime = totalTime;
+      }
+      
+      return {
+        ...base,
+        total_time: totalTime,
+        pic_time: finalPicTime,
+        sic_time: finalSicTime,
+        cross_country_time: parseNumericField(flight.CrossCountry, 'cross_country_time'),
+        night_time: parseNumericField(flight.Night, 'night_time'),
+        instrument_time: parseNumericField(flight.IFR, 'instrument_time'),
+        actual_instrument: parseNumericField(flight.ActualInstrument, 'actual_instrument'),
+        simulated_instrument: parseNumericField(flight.SimulatedInstrument, 'simulated_instrument'),
+        solo_time: parseNumericField(flight.Solo, 'solo_time'),
+        dual_given: parseNumericField(flight.DualGiven, 'dual_given'),
+        dual_received: dualReceived,
+        holds: parseNumericField(flight.Holds, 'holds'),
+        approaches: (flight.Approach1 || '0').toString(),
+        landings: parseNumericField(flight.AllLandings || flight.DayLandingsFullStop, 'landings'),
+        day_takeoffs: parseNumericField(flight.DayTakeoffs, 'day_takeoffs'),
+        day_landings: parseNumericField(flight.DayLandingsFullStop, 'day_landings'),
+        night_takeoffs: parseNumericField(flight.NightTakeoffs, 'night_takeoffs'),
+        night_landings: parseNumericField(flight.NightLandingsFullStop, 'night_landings'),
+        simulated_flight: parseNumericField(flight.SimulatedFlight, 'simulated_flight'),
+        ground_training: parseNumericField(flight.GroundTraining, 'ground_training'),
+      };
+    }
+  };
       
       // For legacy flights, infer PIC vs SIC vs Dual based on available data
       let finalPicTime = picTime;
