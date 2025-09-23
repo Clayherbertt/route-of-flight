@@ -170,6 +170,7 @@ async function processFlightImport(flights: FlightEntry[], userId: string, supab
       }
       
       return {
+      return {
         ...base,
         total_time: totalTime,
         pic_time: finalPicTime,
