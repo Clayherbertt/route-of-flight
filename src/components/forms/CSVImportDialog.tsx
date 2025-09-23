@@ -192,17 +192,29 @@ export function CSVImportDialog({ open, onOpenChange, onImportComplete }: CSVImp
               rowObj['aircraft_type'] = aircraftId; // Fallback to aircraft ID
             }
             
-            // MUCH MORE PERMISSIVE validation - only reject if absolutely unusable
+            // EXTREMELY PERMISSIVE validation - capture EVERY possible flight
             const hasAircraftId = rowObj['AircraftID']?.toString().trim() !== '';
             const hasDate = rowObj['Date']?.toString().trim() !== '';
+            
+            // Much more aggressive time data detection - check ALL possible time columns
             const hasSomeTimeData = (
               (rowObj['TotalTime'] && parseFloat(rowObj['TotalTime']) > 0) ||
               (rowObj['PIC'] && parseFloat(rowObj['PIC']) > 0) ||
               (rowObj['SIC'] && parseFloat(rowObj['SIC']) > 0) ||
-              (rowObj['DualReceived'] && parseFloat(rowObj['DualReceived']) > 0)
+              (rowObj['DualReceived'] && parseFloat(rowObj['DualReceived']) > 0) ||
+              (rowObj['DualGiven'] && parseFloat(rowObj['DualGiven']) > 0) ||
+              (rowObj['Solo'] && parseFloat(rowObj['Solo']) > 0) ||
+              (rowObj['CrossCountry'] && parseFloat(rowObj['CrossCountry']) > 0) ||
+              (rowObj['Night'] && parseFloat(rowObj['Night']) > 0) ||
+              (rowObj['ActualInstrument'] && parseFloat(rowObj['ActualInstrument']) > 0) ||
+              (rowObj['SimulatedInstrument'] && parseFloat(rowObj['SimulatedInstrument']) > 0) ||
+              (rowObj['SimulatedFlight'] && parseFloat(rowObj['SimulatedFlight']) > 0) ||
+              (rowObj['GroundTraining'] && parseFloat(rowObj['GroundTraining']) > 0) ||
+              // Check for any numeric value in TotalTime even if 0 (ground training, etc.)
+              (rowObj['TotalTime'] !== undefined && rowObj['TotalTime'] !== null && rowObj['TotalTime'].toString().trim() !== '')
             );
             
-            // Only skip if missing absolutely essential data
+            // Only skip if missing absolutely essential data - be VERY lenient
             if (!hasDate) {
               console.log(`Skipping row ${i}: Missing date`);
               continue;
@@ -211,8 +223,9 @@ export function CSVImportDialog({ open, onOpenChange, onImportComplete }: CSVImp
               console.log(`Skipping row ${i}: Missing aircraft ID`);
               continue; 
             }
+            // Allow flights with 0 time if they have aircraft and date (ground training, etc.)
             if (!hasSomeTimeData) {
-              console.log(`Skipping row ${i}: No flight time data`);
+              console.log(`Skipping row ${i}: No time data found in any column`);
               continue;
             }
             
