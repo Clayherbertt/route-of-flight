@@ -194,7 +194,6 @@ async function processFlightImport(flights: FlightEntry[], userId: string, supab
       };
     }
   };
-  
   // Enhanced logging to track rejected flights
   const logRejectedFlight = (flight: any, reason: string) => {
     rejectedFlights.push({ flight, reason });
