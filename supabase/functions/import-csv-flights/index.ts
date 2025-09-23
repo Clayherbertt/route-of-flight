@@ -104,10 +104,10 @@ async function processFlightImport(flights: FlightEntry[], userId: string, supab
           continue;
         }
 
-        if (!arrAirport || arrAirport === '' || arrAirport === 'null') {
-          logRejectedFlight(flight, 'Missing arrival_airport');
-          failureCount++;
-          continue;
+        // Allow missing arrival airport but log it - use departure airport as fallback
+        const finalArrAirport = (!arrAirport || arrAirport === '' || arrAirport === 'null') ? depAirport : arrAirport;
+        if (finalArrAirport !== arrAirport) {
+          console.log(`Using departure airport as arrival for flight on ${flight.date} with aircraft ${aircraftReg}`);
         }
 
         const entry = {
@@ -116,7 +116,7 @@ async function processFlightImport(flights: FlightEntry[], userId: string, supab
           aircraft_registration: aircraftReg,
           aircraft_type: aircraftType || aircraftReg, // Fallback to registration if no type
           departure_airport: depAirport,
-          arrival_airport: arrAirport,
+          arrival_airport: finalArrAirport, // Use the final arrival airport (with fallback)
           total_time: parseNumericField(flight.total_time, 'total_time'),
           pic_time: parseNumericField(flight.pic_time, 'pic_time'),
           cross_country_time: parseNumericField(flight.cross_country_time, 'cross_country_time'),
