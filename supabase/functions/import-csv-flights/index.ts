@@ -67,6 +67,35 @@ async function processFlightImport(flights: FlightEntry[], userId: string, supab
     return 'legacy2018';
   };
   
+  // Helper function to calculate flight time from TimeOut/TimeIn
+  const calculateFlightTime = (timeOut: string, timeIn: string): number => {
+    if (!timeOut || !timeIn) return 0;
+    
+    try {
+      // Parse time strings (assuming format like "HH:MM" or decimal hours)
+      const parseTime = (timeStr: string): number => {
+        if (timeStr.includes(':')) {
+          const [hours, minutes] = timeStr.split(':').map(Number);
+          return hours + minutes / 60;
+        }
+        return parseFloat(timeStr) || 0;
+      };
+      
+      const outTime = parseTime(timeOut);
+      const inTime = parseTime(timeIn);
+      
+      // Handle day rollover
+      if (inTime < outTime) {
+        return (24 - outTime) + inTime;
+      }
+      
+      return inTime - outTime;
+    } catch (e) {
+      console.log(`Error calculating flight time from ${timeOut} to ${timeIn}:`, e);
+      return 0;
+    }
+  };
+
   // Helper function to normalize flight data based on format
   const normalizeFlightData = (flight: any, format: string) => {
     console.log(`Normalizing flight with format ${format}:`, JSON.stringify(flight, null, 2));
@@ -108,32 +137,18 @@ async function processFlightImport(flights: FlightEntry[], userId: string, supab
         simulated_flight: parseNumericField(flight.simulated_flight || flight.SimulatedFlight, 'simulated_flight'),
         ground_training: parseNumericField(flight.ground_training || flight.GroundTraining, 'ground_training'),
       };
-    } else {
-      // Legacy formats (2018-2019) - use direct CSV column names
+    } else if (format === 'legacy2019') {
+      // 2019 format - may have different column structure
       const totalTime = parseNumericField(flight.TotalTime, 'total_time');
       const picTime = parseNumericField(flight.PIC, 'pic_time'); 
       const sicTime = parseNumericField(flight.SIC, 'sic_time');
       const dualReceived = parseNumericField(flight.DualReceived, 'dual_received');
       
-      // For legacy flights, infer PIC vs SIC vs Dual based on available data
-      let finalPicTime = picTime;
-      let finalSicTime = sicTime;
-      
-      // If no PIC/SIC specified but we have dual received, it's dual time
-      if (picTime === 0 && sicTime === 0 && dualReceived > 0) {
-        finalPicTime = 0;
-        finalSicTime = 0;
-      }
-      // If total time but no breakdown, assume PIC for 2018 flights (solo training)
-      else if (picTime === 0 && sicTime === 0 && totalTime > 0 && format === 'legacy2018') {
-        finalPicTime = totalTime;
-      }
-      
       return {
         ...base,
         total_time: totalTime,
-        pic_time: finalPicTime,
-        sic_time: finalSicTime,
+        pic_time: picTime,
+        sic_time: sicTime,
         cross_country_time: parseNumericField(flight.CrossCountry, 'cross_country_time'),
         night_time: parseNumericField(flight.Night, 'night_time'),
         instrument_time: parseNumericField(flight.IFR, 'instrument_time'),
@@ -149,6 +164,56 @@ async function processFlightImport(flights: FlightEntry[], userId: string, supab
         day_landings: parseNumericField(flight.DayLandingsFullStop, 'day_landings'),
         night_takeoffs: parseNumericField(flight.NightTakeoffs, 'night_takeoffs'),
         night_landings: parseNumericField(flight.NightLandingsFullStop, 'night_landings'),
+        simulated_flight: parseNumericField(flight.SimulatedFlight, 'simulated_flight'),
+        ground_training: parseNumericField(flight.GroundTraining, 'ground_training'),
+      };
+    } else {
+      // Legacy 2018 format - enhanced handling
+      console.log(`Processing 2018 flight - available fields:`, Object.keys(flight));
+      
+      let totalTime = parseNumericField(flight.TotalTime, 'total_time');
+      let picTime = parseNumericField(flight.PIC, 'pic_time'); 
+      let sicTime = parseNumericField(flight.SIC, 'sic_time');
+      const dualReceived = parseNumericField(flight.DualReceived, 'dual_received');
+      
+      // For 2018 data, try alternative column names or calculate from time fields
+      if (totalTime === 0) {
+        // Try alternative column names that might be used in 2018 data
+        totalTime = parseNumericField(flight.Total || flight['Total Time'] || flight.FlightTime, 'total_time');
+        
+        // If still zero, try to calculate from TimeOut/TimeIn
+        if (totalTime === 0 && flight.TimeOut && flight.TimeIn) {
+          totalTime = calculateFlightTime(flight.TimeOut, flight.TimeIn);
+          console.log(`Calculated total time for 2018 flight from ${flight.TimeOut} to ${flight.TimeIn}: ${totalTime}`);
+        }
+      }
+      
+      // For 2018 flights, if we have total time but no PIC/SIC breakdown, assume it's PIC time (solo training)
+      if (totalTime > 0 && picTime === 0 && sicTime === 0) {
+        picTime = totalTime;
+        console.log(`2018 flight: Setting PIC time to total time (${totalTime}) - assuming solo training`);
+      }
+      
+      return {
+        ...base,
+        total_time: totalTime,
+        pic_time: picTime,
+        sic_time: sicTime,
+        cross_country_time: parseNumericField(flight.CrossCountry || flight['Cross Country'] || flight.XC, 'cross_country_time'),
+        night_time: parseNumericField(flight.Night, 'night_time'),
+        instrument_time: parseNumericField(flight.IFR || flight.Instrument, 'instrument_time'),
+        actual_instrument: parseNumericField(flight.ActualInstrument || flight['Actual Instrument'], 'actual_instrument'),
+        simulated_instrument: parseNumericField(flight.SimulatedInstrument || flight['Simulated Instrument'], 'simulated_instrument'),
+        solo_time: parseNumericField(flight.Solo, 'solo_time'),
+        dual_given: parseNumericField(flight.DualGiven || flight['Dual Given'], 'dual_given'),
+        dual_received: dualReceived,
+        holds: parseNumericField(flight.Holds, 'holds'),
+        approaches: (flight.Approach1 || flight.Approaches || '0').toString(),
+        landings: parseNumericField(flight.AllLandings || flight.Landings || flight.DayLandingsFullStop || 1, 'landings'), // Default to 1 if missing
+        day_takeoffs: parseNumericField(flight.DayTakeoffs || 1, 'day_takeoffs'), // Default to 1 if missing
+        day_landings: parseNumericField(flight.DayLandingsFullStop || flight.DayLandings || 1, 'day_landings'), // Default to 1 if missing
+        night_takeoffs: parseNumericField(flight.NightTakeoffs, 'night_takeoffs'),
+        night_landings: parseNumericField(flight.NightLandingsFullStop || flight.NightLandings, 'night_landings'),
         simulated_flight: parseNumericField(flight.SimulatedFlight, 'simulated_flight'),
         ground_training: parseNumericField(flight.GroundTraining, 'ground_training'),
       };
