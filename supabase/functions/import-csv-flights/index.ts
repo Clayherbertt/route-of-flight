@@ -170,21 +170,54 @@ async function processFlightImport(flights: FlightEntry[], userId: string, supab
     } else {
       // Legacy 2018 format - enhanced handling
       console.log(`Processing 2018 flight - available fields:`, Object.keys(flight));
+      console.log(`Raw flight data:`, flight);
       
       let totalTime = parseNumericField(flight.TotalTime, 'total_time');
       let picTime = parseNumericField(flight.PIC, 'pic_time'); 
       let sicTime = parseNumericField(flight.SIC, 'sic_time');
       const dualReceived = parseNumericField(flight.DualReceived, 'dual_received');
       
-      // For 2018 data, try alternative column names or calculate from time fields
+      // For 2018 data, try many alternative column names
       if (totalTime === 0) {
-        // Try alternative column names that might be used in 2018 data
-        totalTime = parseNumericField(flight.Total || flight['Total Time'] || flight.FlightTime, 'total_time');
+        // Try all possible total time column variations
+        const totalTimeFields = ['Total', 'Total Time', 'FlightTime', 'Flight Time', 'Duration', 'TotalDuration', 'Time'];
+        for (const field of totalTimeFields) {
+          const value = parseNumericField(flight[field], 'total_time');
+          if (value > 0) {
+            totalTime = value;
+            console.log(`Found 2018 total time in field '${field}': ${totalTime}`);
+            break;
+          }
+        }
         
         // If still zero, try to calculate from TimeOut/TimeIn
         if (totalTime === 0 && flight.TimeOut && flight.TimeIn) {
           totalTime = calculateFlightTime(flight.TimeOut, flight.TimeIn);
           console.log(`Calculated total time for 2018 flight from ${flight.TimeOut} to ${flight.TimeIn}: ${totalTime}`);
+        }
+        
+        // Check if any numeric value exists in the flight object that could be time
+        if (totalTime === 0) {
+          console.log(`Still no total time found, checking all numeric fields...`);
+          for (const [key, value] of Object.entries(flight)) {
+            const numValue = parseFloat(value as string);
+            if (!isNaN(numValue) && numValue > 0 && numValue < 24) { // Reasonable flight time
+              console.log(`Potential time field '${key}': ${numValue}`);
+            }
+          }
+        }
+      }
+      
+      // Enhanced PIC time detection for 2018
+      if (picTime === 0) {
+        const picFields = ['PIC', 'PilotInCommand', 'PIC Time', 'Captain', 'P1'];
+        for (const field of picFields) {
+          const value = parseNumericField(flight[field], 'pic_time');
+          if (value > 0) {
+            picTime = value;
+            console.log(`Found 2018 PIC time in field '${field}': ${picTime}`);
+            break;
+          }
         }
       }
       
@@ -193,6 +226,8 @@ async function processFlightImport(flights: FlightEntry[], userId: string, supab
         picTime = totalTime;
         console.log(`2018 flight: Setting PIC time to total time (${totalTime}) - assuming solo training`);
       }
+      
+      console.log(`Final 2018 flight times - Total: ${totalTime}, PIC: ${picTime}, SIC: ${sicTime}`);
       
       return {
         ...base,
