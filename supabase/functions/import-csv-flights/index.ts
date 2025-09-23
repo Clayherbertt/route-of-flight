@@ -38,6 +38,15 @@ async function processFlightImport(flights: FlightEntry[], userId: string, supab
   console.log(`=== BACKGROUND IMPORT STARTED ===`)
   console.log(`Processing ${flights.length} flights for user ${userId}`)
   
+  // Add debugging for 2018 flights specifically
+  const flights2018 = flights.filter(f => f.date && f.date.includes('2018'));
+  console.log(`=== 2018 FLIGHTS DEBUG ===`);
+  console.log(`Found ${flights2018.length} flights from 2018`);
+  if (flights2018.length > 0) {
+    console.log(`First 2018 flight raw data:`, JSON.stringify(flights2018[0], null, 2));
+    console.log(`All 2018 flight sample keys:`, Object.keys(flights2018[0] || {}));
+  }
+  
   let successCount = 0;
   let failureCount = 0;
   let duplicateCount = 0;
@@ -289,6 +298,22 @@ async function processFlightImport(flights: FlightEntry[], userId: string, supab
         const normalizedFlight = normalizeFlightData(flight, format);
         
         console.log(`Flight format: ${format} for date ${flight.date}`);
+        
+        // Extra debugging for 2018 flights
+        if (flight.date && flight.date.includes('2018')) {
+          console.log(`=== 2018 FLIGHT DETAILED DEBUG ===`);
+          console.log(`Raw flight:`, JSON.stringify(flight, null, 2));
+          console.log(`Normalized flight:`, JSON.stringify(normalizedFlight, null, 2));
+          console.log(`Available fields:`, Object.keys(flight));
+          
+          // Check specific time fields
+          const timeFields = ['TotalTime', 'Total', 'FlightTime', 'Duration', 'PIC', 'SIC'];
+          timeFields.forEach(field => {
+            if (flight[field] !== undefined) {
+              console.log(`2018 flight has ${field}: "${flight[field]}" (${typeof flight[field]})`);
+            }
+          });
+        }
         
         // Ensure all required fields have valid values from normalized data
         const aircraftReg = normalizedFlight.aircraft_registration?.toString().trim();
