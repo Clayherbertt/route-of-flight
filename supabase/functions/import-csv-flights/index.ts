@@ -57,6 +57,102 @@ async function processFlightImport(flights: FlightEntry[], userId: string, supab
     return parsed;
   };
   
+  // Helper function to detect flight data format based on date and content
+  const detectFlightFormat = (flight: any): 'modern' | 'legacy2019' | 'legacy2018' => {
+    const flightDate = new Date(flight.date);
+    const year = flightDate.getFullYear();
+    
+    if (year >= 2020) return 'modern';
+    if (year === 2019) return 'legacy2019'; 
+    return 'legacy2018';
+  };
+  
+  // Helper function to normalize flight data based on format
+  const normalizeFlightData = (flight: any, format: string) => {
+    const base = {
+      date: flight.date,
+      aircraft_registration: flight.aircraft_registration || flight.AircraftID,
+      aircraft_type: flight.aircraft_type || flight.AircraftID,
+      departure_airport: flight.departure_airport || flight.From,
+      arrival_airport: flight.arrival_airport || flight.To,
+      route: flight.route || flight.Route,
+      remarks: flight.remarks || flight.PilotComments,
+      start_time: flight.start_time || flight.TimeOut,
+      end_time: flight.end_time || flight.TimeIn,
+    };
+
+    if (format === 'modern') {
+      // Modern format (2020+) - current structure
+      return {
+        ...base,
+        total_time: parseNumericField(flight.total_time || flight.TotalTime, 'total_time'),
+        pic_time: parseNumericField(flight.pic_time || flight.PIC, 'pic_time'),
+        sic_time: parseNumericField(flight.sic_time || flight.SIC, 'sic_time'),
+        cross_country_time: parseNumericField(flight.cross_country_time || flight.CrossCountry, 'cross_country_time'),
+        night_time: parseNumericField(flight.night_time || flight.Night, 'night_time'),
+        instrument_time: parseNumericField(flight.instrument_time || flight.IFR, 'instrument_time'),
+        actual_instrument: parseNumericField(flight.actual_instrument || flight.ActualInstrument, 'actual_instrument'),
+        simulated_instrument: parseNumericField(flight.simulated_instrument || flight.SimulatedInstrument, 'simulated_instrument'),
+        solo_time: parseNumericField(flight.solo_time || flight.Solo, 'solo_time'),
+        dual_given: parseNumericField(flight.dual_given || flight.DualGiven, 'dual_given'),
+        dual_received: parseNumericField(flight.dual_received || flight.DualReceived, 'dual_received'),
+        holds: parseNumericField(flight.holds || flight.Holds, 'holds'),
+        approaches: (flight.approaches || flight.Approach1 || '0').toString(),
+        landings: parseNumericField(flight.landings || flight.AllLandings, 'landings'),
+        day_takeoffs: parseNumericField(flight.day_takeoffs || flight.DayTakeoffs, 'day_takeoffs'),
+        day_landings: parseNumericField(flight.day_landings || flight.DayLandingsFullStop, 'day_landings'),
+        night_takeoffs: parseNumericField(flight.night_takeoffs || flight.NightTakeoffs, 'night_takeoffs'),
+        night_landings: parseNumericField(flight.night_landings || flight.NightLandingsFullStop, 'night_landings'),
+        simulated_flight: parseNumericField(flight.simulated_flight || flight.SimulatedFlight, 'simulated_flight'),
+        ground_training: parseNumericField(flight.ground_training || flight.GroundTraining, 'ground_training'),
+      };
+    } else {
+      // Legacy formats (2018-2019) - different column structure
+      const totalTime = parseNumericField(flight.TotalTime, 'total_time');
+      const picTime = parseNumericField(flight.PIC, 'pic_time'); 
+      const sicTime = parseNumericField(flight.SIC, 'sic_time');
+      const dualReceived = parseNumericField(flight.DualReceived, 'dual_received');
+      
+      // For legacy flights, infer PIC vs SIC vs Dual based on available data
+      let finalPicTime = picTime;
+      let finalSicTime = sicTime;
+      
+      // If no PIC/SIC specified but we have dual received, it's dual time
+      if (picTime === 0 && sicTime === 0 && dualReceived > 0) {
+        finalPicTime = 0;
+        finalSicTime = 0;
+      }
+      // If total time but no breakdown, assume PIC for 2018 flights (solo training)
+      else if (picTime === 0 && sicTime === 0 && totalTime > 0 && format === 'legacy2018') {
+        finalPicTime = totalTime;
+      }
+      
+      return {
+        ...base,
+        total_time: totalTime,
+        pic_time: finalPicTime,
+        sic_time: finalSicTime,
+        cross_country_time: parseNumericField(flight.CrossCountry, 'cross_country_time'),
+        night_time: parseNumericField(flight.Night, 'night_time'),
+        instrument_time: parseNumericField(flight.IFR, 'instrument_time'),
+        actual_instrument: parseNumericField(flight.ActualInstrument, 'actual_instrument'),
+        simulated_instrument: parseNumericField(flight.SimulatedInstrument, 'simulated_instrument'),
+        solo_time: parseNumericField(flight.Solo, 'solo_time'),
+        dual_given: parseNumericField(flight.DualGiven, 'dual_given'),
+        dual_received: dualReceived,
+        holds: parseNumericField(flight.Holds, 'holds'),
+        approaches: (flight.Approach1 || '0').toString(),
+        landings: parseNumericField(flight.AllLandings || flight.DayLandingsFullStop, 'landings'),
+        day_takeoffs: parseNumericField(flight.DayTakeoffs, 'day_takeoffs'),
+        day_landings: parseNumericField(flight.DayLandingsFullStop, 'day_landings'),
+        night_takeoffs: parseNumericField(flight.NightTakeoffs, 'night_takeoffs'),
+        night_landings: parseNumericField(flight.NightLandingsFullStop, 'night_landings'),
+        simulated_flight: parseNumericField(flight.SimulatedFlight, 'simulated_flight'),
+        ground_training: parseNumericField(flight.GroundTraining, 'ground_training'),
+      };
+    }
+  };
+  
   // Enhanced logging to track rejected flights
   const logRejectedFlight = (flight: any, reason: string) => {
     rejectedFlights.push({ flight, reason });
@@ -73,11 +169,11 @@ async function processFlightImport(flights: FlightEntry[], userId: string, supab
     console.log(`Processing batch ${Math.floor(i / batchSize) + 1}/${Math.ceil(flights.length / batchSize)} (flights ${i + 1}-${i + batch.length})`)
 
     try {
-      // Prepare batch entries
+      // Process flights in smaller batches
       const entries = [];
       for (const flight of batch) {
         // Log the flight data for debugging
-        console.log(`Processing flight: date=${flight.date}, reg=${flight.aircraft_registration}, total_time=${flight.total_time}`)
+        console.log(`Processing flight: date=${flight.date}, reg=${flight.aircraft_registration || flight.AircraftID}`)
         
         // Enhanced validation and logging for failed flights
         if (!flight.date || flight.date === '' || flight.date === 'null' || flight.date === 'undefined') {
@@ -86,11 +182,17 @@ async function processFlightImport(flights: FlightEntry[], userId: string, supab
           continue;
         }
 
-        // Ensure all required fields have valid values
-        const aircraftReg = flight.aircraft_registration?.toString().trim();
-        const aircraftType = flight.aircraft_type?.toString().trim();
-        const depAirport = flight.departure_airport?.toString().trim();
-        const arrAirport = flight.arrival_airport?.toString().trim();
+        // Detect flight format and normalize data
+        const format = detectFlightFormat(flight);
+        const normalizedFlight = normalizeFlightData(flight, format);
+        
+        console.log(`Flight format: ${format} for date ${flight.date}`);
+        
+        // Ensure all required fields have valid values from normalized data
+        const aircraftReg = normalizedFlight.aircraft_registration?.toString().trim();
+        const aircraftType = normalizedFlight.aircraft_type?.toString().trim(); 
+        const depAirport = normalizedFlight.departure_airport?.toString().trim();
+        const arrAirport = normalizedFlight.arrival_airport?.toString().trim();
 
         if (!aircraftReg || aircraftReg === '' || aircraftReg === 'null') {
           logRejectedFlight(flight, 'Missing aircraft_registration');
@@ -112,35 +214,35 @@ async function processFlightImport(flights: FlightEntry[], userId: string, supab
 
         const entry = {
           user_id: userId,
-          date: flight.date,
+          date: normalizedFlight.date,
           aircraft_registration: aircraftReg,
           aircraft_type: aircraftType || aircraftReg, // Fallback to registration if no type
           departure_airport: depAirport,
           arrival_airport: finalArrAirport, // Use the final arrival airport (with fallback)
-          total_time: parseNumericField(flight.total_time, 'total_time'),
-          pic_time: parseNumericField(flight.pic_time, 'pic_time'),
-          cross_country_time: parseNumericField(flight.cross_country_time, 'cross_country_time'),
-          night_time: parseNumericField(flight.night_time, 'night_time'),
-          instrument_time: parseNumericField(flight.instrument_time, 'instrument_time'),
-          approaches: (flight.approaches?.toString() || '0').substring(0, 10), // Limit length
-          landings: parseNumericField(flight.landings, 'landings'),
-          sic_time: parseNumericField(flight.sic_time, 'sic_time'),
-          solo_time: parseNumericField(flight.solo_time, 'solo_time'),
-          day_takeoffs: parseNumericField(flight.day_takeoffs, 'day_takeoffs'),
-          day_landings: parseNumericField(flight.day_landings, 'day_landings'),
-          night_takeoffs: parseNumericField(flight.night_takeoffs, 'night_takeoffs'),
-          night_landings: parseNumericField(flight.night_landings, 'night_landings'),
-          actual_instrument: parseNumericField(flight.actual_instrument, 'actual_instrument'),
-          simulated_instrument: parseNumericField(flight.simulated_instrument, 'simulated_instrument'),
-          holds: parseNumericField(flight.holds, 'holds'),
-          dual_given: parseNumericField(flight.dual_given, 'dual_given'),
-          dual_received: parseNumericField(flight.dual_received, 'dual_received'),
-          simulated_flight: parseNumericField(flight.simulated_flight, 'simulated_flight'),
-          ground_training: parseNumericField(flight.ground_training, 'ground_training'),
-          route: flight.route?.toString()?.substring(0, 255) || null, // Limit length
-          remarks: flight.remarks?.toString()?.substring(0, 1000) || null, // Limit length
-          start_time: flight.start_time || null,
-          end_time: flight.end_time || null,
+          total_time: normalizedFlight.total_time,
+          pic_time: normalizedFlight.pic_time,
+          cross_country_time: normalizedFlight.cross_country_time,
+          night_time: normalizedFlight.night_time,
+          instrument_time: normalizedFlight.instrument_time,
+          approaches: (normalizedFlight.approaches?.toString() || '0').substring(0, 10), // Limit length
+          landings: normalizedFlight.landings,
+          sic_time: normalizedFlight.sic_time,
+          solo_time: normalizedFlight.solo_time,
+          day_takeoffs: normalizedFlight.day_takeoffs,
+          day_landings: normalizedFlight.day_landings,
+          night_takeoffs: normalizedFlight.night_takeoffs,
+          night_landings: normalizedFlight.night_landings,
+          actual_instrument: normalizedFlight.actual_instrument,
+          simulated_instrument: normalizedFlight.simulated_instrument,
+          holds: normalizedFlight.holds,
+          dual_given: normalizedFlight.dual_given,
+          dual_received: normalizedFlight.dual_received,
+          simulated_flight: normalizedFlight.simulated_flight,
+          ground_training: normalizedFlight.ground_training,
+          route: normalizedFlight.route?.toString()?.substring(0, 255) || null, // Limit length
+          remarks: normalizedFlight.remarks?.toString()?.substring(0, 1000) || null, // Limit length
+          start_time: normalizedFlight.start_time || null,
+          end_time: normalizedFlight.end_time || null,
         };
 
         entries.push(entry);
