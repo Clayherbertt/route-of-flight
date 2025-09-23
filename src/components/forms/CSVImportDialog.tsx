@@ -14,6 +14,7 @@ import Papa from "papaparse";
 import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
+import { loadForeFlightCsv, analyze, filterOutZeroRows, type ForeFlightRow, type ParseReport } from "@/lib/foreflight-parser";
 
 interface CSVImportDialogProps {
   open: boolean;
@@ -92,6 +93,8 @@ export function CSVImportDialog({ open, onOpenChange, onImportComplete }: CSVImp
   const { user, session } = useAuth();
   
   const [step, setStep] = useState<'upload' | 'mapping' | 'preview' | 'importing' | 'complete'>('upload');
+  const [parsedFlights, setParsedFlights] = useState<ForeFlightRow[]>([]);
+  const [parseReport, setParseReport] = useState<ParseReport | null>(null);
   const [csvData, setCsvData] = useState<CSVRow[]>([]);
   const [csvHeaders, setCsvHeaders] = useState<string[]>([]);
   const [fieldMappings, setFieldMappings] = useState<FieldMapping[]>([]);
@@ -100,6 +103,7 @@ export function CSVImportDialog({ open, onOpenChange, onImportComplete }: CSVImp
   const [importResults, setImportResults] = useState<{ success: number; failed: number }>({ success: 0, failed: 0 });
   const [isForeFlight, setIsForeFlight] = useState(false);
   const [aircraftLookup, setAircraftLookup] = useState<Map<string, AircraftInfo>>(new Map());
+  const [useRobustParser, setUseRobustParser] = useState(true);
 
   const parseForeFlight = (allRows: string[][]) => {
     const aircraftLookupMap = new Map<string, AircraftInfo>();
@@ -243,7 +247,7 @@ export function CSVImportDialog({ open, onOpenChange, onImportComplete }: CSVImp
     return { headers: flightHeaders, rows: flightRows, aircraftLookup: aircraftLookupMap };
   };
 
-  const handleFileUpload = useCallback((event: React.ChangeEvent<HTMLInputElement>) => {
+  const handleFileUpload = useCallback(async (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
     if (!file) return;
 
@@ -256,161 +260,82 @@ export function CSVImportDialog({ open, onOpenChange, onImportComplete }: CSVImp
       return;
     }
 
-    Papa.parse(file, {
-      complete: (results) => {
-        if (results.errors.length > 0) {
-          toast({
-            title: "CSV parsing error",
-            description: "There was an error parsing your CSV file",
-            variant: "destructive",
-          });
-          return;
-        }
-
-        const allRows = results.data as string[][];
+    try {
+      if (useRobustParser) {
+        // Use the robust ForeFlight parser
+        console.log("Using robust ForeFlight parser...");
+        const flights = await loadForeFlightCsv(file);
+        const report = analyze(flights);
         
-        // Check if this is a ForeFlight export
-        const isForeFlight = allRows[0]?.[0]?.toLowerCase().includes('foreflight logbook import');
-        setIsForeFlight(isForeFlight);
+        console.log("Parse report:", report);
         
-        let headers: string[];
-        let rows: CSVRow[];
-        let aircraftLookupMap = new Map<string, AircraftInfo>();
+        setParsedFlights(flights);
+        setParseReport(report);
+        setIsForeFlight(true);
         
-        if (isForeFlight) {
-          const parsed = parseForeFlight(allRows);
-          headers = parsed.headers;
-          rows = parsed.rows;
-          aircraftLookupMap = parsed.aircraftLookup;
-        } else {
-          headers = allRows[0] as string[];
-          rows = allRows.slice(1).filter(row => row.some(cell => cell?.trim())).map(row => {
-            const rowObj: CSVRow = {};
-            headers.forEach((header, index) => {
-              rowObj[header] = row[index] || '';
-            });
-            return rowObj;
-          });
-        }
-        
-        setCsvHeaders(headers);
-        setCsvData(rows);
-        
-        // Auto-map field names
-        const autoMappings: FieldMapping[] = [];
-        headers.forEach(header => {
-          const lowerHeader = header.toLowerCase();
-          let dbField = '';
-          
-          if (isForeFlight) {
-            // ForeFlight-specific mappings - comprehensive set
-            if (lowerHeader === 'date') dbField = 'date';
-            else if (lowerHeader === 'aircraftid') dbField = 'aircraft_registration';
-            else if (lowerHeader === 'from') dbField = 'departure_airport';
-            else if (lowerHeader === 'to') dbField = 'arrival_airport';
-            else if (lowerHeader === 'totaltime') dbField = 'total_time';
-            else if (lowerHeader === 'pic') dbField = 'pic_time';
-            else if (lowerHeader === 'sic') dbField = 'sic_time';
-            else if (lowerHeader === 'crosscountry') dbField = 'cross_country_time';
-            else if (lowerHeader === 'night') dbField = 'night_time';
-            else if (lowerHeader === 'actualinstrument') dbField = 'actual_instrument';
-            else if (lowerHeader === 'simulatedinstrument') dbField = 'simulated_instrument';
-            else if (lowerHeader === 'solo') dbField = 'solo_time';
-            else if (lowerHeader === 'dualreceived') dbField = 'dual_received';
-            else if (lowerHeader === 'dualgiven') dbField = 'dual_given';
-            else if (lowerHeader === 'holds') dbField = 'holds';
-            else if (lowerHeader === 'alllandings') dbField = 'landings';
-            else if (lowerHeader === 'daylandingsfullstop') dbField = 'day_landings';
-            else if (lowerHeader === 'nightlandingsfullstop') dbField = 'night_landings';
-            else if (lowerHeader === 'daytakeoffs') dbField = 'day_takeoffs';
-            else if (lowerHeader === 'nighttakeoffs') dbField = 'night_takeoffs';
-            else if (lowerHeader === 'route') dbField = 'route';
-            else if (lowerHeader === 'pilotcomments') dbField = 'remarks';
-            else if (lowerHeader === 'timeout') dbField = 'start_time';
-            else if (lowerHeader === 'timein') dbField = 'end_time';
-            else if (lowerHeader === 'simulatedflight') dbField = 'simulated_flight';
-            else if (lowerHeader === 'groundtraining') dbField = 'ground_training';
-            else if (lowerHeader === 'ifr') dbField = 'instrument_time'; // Additional mapping
-          } else {
-            // Standard mappings - including specific logbook software column names
-            if (lowerHeader === 'date') dbField = 'date';
-            else if (lowerHeader === 'aircraftid') dbField = 'aircraft_registration';
-            else if (lowerHeader === 'from') dbField = 'departure_airport';
-            else if (lowerHeader === 'to') dbField = 'arrival_airport';
-            else if (lowerHeader === 'route') dbField = 'route';
-            else if (lowerHeader === 'totaltime') dbField = 'total_time';
-            else if (lowerHeader === 'pic') dbField = 'pic_time';
-            else if (lowerHeader === 'sic') dbField = 'sic_time';
-            else if (lowerHeader === 'night') dbField = 'night_time';
-            else if (lowerHeader === 'solo') dbField = 'solo_time';
-            else if (lowerHeader === 'crosscountry') dbField = 'cross_country_time';
-            else if (lowerHeader === 'actualinstrument') dbField = 'actual_instrument';
-            else if (lowerHeader === 'simulated') dbField = 'simulated_instrument';
-            else if (lowerHeader === 'simulatedinstrument') dbField = 'simulated_instrument';
-            else if (lowerHeader === 'dualgiven') dbField = 'dual_given';
-            else if (lowerHeader === 'dualreceived') dbField = 'dual_received';
-            else if (lowerHeader === 'holds') dbField = 'holds';
-            else if (lowerHeader === 'alllandings' || lowerHeader === 'alllandings') dbField = 'landings';
-            else if (lowerHeader === 'daylanding' || lowerHeader === 'daylandings') dbField = 'day_landings';
-            else if (lowerHeader === 'nightlanding' || lowerHeader === 'nightlandings') dbField = 'night_landings';
-            else if (lowerHeader === 'daytakeoff' || lowerHeader === 'daytakeoffs') dbField = 'day_takeoffs';
-            else if (lowerHeader === 'nighttakeoff' || lowerHeader === 'nighttakeoffs') dbField = 'night_takeoffs';
-            // Generic pattern matching for other formats
-            else if (lowerHeader.includes('date')) dbField = 'date';
-            else if (lowerHeader.includes('aircraft') && (lowerHeader.includes('reg') || lowerHeader.includes('tail') || lowerHeader.includes('n-'))) dbField = 'aircraft_registration';
-            else if (lowerHeader.includes('aircraft') && lowerHeader.includes('type')) dbField = 'aircraft_type';
-            else if (lowerHeader.includes('type') && !lowerHeader.includes('aircraft')) dbField = 'aircraft_type';
-            else if (lowerHeader.includes('from') || lowerHeader.includes('departure') || lowerHeader.includes('origin')) dbField = 'departure_airport';
-            else if (lowerHeader.includes('to') || lowerHeader.includes('arrival') || lowerHeader.includes('destination')) dbField = 'arrival_airport';
-            else if (lowerHeader.includes('total') && lowerHeader.includes('time')) dbField = 'total_time';
-            else if (lowerHeader.includes('pic') || lowerHeader === 'pilot in command') dbField = 'pic_time';
-            else if (lowerHeader.includes('sic') || lowerHeader.includes('second in command')) dbField = 'sic_time';
-            else if (lowerHeader.includes('cross') && lowerHeader.includes('country')) dbField = 'cross_country_time';
-            else if (lowerHeader.includes('night')) dbField = 'night_time';
-            else if (lowerHeader.includes('instrument')) dbField = 'instrument_time';
-            else if (lowerHeader.includes('approach')) dbField = 'approaches';
-            else if (lowerHeader.includes('landing')) dbField = 'landings';
-            else if (lowerHeader.includes('route')) dbField = 'route';
-            else if (lowerHeader.includes('remarks') || lowerHeader.includes('notes') || lowerHeader.includes('comment')) dbField = 'remarks';
-          }
-          
-          if (dbField) {
-            autoMappings.push({ csvColumn: header, dbField });
-          }
+        // Show detailed report
+        toast({
+          title: "CSV Parsed Successfully",
+          description: `Found ${report.validFlights} valid flights (${report.zeroTimeFlights} with zero time). ${report.formatBreakdown.legacy2018} from 2018.`,
         });
         
-        // For ForeFlight, add aircraft_type as a virtual mapping since it's derived from AircraftID
-        if (isForeFlight && aircraftLookupMap.size > 0) {
-          autoMappings.push({ csvColumn: 'AircraftID', dbField: 'aircraft_type' });
-        }
+        // Skip mapping step - go directly to preview for robust parser
+        setStep('preview');
         
-        setFieldMappings(autoMappings);
-        
-        // Check if we have all required fields
-        const requiredFields = DATABASE_FIELDS.filter(f => f.required).map(f => f.key);
-        const mappedFields = autoMappings.map(m => m.dbField);
-        const missingRequired = requiredFields.filter(field => !mappedFields.includes(field));
-        
-        if (missingRequired.length > 0) {
-          toast({
-            title: "Missing required fields",
-            description: `Could not automatically map these required fields: ${missingRequired.join(', ')}. Please use the manual mapping.`,
-            variant: "destructive",
-          });
-          setStep('mapping');
-        } else {
-          // Auto-proceed to preview if all required fields are mapped
-          toast({
-            title: "File processed successfully",
-            description: `${isForeFlight ? 'ForeFlight' : 'CSV'} format detected. ${rows.length} flights ready to import.`,
-          });
-          setStep('preview');
-        }
-      },
-      header: false,
-      skipEmptyLines: true
-    });
-  }, [toast]);
+      } else {
+        // Fallback to original Papa Parse logic
+        Papa.parse(file, {
+          complete: (results) => {
+            if (results.errors.length > 0) {
+              toast({
+                title: "CSV parsing error",
+                description: "There was an error parsing your CSV file",
+                variant: "destructive",
+              });
+              return;
+            }
+
+            const allRows = results.data as string[][];
+            
+            // Check if this is a ForeFlight export
+            const isForeFlight = allRows[0]?.[0]?.toLowerCase().includes('foreflight logbook import');
+            setIsForeFlight(isForeFlight);
+            
+            let headers: string[];
+            let rows: CSVRow[];
+            let aircraftLookupMap = new Map<string, AircraftInfo>();
+            
+            if (isForeFlight) {
+              const parsed = parseForeFlight(allRows);
+              headers = parsed.headers;
+              rows = parsed.rows;
+              aircraftLookupMap = parsed.aircraftLookup;
+            } else {
+              headers = allRows[0] as string[];
+              rows = allRows.slice(1).filter(row => row.some(cell => cell?.trim())).map(row => {
+                const rowObj: CSVRow = {};
+                headers.forEach((header, index) => {
+                  rowObj[header] = row[index] || '';
+                });
+                return rowObj;
+              });
+            }
+            
+            setCsvHeaders(headers);
+            setCsvData(rows);
+            setStep('mapping');
+          }
+        });
+      }
+    } catch (error) {
+      console.error('Error parsing CSV:', error);
+      toast({
+        title: "Parsing Error",
+        description: `Failed to parse CSV: ${error instanceof Error ? error.message : 'Unknown error'}`,
+        variant: "destructive",
+      });
+    }
+  }, [toast, useRobustParser]);
 
   const handleMappingChange = (csvColumn: string, dbField: string) => {
     setFieldMappings(prev => {
@@ -579,52 +504,90 @@ export function CSVImportDialog({ open, onOpenChange, onImportComplete }: CSVImp
     setImportProgress(0);
     
     try {
-      const mappedData = csvData.map(row => {
-        const flightEntry: any = {};
-        let approachCount = 0;
-        
-        fieldMappings.forEach(mapping => {
-          const value = row[mapping.csvColumn]?.trim();
-          if (value) {
-            if (mapping.dbField === 'date') {
-              flightEntry[mapping.dbField] = new Date(value).toISOString().split('T')[0];
-            } else if (mapping.dbField.includes('time') || mapping.dbField === 'landings' || mapping.dbField === 'approaches') {
-              flightEntry[mapping.dbField] = Number(value) || 0;
-            } else {
-              flightEntry[mapping.dbField] = value;
+      let mappedData;
+      
+      if (useRobustParser && parsedFlights.length > 0) {
+        // Use robust parser data - already normalized
+        mappedData = parsedFlights.map(flight => ({
+          date: flight.date,
+          aircraft_registration: flight.aircraft_registration,
+          aircraft_type: flight.aircraft_type,
+          departure_airport: flight.departure_airport,
+          arrival_airport: flight.arrival_airport,
+          total_time: flight.total_time,
+          pic_time: flight.pic_time,
+          sic_time: flight.sic_time,
+          cross_country_time: flight.cross_country_time,
+          night_time: flight.night_time,
+          instrument_time: flight.instrument_time,
+          actual_instrument: flight.actual_instrument,
+          simulated_instrument: flight.simulated_instrument,
+          solo_time: flight.solo_time,
+          dual_given: flight.dual_given,
+          dual_received: flight.dual_received,
+          holds: flight.holds,
+          approaches: flight.approaches,
+          landings: flight.landings,
+          day_takeoffs: flight.day_takeoffs,
+          day_landings: flight.day_landings,
+          night_takeoffs: flight.night_takeoffs,
+          night_landings: flight.night_landings,
+          simulated_flight: flight.simulated_flight,
+          ground_training: flight.ground_training,
+          route: flight.route,
+          remarks: flight.remarks,
+          start_time: flight.start_time,
+          end_time: flight.end_time
+        }));
+      } else {
+        // Fallback to original mapping logic
+        mappedData = csvData.map(row => {
+          const flightEntry: any = {};
+          let approachCount = 0;
+          
+          fieldMappings.forEach(mapping => {
+            const value = row[mapping.csvColumn]?.trim();
+            if (value) {
+              if (mapping.dbField === 'date') {
+                flightEntry[mapping.dbField] = new Date(value).toISOString().split('T')[0];
+              } else if (mapping.dbField.includes('time') || mapping.dbField === 'landings' || mapping.dbField === 'approaches') {
+                flightEntry[mapping.dbField] = Number(value) || 0;
+              } else {
+                flightEntry[mapping.dbField] = value;
+              }
             }
-          }
-        });
-        
-        // Handle ForeFlight approach columns
-        if (isForeFlight) {
-          for (let i = 1; i <= 6; i++) {
-            const approachValue = row[`Approach${i}`]?.trim();
-            if (approachValue) {
-              approachCount++;
+          });
+          
+          // Handle ForeFlight approach columns
+          if (isForeFlight) {
+            for (let i = 1; i <= 6; i++) {
+              const approachValue = row[`Approach${i}`]?.trim();
+              if (approachValue) {
+                approachCount++;
+              }
             }
-          }
-          if (approachCount > 0) {
-            flightEntry.approaches = approachCount;
+            if (approachCount > 0) {
+              flightEntry.approaches = approachCount;
+            }
+            
+            // Get aircraft type from lookup if aircraftid is provided
+            const aircraftId = flightEntry.aircraft_registration || row['AircraftID'];
+            if (aircraftId && aircraftLookup.has(aircraftId)) {
+              const aircraftInfo = aircraftLookup.get(aircraftId)!;
+              // Use TypeCode if available, otherwise combine Make and Model
+              if (aircraftInfo.typeCode) {
+                flightEntry.aircraft_type = aircraftInfo.typeCode;
+              } else if (aircraftInfo.make && aircraftInfo.model) {
+                flightEntry.aircraft_type = `${aircraftInfo.make} ${aircraftInfo.model}`;
+              } else {
+                flightEntry.aircraft_type = aircraftInfo.make || aircraftInfo.model || 'Unknown';
+              }
+            }
           }
           
-          // Get aircraft type from lookup if aircraftid is provided
-          const aircraftId = flightEntry.aircraft_registration || row['AircraftID'];
-          if (aircraftId && aircraftLookup.has(aircraftId)) {
-            const aircraftInfo = aircraftLookup.get(aircraftId)!;
-            // Use TypeCode if available, otherwise combine Make and Model
-            if (aircraftInfo.typeCode) {
-              flightEntry.aircraft_type = aircraftInfo.typeCode;
-            } else if (aircraftInfo.make && aircraftInfo.model) {
-              flightEntry.aircraft_type = `${aircraftInfo.make} ${aircraftInfo.model}`;
-            } else {
-              flightEntry.aircraft_type = aircraftInfo.make || aircraftInfo.model || 'Unknown';
-            }
-          }
-        }
-        
-        return flightEntry;
-      });
+          return flightEntry;
+        });
+      }
 
       console.log('About to call edge function with data:', { 
         flights: mappedData.slice(0, 2),
@@ -808,11 +771,34 @@ export function CSVImportDialog({ open, onOpenChange, onImportComplete }: CSVImp
             <Card>
               <CardHeader>
                 <CardTitle className="text-lg">Preview Import Data</CardTitle>
-              <CardDescription>
-                Review your flight data before importing. {csvData.length} flights detected.
-              </CardDescription>
+                <CardDescription>
+                  {useRobustParser && parseReport ? (
+                    <>
+                      Review your flight data before importing. {parseReport.validFlights} valid flights detected 
+                      {parseReport.zeroTimeFlights > 0 && ` (${parseReport.zeroTimeFlights} flights with zero time will be skipped)`}.
+                      {parseReport.formatBreakdown.legacy2018 > 0 && (
+                        <> {parseReport.formatBreakdown.legacy2018} flights from 2018 detected.</>
+                      )}
+                    </>
+                  ) : (
+                    <>Review your flight data before importing. {csvData.length} flights detected.</>
+                  )}
+                </CardDescription>
               </CardHeader>
               <CardContent>
+                {parseReport && parseReport.warnings.length > 0 && (
+                  <Alert className="mb-4">
+                    <AlertCircle className="h-4 w-4" />
+                    <AlertDescription>
+                      <div className="space-y-1">
+                        {parseReport.warnings.map((warning, index) => (
+                          <div key={index}>{warning}</div>
+                        ))}
+                      </div>
+                    </AlertDescription>
+                  </Alert>
+                )}
+                
                 {validationErrors.length > 0 && (
                   <Alert className="mb-4">
                     <AlertCircle className="h-4 w-4" />
@@ -821,68 +807,102 @@ export function CSVImportDialog({ open, onOpenChange, onImportComplete }: CSVImp
                     </AlertDescription>
                   </Alert>
                 )}
+
+                {useRobustParser && parseReport && (
+                  <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
+                    <div className="text-center p-4 bg-muted/50 rounded-lg">
+                      <div className="text-2xl font-bold">{parseReport.validFlights}</div>
+                      <div className="text-sm text-muted-foreground">Valid Flights</div>
+                    </div>
+                    <div className="text-center p-4 bg-muted/50 rounded-lg">
+                      <div className="text-2xl font-bold">{parseReport.totalHours.toFixed(1)}</div>
+                      <div className="text-sm text-muted-foreground">Total Hours</div>
+                    </div>
+                    <div className="text-center p-4 bg-muted/50 rounded-lg">
+                      <div className="text-2xl font-bold">{parseReport.aircraftCount}</div>
+                      <div className="text-sm text-muted-foreground">Aircraft</div>
+                    </div>
+                    <div className="text-center p-4 bg-muted/50 rounded-lg">
+                      <div className="text-2xl font-bold">{parseReport.formatBreakdown.legacy2018}</div>
+                      <div className="text-sm text-muted-foreground">2018 Flights</div>
+                    </div>
+                  </div>
+                )}
                 
                 <div className="max-h-96 overflow-x-auto overflow-y-auto border rounded-lg">
                   <Table>
                     <TableHeader>
                       <TableRow className="bg-muted/50">
                         <TableHead className="sticky left-0 bg-muted/50 border-r min-w-16">Row</TableHead>
-                        {fieldMappings.slice(0, 8).map(mapping => (
-                          <TableHead key={mapping.dbField} className="min-w-32">
-                            {DATABASE_FIELDS.find(f => f.key === mapping.dbField)?.label}
-                          </TableHead>
-                        ))}
-                        {fieldMappings.length > 8 && (
-                          <TableHead className="min-w-20">...</TableHead>
-                        )}
+                        <TableHead className="min-w-28">Date</TableHead>
+                        <TableHead className="min-w-32">Aircraft</TableHead>
+                        <TableHead className="min-w-24">From</TableHead>
+                        <TableHead className="min-w-24">To</TableHead>
+                        <TableHead className="min-w-20">Total</TableHead>
+                        <TableHead className="min-w-20">PIC</TableHead>
+                        <TableHead className="min-w-20">Format</TableHead>
                       </TableRow>
                     </TableHeader>
                     <TableBody>
-                       {csvData.slice(0, 10).map((row, index) => (
-                        <TableRow key={index}>
-                          <TableCell className="sticky left-0 bg-background border-r font-medium">{index + 1}</TableCell>
-                          {fieldMappings.slice(0, 8).map(mapping => {
-                            // Handle both object-based data (ForeFlight) and array-based data (standard CSV)
-                            let value: string;
-                            if (isForeFlight) {
-                              // ForeFlight rows are objects
-                              value = (row as Record<string, string>)[mapping.csvColumn];
-                            } else {
-                              // Standard CSV rows are arrays
-                              value = (row as unknown as string[])[csvHeaders.indexOf(mapping.csvColumn)];
-                            }
-                            const hasError = validationErrors.some(e => e.row === index + 1 && e.field === mapping.dbField);
-                            return (
-                              <TableCell key={mapping.dbField} className={hasError ? 'bg-destructive/10 text-destructive' : ''}>
-                                {value || '-'}
-                              </TableCell>
-                            );
-                          })}
-                          {fieldMappings.length > 8 && (
-                            <TableCell className="text-muted-foreground">+{fieldMappings.length - 8} more</TableCell>
-                          )}
-                        </TableRow>
-                      ))}
+                      {useRobustParser && parsedFlights.length > 0 ? (
+                        // Show robust parser data
+                        parsedFlights.slice(0, 10).map((flight, index) => (
+                          <TableRow key={index} className={flight.total_time === 0 ? 'opacity-50' : ''}>
+                            <TableCell className="sticky left-0 bg-background border-r font-medium">{index + 1}</TableCell>
+                            <TableCell>{flight.date}</TableCell>
+                            <TableCell>{flight.aircraft_registration}</TableCell>
+                            <TableCell>{flight.departure_airport}</TableCell>
+                            <TableCell>{flight.arrival_airport}</TableCell>
+                            <TableCell className={flight.total_time === 0 ? 'text-red-500 font-medium' : 'font-medium'}>
+                              {flight.total_time.toFixed(1)}
+                            </TableCell>
+                            <TableCell>{flight.pic_time.toFixed(1)}</TableCell>
+                            <TableCell>
+                              <Badge variant={flight._format === 'legacy2018' ? 'destructive' : 'secondary'}>
+                                {flight._format}
+                              </Badge>
+                            </TableCell>
+                          </TableRow>
+                        ))
+                      ) : (
+                        // Fallback to original CSV preview
+                        csvData.slice(0, 10).map((row, index) => (
+                          <TableRow key={index}>
+                            <TableCell className="sticky left-0 bg-background border-r font-medium">{index + 1}</TableCell>
+                            {fieldMappings.slice(0, 7).map(mapping => {
+                              // Handle both object-based data (ForeFlight) and array-based data (standard CSV)
+                              let value: string;
+                              if (isForeFlight) {
+                                // ForeFlight rows are objects
+                                value = (row as Record<string, string>)[mapping.csvColumn];
+                              } else {
+                                // Standard CSV rows are arrays
+                                value = (row as unknown as string[])[csvHeaders.indexOf(mapping.csvColumn)];
+                              }
+                              const hasError = validationErrors.some(e => e.row === index + 1 && e.field === mapping.dbField);
+                              return (
+                                <TableCell key={mapping.dbField} className={hasError ? 'bg-destructive/10 text-destructive' : ''}>
+                                  {value || '-'}
+                                </TableCell>
+                              );
+                            })}
+                          </TableRow>
+                        ))
+                      )}
                     </TableBody>
                   </Table>
                 </div>
                 
-                {fieldMappings.length > 8 && (
-                  <div className="text-sm text-muted-foreground">
-                    Showing first 8 columns. All {fieldMappings.length} columns will be imported.
-                  </div>
-                )}
-                
                 <div className="flex flex-col sm:flex-row justify-between gap-4 mt-6 pt-4 border-t">
-                  <Button variant="outline" onClick={() => setStep('mapping')} className="w-full sm:w-auto">
-                    Back to Mapping
+                  <Button variant="outline" onClick={() => setStep(useRobustParser ? 'upload' : 'mapping')} className="w-full sm:w-auto">
+                    Back
                   </Button>
                   <Button 
                     onClick={startImport} 
-                    disabled={validationErrors.length > 0}
+                    disabled={validationErrors.length > 0 || (useRobustParser && parseReport?.validFlights === 0)}
                     className="w-full sm:w-auto bg-primary hover:bg-primary/90"
                   >
-                    Import {csvData.length} Flights
+                    Import {useRobustParser && parseReport ? parseReport.validFlights : csvData.length} Flights
                   </Button>
                 </div>
               </CardContent>
