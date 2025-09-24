@@ -1,5 +1,5 @@
 import { Button } from "@/components/ui/button";
-import { ArrowRight, Play } from "lucide-react";
+import { ArrowRight } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
 import { useEffect, useState } from "react";
@@ -15,17 +15,9 @@ const AnimatedHeroSection = () => {
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
-  const handleStartLogbook = () => {
+  const handleViewDashboard = () => {
     if (user) {
-      navigate("/logbook");
-    } else {
-      navigate("/signin");
-    }
-  };
-
-  const handleViewAirlines = () => {
-    if (user) {
-      navigate("/airlines");
+      navigate("/profile");
     } else {
       navigate("/signin");
     }
@@ -80,19 +72,10 @@ const AnimatedHeroSection = () => {
             variant="default" 
             size="lg" 
             className="group px-8 py-4 text-lg hover-scale" 
-            onClick={handleStartLogbook}
+            onClick={handleViewDashboard}
           >
-            {user ? "View Dashboard" : "Start Free Today"}
+            View Dashboard
             <ArrowRight className="ml-2 h-5 w-5 group-hover:translate-x-1 transition-transform" />
-          </Button>
-          <Button 
-            variant="outline" 
-            size="lg" 
-            className="px-8 py-4 text-lg hover-scale border-aviation-sky/30 hover:border-aviation-sky hover:bg-aviation-sky/10" 
-            onClick={handleViewAirlines}
-          >
-            <Play className="mr-2 h-5 w-5" />
-            Watch Demo
           </Button>
         </div>
 
