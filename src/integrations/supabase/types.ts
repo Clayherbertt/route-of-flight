@@ -548,6 +548,18 @@ export type Database = {
           simulated_instrument: number | null
           solo_time: number | null
           start_time: string | null
+          time_out: string | null
+          time_off: string | null
+          time_on: string | null
+          time_in: string | null
+          on_duty: string | null
+          off_duty: string | null
+          hobbs_start: number | null
+          hobbs_end: number | null
+          tach_start: number | null
+          tach_end: number | null
+          day_landings_full_stop: number | null
+          night_landings_full_stop: number | null
           total_time: number
           updated_at: string
           user_id: string
@@ -583,6 +595,18 @@ export type Database = {
           simulated_instrument?: number | null
           solo_time?: number | null
           start_time?: string | null
+          time_out?: string | null
+          time_off?: string | null
+          time_on?: string | null
+          time_in?: string | null
+          on_duty?: string | null
+          off_duty?: string | null
+          hobbs_start?: number | null
+          hobbs_end?: number | null
+          tach_start?: number | null
+          tach_end?: number | null
+          day_landings_full_stop?: number | null
+          night_landings_full_stop?: number | null
           total_time?: number
           updated_at?: string
           user_id: string
@@ -618,6 +642,18 @@ export type Database = {
           simulated_instrument?: number | null
           solo_time?: number | null
           start_time?: string | null
+          time_out?: string | null
+          time_off?: string | null
+          time_on?: string | null
+          time_in?: string | null
+          on_duty?: string | null
+          off_duty?: string | null
+          hobbs_start?: number | null
+          hobbs_end?: number | null
+          tach_start?: number | null
+          tach_end?: number | null
+          day_landings_full_stop?: number | null
+          night_landings_full_stop?: number | null
           total_time?: number
           updated_at?: string
           user_id?: string

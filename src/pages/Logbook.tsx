@@ -35,6 +35,18 @@ interface FlightEntry {
   route?: string;
   start_time?: string;
   end_time?: string;
+  time_out?: string;
+  time_off?: string;
+  time_on?: string;
+  time_in?: string;
+  on_duty?: string;
+  off_duty?: string;
+  hobbs_start?: number;
+  hobbs_end?: number;
+  tach_start?: number;
+  tach_end?: number;
+  day_landings_full_stop?: number;
+  night_landings_full_stop?: number;
   sic_time?: number;
   solo_time?: number;
   day_takeoffs?: number;
@@ -275,7 +287,11 @@ const Logbook = () => {
               <Upload className="h-4 w-4 mr-2" />
               Import CSV
             </Button>
-            <Button variant="outline" className="text-destructive border-destructive hover:bg-destructive hover:text-destructive-foreground" onClick={() => setShowClearAllDialog(true)}>
+            <Button
+              variant="outline"
+              className="text-destructive border-destructive hover:bg-destructive hover:text-destructive-foreground"
+              onClick={() => setShowClearAllDialog(true)}
+            >
               <Trash2 className="h-4 w-4 mr-2" />
               Clear All
             </Button>
@@ -407,18 +423,43 @@ const Logbook = () => {
                 <TableHeader>
                   <TableRow>
                     <TableHead>Date</TableHead>
-                    <TableHead>Aircraft</TableHead>
+                    <TableHead>Aircraft ID</TableHead>
                     <TableHead>Type</TableHead>
+                    <TableHead>From</TableHead>
+                    <TableHead>To</TableHead>
                     <TableHead>Route</TableHead>
+                    <TableHead>Time Out</TableHead>
+                    <TableHead>Time Off</TableHead>
+                    <TableHead>Time On</TableHead>
+                    <TableHead>Time In</TableHead>
+                    <TableHead>On Duty</TableHead>
+                    <TableHead>Off Duty</TableHead>
+                    <TableHead>Hobbs Start</TableHead>
+                    <TableHead>Hobbs End</TableHead>
+                    <TableHead>Tach Start</TableHead>
+                    <TableHead>Tach End</TableHead>
                     <TableHead>Total Time</TableHead>
                     <TableHead>PIC</TableHead>
-                    <TableHead>XC</TableHead>
+                    <TableHead>SIC</TableHead>
+                    <TableHead>Solo</TableHead>
                     <TableHead>Night</TableHead>
-                    <TableHead>Instrument</TableHead>
+                    <TableHead>Cross Country</TableHead>
+                    <TableHead>Actual Instrument</TableHead>
+                    <TableHead>Sim Instrument</TableHead>
+                    <TableHead>Holds</TableHead>
                     <TableHead>Approaches</TableHead>
-                    <TableHead>Landings</TableHead>
+                    <TableHead>Day TO</TableHead>
+                    <TableHead>Day LDG</TableHead>
+                    <TableHead>Day Full Stop</TableHead>
+                    <TableHead>Night TO</TableHead>
+                    <TableHead>Night LDG</TableHead>
+                    <TableHead>Night Full Stop</TableHead>
+                    <TableHead>Dual Given</TableHead>
+                    <TableHead>Dual Received</TableHead>
+                    <TableHead>Sim Flight</TableHead>
+                    <TableHead>Ground Training</TableHead>
                     <TableHead>Remarks</TableHead>
-                    <TableHead className="w-[50px]">Actions</TableHead>
+                    <TableHead className="w-[70px]">Actions</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
@@ -430,18 +471,39 @@ const Logbook = () => {
                           <Badge variant="outline">{flight.aircraft_registration}</Badge>
                         </TableCell>
                         <TableCell>{flight.aircraft_type}</TableCell>
-                        <TableCell>
-                          <span className="text-sm">
-                            {flight.departure_airport} → {flight.arrival_airport}
-                          </span>
-                        </TableCell>
+                        <TableCell>{flight.departure_airport}</TableCell>
+                        <TableCell>{flight.arrival_airport}</TableCell>
+                        <TableCell>{flight.route || '-'}</TableCell>
+                        <TableCell>{flight.time_out || flight.start_time || '-'}</TableCell>
+                        <TableCell>{flight.time_off || '-'}</TableCell>
+                        <TableCell>{flight.time_on || '-'}</TableCell>
+                        <TableCell>{flight.time_in || flight.end_time || '-'}</TableCell>
+                        <TableCell>{flight.on_duty || '-'}</TableCell>
+                        <TableCell>{flight.off_duty || '-'}</TableCell>
+                        <TableCell>{flight.hobbs_start ?? '-'}</TableCell>
+                        <TableCell>{flight.hobbs_end ?? '-'}</TableCell>
+                        <TableCell>{flight.tach_start ?? '-'}</TableCell>
+                        <TableCell>{flight.tach_end ?? '-'}</TableCell>
                         <TableCell className="font-medium">{flight.total_time}</TableCell>
                         <TableCell>{flight.pic_time}</TableCell>
-                        <TableCell>{flight.cross_country_time}</TableCell>
+                        <TableCell>{flight.sic_time ?? 0}</TableCell>
+                        <TableCell>{flight.solo_time ?? 0}</TableCell>
                         <TableCell>{flight.night_time}</TableCell>
-                        <TableCell>{flight.instrument_time}</TableCell>
-                        <TableCell>{flight.approaches}</TableCell>
-                        <TableCell>{flight.landings}</TableCell>
+                        <TableCell>{flight.cross_country_time}</TableCell>
+                        <TableCell>{flight.actual_instrument ?? 0}</TableCell>
+                        <TableCell>{flight.simulated_instrument ?? 0}</TableCell>
+                        <TableCell>{flight.holds ?? 0}</TableCell>
+                        <TableCell>{flight.approaches || '-'}</TableCell>
+                        <TableCell>{flight.day_takeoffs ?? 0}</TableCell>
+                        <TableCell>{flight.day_landings ?? 0}</TableCell>
+                        <TableCell>{flight.day_landings_full_stop ?? 0}</TableCell>
+                        <TableCell>{flight.night_takeoffs ?? 0}</TableCell>
+                        <TableCell>{flight.night_landings ?? 0}</TableCell>
+                        <TableCell>{flight.night_landings_full_stop ?? 0}</TableCell>
+                        <TableCell>{flight.dual_given ?? 0}</TableCell>
+                        <TableCell>{flight.dual_received ?? 0}</TableCell>
+                        <TableCell>{flight.simulated_flight ?? 0}</TableCell>
+                        <TableCell>{flight.ground_training ?? 0}</TableCell>
                         <TableCell className="max-w-xs truncate">{flight.remarks || '-'}</TableCell>
                         <TableCell>
                           <DropdownMenu>
@@ -470,7 +532,7 @@ const Logbook = () => {
                     ))
                   ) : (
                     <TableRow>
-                      <TableCell colSpan={13} className="h-32 text-center">
+                      <TableCell colSpan={38} className="h-32 text-center">
                         <div className="flex flex-col items-center justify-center text-muted-foreground">
                           <Plane className="h-8 w-8 mb-2 opacity-50" />
                           <p className="text-lg font-medium">No flights recorded yet</p>

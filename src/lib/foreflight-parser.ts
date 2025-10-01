@@ -3,6 +3,11 @@
  * Handles the complex multi-section CSV format from ForeFlight exports
  */
 
+import Papa from "papaparse";
+
+type RawValue = string | number | null | undefined;
+type RawRow = Record<string, RawValue>;
+
 export interface ForeFlightRow {
   date: string;
   aircraft_registration: string;
@@ -33,8 +38,20 @@ export interface ForeFlightRow {
   remarks?: string;
   start_time?: string;
   end_time?: string;
+  time_out?: string;
+  time_off?: string;
+  time_on?: string;
+  time_in?: string;
+  on_duty?: string;
+  off_duty?: string;
+  hobbs_start?: number;
+  hobbs_end?: number;
+  tach_start?: number;
+  tach_end?: number;
+  day_landings_full_stop?: number;
+  night_landings_full_stop?: number;
   // Raw data for debugging
-  _raw?: Record<string, any>;
+  _raw?: RawRow;
   _format?: 'modern' | 'legacy2019' | 'legacy2018';
 }
 
@@ -61,30 +78,88 @@ export interface ParseReport {
 /**
  * Parse a number field with multiple fallback strategies
  */
-function parseNumber(value: any, fallbacks: any[] = []): number {
-  // Try the primary value first
-  if (value !== undefined && value !== null && value !== '' && value !== 'null') {
-    const parsed = parseFloat(value.toString());
-    if (!isNaN(parsed)) return parsed;
-  }
-  
-  // Try fallback values
-  for (const fallback of fallbacks) {
-    if (fallback !== undefined && fallback !== null && fallback !== '' && fallback !== 'null') {
-      const parsed = parseFloat(fallback.toString());
-      if (!isNaN(parsed)) return parsed;
+function parseDurationLike(value: string): number | null {
+  const normalized = value.trim();
+  if (!normalized) return null;
+
+  // Handle HH:MM[:SS] formats
+  const colonParts = normalized.split(':');
+  if (colonParts.length >= 2 && colonParts.length <= 3) {
+    const numericParts = colonParts.map(part => Number(part));
+    if (numericParts.every(part => !Number.isNaN(part))) {
+      const [hours, minutes = 0, seconds = 0] = numericParts;
+      return hours + minutes / 60 + seconds / 3600;
     }
   }
-  
+
+  // Handle H+MM format (common in some logbooks)
+  if (normalized.includes('+')) {
+    const [hoursPart, minutesPart] = normalized.split('+');
+    const hours = Number(hoursPart);
+    const minutes = Number(minutesPart);
+    if (!Number.isNaN(hours) && !Number.isNaN(minutes)) {
+      return hours + minutes / 60;
+    }
+  }
+
+  // Handle formats like "1h 30m" or "45 min"
+  const hourMatch = normalized.match(/(-?\d+(?:\.\d+)?)\s*h(?:ours?)?/i);
+  const minuteMatch = normalized.match(/(\d+(?:\.\d+)?)\s*m(?:in(?:utes?)?)?/i);
+  if (hourMatch || minuteMatch) {
+    const hours = hourMatch ? Number(hourMatch[1]) : 0;
+    const minutes = minuteMatch ? Number(minuteMatch[1]) : 0;
+    if (!Number.isNaN(hours) && !Number.isNaN(minutes)) {
+      return hours + minutes / 60;
+    }
+  }
+
+  return null;
+}
+
+export function coerceNumber(raw: RawValue): number | null {
+  if (raw === undefined || raw === null) return null;
+  if (typeof raw === 'number' && !Number.isNaN(raw)) return raw;
+
+  const str = raw.toString().trim();
+  if (!str || str.toLowerCase() === 'null' || str.toLowerCase() === 'undefined') {
+    return null;
+  }
+
+  const duration = parseDurationLike(str);
+  if (duration !== null) {
+    return duration;
+  }
+
+  const dotted = str.includes('.')
+    ? str.replace(/,/g, '')
+    : str.replace(',', '.');
+
+  const parsed = parseFloat(dotted);
+  if (!Number.isNaN(parsed)) {
+    return parsed;
+  }
+
+  return null;
+}
+
+function parseNumber(value: RawValue, fallbacks: RawValue[] = []): number {
+  const primary = coerceNumber(value);
+  if (primary !== null) return primary;
+
+  for (const fallback of fallbacks) {
+    const coerced = coerceNumber(fallback);
+    if (coerced !== null) return coerced;
+  }
+
   return 0;
 }
 
 /**
  * Calculate flight time from TimeOut/TimeIn strings
  */
-function calculateFlightTime(timeOut?: string, timeIn?: string): number {
+function calculateFlightTime(timeOut?: RawValue, timeIn?: RawValue): number {
   if (!timeOut || !timeIn) return 0;
-  
+
   try {
     const parseTime = (timeStr: string): number => {
       if (timeStr.includes(':')) {
@@ -93,9 +168,9 @@ function calculateFlightTime(timeOut?: string, timeIn?: string): number {
       }
       return parseFloat(timeStr) || 0;
     };
-    
-    const outTime = parseTime(timeOut);
-    const inTime = parseTime(timeIn);
+
+    const outTime = parseTime(timeOut.toString());
+    const inTime = parseTime(timeIn.toString());
     
     // Handle day rollover
     if (inTime < outTime) {
@@ -111,7 +186,7 @@ function calculateFlightTime(timeOut?: string, timeIn?: string): number {
 /**
  * Detect flight data format based on date and available columns
  */
-function detectFormat(row: Record<string, any>): 'modern' | 'legacy2019' | 'legacy2018' {
+function detectFormat(row: RawRow): 'modern' | 'legacy2019' | 'legacy2018' {
   const date = new Date(row.Date || row.date);
   const year = date.getFullYear();
   
@@ -132,7 +207,7 @@ function detectFormat(row: Record<string, any>): 'modern' | 'legacy2019' | 'lega
 /**
  * Normalize a single flight row from ForeFlight CSV
  */
-function normalizeFlightRow(row: Record<string, any>): ForeFlightRow | null {
+function normalizeFlightRow(row: RawRow): ForeFlightRow | null {
   const format = detectFormat(row);
   
   // Extract basic info
@@ -141,9 +216,37 @@ function normalizeFlightRow(row: Record<string, any>): ForeFlightRow | null {
     return null; // Skip rows without dates
   }
   
-  const aircraftReg = (row.AircraftID || row.aircraft_registration || '').toString().trim();
-  const depAirport = (row.From || row.departure_airport || '').toString().trim();
-  const arrAirport = (row.To || row.arrival_airport || depAirport || '').toString().trim();
+  const aircraftReg = (
+    row.AircraftID ||
+    row.aircraft_registration ||
+    row.Aircraft ||
+    row['Aircraft Registration'] ||
+    row['Aircraft Tail Number'] ||
+    row['Tail Number'] ||
+    row['Aircraft Number'] ||
+    row['N-Number'] ||
+    row['Aircraft No'] ||
+    row['Aircraft Reg'] ||
+    row.aircraft ||
+    ''
+  ).toString().trim();
+  const depAirport = (
+    row.From ||
+    row.departure_airport ||
+    row['Departure Airport'] ||
+    row['Departure'] ||
+    row['From Airport'] ||
+    ''
+  ).toString().trim();
+  const arrAirport = (
+    row.To ||
+    row.arrival_airport ||
+    row['Arrival Airport'] ||
+    row['Arrival'] ||
+    row['To Airport'] ||
+    depAirport ||
+    ''
+  ).toString().trim();
   
   if (!aircraftReg || !depAirport) {
     return null; // Skip rows without essential data
@@ -198,7 +301,7 @@ function normalizeFlightRow(row: Record<string, any>): ForeFlightRow | null {
   return {
     date,
     aircraft_registration: aircraftReg,
-    aircraft_type: row.aircraft_type || aircraftReg,
+    aircraft_type: row.aircraft_type || row.Type || row['Aircraft Type'] || aircraftReg,
     departure_airport: depAirport,
     arrival_airport: arrAirport,
     total_time: totalTime,
@@ -216,15 +319,27 @@ function normalizeFlightRow(row: Record<string, any>): ForeFlightRow | null {
     approaches: (row.Approach1 || row.Approaches || '0').toString(),
     landings: parseNumber(row.AllLandings, [row.Landings, row.DayLandingsFullStop, 1]),
     day_takeoffs: parseNumber(row.DayTakeoffs, [1]),
-    day_landings: parseNumber(row.DayLandingsFullStop, [row.DayLandings, 1]),
+    day_landings: parseNumber(row.DayLandings, [row.DayLandingsFullStop, 1]),
+    day_landings_full_stop: parseNumber(row.DayLandingsFullStop, [row['Day Landings Full Stop'], row.DayLandings, 0]),
     night_takeoffs: parseNumber(row.NightTakeoffs),
-    night_landings: parseNumber(row.NightLandingsFullStop, [row.NightLandings]),
+    night_landings: parseNumber(row.NightLandings, [row.NightLandingsFullStop]),
+    night_landings_full_stop: parseNumber(row.NightLandingsFullStop, [row['Night Landings Full Stop'], row.NightLandings, 0]),
     simulated_flight: parseNumber(row.SimulatedFlight),
     ground_training: parseNumber(row.GroundTraining),
-    route: row.Route || row.route,
-    remarks: row.PilotComments || row.remarks,
-    start_time: row.TimeOut || row.start_time,
-    end_time: row.TimeIn || row.end_time,
+    route: row.Route || row['Route of Flight'] || row.RouteOfFlight || row.route,
+    remarks: row.PilotComments || row.Remarks || row.Comments || row.remarks,
+    time_out: row.TimeOut || row['Time Out'] || row.start_time,
+    time_off: row.TimeOff || row['Time Off'] || row.time_off,
+    time_on: row.TimeOn || row['Time On'] || row.time_on,
+    time_in: row.TimeIn || row['Time In'] || row.end_time,
+    on_duty: row.OnDuty || row['On Duty'] || row.on_duty,
+    off_duty: row.OffDuty || row['Off Duty'] || row.off_duty,
+    hobbs_start: parseNumber(row.HobbsStart),
+    hobbs_end: parseNumber(row.HobbsEnd),
+    tach_start: parseNumber(row.TachStart),
+    tach_end: parseNumber(row.TachEnd),
+    start_time: row.TimeOut || row['Time Out'] || row.start_time,
+    end_time: row.TimeIn || row['Time In'] || row.end_time,
     _raw: row,
     _format: format
   };
@@ -235,47 +350,99 @@ function normalizeFlightRow(row: Record<string, any>): ForeFlightRow | null {
  */
 export async function loadForeFlightCsv(file: File): Promise<ForeFlightRow[]> {
   const text = await file.text();
-  const lines = text.split('\n');
-  
-  let flightSectionStart = -1;
-  let flightHeaders: string[] = [];
+  const { data } = Papa.parse<string[]>(text, {
+    skipEmptyLines: false,
+  });
+
+  const rows = (data as string[][]).map(row =>
+    (row ?? []).map(cell => (cell ?? '').toString().trim())
+  );
+
   const flights: ForeFlightRow[] = [];
-  
-  // Find the flights section
-  for (let i = 0; i < lines.length; i++) {
-    const line = lines[i].trim();
-    
-    // Look for common flight table indicators
-    if (line.includes('Date') && (line.includes('AircraftID') || line.includes('Aircraft'))) {
-      flightSectionStart = i;
-      flightHeaders = line.split(',').map(h => h.trim().replace(/"/g, ''));
-      break;
+  const aircraftLookup = new Map<string, { typeCode?: string; make?: string; model?: string }>();
+  let currentSection: 'none' | 'aircraft' | 'flights' = 'none';
+  let flightHeaders: string[] = [];
+
+  for (const row of rows) {
+    const firstCell = row[0]?.toLowerCase?.() || '';
+
+    if (!row.some(cell => cell && cell.trim())) {
+      continue;
+    }
+
+    if (firstCell.includes('foreflight logbook import')) {
+      currentSection = 'none';
+      flightHeaders = [];
+      continue;
+    }
+
+    if (firstCell === 'aircraft table') {
+      currentSection = 'aircraft';
+      continue;
+    }
+
+    if (firstCell === 'flights table') {
+      currentSection = 'flights';
+      flightHeaders = [];
+      continue;
+    }
+
+    if (currentSection === 'aircraft') {
+      if (!row[0] || row[0] === 'AircraftID') continue;
+
+      const aircraftId = row[0];
+      if (aircraftId) {
+        aircraftLookup.set(aircraftId, {
+          typeCode: row[1] || row[3],
+          make: row[3],
+          model: row[4],
+        });
+      }
+      continue;
+    }
+
+    if (currentSection === 'flights') {
+      if (flightHeaders.length === 0) {
+        if (firstCell === 'date') {
+          flightHeaders = row.map(header => header.replace(/"/g, '').trim());
+        }
+        continue;
+      }
+
+      if (!row[0]) {
+        continue;
+      }
+
+      const rowObj: RawRow = {};
+      flightHeaders.forEach((header, index) => {
+        const cellValue = row[index];
+        if (cellValue !== undefined) {
+          rowObj[header] = cellValue;
+        }
+      });
+
+      const rawAircraftId = rowObj.AircraftID ?? rowObj.aircraft_registration;
+      const aircraftId = typeof rawAircraftId === 'string'
+        ? rawAircraftId.trim()
+        : rawAircraftId !== undefined && rawAircraftId !== null
+          ? rawAircraftId.toString().trim()
+          : '';
+      if (aircraftId && aircraftLookup.has(aircraftId)) {
+        const aircraft = aircraftLookup.get(aircraftId)!;
+        rowObj.aircraft_type = aircraft.typeCode || aircraft.model || aircraft.make;
+      }
+
+      const normalizedFlight = normalizeFlightRow(rowObj);
+      if (normalizedFlight) {
+        flights.push(normalizedFlight);
+      }
     }
   }
-  
-  if (flightSectionStart === -1) {
+
+  if (flights.length === 0) {
     throw new Error('Could not find flight data section in CSV');
   }
-  
-  // Parse flight data
-  for (let i = flightSectionStart + 1; i < lines.length; i++) {
-    const line = lines[i].trim();
-    if (!line || line === ','.repeat(line.length)) continue; // Skip empty lines
-    
-    const values = line.split(',').map(v => v.trim().replace(/"/g, ''));
-    
-    // Create row object
-    const row: Record<string, any> = {};
-    flightHeaders.forEach((header, index) => {
-      row[header] = values[index] || '';
-    });
-    
-    const normalizedFlight = normalizeFlightRow(row);
-    if (normalizedFlight) {
-      flights.push(normalizedFlight);
-    }
-  }
-  
+
   return flights;
 }
 

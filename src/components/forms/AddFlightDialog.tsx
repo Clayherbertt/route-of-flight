@@ -28,6 +28,16 @@ const addFlightSchema = z.object({
   departure_airport: z.string().min(3, "Departure airport code is required (3+ characters)"),
   arrival_airport: z.string().min(3, "Arrival airport code is required (3+ characters)"),
   route: z.string().optional(),
+  time_out: z.string().optional(),
+  time_off: z.string().optional(),
+  time_on: z.string().optional(),
+  time_in: z.string().optional(),
+  on_duty: z.string().optional(),
+  off_duty: z.string().optional(),
+  hobbs_start: z.number().min(0).optional().transform(val => val ?? 0),
+  hobbs_end: z.number().min(0).optional().transform(val => val ?? 0),
+  tach_start: z.number().min(0).optional().transform(val => val ?? 0),
+  tach_end: z.number().min(0).optional().transform(val => val ?? 0),
   start_time: z.string().optional(),
   end_time: z.string().optional(),
   total_time: z.number().min(0).optional().transform(val => val ?? 0),
@@ -38,8 +48,10 @@ const addFlightSchema = z.object({
   cross_country_time: z.number().min(0).optional().transform(val => val ?? 0),
   day_takeoffs: z.number().int().min(0).optional().transform(val => val ?? 0),
   day_landings: z.number().int().min(0).optional().transform(val => val ?? 0),
+  day_landings_full_stop: z.number().int().min(0).optional().transform(val => val ?? 0),
   night_takeoffs: z.number().int().min(0).optional().transform(val => val ?? 0),
   night_landings: z.number().int().min(0).optional().transform(val => val ?? 0),
+  night_landings_full_stop: z.number().int().min(0).optional().transform(val => val ?? 0),
   actual_instrument: z.number().min(0).optional().transform(val => val ?? 0),
   simulated_instrument: z.number().min(0).optional().transform(val => val ?? 0),
   holds: z.number().int().min(0).optional().transform(val => val ?? 0),
@@ -71,6 +83,18 @@ interface FlightEntry {
   route?: string;
   start_time?: string;
   end_time?: string;
+  time_out?: string;
+  time_off?: string;
+  time_on?: string;
+  time_in?: string;
+  on_duty?: string;
+  off_duty?: string;
+  hobbs_start?: number;
+  hobbs_end?: number;
+  tach_start?: number;
+  tach_end?: number;
+  day_landings_full_stop?: number;
+  night_landings_full_stop?: number;
   sic_time?: number;
   solo_time?: number;
   day_takeoffs?: number;
@@ -120,8 +144,10 @@ export const AddFlightDialog = ({ open, onOpenChange, onFlightAdded, editingFlig
       cross_country_time: undefined,
       day_takeoffs: undefined,
       day_landings: undefined,
+      day_landings_full_stop: undefined,
       night_takeoffs: undefined,
       night_landings: undefined,
+      night_landings_full_stop: undefined,
       actual_instrument: undefined,
       simulated_instrument: undefined,
       holds: undefined,
@@ -129,6 +155,10 @@ export const AddFlightDialog = ({ open, onOpenChange, onFlightAdded, editingFlig
       dual_received: undefined,
       simulated_flight: undefined,
       ground_training: undefined,
+      hobbs_start: undefined,
+      hobbs_end: undefined,
+      tach_start: undefined,
+      tach_end: undefined,
     },
   });
 
@@ -149,6 +179,16 @@ export const AddFlightDialog = ({ open, onOpenChange, onFlightAdded, editingFlig
         departure_airport: editingFlight.departure_airport,
         arrival_airport: editingFlight.arrival_airport,
         route: editingFlight.route || "",
+        time_out: editingFlight.time_out || editingFlight.start_time || "",
+        time_off: editingFlight.time_off || "",
+        time_on: editingFlight.time_on || "",
+        time_in: editingFlight.time_in || editingFlight.end_time || "",
+        on_duty: editingFlight.on_duty || "",
+        off_duty: editingFlight.off_duty || "",
+        hobbs_start: editingFlight.hobbs_start ?? 0,
+        hobbs_end: editingFlight.hobbs_end ?? 0,
+        tach_start: editingFlight.tach_start ?? 0,
+        tach_end: editingFlight.tach_end ?? 0,
         start_time: editingFlight.start_time || "",
         end_time: editingFlight.end_time || "",
         total_time: editingFlight.total_time,
@@ -159,8 +199,10 @@ export const AddFlightDialog = ({ open, onOpenChange, onFlightAdded, editingFlig
         cross_country_time: editingFlight.cross_country_time,
         day_takeoffs: editingFlight.day_takeoffs || 0,
         day_landings: editingFlight.day_landings || 0,
+        day_landings_full_stop: editingFlight.day_landings_full_stop || 0,
         night_takeoffs: editingFlight.night_takeoffs || 0,
         night_landings: editingFlight.night_landings || 0,
+        night_landings_full_stop: editingFlight.night_landings_full_stop || 0,
         actual_instrument: editingFlight.actual_instrument || 0,
         simulated_instrument: editingFlight.simulated_instrument || 0,
         holds: editingFlight.holds || 0,
@@ -173,6 +215,18 @@ export const AddFlightDialog = ({ open, onOpenChange, onFlightAdded, editingFlig
       });
     } else if (!editingFlight && open) {
       form.reset({
+        time_out: undefined,
+        time_off: undefined,
+        time_on: undefined,
+        time_in: undefined,
+        on_duty: undefined,
+        off_duty: undefined,
+        hobbs_start: undefined,
+        hobbs_end: undefined,
+        tach_start: undefined,
+        tach_end: undefined,
+        start_time: undefined,
+        end_time: undefined,
         total_time: undefined,
         pic_time: undefined,
         sic_time: undefined,
@@ -181,8 +235,10 @@ export const AddFlightDialog = ({ open, onOpenChange, onFlightAdded, editingFlig
         cross_country_time: undefined,
         day_takeoffs: undefined,
         day_landings: undefined,
+        day_landings_full_stop: undefined,
         night_takeoffs: undefined,
         night_landings: undefined,
+        night_landings_full_stop: undefined,
         actual_instrument: undefined,
         simulated_instrument: undefined,
         holds: undefined,
@@ -243,8 +299,18 @@ export const AddFlightDialog = ({ open, onOpenChange, onFlightAdded, editingFlig
         departure_airport: values.departure_airport.toUpperCase(),
         arrival_airport: values.arrival_airport.toUpperCase(),
         route: values.route || null,
-        start_time: values.start_time || null,
-        end_time: values.end_time || null,
+        time_out: values.time_out || null,
+        time_off: values.time_off || null,
+        time_on: values.time_on || null,
+        time_in: values.time_in || null,
+        on_duty: values.on_duty || null,
+        off_duty: values.off_duty || null,
+        hobbs_start: values.hobbs_start,
+        hobbs_end: values.hobbs_end,
+        tach_start: values.tach_start,
+        tach_end: values.tach_end,
+        start_time: values.time_out || values.start_time || null,
+        end_time: values.time_in || values.end_time || null,
         total_time: values.total_time,
         pic_time: values.pic_time,
         sic_time: values.sic_time,
@@ -253,12 +319,14 @@ export const AddFlightDialog = ({ open, onOpenChange, onFlightAdded, editingFlig
         cross_country_time: values.cross_country_time,
         day_takeoffs: values.day_takeoffs,
         day_landings: values.day_landings,
+        day_landings_full_stop: values.day_landings_full_stop,
         night_takeoffs: values.night_takeoffs,
         night_landings: values.night_landings,
+        night_landings_full_stop: values.night_landings_full_stop,
         actual_instrument: values.actual_instrument,
         simulated_instrument: values.simulated_instrument,
         holds: values.holds,
-        approaches: values.approaches || null,
+        approaches: values.approaches ?? '',
         dual_given: values.dual_given,
         dual_received: values.dual_received,
         simulated_flight: values.simulated_flight,
@@ -325,7 +393,7 @@ export const AddFlightDialog = ({ open, onOpenChange, onFlightAdded, editingFlig
                 name="date"
                 render={({ field }) => (
                   <FormItem className="flex flex-col">
-                    <FormLabel>Flight Date</FormLabel>
+                    <FormLabel>Date</FormLabel>
                     <Popover>
                       <PopoverTrigger asChild>
                         <FormControl>
@@ -366,7 +434,7 @@ export const AddFlightDialog = ({ open, onOpenChange, onFlightAdded, editingFlig
                 name="aircraft_registration"
                 render={({ field }) => (
                   <FormItem className="flex flex-col">
-                    <FormLabel>Aircraft Registration</FormLabel>
+                    <FormLabel>Aircraft ID</FormLabel>
                     <div className="flex gap-2">
                       <Popover open={aircraftSearchOpen} onOpenChange={setAircraftSearchOpen}>
                         <PopoverTrigger asChild>
@@ -438,13 +506,7 @@ export const AddFlightDialog = ({ open, onOpenChange, onFlightAdded, editingFlig
                 control={form.control}
                 name="aircraft_type"
                 render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Aircraft Type</FormLabel>
-                    <FormControl>
-                      <Input placeholder="C172" {...field} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
+                  <input type="hidden" {...field} />
                 )}
               />
 
@@ -453,7 +515,7 @@ export const AddFlightDialog = ({ open, onOpenChange, onFlightAdded, editingFlig
                 name="departure_airport"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>From (Airport Code)</FormLabel>
+                    <FormLabel>From</FormLabel>
                     <FormControl>
                       <Input placeholder="KJFK" {...field} />
                     </FormControl>
@@ -467,7 +529,7 @@ export const AddFlightDialog = ({ open, onOpenChange, onFlightAdded, editingFlig
                 name="arrival_airport"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>To (Airport Code)</FormLabel>
+                    <FormLabel>To</FormLabel>
                     <FormControl>
                       <Input placeholder="KLGA" {...field} />
                     </FormControl>
@@ -491,18 +553,22 @@ export const AddFlightDialog = ({ open, onOpenChange, onFlightAdded, editingFlig
               />
             </div>
 
-            {/* Time Fields */}
+            {/* Time Tracking */}
             <div className="space-y-4">
-              <h3 className="text-lg font-semibold">Flight Times</h3>
+              <h3 className="text-lg font-semibold">Time Tracking</h3>
               <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
                 <FormField
                   control={form.control}
-                  name="start_time"
+                  name="time_out"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Start Time</FormLabel>
+                      <FormLabel>Time Out</FormLabel>
                       <FormControl>
-                        <Input type="time" {...field} />
+                        <Input
+                          type="time"
+                          value={field.value || ""}
+                          onChange={(e) => field.onChange(e.target.value)}
+                        />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -511,18 +577,184 @@ export const AddFlightDialog = ({ open, onOpenChange, onFlightAdded, editingFlig
 
                 <FormField
                   control={form.control}
-                  name="end_time"
+                  name="time_off"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>End Time</FormLabel>
+                      <FormLabel>Time Off</FormLabel>
                       <FormControl>
-                        <Input type="time" {...field} />
+                        <Input
+                          type="time"
+                          value={field.value || ""}
+                          onChange={(e) => field.onChange(e.target.value)}
+                        />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
                   )}
                 />
 
+                <FormField
+                  control={form.control}
+                  name="time_on"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Time On</FormLabel>
+                      <FormControl>
+                        <Input
+                          type="time"
+                          value={field.value || ""}
+                          onChange={(e) => field.onChange(e.target.value)}
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                <FormField
+                  control={form.control}
+                  name="time_in"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Time In</FormLabel>
+                      <FormControl>
+                        <Input
+                          type="time"
+                          value={field.value || ""}
+                          onChange={(e) => field.onChange(e.target.value)}
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </div>
+
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                <FormField
+                  control={form.control}
+                  name="on_duty"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>On Duty</FormLabel>
+                      <FormControl>
+                        <Input
+                          type="time"
+                          value={field.value || ""}
+                          onChange={(e) => field.onChange(e.target.value)}
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                <FormField
+                  control={form.control}
+                  name="off_duty"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Off Duty</FormLabel>
+                      <FormControl>
+                        <Input
+                          type="time"
+                          value={field.value || ""}
+                          onChange={(e) => field.onChange(e.target.value)}
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </div>
+
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                <FormField
+                  control={form.control}
+                  name="hobbs_start"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Hobbs Start</FormLabel>
+                      <FormControl>
+                        <Input
+                          type="number"
+                          step="0.1"
+                          placeholder="0.0"
+                          value={field.value || ""}
+                          onChange={(e) => field.onChange(parseFloat(e.target.value) || undefined)}
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                <FormField
+                  control={form.control}
+                  name="hobbs_end"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Hobbs End</FormLabel>
+                      <FormControl>
+                        <Input
+                          type="number"
+                          step="0.1"
+                          placeholder="0.0"
+                          value={field.value || ""}
+                          onChange={(e) => field.onChange(parseFloat(e.target.value) || undefined)}
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                <FormField
+                  control={form.control}
+                  name="tach_start"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Tach Start</FormLabel>
+                      <FormControl>
+                        <Input
+                          type="number"
+                          step="0.1"
+                          placeholder="0.0"
+                          value={field.value || ""}
+                          onChange={(e) => field.onChange(parseFloat(e.target.value) || undefined)}
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                <FormField
+                  control={form.control}
+                  name="tach_end"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Tach End</FormLabel>
+                      <FormControl>
+                        <Input
+                          type="number"
+                          step="0.1"
+                          placeholder="0.0"
+                          value={field.value || ""}
+                          onChange={(e) => field.onChange(parseFloat(e.target.value) || undefined)}
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </div>
+            </div>
+
+            {/* Flight Totals */}
+            <div className="space-y-4">
+              <h3 className="text-lg font-semibold">Flight Totals</h3>
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
                 <FormField
                   control={form.control}
                   name="total_time"
@@ -530,9 +762,9 @@ export const AddFlightDialog = ({ open, onOpenChange, onFlightAdded, editingFlig
                     <FormItem>
                       <FormLabel>Total Time</FormLabel>
                       <FormControl>
-                        <Input 
-                          type="number" 
-                          step="0.1" 
+                        <Input
+                          type="number"
+                          step="0.1"
                           placeholder="0.0"
                           value={field.value || ""}
                           onChange={(e) => field.onChange(parseFloat(e.target.value) || undefined)}
@@ -548,11 +780,11 @@ export const AddFlightDialog = ({ open, onOpenChange, onFlightAdded, editingFlig
                   name="pic_time"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>PIC Time</FormLabel>
+                      <FormLabel>PIC</FormLabel>
                       <FormControl>
-                        <Input 
-                          type="number" 
-                          step="0.1" 
+                        <Input
+                          type="number"
+                          step="0.1"
                           placeholder="0.0"
                           value={field.value || ""}
                           onChange={(e) => field.onChange(parseFloat(e.target.value) || undefined)}
@@ -568,11 +800,11 @@ export const AddFlightDialog = ({ open, onOpenChange, onFlightAdded, editingFlig
                   name="sic_time"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>SIC Time</FormLabel>
+                      <FormLabel>SIC</FormLabel>
                       <FormControl>
-                        <Input 
-                          type="number" 
-                          step="0.1" 
+                        <Input
+                          type="number"
+                          step="0.1"
                           placeholder="0.0"
                           value={field.value || ""}
                           onChange={(e) => field.onChange(parseFloat(e.target.value) || undefined)}
@@ -588,11 +820,11 @@ export const AddFlightDialog = ({ open, onOpenChange, onFlightAdded, editingFlig
                   name="solo_time"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Solo Time</FormLabel>
+                      <FormLabel>Solo</FormLabel>
                       <FormControl>
-                        <Input 
-                          type="number" 
-                          step="0.1" 
+                        <Input
+                          type="number"
+                          step="0.1"
                           placeholder="0.0"
                           value={field.value || ""}
                           onChange={(e) => field.onChange(parseFloat(e.target.value) || undefined)}
@@ -608,11 +840,11 @@ export const AddFlightDialog = ({ open, onOpenChange, onFlightAdded, editingFlig
                   name="night_time"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Night Time</FormLabel>
+                      <FormLabel>Night</FormLabel>
                       <FormControl>
-                        <Input 
-                          type="number" 
-                          step="0.1" 
+                        <Input
+                          type="number"
+                          step="0.1"
                           placeholder="0.0"
                           value={field.value || ""}
                           onChange={(e) => field.onChange(parseFloat(e.target.value) || undefined)}
@@ -630,9 +862,9 @@ export const AddFlightDialog = ({ open, onOpenChange, onFlightAdded, editingFlig
                     <FormItem>
                       <FormLabel>Cross Country</FormLabel>
                       <FormControl>
-                        <Input 
-                          type="number" 
-                          step="0.1" 
+                        <Input
+                          type="number"
+                          step="0.1"
                           placeholder="0.0"
                           value={field.value || ""}
                           onChange={(e) => field.onChange(parseFloat(e.target.value) || undefined)}
@@ -644,11 +876,10 @@ export const AddFlightDialog = ({ open, onOpenChange, onFlightAdded, editingFlig
                 />
               </div>
             </div>
-
             {/* Takeoffs and Landings */}
             <div className="space-y-4">
               <h3 className="text-lg font-semibold">Takeoffs & Landings</h3>
-              <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+              <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
                 <FormField
                   control={form.control}
                   name="day_takeoffs"
@@ -656,8 +887,8 @@ export const AddFlightDialog = ({ open, onOpenChange, onFlightAdded, editingFlig
                     <FormItem>
                       <FormLabel>Day Takeoffs</FormLabel>
                       <FormControl>
-                        <Input 
-                          type="number" 
+                        <Input
+                          type="number"
                           placeholder="0"
                           value={field.value || ""}
                           onChange={(e) => field.onChange(parseInt(e.target.value) || undefined)}
@@ -675,8 +906,27 @@ export const AddFlightDialog = ({ open, onOpenChange, onFlightAdded, editingFlig
                     <FormItem>
                       <FormLabel>Day Landings</FormLabel>
                       <FormControl>
-                        <Input 
-                          type="number" 
+                        <Input
+                          type="number"
+                          placeholder="0"
+                          value={field.value || ""}
+                          onChange={(e) => field.onChange(parseInt(e.target.value) || undefined)}
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                <FormField
+                  control={form.control}
+                  name="day_landings_full_stop"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Day Landings (Full Stop)</FormLabel>
+                      <FormControl>
+                        <Input
+                          type="number"
                           placeholder="0"
                           value={field.value || ""}
                           onChange={(e) => field.onChange(parseInt(e.target.value) || undefined)}
@@ -694,8 +944,8 @@ export const AddFlightDialog = ({ open, onOpenChange, onFlightAdded, editingFlig
                     <FormItem>
                       <FormLabel>Night Takeoffs</FormLabel>
                       <FormControl>
-                        <Input 
-                          type="number" 
+                        <Input
+                          type="number"
                           placeholder="0"
                           value={field.value || ""}
                           onChange={(e) => field.onChange(parseInt(e.target.value) || undefined)}
@@ -713,8 +963,27 @@ export const AddFlightDialog = ({ open, onOpenChange, onFlightAdded, editingFlig
                     <FormItem>
                       <FormLabel>Night Landings</FormLabel>
                       <FormControl>
-                        <Input 
-                          type="number" 
+                        <Input
+                          type="number"
+                          placeholder="0"
+                          value={field.value || ""}
+                          onChange={(e) => field.onChange(parseInt(e.target.value) || undefined)}
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                <FormField
+                  control={form.control}
+                  name="night_landings_full_stop"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Night Landings (Full Stop)</FormLabel>
+                      <FormControl>
+                        <Input
+                          type="number"
                           placeholder="0"
                           value={field.value || ""}
                           onChange={(e) => field.onChange(parseInt(e.target.value) || undefined)}
@@ -726,7 +995,6 @@ export const AddFlightDialog = ({ open, onOpenChange, onFlightAdded, editingFlig
                 />
               </div>
             </div>
-
             {/* Instrument and Training */}
             <div className="space-y-4">
               <h3 className="text-lg font-semibold">Instrument & Training</h3>

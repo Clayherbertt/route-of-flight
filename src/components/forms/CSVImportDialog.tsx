@@ -14,7 +14,7 @@ import Papa from "papaparse";
 import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
-import { loadForeFlightCsv, analyze, filterOutZeroRows, type ForeFlightRow, type ParseReport } from "@/lib/foreflight-parser";
+import { loadForeFlightCsv, analyze, coerceNumber, filterOutZeroRows, type ForeFlightRow, type ParseReport } from "@/lib/foreflight-parser";
 
 interface CSVImportDialogProps {
   open: boolean;
@@ -37,33 +37,90 @@ interface ValidationError {
   message: string;
 }
 
+type FlightPayload = Record<string, string | number | undefined>;
+
 const DATABASE_FIELDS = [
   { key: 'date', label: 'Date *', required: true },
   { key: 'aircraft_registration', label: 'Aircraft Registration *', required: true },
-  { key: 'aircraft_type', label: 'Aircraft Type *', required: true },
-  { key: 'departure_airport', label: 'Departure Airport *', required: true },
-  { key: 'arrival_airport', label: 'Arrival Airport *', required: true },
+  { key: 'aircraft_type', label: 'Aircraft Type', required: false },
+  { key: 'departure_airport', label: 'From (Airport) *', required: true },
+  { key: 'arrival_airport', label: 'To (Airport) *', required: true },
+  { key: 'route', label: 'Route', required: false },
+  { key: 'time_out', label: 'Time Out', required: false },
+  { key: 'time_off', label: 'Time Off', required: false },
+  { key: 'time_on', label: 'Time On', required: false },
+  { key: 'time_in', label: 'Time In', required: false },
+  { key: 'on_duty', label: 'On Duty', required: false },
+  { key: 'off_duty', label: 'Off Duty', required: false },
+  { key: 'hobbs_start', label: 'Hobbs Start', required: false },
+  { key: 'hobbs_end', label: 'Hobbs End', required: false },
+  { key: 'tach_start', label: 'Tach Start', required: false },
+  { key: 'tach_end', label: 'Tach End', required: false },
   { key: 'total_time', label: 'Total Time *', required: true },
-  { key: 'pic_time', label: 'PIC Time', required: false },
-  { key: 'sic_time', label: 'SIC Time', required: false },
+  { key: 'pic_time', label: 'PIC', required: false },
+  { key: 'sic_time', label: 'SIC', required: false },
+  { key: 'solo_time', label: 'Solo', required: false },
+  { key: 'night_time', label: 'Night', required: false },
   { key: 'cross_country_time', label: 'Cross Country', required: false },
-  { key: 'night_time', label: 'Night Time', required: false },
-  { key: 'instrument_time', label: 'Instrument Time', required: false },
   { key: 'actual_instrument', label: 'Actual Instrument', required: false },
   { key: 'simulated_instrument', label: 'Simulated Instrument', required: false },
-  { key: 'solo_time', label: 'Solo Time', required: false },
+  { key: 'instrument_time', label: 'Instrument Time', required: false },
+  { key: 'holds', label: 'Holds', required: false },
+  { key: 'approaches', label: 'Approaches', required: false },
+  { key: 'day_takeoffs', label: 'Day Takeoffs', required: false },
+  { key: 'day_landings', label: 'Day Landings', required: false },
+  { key: 'day_landings_full_stop', label: 'Day Landings (Full Stop)', required: false },
+  { key: 'night_takeoffs', label: 'Night Takeoffs', required: false },
+  { key: 'night_landings', label: 'Night Landings', required: false },
+  { key: 'night_landings_full_stop', label: 'Night Landings (Full Stop)', required: false },
+  { key: 'landings', label: 'Total Landings', required: false },
   { key: 'dual_given', label: 'Dual Given', required: false },
   { key: 'dual_received', label: 'Dual Received', required: false },
-  { key: 'approaches', label: 'Approaches', required: false },
-  { key: 'landings', label: 'Landings', required: false },
-  { key: 'day_landings', label: 'Day Landings', required: false },
-  { key: 'night_landings', label: 'Night Landings', required: false },
-  { key: 'holds', label: 'Holds', required: false },
-  { key: 'route', label: 'Route', required: false },
+  { key: 'simulated_flight', label: 'Simulated Flight', required: false },
+  { key: 'ground_training', label: 'Ground Training', required: false },
   { key: 'remarks', label: 'Remarks', required: false },
-  { key: 'start_time', label: 'Start Time', required: false },
-  { key: 'end_time', label: 'End Time', required: false },
+  { key: 'start_time', label: 'Legacy Start Time', required: false },
+  { key: 'end_time', label: 'Legacy End Time', required: false },
 ];
+
+const NUMERIC_FIELDS = new Set<string>([
+  'total_time',
+  'pic_time',
+  'sic_time',
+  'solo_time',
+  'night_time',
+  'cross_country_time',
+  'instrument_time',
+  'actual_instrument',
+  'simulated_instrument',
+  'holds',
+  'day_takeoffs',
+  'day_landings',
+  'day_landings_full_stop',
+  'night_takeoffs',
+  'night_landings',
+  'night_landings_full_stop',
+  'landings',
+  'dual_given',
+  'dual_received',
+  'simulated_flight',
+  'ground_training',
+  'hobbs_start',
+  'hobbs_end',
+  'tach_start',
+  'tach_end'
+]);
+
+const TIME_STRING_FIELDS = new Set<string>([
+  'time_out',
+  'time_off',
+  'time_on',
+  'time_in',
+  'on_duty',
+  'off_duty',
+  'start_time',
+  'end_time'
+]);
 
 const SAMPLE_CSV = `Date,Aircraft,Type,From,To,Total Time,PIC,Cross Country,Night,Approaches,Landings,Remarks
 2024-01-15,N12345,C172,KJFK,KLGA,1.2,1.2,0,0,2,1,Pattern work
@@ -105,10 +162,72 @@ export function CSVImportDialog({ open, onOpenChange, onImportComplete }: CSVImp
   const [aircraftLookup, setAircraftLookup] = useState<Map<string, AircraftInfo>>(new Map());
   const [useRobustParser, setUseRobustParser] = useState(true);
 
+  const parseWithPapa = useCallback((file: File) => {
+    Papa.parse(file, {
+      complete: (results) => {
+        if (results.errors.length > 0) {
+          toast({
+            title: "CSV parsing error",
+            description: "There was an error parsing your CSV file",
+            variant: "destructive",
+          });
+          return;
+        }
+
+        const allRows = results.data as string[][];
+        if (!Array.isArray(allRows) || allRows.length === 0) {
+          toast({
+            title: "Empty file",
+            description: "We couldn't find any rows in that CSV",
+            variant: "destructive",
+          });
+          return;
+        }
+
+        // Check if this is a ForeFlight export
+        const firstCell = allRows[0]?.[0]?.toString().toLowerCase() || '';
+        const isForeFlight = firstCell.includes('foreflight logbook import');
+        setIsForeFlight(isForeFlight);
+
+        let headers: string[] = [];
+        let rows: CSVRow[] = [];
+        let aircraftLookupMap = new Map<string, AircraftInfo>();
+
+        if (isForeFlight) {
+          const parsed = parseForeFlight(allRows);
+          headers = parsed.headers;
+          rows = parsed.rows;
+          aircraftLookupMap = parsed.aircraftLookup;
+        } else {
+          headers = (allRows[0] as string[]).map(header => header?.toString().trim());
+          rows = allRows
+            .slice(1)
+            .filter(row => Array.isArray(row) && row.some(cell => cell?.toString().trim()))
+            .map(row => {
+              const rowObj: CSVRow = {};
+              headers.forEach((header, index) => {
+                rowObj[header] = row[index]?.toString().trim() || '';
+              });
+              return rowObj;
+            });
+        }
+
+        setUseRobustParser(false);
+        setCsvHeaders(headers);
+        setCsvData(rows);
+        setAircraftLookup(aircraftLookupMap);
+        setParsedFlights([]);
+        setParseReport(null);
+        setValidationErrors([]);
+        setStep('mapping');
+      }
+    });
+  }, [toast]);
+
   const parseForeFlight = (allRows: string[][]) => {
     const aircraftLookupMap = new Map<string, AircraftInfo>();
     let flightHeaders: string[] = [];
-    let flightRows: CSVRow[] = [];
+    const flightRows: CSVRow[] = [];
     
     let currentSection = '';
     let headerRowFound = false;
@@ -266,12 +385,33 @@ export function CSVImportDialog({ open, onOpenChange, onImportComplete }: CSVImp
         console.log("Using robust ForeFlight parser...");
         const flights = await loadForeFlightCsv(file);
         const report = analyze(flights);
-        
+        const flightsForImport = report.zeroTimeFlights > 0 ? filterOutZeroRows(flights) : flights;
+
         console.log("Parse report:", report);
-        
-        setParsedFlights(flights);
+        const majorityZeroTime = flights.length > 0 && report.zeroTimeFlights / flights.length > 0.5;
+        const legacyZeroTime = report.formatBreakdown.legacy2018 > 0 && report.zeroTimeFlights > 0;
+
+        if (flights.length === 0 || report.validFlights === 0 || majorityZeroTime || legacyZeroTime) {
+          console.warn('Robust parser struggled with this file, falling back to manual mapping.', {
+            totalFlights: flights.length,
+            report
+          });
+          toast({
+            title: "Need manual mapping",
+            description: legacyZeroTime
+              ? "Some 2018 flights came through with zero time. We'll switch to manual mapping so you can choose the right columns."
+              : majorityZeroTime
+                ? "Most flights came through with zero time. We'll switch to manual mapping so you can choose the right columns."
+                : "We couldn't auto-detect your CSV format. Please map the columns manually.",
+          });
+          parseWithPapa(file);
+          return;
+        }
+
+        setParsedFlights(flightsForImport);
         setParseReport(report);
         setIsForeFlight(true);
+        setUseRobustParser(true);
         
         // Show detailed report
         toast({
@@ -281,51 +421,10 @@ export function CSVImportDialog({ open, onOpenChange, onImportComplete }: CSVImp
         
         // Skip mapping step - go directly to preview for robust parser
         setStep('preview');
-        
+
       } else {
         // Fallback to original Papa Parse logic
-        Papa.parse(file, {
-          complete: (results) => {
-            if (results.errors.length > 0) {
-              toast({
-                title: "CSV parsing error",
-                description: "There was an error parsing your CSV file",
-                variant: "destructive",
-              });
-              return;
-            }
-
-            const allRows = results.data as string[][];
-            
-            // Check if this is a ForeFlight export
-            const isForeFlight = allRows[0]?.[0]?.toLowerCase().includes('foreflight logbook import');
-            setIsForeFlight(isForeFlight);
-            
-            let headers: string[];
-            let rows: CSVRow[];
-            let aircraftLookupMap = new Map<string, AircraftInfo>();
-            
-            if (isForeFlight) {
-              const parsed = parseForeFlight(allRows);
-              headers = parsed.headers;
-              rows = parsed.rows;
-              aircraftLookupMap = parsed.aircraftLookup;
-            } else {
-              headers = allRows[0] as string[];
-              rows = allRows.slice(1).filter(row => row.some(cell => cell?.trim())).map(row => {
-                const rowObj: CSVRow = {};
-                headers.forEach((header, index) => {
-                  rowObj[header] = row[index] || '';
-                });
-                return rowObj;
-              });
-            }
-            
-            setCsvHeaders(headers);
-            setCsvData(rows);
-            setStep('mapping');
-          }
-        });
+        parseWithPapa(file);
       }
     } catch (error) {
       console.error('Error parsing CSV:', error);
@@ -335,7 +434,7 @@ export function CSVImportDialog({ open, onOpenChange, onImportComplete }: CSVImp
         variant: "destructive",
       });
     }
-  }, [toast, useRobustParser]);
+  }, [toast, useRobustParser, parseWithPapa]);
 
   const handleMappingChange = (csvColumn: string, dbField: string) => {
     setFieldMappings(prev => {
@@ -391,14 +490,8 @@ export function CSVImportDialog({ open, onOpenChange, onImportComplete }: CSVImp
       console.log('Row data:', row);
       
       fieldMappings.forEach(mapping => {
-        let value: string;
-        if (isForeFlight) {
-          value = (row as Record<string, string>)[mapping.csvColumn];
-        } else {
-          value = (row as unknown as string[])[csvHeaders.indexOf(mapping.csvColumn)];
-        }
-        
-        value = value?.trim?.() || '';
+        const rowRecord = row as Record<string, string>;
+        const value = rowRecord?.[mapping.csvColumn]?.trim?.() || '';
         const field = DATABASE_FIELDS.find(f => f.key === mapping.dbField);
         
         console.log(`  Field: ${mapping.dbField} (${field?.required ? 'REQUIRED' : 'optional'}) = "${value}"`);
@@ -428,33 +521,18 @@ export function CSVImportDialog({ open, onOpenChange, onImportComplete }: CSVImp
           }
         }
         
-        // Validate time fields
-        if (mapping.dbField.includes('time') && value) {
-          const numValue = parseFloat(value);
-          if (isNaN(numValue) || numValue < 0) {
-            console.log(`  ❌ VALIDATION ERROR: Invalid time "${value}" (parsed as ${numValue})`);
-            errors.push({
-              row: index + 1,
-              field: mapping.dbField,
-              message: 'Invalid time format (must be a positive number)'
-            });
-          } else {
-            console.log(`  ✅ Time "${value}" is valid (${numValue})`);
-          }
-        }
-        
         // Validate numeric fields
-        if (['approaches', 'landings', 'day_landings', 'night_landings', 'holds'].includes(mapping.dbField) && value) {
-          const numValue = parseInt(value);
-          if (isNaN(numValue) || numValue < 0) {
-            console.log(`  ❌ VALIDATION ERROR: Invalid number "${value}" (parsed as ${numValue})`);
+        if (NUMERIC_FIELDS.has(mapping.dbField) && value) {
+          const numValue = coerceNumber(value);
+          if (numValue === null || numValue < 0) {
+            console.log(`  ❌ VALIDATION ERROR: Invalid numeric value "${value}" for ${mapping.dbField}`);
             errors.push({
               row: index + 1,
               field: mapping.dbField,
-              message: 'Invalid number format (must be a positive integer)'
+              message: 'Invalid number format (must be a positive value)'
             });
           } else {
-            console.log(`  ✅ Number "${value}" is valid (${numValue})`);
+            console.log(`  ✅ Numeric value "${value}" is valid (${numValue})`);
           }
         }
       });
@@ -504,7 +582,7 @@ export function CSVImportDialog({ open, onOpenChange, onImportComplete }: CSVImp
     setImportProgress(0);
     
     try {
-      let mappedData;
+      let mappedData: FlightPayload[];
       
       if (useRobustParser && parsedFlights.length > 0) {
         // Use robust parser data - already normalized
@@ -542,21 +620,26 @@ export function CSVImportDialog({ open, onOpenChange, onImportComplete }: CSVImp
       } else {
         // Fallback to original mapping logic
         mappedData = csvData.map(row => {
-          const flightEntry: any = {};
+          const flightEntry: FlightPayload = {};
           let approachCount = 0;
           
           fieldMappings.forEach(mapping => {
-            const value = row[mapping.csvColumn]?.trim();
+            const value = row[mapping.csvColumn]?.toString().trim();
             if (value) {
               if (mapping.dbField === 'date') {
                 flightEntry[mapping.dbField] = new Date(value).toISOString().split('T')[0];
-              } else if (mapping.dbField.includes('time') || mapping.dbField === 'landings' || mapping.dbField === 'approaches') {
-                flightEntry[mapping.dbField] = Number(value) || 0;
+              } else if (NUMERIC_FIELDS.has(mapping.dbField)) {
+                const numericValue = coerceNumber(value);
+                flightEntry[mapping.dbField] = numericValue !== null ? numericValue : 0;
               } else {
                 flightEntry[mapping.dbField] = value;
               }
             }
           });
+
+          if (flightEntry.departure_airport && !flightEntry.arrival_airport) {
+            flightEntry.arrival_airport = flightEntry.departure_airport;
+          }
           
           // Handle ForeFlight approach columns
           if (isForeFlight) {
@@ -571,7 +654,12 @@ export function CSVImportDialog({ open, onOpenChange, onImportComplete }: CSVImp
             }
             
             // Get aircraft type from lookup if aircraftid is provided
-            const aircraftId = flightEntry.aircraft_registration || row['AircraftID'];
+            const aircraftIdValue = flightEntry.aircraft_registration || row['AircraftID'];
+            const aircraftId = typeof aircraftIdValue === 'string'
+              ? aircraftIdValue
+              : aircraftIdValue !== undefined
+                ? aircraftIdValue.toString()
+                : '';
             if (aircraftId && aircraftLookup.has(aircraftId)) {
               const aircraftInfo = aircraftLookup.get(aircraftId)!;
               // Use TypeCode if available, otherwise combine Make and Model
@@ -654,6 +742,9 @@ export function CSVImportDialog({ open, onOpenChange, onImportComplete }: CSVImp
     setImportResults({ success: 0, failed: 0 });
     setIsForeFlight(false);
     setAircraftLookup(new Map());
+    setUseRobustParser(true);
+    setParseReport(null);
+    setParsedFlights([]);
   };
 
   return (
@@ -804,6 +895,16 @@ export function CSVImportDialog({ open, onOpenChange, onImportComplete }: CSVImp
                     <AlertCircle className="h-4 w-4" />
                     <AlertDescription>
                       Found {validationErrors.length} validation errors. Please fix them before importing.
+                      <div className="mt-2 space-y-1">
+                        {validationErrors.slice(0, 5).map((error, index) => (
+                          <div key={`${error.row}-${error.field}-${index}`}>
+                            Row {error.row}: {error.field} — {error.message}
+                          </div>
+                        ))}
+                        {validationErrors.length > 5 && (
+                          <div>Showing first 5 issues.</div>
+                        )}
+                      </div>
                     </AlertDescription>
                   </Alert>
                 )}
@@ -871,14 +972,7 @@ export function CSVImportDialog({ open, onOpenChange, onImportComplete }: CSVImp
                             <TableCell className="sticky left-0 bg-background border-r font-medium">{index + 1}</TableCell>
                             {fieldMappings.slice(0, 7).map(mapping => {
                               // Handle both object-based data (ForeFlight) and array-based data (standard CSV)
-                              let value: string;
-                              if (isForeFlight) {
-                                // ForeFlight rows are objects
-                                value = (row as Record<string, string>)[mapping.csvColumn];
-                              } else {
-                                // Standard CSV rows are arrays
-                                value = (row as unknown as string[])[csvHeaders.indexOf(mapping.csvColumn)];
-                              }
+                              const value = (row as Record<string, string>)[mapping.csvColumn];
                               const hasError = validationErrors.some(e => e.row === index + 1 && e.field === mapping.dbField);
                               return (
                                 <TableCell key={mapping.dbField} className={hasError ? 'bg-destructive/10 text-destructive' : ''}>
