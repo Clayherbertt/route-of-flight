@@ -87,7 +87,7 @@ const LogbookSection = () => {
               <h2 className="text-4xl md:text-5xl font-bold leading-tight">
                 Chart every hour with
                 <span className="block bg-gradient-to-r from-aviation-sky via-aviation-light to-aviation-navy bg-clip-text text-transparent">
-                  cockpit-grade precision
+                  precise detail
                 </span>
               </h2>
               <p className="text-lg text-muted-foreground">
