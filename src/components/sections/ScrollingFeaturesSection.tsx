@@ -1,8 +1,8 @@
 import { useEffect, useState } from "react";
-import { Book, Building2, TrendingUp, Shield, Clock, Users } from "lucide-react";
+import { CalendarClock, PlaneTakeoff, Radar, ShieldCheck, TrendingUp, Users } from "lucide-react";
 
 const ScrollingFeaturesSection = () => {
-  const [visibleFeatures, setVisibleFeatures] = useState<number[]>([]);
+  const [visiblePhases, setVisiblePhases] = useState<number[]>([]);
 
   useEffect(() => {
     const observer = new IntersectionObserver(
@@ -10,157 +10,234 @@ const ScrollingFeaturesSection = () => {
         entries.forEach((entry) => {
           if (entry.isIntersecting) {
             const index = parseInt(entry.target.getAttribute('data-index') || '0');
-            setVisibleFeatures(prev => (prev.includes(index) ? prev : [...prev, index]));
+            setVisiblePhases(prev => (prev.includes(index) ? prev : [...prev, index]));
           }
         });
       },
       { threshold: 0.3 }
     );
 
-    const elements = document.querySelectorAll('.feature-card');
+    const elements = document.querySelectorAll('.mission-card');
     elements.forEach((el) => observer.observe(el));
 
     return () => observer.disconnect();
   }, []);
 
-  const features = [
+  const quickStats = [
+    { value: "37+", label: "Routes Created" },
+    { value: "2800", label: "Milestones auto-tracked" },
+    { value: "250+", label: "Routes accomplished" },
+  ];
+
+  const runwayPhases = [
     {
-      icon: Book,
-      title: "Digital Logbook",
-      description: "Comprehensive flight logging with automatic currency tracking and regulatory compliance."
+      icon: PlaneTakeoff,
+      badge: "Route Builder • 01",
+      title: "Start from zero hours",
+      description: "Discovery flights, medical, and flight school shopping to set you up for success.",
+      details: [
+        "Personalized readiness checklist with medical guidance and flight school shopping tips",
+        "Discovery flight guide to help you make the best decision",
+        "Additional tips designed to help you make informed decisions",
+      ],
     },
     {
-      icon: Building2,
-      title: "Airline Database",
-      description: "Complete profiles of US carriers with real-time hiring requirements and application tracking."
+      icon: Radar,
+      badge: "Route Builder • 02",
+      title: "Build time with purpose",
+      description: "Logbook tracking to keep your goals and route aligned with your end goal.",
+      details: [
+        "Hour calculator that tracks instrument, XC, and night flight time",
+        "Recommended what targeted goal should be completed in each order",
+        "Logbook countdown at each step to show how close you are to your next milestone",
+      ],
     },
+  ];
+
+  const runwayPhasesRowTwo = [
     {
       icon: TrendingUp,
-      title: "Career Analytics",
-      description: "Advanced insights and progression tracking to optimize your path to the airlines."
+      badge: "Route Builder • 03",
+      title: "Cadet program guidance",
+      description: "Wanting to join a cadet program? Using the route builder tracks all milestones and requirements.",
+      details: [
+        "Logbook integration to track your milestones and hours",
+        "Step by step guide to accomplishing each cadet program requirement",
+        "Never miss a goal with automated reminders",
+      ],
     },
     {
-      icon: Shield,
-      title: "Secure & Compliant",
-      description: "Bank-level security with full FAA regulation compliance and data backup."
+      icon: ShieldCheck,
+      badge: "Route Builder • 04",
+      title: "Graduate to the flight deck",
+      description: "Convert hours into airline-ready portfolios, mock interviews, and mentor sign-offs.",
+      details: [
+        "Airline comparison board tailored to your flight profile",
+        "Resume and logbook export bundles formatted for airlines",
+        "Airline requirements built right into your route milestones",
+      ],
     },
+  ];
+
+  const missionHighlights = [
     {
-      icon: Clock,
-      title: "Real-time Updates",
-      description: "Live currency tracking, automatic calculations, and instant progress updates."
+      icon: CalendarClock,
+      title: "Milestone tracker",
+      description: "Easily track your flight hours and stay motivated with milestones that mark your progress along the way.",
     },
     {
       icon: Users,
-      title: "Community Network",
-      description: "Connect with pilots, mentors, and industry professionals in your career journey."
-    }
+      title: "Guided mentorship",
+      description: "Get a clear path with built-in mentorship. Route Builder breaks goals into simple steps so progress is never guesswork.",
+    },
   ];
 
-  const accentGradients = [
-    "from-aviation-sky/60 via-aviation-sky/10 to-transparent",
-    "from-aviation-navy/40 via-aviation-sky/10 to-transparent",
-    "from-aviation-light/50 via-aviation-sky/10 to-transparent",
-  ];
-
-  const strategicPillars = [
-    {
-      title: "Logbook Automation",
-      summary: "Import, reconcile, and audit every flight with confidence.",
-    },
-    {
-      title: "Airline Intelligence",
-      summary: "Track hiring requirements and application status in one hub.",
-    },
-    {
-      title: "Career Momentum",
-      summary: "Translate hours into next steps with analytics and mentorship.",
-    },
+  const phaseGradients = [
+    "from-aviation-sky/60 via-aviation-sky/15 to-transparent",
+    "from-aviation-navy/40 via-aviation-sky/15 to-transparent",
+    "from-aviation-light/50 via-aviation-sky/15 to-transparent",
   ];
 
   return (
-    <section className="relative overflow-hidden py-24">
+    <section className="relative overflow-hidden py-20">
       <div className="absolute inset-0 bg-gradient-to-br from-background via-aviation-sky/10 to-background" />
       <div className="absolute -top-32 -left-24 h-72 w-72 rounded-full bg-aviation-sky/20 blur-3xl opacity-60" />
       <div className="absolute bottom-[-10%] right-[-5%] h-96 w-96 rounded-full bg-aviation-navy/30 blur-3xl opacity-60" />
 
       <div className="relative z-10 container mx-auto px-6">
-        <div className="grid gap-12 lg:grid-cols-[0.85fr,1.15fr] items-start">
-          <div className="space-y-10">
-            <div className="space-y-6">
-              <p className="text-xs uppercase tracking-[0.4em] text-aviation-sky">
-                Professional Platform for professional Pilots
-                
-              </p>
+        <div className="grid gap-12 lg:grid-cols-[0.95fr,1.05fr] items-start lg:items-stretch">
+          <div className="space-y-8">
+            <div className="space-y-5">
+              <p className="text-xs uppercase tracking-[0.4em] text-aviation-sky">Route Builder flight plan</p>
               <h2 className="text-4xl md:text-5xl font-bold leading-tight">
-                Everything you need to
-                <span className="block bg-gradient-to-r from-aviation-sky to-aviation-navy bg-clip-text text-transparent">
-                  advance your career
+                Guide every aspiring pilot from
+                <span className="block bg-gradient-to-r from-aviation-sky via-aviation-light to-aviation-navy bg-clip-text text-transparent">
+                  zero hours to the jet seat
                 </span>
               </h2>
               <p className="text-lg text-muted-foreground max-w-xl">
-                From your first imported logbook entry to the day you class-date with an airline, Route of Flight keeps every compliance task, application milestone, and mentoring conversation in sync.
+                Unsure where to start? Route Builder breaks training into approachable missions, adapts to your pace, and makes sure every milestone is ready before you ever walk into a checkride or airline interview.
               </p>
             </div>
 
             <div className="grid gap-4 sm:grid-cols-3">
-              {strategicPillars.map((pillar) => (
-                <div
-                  key={pillar.title}
-                  className="rounded-2xl border border-aviation-sky/20 bg-card/60 p-4 backdrop-blur hover:border-aviation-sky/40 transition-colors"
-                >
-                  <p className="text-sm font-semibold text-foreground">{pillar.title}</p>
-                  <p className="mt-2 text-xs text-muted-foreground leading-relaxed">
-                    {pillar.summary}
-                  </p>
+              {quickStats.map((stat) => (
+                <div key={stat.label} className="rounded-2xl border border-aviation-sky/20 bg-card/60 p-5 backdrop-blur">
+                  <p className="text-2xl font-semibold text-foreground">{stat.value}</p>
+                  <p className="mt-1 text-xs uppercase tracking-[0.25em] text-muted-foreground">{stat.label}</p>
                 </div>
               ))}
             </div>
+
+            <div className="rounded-3xl border border-border/30 bg-card/70 p-5 backdrop-blur">
+              <div className="flex flex-col gap-5 md:flex-row md:items-center md:justify-between">
+                {missionHighlights.map((highlight) => {
+                  const Icon = highlight.icon;
+                  return (
+                    <div key={highlight.title} className="flex items-start gap-4">
+                      <div className="rounded-xl border border-aviation-sky/30 bg-aviation-sky/10 p-2.5">
+                        <Icon className="h-5 w-5 text-aviation-sky" />
+                      </div>
+                      <div>
+                        <p className="text-sm font-semibold text-foreground">{highlight.title}</p>
+                        <p className="mt-1 text-xs text-muted-foreground leading-relaxed max-w-xs">
+                          {highlight.description}
+                        </p>
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
           </div>
 
-          <div className="relative">
-            <div className="absolute inset-0 rounded-3xl bg-card/50 backdrop-blur-3xl border border-border/40" />
-            <div className="relative rounded-3xl p-8">
-              <div className="grid gap-6 md:grid-cols-2">
-                {features.map((feature, index) => {
-                  const Icon = feature.icon;
-                  const isVisible = visibleFeatures.includes(index);
-                  const gradient = accentGradients[index % accentGradients.length];
+          <div className="relative lg:h-full">
+            <div className="absolute inset-0 rounded-3xl bg-card/60 backdrop-blur-3xl border border-border/40" />
+            <div className="relative rounded-3xl p-7 h-full flex flex-col">
+              <div className="grid gap-4 md:grid-cols-2 flex-1 min-h-0">
+                {runwayPhases.map((phase, index) => {
+                  const Icon = phase.icon;
+                  const isVisible = visiblePhases.includes(index);
+                  const gradient = phaseGradients[index % phaseGradients.length];
 
                   return (
                     <div
-                      key={feature.title}
+                      key={phase.title}
                       data-index={index}
-                      className={`feature-card group relative rounded-3xl bg-gradient-to-br ${gradient} p-[1px] transition-all duration-700 ${
-                        isVisible ? 'translate-y-0 opacity-100' : 'translate-y-8 opacity-0'
+                      className={`mission-card group relative overflow-hidden rounded-2xl bg-gradient-to-br ${gradient} p-[1px] transition-all duration-700 ${
+                        isVisible ? 'translate-y-0 opacity-100' : 'translate-y-6 opacity-0'
                       }`}
-                      style={{ animationDelay: `${index * 0.1}s` }}
+                      style={{ animationDelay: `${index * 0.12}s` }}
                     >
-                      <div className="relative h-full rounded-[calc(1.5rem-1px)] bg-background/95 p-6 shadow-lg shadow-aviation-navy/10">
-                        <div className="flex items-start justify-between gap-3">
-                          <div className="flex items-center gap-3">
-                            <div className="flex h-12 w-12 items-center justify-center rounded-xl border border-aviation-sky/30 bg-aviation-sky/10">
-                              <Icon className="h-6 w-6 text-aviation-sky" />
-                            </div>
-                            <div>
-                              <p className="text-xs uppercase tracking-[0.25em] text-muted-foreground">
-                                0{index + 1}
-                              </p>
-                              <h3 className="text-lg font-semibold text-foreground group-hover:text-aviation-sky transition-colors">
-                                {feature.title}
-                              </h3>
-                            </div>
+                      <div className="relative h-full rounded-[calc(1rem-1px)] bg-background/95 p-6 shadow-lg shadow-aviation-navy/10">
+                        <div className="flex items-start gap-4">
+                          <div className="flex h-10 w-10 items-center justify-center rounded-lg border border-aviation-sky/30 bg-aviation-sky/10">
+                            <Icon className="h-5 w-5 text-aviation-sky" />
+                          </div>
+                          <div>
+                            <p className="text-[11px] uppercase tracking-[0.35em] text-muted-foreground">{phase.badge}</p>
+                            <h3 className="mt-1 text-lg font-semibold text-foreground group-hover:text-aviation-sky transition-colors">
+                              {phase.title}
+                            </h3>
                           </div>
                         </div>
 
-                        <p className="mt-4 text-sm text-muted-foreground leading-relaxed">
-                          {feature.description}
+                        <p className="mt-2.5 text-sm text-muted-foreground leading-relaxed">
+                          {phase.description}
                         </p>
+                        <ul className="mt-4 space-y-1.5 text-xs text-muted-foreground">
+                          {phase.details.map((item) => (
+                            <li key={item} className="flex items-start gap-2">
+                              <span className="mt-1 h-1.5 w-1.5 flex-none rounded-full bg-aviation-sky" />
+                              <span className="leading-relaxed">{item}</span>
+                            </li>
+                          ))}
+                        </ul>
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+              <div className="mt-4 grid gap-4 md:grid-cols-2 flex-none">
+                {runwayPhasesRowTwo.map((phase, idx) => {
+                  const Icon = phase.icon;
+                  const index = idx + runwayPhases.length;
+                  const isVisible = visiblePhases.includes(index);
+                  const gradient = phaseGradients[index % phaseGradients.length];
 
-                        <div className="mt-6 flex items-center justify-between text-[11px] uppercase tracking-[0.3em] text-muted-foreground/80">
-                          <span>Included</span>
-                          <span>Route of Flight</span>
+                  return (
+                    <div
+                      key={phase.title}
+                      data-index={index}
+                      className={`mission-card group relative overflow-hidden rounded-2xl bg-gradient-to-br ${gradient} p-[1px] transition-all duration-700 ${
+                        isVisible ? 'translate-y-0 opacity-100' : 'translate-y-6 opacity-0'
+                      }`}
+                      style={{ animationDelay: `${index * 0.12}s` }}
+                    >
+                      <div className="relative h-full rounded-[calc(1rem-1px)] bg-background/95 p-6 shadow-lg shadow-aviation-navy/10">
+                        <div className="flex items-start gap-4">
+                          <div className="flex h-10 w-10 items-center justify-center rounded-lg border border-aviation-sky/30 bg-aviation-sky/10">
+                            <Icon className="h-5 w-5 text-aviation-sky" />
+                          </div>
+                          <div>
+                            <p className="text-[11px] uppercase tracking-[0.35em] text-muted-foreground">{phase.badge}</p>
+                            <h3 className="mt-1 text-lg font-semibold text-foreground group-hover:text-aviation-sky transition-colors">
+                              {phase.title}
+                            </h3>
+                          </div>
                         </div>
-                        <div className="absolute inset-x-6 bottom-4 h-[1px] bg-gradient-to-r from-transparent via-aviation-sky/30 to-transparent" />
+
+                        <p className="mt-2.5 text-sm text-muted-foreground leading-relaxed">
+                          {phase.description}
+                        </p>
+                        <ul className="mt-4 space-y-1.5 text-xs text-muted-foreground">
+                          {phase.details.map((item) => (
+                            <li key={item} className="flex items-start gap-2">
+                              <span className="mt-1 h-1.5 w-1.5 flex-none rounded-full bg-aviation-sky" />
+                              <span className="leading-relaxed">{item}</span>
+                            </li>
+                          ))}
+                        </ul>
                       </div>
                     </div>
                   );
