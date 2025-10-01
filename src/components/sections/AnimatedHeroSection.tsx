@@ -33,14 +33,6 @@ const AnimatedHeroSection = () => {
     }
   };
 
-  const handleViewAirlines = () => {
-    if (user) {
-      navigate("/airlines");
-    } else {
-      navigate("/signin");
-    }
-  };
-
   return (
     <section className="min-h-screen relative overflow-hidden bg-gradient-to-br from-background via-background to-aviation-navy/20">
       {/* Removed aircraft PNGs as requested */}
@@ -61,53 +53,7 @@ const AnimatedHeroSection = () => {
         ))}
       </div>
 
-      {/* Main Content */}
-      <div className="relative z-10 container mx-auto px-6 pt-20 pb-12 text-center min-h-screen flex flex-col justify-center">
-        {/* Tagline */}
-        <div className="animate-fade-in mb-6">
-          <span className="inline-flex items-center px-4 py-2 rounded-full bg-aviation-sky/10 border border-aviation-sky/20 text-aviation-sky text-sm font-medium">
-            ✈️ Professional Aviation Platform
-          </span>
-        </div>
-
-        {/* Main Headline */}
-        <h1 className="text-6xl md:text-8xl font-bold mb-8 leading-tight animate-fade-in animation-delay-200">
-          Navigate Your
-          <span className="block sky-gradient bg-clip-text text-transparent mt-2">
-            Aviation Journey
-          </span>
-        </h1>
-        
-        {/* Description */}
-        <p className="text-xl md:text-2xl mb-12 max-w-4xl mx-auto text-muted-foreground leading-relaxed animate-fade-in animation-delay-400">
-          The complete digital ecosystem for professional pilots. Track flight hours, 
-          maintain currency, and chart your course to the airlines.
-        </p>
-
-        {/* CTA Buttons */}
-        <div className="flex flex-col sm:flex-row gap-6 justify-center mb-16 animate-fade-in animation-delay-600">
-          <Button
-            variant="default"
-            size="lg"
-            className="group px-8 py-4 text-lg hover-scale"
-            onClick={handlePrimaryCta}
-          >
-            View Dashboard
-            <ArrowRight className="ml-2 h-5 w-5 group-hover:translate-x-1 transition-transform" />
-          </Button>
-          <Button 
-            variant="outline" 
-            size="lg" 
-            className="px-8 py-4 text-lg hover-scale border-aviation-sky/30 hover:border-aviation-sky hover:bg-aviation-sky/10" 
-            onClick={handleViewAirlines}
-          >
-            View Airlines
-            <ArrowRight className="ml-2 h-5 w-5 group-hover:translate-x-1 transition-transform" />
-          </Button>
-        </div>
-      </div>
-
-      <section className="relative overflow-hidden">
+      <section className="relative overflow-hidden z-10">
         <div className="absolute inset-0 bg-gradient-to-br from-background via-background to-aviation-navy/30" />
         <div className="absolute top-[-20%] left-1/2 h-[600px] w-[600px] -translate-x-1/2 rounded-full bg-aviation-sky/20 blur-3xl opacity-50" />
         <div className="absolute bottom-[-25%] right-[-10%] h-[500px] w-[500px] rounded-full bg-aviation-navy/40 blur-3xl opacity-60" />
