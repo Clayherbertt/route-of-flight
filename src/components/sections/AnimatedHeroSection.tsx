@@ -121,12 +121,12 @@ const AnimatedHeroSection = () => {
 
                 <div className="grid grid-cols-2 gap-4 text-sm">
                   {[
-                    { label: "Total Time", value: "02.1 hrs" },
-                    { label: "PIC", value: "01.5 hrs" },
-                    { label: "SIC", value: "00.6 hrs" },
-                    { label: "Night", value: "00.4 hrs" },
-                    { label: "Instrument", value: "00.7 hrs" },
-                    { label: "Approaches", value: "2 ILS" },
+                    { label: "Total Time", value: "2.1 hrs" },
+                    { label: "PIC", value: "1.5 hrs" },
+                    { label: "SIC", value: "0.6 hrs" },
+                    { label: "Night", value: "0.4 hrs" },
+                    { label: "Instrument", value: "0.7 hrs" },
+                    { label: "Approaches", value: "ILS 25L" },
                   ].map(({ label, value }) => (
                     <div key={label} className="rounded-xl border border-border/40 bg-background/70 p-4">
                       <p className="text-[11px] uppercase tracking-wide text-muted-foreground">{label}</p>
@@ -141,9 +141,9 @@ const AnimatedHeroSection = () => {
                   </div>
                   <div className="space-y-3">
                     {[
-                      { title: "ATP Minimums", value: "74%" },
+                      { title: "ATP Minimums", value: "92%" },
                       { title: "Airline Hiring Benchmarks", value: "58%" },
-                      { title: "Currency Window", value: "14 days" },
+                      { title: "Currency", value: "120 days" },
                     ].map(({ title, value }) => (
                       <div key={title} className="flex justify-between text-sm font-medium text-aviation-navy">
                         <span>{title}</span>
