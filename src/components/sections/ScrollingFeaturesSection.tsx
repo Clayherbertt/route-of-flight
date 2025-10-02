@@ -99,10 +99,9 @@ const ScrollingFeaturesSection = () => {
   ];
 
   return (
-    <section className="relative overflow-hidden py-20">
-      <div className="absolute inset-0 bg-gradient-to-br from-aviation-sky/25 via-aviation-sky/8 to-background" />
-      <div className="absolute -top-32 -left-24 h-72 w-72 rounded-full bg-aviation-sky/20 blur-3xl opacity-60" />
-      <div className="absolute bottom-[-10%] right-[-5%] h-96 w-96 rounded-full bg-aviation-navy/30 blur-3xl opacity-60" />
+    <section className="relative overflow-hidden py-20 bg-background">
+      <div className="absolute -top-32 -left-24 h-72 w-72 rounded-full bg-aviation-sky/15 blur-3xl opacity-50" />
+      <div className="absolute bottom-[-10%] right-[-5%] h-96 w-96 rounded-full bg-aviation-navy/20 blur-3xl opacity-50" />
 
       <div className="relative z-10 container mx-auto px-6">
         <div className="grid gap-12 lg:grid-cols-[0.95fr,1.05fr] items-start lg:items-stretch">
