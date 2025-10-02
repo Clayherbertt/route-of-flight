@@ -47,7 +47,7 @@
     
     /* Gradients */
     --gradient-aviation: linear-gradient(135deg, hsl(var(--aviation-navy)), hsl(var(--aviation-blue)));
-    --gradient-sky: linear-gradient(135deg, hsl(var(--aviation-blue)), hsl(var(--aviation-sky)));
+    --gradient-sky: linear-gradient(90deg, hsl(var(--aviation-sky)), hsl(var(--aviation-navy)));
     --gradient-subtle: linear-gradient(180deg, hsl(var(--aviation-light)), hsl(var(--background)));
     
     /* Shadows */
@@ -208,5 +208,12 @@
 
   .animation-delay-800 {
     animation-delay: var(--animation-delay-800);
+  }
+}
+
+@layer utilities {
+  .text-accent-gradient {
+    @apply bg-clip-text text-transparent;
+    background-image: var(--gradient-sky);
   }
 }

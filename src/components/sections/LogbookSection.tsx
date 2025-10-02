@@ -83,10 +83,10 @@ const LogbookSection = () => {
         <div className="grid gap-10 lg:grid-cols-[1.1fr,1.6fr,1fr]">
           <div className="space-y-8">
             <div className="space-y-4">
-              <span className="text-xs uppercase tracking-[0.4em] text-aviation-sky">Professional Logbook</span>
+              <span className="text-xs uppercase tracking-[0.4em] text-accent-gradient">Professional Logbook</span>
               <h2 className="text-4xl md:text-5xl font-bold leading-tight">
                 Chart every hour with
-                <span className="block text-aviation-sky">
+                <span className="block text-accent-gradient">
                   precise detail
                 </span>
               </h2>
@@ -146,7 +146,7 @@ const LogbookSection = () => {
                   </div>
                   <div className="text-right space-y-2">
                     <p className="text-lg font-semibold text-foreground">{block}</p>
-                    <Badge className="rounded-full bg-aviation-sky/10 text-aviation-sky border border-aviation-sky/30">{status}</Badge>
+                    <Badge className="rounded-full bg-aviation-sky/10 text-accent-gradient border border-aviation-sky/30">{status}</Badge>
                   </div>
                 </div>
               ))}

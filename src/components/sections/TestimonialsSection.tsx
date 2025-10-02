@@ -67,7 +67,7 @@ const TestimonialsSection = () => {
         <div className="text-center mb-16">
           <h2 className="text-5xl font-bold mb-6">
             Trusted by 
-            <span className="sky-gradient bg-clip-text text-transparent"> Aviation Professionals</span>
+            <span className="text-accent-gradient"> Aviation Professionals</span>
           </h2>
           <p className="text-xl text-muted-foreground max-w-3xl mx-auto">
             From flight instructors to airline captains, see what pilots are saying about Route of Flight.

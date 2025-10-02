@@ -61,13 +61,13 @@ const AnimatedHeroSection = () => {
         <div className="relative container mx-auto px-6 pt-28 pb-24 lg:pb-32">
           <div className="grid lg:grid-cols-2 gap-16 items-center">
             <div className="space-y-8">
-              <p className="text-xs md:text-sm uppercase tracking-[0.35em] text-aviation-sky">
+              <p className="text-xs md:text-sm uppercase tracking-[0.35em] text-accent-gradient">
                 Digital Logbook • Airline Database • Route Builder • Career Path Tracker
               </p>
 
               <h1 className="text-4xl md:text-6xl xl:text-7xl font-bold leading-tight">
                 Command your
-                <span className="block bg-gradient-to-r from-aviation-sky to-aviation-navy bg-clip-text text-transparent">
+                <span className="block text-accent-gradient">
                   professional flight path
                 </span>
               </h1>
@@ -114,8 +114,8 @@ const AnimatedHeroSection = () => {
                     <p className="text-lg font-semibold">Nov 18, 2024 · N482JF</p>
                     <p className="text-sm text-muted-foreground">KDEN → KLAX · Cessna CJ4</p>
                   </div>
-                  <span className="inline-flex items-center gap-2 rounded-full bg-aviation-sky/20 px-3 py-1 text-xs font-medium text-aviation-sky">
-                    <ShieldCheck className="h-3.5 w-3.5" /> Synced
+                  <span className="inline-flex items-center gap-2 rounded-full bg-aviation-sky/20 px-3 py-1 text-xs font-medium text-accent-gradient">
+                    <ShieldCheck className="h-3.5 w-3.5 text-aviation-sky" /> Synced
                   </span>
                 </div>
 
@@ -136,8 +136,9 @@ const AnimatedHeroSection = () => {
                 </div>
 
                 <div className="rounded-2xl border border-aviation-sky/40 bg-aviation-sky/10 p-5 space-y-4">
-                  <div className="flex items-center gap-2 text-sm font-semibold text-aviation-sky">
-                    <ClipboardList className="h-4 w-4" /> Career Targets Snapshot
+                  <div className="flex items-center gap-2 text-sm font-semibold">
+                    <ClipboardList className="h-4 w-4 text-aviation-sky" />
+                    <span className="text-accent-gradient">Career Targets Snapshot</span>
                   </div>
                   <div className="space-y-3">
                     {[

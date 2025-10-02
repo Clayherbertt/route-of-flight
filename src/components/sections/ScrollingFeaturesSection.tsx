@@ -107,10 +107,10 @@ const ScrollingFeaturesSection = () => {
         <div className="grid gap-12 lg:grid-cols-[0.95fr,1.05fr] items-start lg:items-stretch">
           <div className="space-y-8">
             <div className="space-y-5">
-              <p className="text-xs uppercase tracking-[0.4em] text-aviation-sky">Route Builder flight plan</p>
+              <p className="text-xs uppercase tracking-[0.4em] text-accent-gradient">Route Builder flight plan</p>
               <h2 className="text-4xl md:text-5xl font-bold leading-tight">
                 Guide every aspiring pilot from
-                <span className="block text-aviation-sky">
+                <span className="block text-accent-gradient">
                   zero hours to the jet seat
                 </span>
               </h2>
