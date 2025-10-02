@@ -77,9 +77,7 @@ const compliancePanels = [
 
 const LogbookSection = () => {
   return (
-    <section className="relative overflow-hidden py-24">
-      <div className="absolute inset-0 bg-gradient-to-br from-background via-aviation-sky/10 to-background" />
-      <div className="absolute inset-x-0 top-0 h-32 bg-gradient-to-b from-aviation-sky/15 to-transparent" />
+    <section className="relative overflow-hidden py-24 bg-background">
 
       <div className="relative z-10 container mx-auto px-6">
         <div className="grid gap-10 lg:grid-cols-[1.1fr,1.6fr,1fr]">

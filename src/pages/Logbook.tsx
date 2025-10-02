@@ -1,5 +1,4 @@
 import Header from "@/components/layout/Header";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -249,10 +248,21 @@ const Logbook = () => {
     return isTurbine ? sum + time : sum;
   }, 0);
 
+  const summaryMetrics = [
+    { label: "Total Flight Time", value: `${totalHours.toFixed(1)} hrs` },
+    { label: "Pilot in Command", value: `${totalPIC.toFixed(1)} hrs` },
+    { label: "Cross Country", value: `${totalXC.toFixed(1)} hrs` },
+    { label: "Night Time", value: `${totalNight.toFixed(1)} hrs` },
+    { label: "Instrument", value: `${totalInstrument.toFixed(1)} hrs` },
+    { label: "Multi-Engine", value: `${totalMultiEngine.toFixed(1)} hrs` },
+    { label: "SIC Time", value: `${totalSIC.toFixed(1)} hrs` },
+    { label: "PIC Turbine", value: `${totalPICTurbine.toFixed(1)} hrs` },
+  ];
+
   // Show loading state
   if (loading || isLoadingFlights) {
     return (
-      <div className="min-h-screen bg-background">
+      <div className="min-h-screen bg-gradient-to-b from-background via-aviation-light/40 to-background">
         <Header />
         <main className="container mx-auto px-6 py-8">
           <div className="flex items-center justify-center h-64">
@@ -271,281 +281,354 @@ const Logbook = () => {
     return null;
   }
 
+  const thirtyDaysAgo = new Date();
+  thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
+
+  const recentHours = flights.reduce((sum, flight) => {
+    const parsedDate = flight.date ? new Date(flight.date) : null;
+    if (parsedDate && !Number.isNaN(parsedDate.getTime()) && parsedDate >= thirtyDaysAgo) {
+      return sum + (Number(flight.total_time) || 0);
+    }
+    return sum;
+  }, 0);
+
+  const lastFlight = flights[0];
+
+  const totalApproaches = flights.reduce((sum, flight) => sum + (Number(flight.approaches) || 0), 0);
+  const totalNightFullStops = flights.reduce((sum, flight) => sum + (Number(flight.night_landings_full_stop) || 0), 0);
+  const totalDualGiven = flights.reduce((sum, flight) => sum + (Number(flight.dual_given) || 0), 0);
+
+  let tableRows: React.ReactNode;
+
+  if (flights.length === 0) {
+    tableRows = (
+      <TableRow>
+        <TableCell colSpan={38} className="h-32 text-center">
+          <div className="flex flex-col items-center justify-center text-muted-foreground">
+            <Plane className="h-8 w-8 mb-2 opacity-50" />
+            <p className="text-lg font-medium">No flights recorded yet</p>
+            <p className="text-sm">Click "Add Flight" to log your first flight</p>
+          </div>
+        </TableCell>
+      </TableRow>
+    );
+  } else {
+    tableRows = flights.map((flight) => (
+      <TableRow key={flight.id} className="hover:bg-muted/50">
+        <TableCell className="font-medium">{flight.date}</TableCell>
+        <TableCell>
+          <Badge variant="outline">{flight.aircraft_registration}</Badge>
+        </TableCell>
+        <TableCell>{flight.aircraft_type}</TableCell>
+        <TableCell>{flight.departure_airport}</TableCell>
+        <TableCell>{flight.arrival_airport}</TableCell>
+        <TableCell>{flight.route || '-'}</TableCell>
+        <TableCell>{flight.time_out || flight.start_time || '-'}</TableCell>
+        <TableCell>{flight.time_off || '-'}</TableCell>
+        <TableCell>{flight.time_on || '-'}</TableCell>
+        <TableCell>{flight.time_in || flight.end_time || '-'}</TableCell>
+        <TableCell>{flight.on_duty || '-'}</TableCell>
+        <TableCell>{flight.off_duty || '-'}</TableCell>
+        <TableCell>{flight.hobbs_start ?? '-'}</TableCell>
+        <TableCell>{flight.hobbs_end ?? '-'}</TableCell>
+        <TableCell>{flight.tach_start ?? '-'}</TableCell>
+        <TableCell>{flight.tach_end ?? '-'}</TableCell>
+        <TableCell className="font-medium">{flight.total_time}</TableCell>
+        <TableCell>{flight.pic_time}</TableCell>
+        <TableCell>{flight.sic_time ?? 0}</TableCell>
+        <TableCell>{flight.solo_time ?? 0}</TableCell>
+        <TableCell>{flight.night_time}</TableCell>
+        <TableCell>{flight.cross_country_time}</TableCell>
+        <TableCell>{flight.actual_instrument ?? 0}</TableCell>
+        <TableCell>{flight.simulated_instrument ?? 0}</TableCell>
+        <TableCell>{flight.holds ?? 0}</TableCell>
+        <TableCell>{flight.approaches || '-'}</TableCell>
+        <TableCell>{flight.day_takeoffs ?? 0}</TableCell>
+        <TableCell>{flight.day_landings ?? 0}</TableCell>
+        <TableCell>{flight.day_landings_full_stop ?? 0}</TableCell>
+        <TableCell>{flight.night_takeoffs ?? 0}</TableCell>
+        <TableCell>{flight.night_landings ?? 0}</TableCell>
+        <TableCell>{flight.night_landings_full_stop ?? 0}</TableCell>
+        <TableCell>{flight.dual_given ?? 0}</TableCell>
+        <TableCell>{flight.dual_received ?? 0}</TableCell>
+        <TableCell>{flight.simulated_flight ?? 0}</TableCell>
+        <TableCell>{flight.ground_training ?? 0}</TableCell>
+        <TableCell className="max-w-xs truncate">{flight.remarks || '-'}</TableCell>
+        <TableCell>
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button variant="ghost" size="sm" className="h-8 w-8 p-0 hover:bg-muted">
+                <span className="sr-only">Open menu</span>
+                <MoreHorizontal className="h-4 w-4" />
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end" className="w-[160px]">
+              <DropdownMenuItem onClick={() => handleEditFlight(flight)}>
+                <Edit className="h-4 w-4 mr-2" />
+                Edit Flight
+              </DropdownMenuItem>
+              <DropdownMenuItem
+                onClick={() => setDeletingFlight(flight)}
+                className="text-destructive focus:text-destructive"
+              >
+                <Trash2 className="h-4 w-4 mr-2" />
+                Delete Flight
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
+        </TableCell>
+      </TableRow>
+    ));
+  }
+
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-gradient-to-b from-background via-aviation-light/40 to-background">
       <Header />
-      
-      <main className="container mx-auto px-6 py-8">
-        {/* Header Section */}
-        <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4 mb-8">
-          <div>
-            <h1 className="text-3xl font-bold text-foreground mb-2">Flight Logbook</h1>
-            <p className="text-muted-foreground">Track and manage your flight hours and experience</p>
+
+      <main className="relative pb-16">
+        <section className="relative overflow-hidden">
+          <div className="absolute inset-0 bg-gradient-to-br from-background via-aviation-sky/10 to-aviation-navy/20" />
+          <div className="absolute -top-20 right-[-10%] h-64 w-64 rounded-full bg-aviation-sky/30 blur-3xl opacity-70" />
+          <div className="absolute bottom-[-35%] left-[-15%] h-[420px] w-[420px] rounded-full bg-aviation-navy/30 blur-3xl opacity-60" />
+          <div className="absolute inset-0 pointer-events-none">
+            {[...Array(6)].map((_, index) => (
+              <span
+                key={index}
+                className="absolute h-2 w-2 rounded-full bg-aviation-sky/20"
+                style={{
+                  left: `${10 + index * 15}%`,
+                  top: `${25 + (index % 3) * 20}%`,
+                }}
+              />
+            ))}
           </div>
-          <div className="flex gap-2">
-            <Button variant="outline" onClick={() => setShowCSVImportDialog(true)}>
-              <Upload className="h-4 w-4 mr-2" />
-              Import CSV
-            </Button>
-            <Button
-              variant="outline"
-              className="text-destructive border-destructive hover:bg-destructive hover:text-destructive-foreground"
-              onClick={() => setShowClearAllDialog(true)}
-            >
-              <Trash2 className="h-4 w-4 mr-2" />
-              Clear All
-            </Button>
-            <Button onClick={() => setShowAddFlightDialog(true)}>
-              <Plus className="h-4 w-4 mr-2" />
-              Add Flight
-            </Button>
-          </div>
-        </div>
 
-        {/* Stats Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-6">
-          <Card>
-            <CardHeader className="pb-3">
-              <CardDescription>Total Flight Time</CardDescription>
-              <CardTitle className="text-2xl text-primary">{totalHours.toFixed(1)} hrs</CardTitle>
-            </CardHeader>
-          </Card>
-          <Card>
-            <CardHeader className="pb-3">
-              <CardDescription>Pilot in Command</CardDescription>
-              <CardTitle className="text-2xl text-primary">{totalPIC.toFixed(1)} hrs</CardTitle>
-            </CardHeader>
-          </Card>
-          <Card>
-            <CardHeader className="pb-3">
-              <CardDescription>Cross Country</CardDescription>
-              <CardTitle className="text-2xl text-primary">{totalXC.toFixed(1)} hrs</CardTitle>
-            </CardHeader>
-          </Card>
-          <Card>
-            <CardHeader className="pb-3">
-              <CardDescription>Night Time</CardDescription>
-              <CardTitle className="text-2xl text-primary">{totalNight.toFixed(1)} hrs</CardTitle>
-            </CardHeader>
-          </Card>
-        </div>
-
-        {/* Additional Stats Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-          <Card>
-            <CardHeader className="pb-3">
-              <CardDescription>Instrument</CardDescription>
-              <CardTitle className="text-2xl text-primary">{totalInstrument.toFixed(1)} hrs</CardTitle>
-            </CardHeader>
-          </Card>
-          <Card>
-            <CardHeader className="pb-3">
-              <CardDescription>Multi-Engine</CardDescription>
-              <CardTitle className="text-2xl text-primary">{totalMultiEngine.toFixed(1)} hrs</CardTitle>
-            </CardHeader>
-          </Card>
-          <Card>
-            <CardHeader className="pb-3">
-              <CardDescription>SIC Time</CardDescription>
-              <CardTitle className="text-2xl text-primary">{totalSIC.toFixed(1)} hrs</CardTitle>
-            </CardHeader>
-          </Card>
-          <Card>
-            <CardHeader className="pb-3">
-              <CardDescription>PIC Turbine</CardDescription>
-              <CardTitle className="text-2xl text-primary">{totalPICTurbine.toFixed(1)} hrs</CardTitle>
-            </CardHeader>
-          </Card>
-        </div>
-
-        {/* Filters and Search */}
-        <Card className="mb-6">
-          <CardHeader>
-            <CardTitle className="text-lg">Search & Filter</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="flex flex-col md:flex-row gap-4">
-              <div className="flex-1">
-                <Label htmlFor="search">Search flights</Label>
-                <div className="relative">
-                  <Search className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
-                  <Input
-                    id="search"
-                    placeholder="Search by aircraft, route, or remarks..."
-                    value={searchTerm}
-                    onChange={(e) => setSearchTerm(e.target.value)}
-                    className="pl-10"
-                  />
+          <div className="relative container mx-auto px-6 py-12 lg:py-20">
+            <div className="flex flex-col gap-10 lg:flex-row lg:items-start lg:justify-between">
+              <div className="max-w-2xl space-y-6">
+                <span className="inline-flex items-center gap-2 rounded-full border border-white/40 bg-white/10 px-4 py-1 text-xs uppercase tracking-[0.35em] text-aviation-sky backdrop-blur">
+                  Logbook Hub
+                </span>
+                <div>
+                  <h1 className="text-4xl md:text-5xl font-bold tracking-tight text-foreground">Flight Logbook</h1>
+                  <p className="mt-4 text-lg leading-relaxed text-muted-foreground">
+                    Track and manage your flight hours, currency, and experience with a cockpit-ready dashboard designed for working pilots.
+                  </p>
+                </div>
+                <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
+                  <Button size="lg" className="rounded-full px-6" onClick={() => setShowAddFlightDialog(true)}>
+                    <Plus className="mr-2 h-5 w-5" />
+                    Add Flight
+                  </Button>
+                  <Button
+                    size="lg"
+                    variant="outline"
+                    className="rounded-full border-aviation-sky/40 text-aviation-sky hover:bg-aviation-sky/10"
+                    onClick={() => setShowCSVImportDialog(true)}
+                  >
+                    <Upload className="mr-2 h-5 w-5" />
+                    Import CSV
+                  </Button>
+                  <Button
+                    size="lg"
+                    variant="outline"
+                    className="rounded-full border-destructive/70 text-destructive hover:bg-destructive/10"
+                    onClick={() => setShowClearAllDialog(true)}
+                  >
+                    <Trash2 className="mr-2 h-5 w-5" />
+                    Clear All
+                  </Button>
                 </div>
               </div>
-              <div className="md:w-48">
-                <Label htmlFor="aircraft-filter">Aircraft Type</Label>
-                <Select>
-                  <SelectTrigger>
-                    <SelectValue placeholder="All aircraft" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="all">All Aircraft</SelectItem>
-                    <SelectItem value="c172">Cessna 172</SelectItem>
-                    <SelectItem value="pa28">Piper Cherokee</SelectItem>
-                    <SelectItem value="c152">Cessna 152</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-              <div className="flex items-end gap-2">
-                <Button variant="outline" size="sm">
-                  <Filter className="h-4 w-4 mr-2" />
-                  More Filters
-                </Button>
-                <Button variant="outline" size="sm">
-                  <Download className="h-4 w-4 mr-2" />
-                  Export
-                </Button>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
 
-        {/* Flight Log Table */}
-        <Card>
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <Plane className="h-5 w-5" />
-              Flight Log Entries
-            </CardTitle>
-            <CardDescription>
-              {flights.length} flights recorded
-            </CardDescription>
-          </CardHeader>
-          <CardContent className="p-0">
-            <div className="overflow-x-auto">
-              <Table>
-                <TableHeader>
-                  <TableRow>
-                    <TableHead>Date</TableHead>
-                    <TableHead>Aircraft ID</TableHead>
-                    <TableHead>Type</TableHead>
-                    <TableHead>From</TableHead>
-                    <TableHead>To</TableHead>
-                    <TableHead>Route</TableHead>
-                    <TableHead>Time Out</TableHead>
-                    <TableHead>Time Off</TableHead>
-                    <TableHead>Time On</TableHead>
-                    <TableHead>Time In</TableHead>
-                    <TableHead>On Duty</TableHead>
-                    <TableHead>Off Duty</TableHead>
-                    <TableHead>Hobbs Start</TableHead>
-                    <TableHead>Hobbs End</TableHead>
-                    <TableHead>Tach Start</TableHead>
-                    <TableHead>Tach End</TableHead>
-                    <TableHead>Total Time</TableHead>
-                    <TableHead>PIC</TableHead>
-                    <TableHead>SIC</TableHead>
-                    <TableHead>Solo</TableHead>
-                    <TableHead>Night</TableHead>
-                    <TableHead>Cross Country</TableHead>
-                    <TableHead>Actual Instrument</TableHead>
-                    <TableHead>Sim Instrument</TableHead>
-                    <TableHead>Holds</TableHead>
-                    <TableHead>Approaches</TableHead>
-                    <TableHead>Day TO</TableHead>
-                    <TableHead>Day LDG</TableHead>
-                    <TableHead>Day Full Stop</TableHead>
-                    <TableHead>Night TO</TableHead>
-                    <TableHead>Night LDG</TableHead>
-                    <TableHead>Night Full Stop</TableHead>
-                    <TableHead>Dual Given</TableHead>
-                    <TableHead>Dual Received</TableHead>
-                    <TableHead>Sim Flight</TableHead>
-                    <TableHead>Ground Training</TableHead>
-                    <TableHead>Remarks</TableHead>
-                    <TableHead className="w-[70px]">Actions</TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {flights.length > 0 ? (
-                    flights.map((flight) => (
-                      <TableRow key={flight.id} className="hover:bg-muted/50">
-                        <TableCell className="font-medium">{flight.date}</TableCell>
-                        <TableCell>
-                          <Badge variant="outline">{flight.aircraft_registration}</Badge>
-                        </TableCell>
-                        <TableCell>{flight.aircraft_type}</TableCell>
-                        <TableCell>{flight.departure_airport}</TableCell>
-                        <TableCell>{flight.arrival_airport}</TableCell>
-                        <TableCell>{flight.route || '-'}</TableCell>
-                        <TableCell>{flight.time_out || flight.start_time || '-'}</TableCell>
-                        <TableCell>{flight.time_off || '-'}</TableCell>
-                        <TableCell>{flight.time_on || '-'}</TableCell>
-                        <TableCell>{flight.time_in || flight.end_time || '-'}</TableCell>
-                        <TableCell>{flight.on_duty || '-'}</TableCell>
-                        <TableCell>{flight.off_duty || '-'}</TableCell>
-                        <TableCell>{flight.hobbs_start ?? '-'}</TableCell>
-                        <TableCell>{flight.hobbs_end ?? '-'}</TableCell>
-                        <TableCell>{flight.tach_start ?? '-'}</TableCell>
-                        <TableCell>{flight.tach_end ?? '-'}</TableCell>
-                        <TableCell className="font-medium">{flight.total_time}</TableCell>
-                        <TableCell>{flight.pic_time}</TableCell>
-                        <TableCell>{flight.sic_time ?? 0}</TableCell>
-                        <TableCell>{flight.solo_time ?? 0}</TableCell>
-                        <TableCell>{flight.night_time}</TableCell>
-                        <TableCell>{flight.cross_country_time}</TableCell>
-                        <TableCell>{flight.actual_instrument ?? 0}</TableCell>
-                        <TableCell>{flight.simulated_instrument ?? 0}</TableCell>
-                        <TableCell>{flight.holds ?? 0}</TableCell>
-                        <TableCell>{flight.approaches || '-'}</TableCell>
-                        <TableCell>{flight.day_takeoffs ?? 0}</TableCell>
-                        <TableCell>{flight.day_landings ?? 0}</TableCell>
-                        <TableCell>{flight.day_landings_full_stop ?? 0}</TableCell>
-                        <TableCell>{flight.night_takeoffs ?? 0}</TableCell>
-                        <TableCell>{flight.night_landings ?? 0}</TableCell>
-                        <TableCell>{flight.night_landings_full_stop ?? 0}</TableCell>
-                        <TableCell>{flight.dual_given ?? 0}</TableCell>
-                        <TableCell>{flight.dual_received ?? 0}</TableCell>
-                        <TableCell>{flight.simulated_flight ?? 0}</TableCell>
-                        <TableCell>{flight.ground_training ?? 0}</TableCell>
-                        <TableCell className="max-w-xs truncate">{flight.remarks || '-'}</TableCell>
-                        <TableCell>
-                          <DropdownMenu>
-                            <DropdownMenuTrigger asChild>
-                              <Button variant="ghost" size="sm" className="h-8 w-8 p-0 hover:bg-muted">
-                                <span className="sr-only">Open menu</span>
-                                <MoreHorizontal className="h-4 w-4" />
-                              </Button>
-                            </DropdownMenuTrigger>
-                            <DropdownMenuContent align="end" className="w-[160px]">
-                              <DropdownMenuItem onClick={() => handleEditFlight(flight)}>
-                                <Edit className="h-4 w-4 mr-2" />
-                                Edit Flight
-                              </DropdownMenuItem>
-                              <DropdownMenuItem 
-                                onClick={() => setDeletingFlight(flight)}
-                                className="text-destructive focus:text-destructive"
-                              >
-                                <Trash2 className="h-4 w-4 mr-2" />
-                                Delete Flight
-                              </DropdownMenuItem>
-                            </DropdownMenuContent>
-                          </DropdownMenu>
-                        </TableCell>
-                      </TableRow>
-                    ))
-                  ) : (
-                    <TableRow>
-                      <TableCell colSpan={38} className="h-32 text-center">
-                        <div className="flex flex-col items-center justify-center text-muted-foreground">
-                          <Plane className="h-8 w-8 mb-2 opacity-50" />
-                          <p className="text-lg font-medium">No flights recorded yet</p>
-                          <p className="text-sm">Click "Add Flight" to log your first flight</p>
-                        </div>
-                      </TableCell>
-                    </TableRow>
-                  )}
-                </TableBody>
-              </Table>
+              <div className="w-full max-w-sm rounded-3xl border border-white/50 bg-white/30 p-6 shadow-2xl shadow-aviation-navy/20 backdrop-blur">
+                <p className="text-xs uppercase tracking-[0.35em] text-muted-foreground">Snapshot</p>
+                <div className="mt-5 space-y-4">
+                  <div className="flex items-center justify-between">
+                    <span className="text-sm text-muted-foreground">Flights logged</span>
+                    <span className="text-lg font-semibold text-foreground">{flights.length}</span>
+                  </div>
+                  <div className="flex items-center justify-between">
+                    <span className="text-sm text-muted-foreground">Hours past 30 days</span>
+                    <span className="text-lg font-semibold text-foreground">{recentHours.toFixed(1)}</span>
+                  </div>
+                  <div className="rounded-2xl border border-border/40 bg-card/70 p-4">
+                    <p className="text-xs uppercase tracking-[0.3em] text-muted-foreground">Most recent flight</p>
+                    {lastFlight ? (
+                      <div className="mt-3 space-y-1">
+                        <p className="text-sm font-semibold text-foreground">{lastFlight.departure_airport} → {lastFlight.arrival_airport}</p>
+                        <p className="text-xs text-muted-foreground">
+                          {lastFlight.date} · {lastFlight.aircraft_type} · {lastFlight.total_time} hrs
+                        </p>
+                      </div>
+                    ) : (
+                      <p className="mt-3 text-sm text-muted-foreground">Log your first flight to see insights here.</p>
+                    )}
+                  </div>
+                </div>
+              </div>
             </div>
-          </CardContent>
-        </Card>
+
+            <div className="mt-12 grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
+              {summaryMetrics.map((metric) => (
+                <div
+                  key={metric.label}
+                  className="rounded-3xl border border-white/40 bg-white/40 p-5 shadow-lg backdrop-blur transition-transform duration-300 hover:-translate-y-1 hover:shadow-xl"
+                >
+                  <p className="text-[11px] uppercase tracking-[0.3em] text-muted-foreground">{metric.label}</p>
+                  <p className="mt-3 text-2xl font-semibold text-foreground">{metric.value}</p>
+                </div>
+              ))}
+            </div>
+          </div>
+        </section>
+
+        <section className="relative -mt-10">
+          <div className="container mx-auto px-6 pt-12 space-y-8">
+            <div className="rounded-3xl border border-border/60 bg-card/90 shadow-xl shadow-aviation-navy/15 backdrop-blur">
+              <div className="flex flex-wrap items-center justify-between gap-4 border-b border-border/60 px-6 py-5">
+                <div>
+                  <p className="text-sm font-semibold text-foreground">Search &amp; Filter</p>
+                  <p className="text-xs text-muted-foreground">Fine-tune your logbook view or prepare an export in seconds</p>
+                </div>
+                <div className="flex items-center gap-2">
+                  <Button variant="outline" size="sm" className="rounded-full">
+                    <Filter className="mr-2 h-4 w-4" />
+                    More Filters
+                  </Button>
+                  <Button variant="outline" size="sm" className="rounded-full">
+                    <Download className="mr-2 h-4 w-4" />
+                    Export
+                  </Button>
+                </div>
+              </div>
+
+              <div className="px-6 py-6">
+                <div className="grid gap-5 lg:grid-cols-[minmax(0,1fr),220px] lg:items-end">
+                  <div>
+                    <Label htmlFor="search">Search flights</Label>
+                    <div className="relative mt-2">
+                      <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+                      <Input
+                        id="search"
+                        placeholder="Search by aircraft, route, or remarks..."
+                        value={searchTerm}
+                        onChange={(e) => setSearchTerm(e.target.value)}
+                        className="h-12 rounded-2xl border-border/50 bg-background/70 pl-10"
+                      />
+                    </div>
+                  </div>
+                  <div>
+                    <Label htmlFor="aircraft-filter">Aircraft type</Label>
+                    <Select>
+                      <SelectTrigger className="mt-2 h-12 rounded-2xl border-border/50 bg-background/70">
+                        <SelectValue placeholder="All aircraft" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="all">All Aircraft</SelectItem>
+                        <SelectItem value="c172">Cessna 172</SelectItem>
+                        <SelectItem value="pa28">Piper Cherokee</SelectItem>
+                        <SelectItem value="c152">Cessna 152</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+                </div>
+
+                <div className="mt-5 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+                  <div className="rounded-2xl border border-border/50 bg-background/60 p-4">
+                    <p className="text-xs uppercase tracking-[0.25em] text-muted-foreground">Quick insight</p>
+                    <p className="mt-2 text-sm text-muted-foreground">{recentHours.toFixed(1)} hrs logged in the last 30 days</p>
+                  </div>
+                  <div className="rounded-2xl border border-border/50 bg-background/60 p-4">
+                    <p className="text-xs uppercase tracking-[0.25em] text-muted-foreground">Total approaches</p>
+                    <p className="mt-2 text-sm text-muted-foreground">{totalApproaches}</p>
+                  </div>
+                  <div className="rounded-2xl border border-border/50 bg-background/60 p-4">
+                    <p className="text-xs uppercase tracking-[0.25em] text-muted-foreground">Night landings</p>
+                    <p className="mt-2 text-sm text-muted-foreground">{totalNightFullStops}</p>
+                  </div>
+                  <div className="rounded-2xl border border-border/50 bg-background/60 p-4">
+                    <p className="text-xs uppercase tracking-[0.25em] text-muted-foreground">Dual given</p>
+                    <p className="mt-2 text-sm text-muted-foreground">{totalDualGiven} hrs</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div className="rounded-3xl border border-border/60 bg-card/95 shadow-xl shadow-aviation-navy/15 backdrop-blur">
+              <div className="flex flex-wrap items-center justify-between gap-4 border-b border-border/60 px-6 py-5">
+                <div>
+                  <p className="flex items-center gap-2 text-lg font-semibold text-foreground">
+                    <Plane className="h-5 w-5 text-aviation-sky" />
+                    Flight Log Entries
+                  </p>
+                  <p className="text-sm text-muted-foreground">{flights.length} flights recorded</p>
+                </div>
+                <div className="flex items-center gap-2">
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    className="rounded-full"
+                    onClick={() => setShowAddFlightDialog(true)}
+                  >
+                    <Plus className="mr-2 h-4 w-4" />
+                    Add Flight
+                  </Button>
+                </div>
+              </div>
+
+              <div className="overflow-x-auto">
+                <Table>
+                  <TableHeader>
+                    <TableRow>
+                      <TableHead>Date</TableHead>
+                      <TableHead>Aircraft ID</TableHead>
+                      <TableHead>Type</TableHead>
+                      <TableHead>From</TableHead>
+                      <TableHead>To</TableHead>
+                      <TableHead>Route</TableHead>
+                      <TableHead>Time Out</TableHead>
+                      <TableHead>Time Off</TableHead>
+                      <TableHead>Time On</TableHead>
+                      <TableHead>Time In</TableHead>
+                      <TableHead>On Duty</TableHead>
+                      <TableHead>Off Duty</TableHead>
+                      <TableHead>Hobbs Start</TableHead>
+                      <TableHead>Hobbs End</TableHead>
+                      <TableHead>Tach Start</TableHead>
+                      <TableHead>Tach End</TableHead>
+                      <TableHead>Total Time</TableHead>
+                      <TableHead>PIC</TableHead>
+                      <TableHead>SIC</TableHead>
+                      <TableHead>Solo</TableHead>
+                      <TableHead>Night</TableHead>
+                      <TableHead>Cross Country</TableHead>
+                      <TableHead>Actual Instrument</TableHead>
+                      <TableHead>Sim Instrument</TableHead>
+                      <TableHead>Holds</TableHead>
+                      <TableHead>Approaches</TableHead>
+                      <TableHead>Day TO</TableHead>
+                      <TableHead>Day LDG</TableHead>
+                      <TableHead>Day Full Stop</TableHead>
+                      <TableHead>Night TO</TableHead>
+                      <TableHead>Night LDG</TableHead>
+                      <TableHead>Night Full Stop</TableHead>
+                      <TableHead>Dual Given</TableHead>
+                      <TableHead>Dual Received</TableHead>
+                      <TableHead>Sim Flight</TableHead>
+                      <TableHead>Ground Training</TableHead>
+                      <TableHead>Remarks</TableHead>
+                      <TableHead className="w-[70px]">Actions</TableHead>
+                    </TableRow>
+                  </TableHeader>
+                  <TableBody>{tableRows}</TableBody>
+                </Table>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
       </main>
 
       <AddFlightDialog
