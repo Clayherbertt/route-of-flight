@@ -100,7 +100,7 @@ const ScrollingFeaturesSection = () => {
 
   return (
     <section className="relative overflow-hidden py-20">
-      <div className="absolute inset-0 bg-gradient-to-br from-background via-aviation-sky/10 to-background" />
+      <div className="absolute inset-0 bg-gradient-to-br from-aviation-sky/25 via-aviation-sky/8 to-background" />
       <div className="absolute -top-32 -left-24 h-72 w-72 rounded-full bg-aviation-sky/20 blur-3xl opacity-60" />
       <div className="absolute bottom-[-10%] right-[-5%] h-96 w-96 rounded-full bg-aviation-navy/30 blur-3xl opacity-60" />
 
@@ -111,7 +111,7 @@ const ScrollingFeaturesSection = () => {
               <p className="text-xs uppercase tracking-[0.4em] text-aviation-sky">Route Builder flight plan</p>
               <h2 className="text-4xl md:text-5xl font-bold leading-tight">
                 Guide every aspiring pilot from
-                <span className="block bg-gradient-to-r from-aviation-sky via-aviation-light to-aviation-navy bg-clip-text text-transparent">
+                <span className="block text-aviation-sky">
                   zero hours to the jet seat
                 </span>
               </h2>

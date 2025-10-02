@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
-import { Building2, Search, Plane, Users, MapPin } from "lucide-react";
-import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
+import { Building2, CalendarDays, MapPin, Plane, Radar, Search, Users } from "lucide-react";
+import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { AirlineDetailsDialog } from "@/components/dialogs/AirlineDetailsDialog";
@@ -115,16 +115,16 @@ const Airlines = () => {
     }
   ];
 
-  // Filter airlines based on search term
-  const filteredSections = airlineSections.map(section => ({
-    ...section,
-    airlines: section.airlines.filter(airline => 
-      airline.name.toLowerCase().includes(searchTerm.toLowerCase())
-    )
-  })).filter(section => section.airlines.length > 0);
-
-  console.log("Airlines data prepared, about to render");
-
+  const filteredSections = airlineSections
+    .map(section => ({
+      ...section,
+      airlines: section.airlines.filter(airline =>
+        airline.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        airline.bases.some(base => base.toLowerCase().includes(searchTerm.toLowerCase()))
+      )
+    }))
+    .filter(section => section.airlines.length > 0);
+  
   if (loading) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-background via-background to-muted/20">
@@ -202,28 +202,66 @@ const Airlines = () => {
                   </div>
                 </div>
                 
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+                <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-5">
                   {section.airlines.map((airline, index) => (
                     <Card 
                       key={index}
-                      className={`${getSectionColor(section.title)} hover:scale-105 transition-all duration-200 cursor-pointer hover:shadow-lg group`}
+                      className={`${getSectionColor(section.title)} border border-border/40 shadow-sm transition-all duration-200 hover:-translate-y-1 hover:shadow-2xl cursor-pointer group`}
                       onClick={() => handleAirlineClick(airline)}
                     >
-                      <CardContent className="p-6">
-                        <div className="flex items-center gap-3">
-                          <div className="flex-shrink-0 p-2 rounded-full bg-background/50 group-hover:bg-background/80 transition-colors">
-                            <Plane className="h-5 w-5 text-primary" />
-                          </div>
-                          <div className="min-w-0 flex-1">
-                            <h3 className="font-semibold text-foreground leading-tight group-hover:text-primary transition-colors">
-                              {airline.name}
-                            </h3>
-                            <div className="flex items-center gap-2 mt-2 text-sm text-muted-foreground">
-                              <Users className="h-3 w-3" />
-                              <span>View Details</span>
+                      <CardContent className="p-6 space-y-6">
+                        <div className="space-y-1">
+                          <div className="flex items-center gap-3">
+                            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-background/50 group-hover:bg-background/70 transition-colors">
+                              <Plane className="h-5 w-5 text-primary" />
+                            </div>
+                            <div className="min-w-0">
+                              <h3 className="text-lg font-semibold text-foreground leading-tight group-hover:text-primary transition-colors">
+                                {airline.name}
+                              </h3>
+                              <p className="text-xs uppercase tracking-[0.3em] text-muted-foreground">
+                                {airline.call_sign || "Call sign pending"}
+                              </p>
                             </div>
                           </div>
+                          <div className="flex items-center gap-2 text-xs">
+                            <Badge variant={airline.is_hiring ? "default" : "outline"} className="rounded-full">
+                              {airline.is_hiring ? "Hiring now" : "Audit ready"}
+                            </Badge>
+                            <span className="text-muted-foreground">Fleet {airline.fleet_size ? airline.fleet_size.toLocaleString() : "—"}</span>
+                          </div>
                         </div>
+
+                        <div className="grid grid-cols-2 gap-3 text-[13px] text-muted-foreground">
+                          <div className="rounded-2xl bg-background/40 p-3 space-y-1">
+                            <div className="flex items-center gap-2 text-xs uppercase tracking-[0.2em] text-muted-foreground">
+                              <Users className="h-3.5 w-3.5 text-primary" /> Crew size
+                            </div>
+                            <p className="text-sm font-semibold text-foreground">{airline.pilot_group_size || "data pending"}</p>
+                          </div>
+                          <div className="rounded-2xl bg-background/40 p-3 space-y-1">
+                            <div className="flex items-center gap-2 text-xs uppercase tracking-[0.2em] text-muted-foreground">
+                              <MapPin className="h-3.5 w-3.5 text-primary" /> Bases
+                            </div>
+                            <p className="text-sm font-semibold text-foreground">
+                              {airline.bases && airline.bases.length > 0 ? airline.bases.slice(0, 2).join(" • ") : "Updating"}
+                              {airline.bases && airline.bases.length > 2 ? " +" + (airline.bases.length - 2) : ""}
+                            </p>
+                          </div>
+                        </div>
+
+                        <div className="flex items-center justify-between text-sm">
+                          <div className="flex items-center gap-2 text-muted-foreground">
+                            <CalendarDays className="h-4 w-4 text-primary" />
+                            <span>{airline.most_junior_base ? `Most junior base: ${airline.most_junior_base}` : "Seniority intel coming soon"}</span>
+                          </div>
+                          <div className="inline-flex items-center gap-2 text-primary font-medium">
+                            Open dossier
+                            <Building2 className="h-4 w-4" />
+                          </div>
+                        </div>
+
+                        <div className="h-1 rounded-full bg-gradient-to-r from-primary/40 via-primary to-primary/40" />
                       </CardContent>
                     </Card>
                   ))}

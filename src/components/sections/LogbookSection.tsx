@@ -31,6 +31,7 @@ const quickActions = [
 
 const missionFeed = [
   {
+    id: "LG-0918",
     aircraft: "A320 • N762VA",
     route: "SFO → AUS",
     block: "3.6 hrs",
@@ -38,6 +39,7 @@ const missionFeed = [
     status: "Completed",
   },
   {
+    id: "LG-0917",
     aircraft: "A320 • N762VA",
     route: "AUS → SFO",
     block: "3.1 hrs",
@@ -86,7 +88,7 @@ const LogbookSection = () => {
               <span className="text-xs uppercase tracking-[0.4em] text-aviation-sky">Professional Logbook</span>
               <h2 className="text-4xl md:text-5xl font-bold leading-tight">
                 Chart every hour with
-                <span className="block bg-gradient-to-r from-aviation-sky via-aviation-light to-aviation-navy bg-clip-text text-transparent">
+                <span className="block text-aviation-sky">
                   precise detail
                 </span>
               </h2>

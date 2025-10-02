@@ -1,9 +1,17 @@
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
+import { Dialog, DialogContent } from "@/components/ui/dialog";
 import { Badge } from "@/components/ui/badge";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
 import { Button } from "@/components/ui/button";
-import { MapPin, Users, Clock, Plane, Building2, ExternalLink, Phone, Mail, DollarSign, CalendarDays, Briefcase } from "lucide-react";
+import {
+  Building2,
+  DollarSign,
+  ExternalLink,
+  MapPin,
+  Phone,
+  Plane,
+  Users,
+  Mail,
+} from "lucide-react";
 import type { AirlineData } from "@/hooks/useAirlines";
 
 interface AirlineDetailsDialogProps {
@@ -13,393 +21,305 @@ interface AirlineDetailsDialogProps {
 }
 
 export function AirlineDetailsDialog({ open, onOpenChange, airline }: AirlineDetailsDialogProps) {
-  console.log("🔍 AirlineDetailsDialog received airline data:", airline);
-  
   if (!airline) return null;
+
+  const summaryMetrics = [
+    {
+      label: "Fleet size",
+      value: airline.fleet_size ? airline.fleet_size.toLocaleString() : "Updating",
+    },
+    {
+      label: "Pilot group",
+      value: airline.pilot_group_size || "Updating",
+    },
+    {
+      label: "Union",
+      value: airline.pilot_union || "Non-union",
+    },
+  ];
+
+  const years = Array.from({ length: 10 }, (_, index) => index + 1);
+
+  const formatPay = (value?: string) => {
+    if (!value) return "-";
+    return value.includes("$") ? value : `$${value}`;
+  };
+
+  const renderSimplePayTable = (prefix: string) => (
+    <table className="w-full">
+      <thead>
+        <tr className="border-b">
+          <th className="text-left py-3 px-4 font-semibold">Year</th>
+          <th className="text-center py-3 px-4 font-semibold">Rate</th>
+        </tr>
+      </thead>
+      <tbody className="divide-y">
+        {years.map((year) => {
+          const key = `${prefix}_${year}` as keyof AirlineData;
+          const raw = airline[key] as string;
+          const value = formatPay(raw);
+
+          return (
+            <tr key={year} className="hover:bg-muted/30 transition-colors">
+              <td className="py-3 px-4 font-medium">Year {year}</td>
+              <td className="text-center py-3 px-4">
+                <div className="font-bold text-sm">{value}</div>
+              </td>
+            </tr>
+          );
+        })}
+      </tbody>
+    </table>
+  );
+
+  const renderBodyPayTable = (narrowPrefix: string, widePrefix: string) => (
+    <table className="w-full">
+      <thead>
+        <tr className="border-b">
+          <th className="text-left py-3 px-4 font-semibold">Year</th>
+          <th className="text-center py-3 px-4 font-semibold">Narrow Body</th>
+          <th className="text-center py-3 px-4 font-semibold">Wide Body</th>
+        </tr>
+      </thead>
+      <tbody className="divide-y">
+        {years.map((year) => {
+          const narrowKey = `${narrowPrefix}_${year}` as keyof AirlineData;
+          const wideKey = `${widePrefix}_${year}` as keyof AirlineData;
+          const narrowValue = formatPay(airline[narrowKey] as string);
+          const wideValue = formatPay(airline[wideKey] as string);
+
+          return (
+            <tr key={year} className="hover:bg-muted/30 transition-colors">
+              <td className="py-3 px-4 font-medium">Year {year}</td>
+              <td className="text-center py-3 px-4">
+                <div className="font-bold text-sm">{narrowValue}</div>
+              </td>
+              <td className="text-center py-3 px-4">
+                <div className="font-bold text-sm">{wideValue}</div>
+              </td>
+            </tr>
+          );
+        })}
+      </tbody>
+    </table>
+  );
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-6xl w-[95vw] max-h-[90vh] overflow-y-auto">
-        <DialogHeader>
-          <div className="flex items-center gap-3">
-            <div className="text-3xl">{airline.logo}</div>
-            <div>
-              <DialogTitle className="text-2xl font-bold">{airline.name}</DialogTitle>
-              <DialogDescription className="text-base">{airline.call_sign}</DialogDescription>
+      <DialogContent className="max-w-6xl w-[95vw] max-h-[90vh] h-[90vh] border-none bg-transparent p-0">
+        <div className="grid lg:grid-cols-[320px,1fr] gap-6 rounded-3xl bg-card/95 shadow-2xl h-full">
+          <aside className="space-y-8 bg-primary/5 px-8 py-10">
+            <div className="space-y-3">
+              <div className="text-4xl">{airline.logo}</div>
+              <h2 className="text-2xl font-bold text-foreground">{airline.name}</h2>
+                <p className="text-sm text-muted-foreground">{airline.call_sign || "Call sign updating"}</p>
+                <Badge variant={airline.is_hiring ? "default" : "outline"} className="rounded-full">
+                {airline.is_hiring ? "Hiring now" : "Monitoring"}
+              </Badge>
             </div>
-          </div>
-        </DialogHeader>
 
-        <div className="space-y-6">
-          {/* Basic Info */}
-          <Card>
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <Building2 className="h-5 w-5" />
-                Company Overview
-              </CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <p className="text-sm leading-relaxed">{airline.description}</p>
-              
-              <div className="grid grid-cols-2 md:grid-cols-4 gap-4 pt-4 border-t">
-                <div className="text-center">
-                  <div className="text-2xl font-bold text-primary">{airline.fleet_size}</div>
-                  <div className="text-xs text-muted-foreground">Fleet Size</div>
+            <Separator className="bg-primary/30" />
+
+            <div className="space-y-3">
+              {summaryMetrics.map((metric) => (
+                <div key={metric.label} className="rounded-2xl border border-primary/20 bg-background/70 px-4 py-3">
+                  <p className="text-xs uppercase tracking-[0.3em] text-muted-foreground">{metric.label}</p>
+                  <p className="text-lg font-semibold text-foreground">{metric.value}</p>
                 </div>
-                <div className="text-center">
-                  <div className="text-2xl font-bold text-primary">{airline.pilot_group_size}</div>
-                  <div className="text-xs text-muted-foreground">Pilots</div>
-                </div>
-                <div className="text-center">
-                  <div className="text-sm font-medium text-primary">{airline.pilot_union}</div>
-                  <div className="text-xs text-muted-foreground">Union</div>
-                </div>
-                <div className="text-center">
-                  <Badge variant={airline.is_hiring ? "default" : "secondary"}>
-                    {airline.is_hiring ? "Hiring" : "Not Hiring"}
-                  </Badge>
+              ))}
+            </div>
+
+            {airline.application_url && (
+              <Button asChild variant="sky" className="w-full rounded-full">
+                <a href={airline.application_url} target="_blank" rel="noopener noreferrer" className="inline-flex items-center justify-center gap-2">
+                  Apply or refer <ExternalLink className="h-4 w-4" />
+                </a>
+              </Button>
+            )}
+
+            {airline.additional_info && airline.additional_info.length > 0 && (
+              <div className="rounded-2xl border border-primary/20 bg-background/70 px-4 py-3 text-sm text-muted-foreground space-y-2">
+                <p className="text-xs uppercase tracking-[0.3em] text-muted-foreground">Insider notes</p>
+                <ul className="space-y-1">
+                  {airline.additional_info.slice(0, 4).map((item, index) => (
+                    <li key={index}>{item}</li>
+                  ))}
+                  {airline.additional_info.length > 4 && (
+                    <li>+{airline.additional_info.length - 4} more</li>
+                  )}
+                </ul>
+              </div>
+            )}
+          </aside>
+
+          <div className="px-6 py-10 space-y-8 overflow-y-auto max-h-[90vh]">
+            <section className="rounded-2xl border border-border/60 bg-card/80 p-6 space-y-4">
+              <div className="flex items-start gap-3">
+                <Building2 className="h-5 w-5 text-primary" />
+                <div>
+                  <h3 className="text-lg font-semibold text-foreground">Company overview</h3>
+                  <p className="text-sm text-muted-foreground leading-relaxed mt-1">
+                    {airline.description}
+                  </p>
                 </div>
               </div>
-            </CardContent>
-          </Card>
 
-          {/* Fleet Information */}
-          {airline.fleet_info && airline.fleet_info.length > 0 && (
-            <Card>
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2">
-                  <Plane className="h-5 w-5" />
-                  Fleet Information
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+              <div className="grid gap-3 sm:grid-cols-2">
+                <div className="rounded-xl bg-background/60 p-4">
+                  <p className="text-xs uppercase tracking-[0.3em] text-muted-foreground">Most junior base</p>
+                  <p className="text-sm font-semibold text-foreground">{airline.most_junior_base || "Updating"}</p>
+                </div>
+                <div className="rounded-xl bg-background/60 p-4">
+                  <p className="text-xs uppercase tracking-[0.3em] text-muted-foreground">Most junior captain hire</p>
+                  <p className="text-sm font-semibold text-foreground">{airline.most_junior_captain_hire_date || "Tracking"}</p>
+                </div>
+              </div>
+            </section>
+
+            {airline.fleet_info && airline.fleet_info.length > 0 && (
+              <section className="rounded-2xl border border-border/60 bg-card/80 p-6 space-y-4">
+                <div className="flex items-center gap-3">
+                  <Plane className="h-5 w-5 text-primary" />
+                  <h3 className="text-lg font-semibold text-foreground">Fleet composition</h3>
+                </div>
+                <div className="grid gap-3 md:grid-cols-2">
                   {airline.fleet_info.map((aircraft, index) => (
-                    <div key={index} className="flex justify-between items-center p-3 bg-muted/50 rounded-lg">
-                      <span className="font-medium">{aircraft.type}</span>
+                    <div key={index} className="flex items-center justify-between rounded-xl bg-background/60 px-4 py-3">
+                      <span className="font-medium text-foreground">{aircraft.type}</span>
                       <Badge variant="outline">{aircraft.quantity}</Badge>
                     </div>
                   ))}
                 </div>
-              </CardContent>
-            </Card>
-          )}
+              </section>
+            )}
 
-          {/* Bases */}
-          {airline.bases && airline.bases.length > 0 && (
-            <Card>
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2">
-                  <MapPin className="h-5 w-5" />
-                  Crew Bases
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
+            {airline.bases && airline.bases.length > 0 && (
+              <section className="rounded-2xl border border-border/60 bg-card/80 p-6 space-y-4">
+                <div className="flex items-center gap-3">
+                  <MapPin className="h-5 w-5 text-primary" />
+                  <h3 className="text-lg font-semibold text-foreground">Crew bases</h3>
+                </div>
                 <div className="flex flex-wrap gap-2">
                   {airline.bases.map((base, index) => (
-                    <Badge key={index} variant="outline" className="px-3 py-1">
+                    <Badge key={index} variant="outline" className="rounded-full px-3 py-1">
                       {base}
                     </Badge>
                   ))}
                 </div>
-              </CardContent>
-            </Card>
-          )}
+              </section>
+            )}
 
-          {/* Hiring Requirements */}
-          {airline.is_hiring && (
-            <Card>
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2">
-                  <Users className="h-5 w-5" />
-                  Hiring Information
-                </CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                {airline.application_url && (
-                  <div className="flex items-center justify-between p-4 bg-green-50 dark:bg-green-950/30 rounded-lg border border-green-200 dark:border-green-800">
+            {airline.is_hiring && (
+              <section className="rounded-2xl border border-border/60 bg-card/80 p-6 space-y-6">
+                <div className="flex items-center gap-3">
+                  <Users className="h-5 w-5 text-primary" />
+                  <h3 className="text-lg font-semibold text-foreground">Hiring information</h3>
+                </div>
+
+                <div className="grid gap-4 md:grid-cols-2">
+                  {airline.required_qualifications && airline.required_qualifications.length > 0 && (
                     <div>
-                      <div className="font-medium text-green-800 dark:text-green-200">Currently Hiring Pilots</div>
-                      <div className="text-sm text-green-600 dark:text-green-400">Applications being accepted</div>
+                      <h4 className="text-sm font-semibold text-foreground mb-2 uppercase tracking-[0.2em]">Required</h4>
+                      <ul className="space-y-1.5 text-sm text-muted-foreground">
+                        {airline.required_qualifications.map((item, index) => (
+                          <li key={index}>{item}</li>
+                        ))}
+                      </ul>
                     </div>
-                    <Button asChild variant="outline" size="sm">
-                      <a href={airline.application_url} target="_blank" rel="noopener noreferrer" className="flex items-center gap-2">
-                        Apply Now
-                        <ExternalLink className="h-4 w-4" />
+                  )}
+                  {airline.preferred_qualifications && airline.preferred_qualifications.length > 0 && (
+                    <div>
+                      <h4 className="text-sm font-semibold text-foreground mb-2 uppercase tracking-[0.2em]">Preferred</h4>
+                      <ul className="space-y-1.5 text-sm text-muted-foreground">
+                        {airline.preferred_qualifications.map((item, index) => (
+                          <li key={index}>{item}</li>
+                        ))}
+                      </ul>
+                    </div>
+                  )}
+                </div>
+
+                {airline.inside_scoop && airline.inside_scoop.length > 0 && (
+                  <div className="rounded-xl bg-background/60 px-4 py-3 text-sm text-muted-foreground space-y-1">
+                    <h4 className="text-xs uppercase tracking-[0.2em] text-muted-foreground">Inside scoop</h4>
+                    <ul className="space-y-1">
+                      {airline.inside_scoop.map((item, index) => (
+                        <li key={index}>{item}</li>
+                      ))}
+                    </ul>
+                  </div>
+                )}
+              </section>
+            )}
+
+            {(airline.application_url || airline.additional_info.length > 0) && (
+              <section className="rounded-2xl border border-border/60 bg-card/80 p-6 space-y-4 text-sm text-muted-foreground">
+                <div className="flex items-center gap-3 text-foreground">
+                  <Phone className="h-5 w-5 text-primary" />
+                  <h3 className="text-lg font-semibold">Contacts & links</h3>
+                </div>
+                {airline.application_url && (
+                  <div className="flex items-center justify-between rounded-xl bg-background/60 px-4 py-3">
+                    <span>Official application portal</span>
+                    <Button asChild variant="ghost" className="text-primary">
+                      <a href={airline.application_url} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-2">
+                        Visit site <ExternalLink className="h-4 w-4" />
                       </a>
                     </Button>
                   </div>
                 )}
-
-                {/* Required Qualifications */}
-                {airline.required_qualifications && airline.required_qualifications.length > 0 && (
+                {airline.additional_info && airline.additional_info.length > 0 && (
                   <div>
-                    <h4 className="font-semibold mb-3 flex items-center gap-2">
-                      <Clock className="h-4 w-4" />
-                      Required Qualifications
+                    <h4 className="text-sm font-semibold text-foreground mb-2 uppercase tracking-[0.2em] flex items-center gap-2">
+                      <Mail className="h-4 w-4" /> Notes
                     </h4>
-                    <ul className="space-y-2">
-                      {airline.required_qualifications.map((qual, index) => (
-                        <li key={index} className="flex items-start gap-2 text-sm">
-                          <span className="text-red-500 mt-1">•</span>
-                          <span>{qual}</span>
-                        </li>
+                    <ul className="space-y-1.5 leading-relaxed">
+                      {airline.additional_info.map((item, index) => (
+                        <li key={index}>{item}</li>
                       ))}
                     </ul>
                   </div>
                 )}
+              </section>
+            )}
 
-                {/* Preferred Qualifications */}
-                {airline.preferred_qualifications && airline.preferred_qualifications.length > 0 && (
-                  <div>
-                    <h4 className="font-semibold mb-3 flex items-center gap-2">
-                      <Briefcase className="h-4 w-4" />
-                      Preferred Qualifications
-                    </h4>
-                    <ul className="space-y-2">
-                      {airline.preferred_qualifications.map((qual, index) => (
-                        <li key={index} className="flex items-start gap-2 text-sm">
-                          <span className="text-blue-500 mt-1">•</span>
-                          <span>{qual}</span>
-                        </li>
-                      ))}
-                    </ul>
-                  </div>
-                )}
-
-                {/* Inside Scoop */}
-                {airline.inside_scoop && airline.inside_scoop.length > 0 && (
-                  <div>
-                    <h4 className="font-semibold mb-3">Inside Scoop</h4>
-                    <ul className="space-y-2">
-                      {airline.inside_scoop.map((tip, index) => (
-                        <li key={index} className="flex items-start gap-2 text-sm">
-                          <span className="text-primary mt-1">💡</span>
-                          <span className="italic">{tip}</span>
-                        </li>
-                      ))}
-                    </ul>
-                  </div>
-                )}
-              </CardContent>
-            </Card>
-          )}
-
-          {/* Seniority Information */}
-          {(airline.most_junior_base || airline.most_junior_captain_hire_date || airline.retirements_in_2025) && (
-            <Card>
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2">
-                  <CalendarDays className="h-5 w-5" />
-                  Seniority Information
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                  {airline.most_junior_base && (
-                    <div className="text-center p-4 bg-muted/50 rounded-lg">
-                      <div className="text-sm text-muted-foreground mb-1">Most Junior Base</div>
-                      <div className="font-semibold">{airline.most_junior_base}</div>
-                    </div>
-                  )}
-                  {airline.most_junior_captain_hire_date && (
-                    <div className="text-center p-4 bg-muted/50 rounded-lg">
-                      <div className="text-sm text-muted-foreground mb-1">Junior Captain Hire Date</div>
-                      <div className="font-semibold">{airline.most_junior_captain_hire_date}</div>
-                    </div>
-                  )}
-                  <div className="text-center p-4 bg-muted/50 rounded-lg">
-                    <div className="text-sm text-muted-foreground mb-1">2025 Retirements</div>
-                    <div className="font-semibold text-primary">{airline.retirements_in_2025}</div>
-                  </div>
+            {(airline.fo_pay_year_1 || airline.captain_pay_year_1 || airline.fo_narrowbody_pay_year_1 || airline.captain_narrowbody_pay_year_1) && (
+              <section className="rounded-2xl border border-border/60 bg-card/80 p-6 space-y-6 text-sm">
+                <div className="flex items-center gap-3 text-foreground">
+                  <DollarSign className="h-5 w-5 text-primary" />
+                  <h3 className="text-lg font-semibold">Pay information</h3>
                 </div>
-              </CardContent>
-            </Card>
-          )}
 
-          {/* Pay Scale */}
-          {(airline.fo_pay_year_1 || airline.captain_pay_year_1 || airline.fo_narrowbody_pay_year_1 || airline.captain_narrowbody_pay_year_1) && (
-            <Card>
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2">
-                  <DollarSign className="h-5 w-5" />
-                  Pay Scale
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                {/* Check if this is American Airlines for narrow body/wide body format */}
-                {airline.name === 'American Airlines' ? (
-                  <div className="space-y-6">
-                    {/* First Officer Pay Scale */}
-                    {airline.fo_narrowbody_pay_year_1 && (
-                      <div>
-                        <h4 className="font-semibold mb-3 text-lg">First Officer Pay Scale</h4>
-                        <div className="overflow-x-auto">
-                          <table className="w-full">
-                            <thead>
-                              <tr className="border-b">
-                                <th className="text-left py-3 px-4 font-semibold">Year</th>
-                                <th className="text-center py-3 px-4 font-semibold">Narrow Body</th>
-                                <th className="text-center py-3 px-4 font-semibold">Wide Body</th>
-                              </tr>
-                            </thead>
-                            <tbody className="divide-y">
-                              {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map(year => {
-                                const narrowBodyKey = `fo_narrowbody_pay_year_${year}` as keyof typeof airline;
-                                const wideBodyKey = `fo_widebody_pay_year_${year}` as keyof typeof airline;
-                                const narrowBodyValue = airline[narrowBodyKey] as string;
-                                const wideBodyValue = airline[wideBodyKey] as string;
-                                
-                                return (
-                                  <tr key={year} className="hover:bg-muted/30 transition-colors">
-                                    <td className="py-3 px-4 font-medium">Year {year}</td>
-                                    <td className="text-center py-3 px-4">
-                                       <div className="font-bold text-sm">
-                                         {narrowBodyValue ? (narrowBodyValue.includes('$') ? narrowBodyValue : `$${narrowBodyValue}`) : '-'}
-                                       </div>
-                                    </td>
-                                    <td className="text-center py-3 px-4">
-                                       <div className="font-bold text-sm">
-                                         {wideBodyValue ? (wideBodyValue.includes('$') ? wideBodyValue : `$${wideBodyValue}`) : '-'}
-                                       </div>
-                                    </td>
-                                  </tr>
-                                );
-                              })}
-                            </tbody>
-                          </table>
-                        </div>
-                      </div>
-                    )}
-
-                    {/* Captain Pay Scale */}
+                {airline.fo_pay_year_1 && airline.captain_pay_year_1 ? (
+                  <div className="grid md:grid-cols-2 gap-6">
+                    <div>
+                      <h4 className="font-semibold mb-3 text-lg">First Officer</h4>
+                      {renderSimplePayTable("fo_pay_year")}
+                    </div>
+                    <div>
+                      <h4 className="font-semibold mb-3 text-lg">Captain</h4>
+                      {renderSimplePayTable("captain_pay_year")}
+                    </div>
+                  </div>
+                ) : airline.fo_narrowbody_pay_year_1 ? (
+                  <div className="grid md:grid-cols-2 gap-6">
+                    <div>
+                      <h4 className="font-semibold mb-3 text-lg">First Officer Pay Scale</h4>
+                      <div className="overflow-x-auto">{renderBodyPayTable("fo_narrowbody_pay_year", "fo_widebody_pay_year")}</div>
+                    </div>
                     {airline.captain_narrowbody_pay_year_1 && (
                       <div>
                         <h4 className="font-semibold mb-3 text-lg">Captain Pay Scale</h4>
-                        <div className="overflow-x-auto">
-                          <table className="w-full">
-                            <thead>
-                              <tr className="border-b">
-                                <th className="text-left py-3 px-4 font-semibold">Year</th>
-                                <th className="text-center py-3 px-4 font-semibold">Narrow Body</th>
-                                <th className="text-center py-3 px-4 font-semibold">Wide Body</th>
-                              </tr>
-                            </thead>
-                            <tbody className="divide-y">
-                              {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map(year => {
-                                const narrowBodyKey = `captain_narrowbody_pay_year_${year}` as keyof typeof airline;
-                                const wideBodyKey = `captain_widebody_pay_year_${year}` as keyof typeof airline;
-                                const narrowBodyValue = airline[narrowBodyKey] as string;
-                                const wideBodyValue = airline[wideBodyKey] as string;
-                                
-                                return (
-                                  <tr key={year} className="hover:bg-muted/30 transition-colors">
-                                    <td className="py-3 px-4 font-medium">Year {year}</td>
-                                    <td className="text-center py-3 px-4">
-                                       <div className="font-bold text-sm">
-                                         {narrowBodyValue ? (narrowBodyValue.includes('$') ? narrowBodyValue : `$${narrowBodyValue}`) : '-'}
-                                       </div>
-                                    </td>
-                                    <td className="text-center py-3 px-4">
-                                       <div className="font-bold text-sm">
-                                         {wideBodyValue ? (wideBodyValue.includes('$') ? wideBodyValue : `$${wideBodyValue}`) : '-'}
-                                       </div>
-                                    </td>
-                                  </tr>
-                                );
-                              })}
-                            </tbody>
-                          </table>
-                        </div>
+                        <div className="overflow-x-auto">{renderBodyPayTable("captain_narrowbody_pay_year", "captain_widebody_pay_year")}</div>
                       </div>
                     )}
                   </div>
                 ) : (
-                  /* Fallback to original single table format */
-                  <div className="overflow-x-auto">
-                    <table className="w-full">
-                      <thead>
-                        <tr className="border-b">
-                          <th className="text-left py-3 px-4 font-semibold">Position</th>
-                          {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map(year => (
-                            <th key={year} className="text-center py-3 px-2 font-medium text-sm">
-                              Year {year}
-                            </th>
-                          ))}
-                        </tr>
-                      </thead>
-                      <tbody className="divide-y">
-                        {/* First Officer Row */}
-                        {airline.fo_pay_year_1 && (
-                          <tr className="hover:bg-muted/30 transition-colors">
-                            <td className="py-4 px-4 font-semibold text-primary">First Officer</td>
-                            {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map(year => {
-                              const payKey = `fo_pay_year_${year}` as keyof typeof airline;
-                              const payValue = airline[payKey] as string;
-                              
-                              return (
-                                <td key={year} className="text-center py-4 px-2">
-                                  <div className="font-bold text-sm">
-                                    {payValue || '-'}
-                                  </div>
-                                </td>
-                              );
-                            })}
-                          </tr>
-                        )}
-                        
-                        {/* Captain Row */}
-                        {airline.captain_pay_year_1 && (
-                          <tr className="hover:bg-muted/30 transition-colors">
-                            <td className="py-4 px-4 font-semibold text-primary">Captain</td>
-                            {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map(year => {
-                              const payKey = `captain_pay_year_${year}` as keyof typeof airline;
-                              const payValue = airline[payKey] as string;
-                              
-                              return (
-                                <td key={year} className="text-center py-4 px-2">
-                                  <div className="font-bold text-sm">
-                                    {payValue || '-'}
-                                  </div>
-                                </td>
-                              );
-                            })}
-                          </tr>
-                        )}
-                      </tbody>
-                    </table>
-                  </div>
+                  <div className="overflow-x-auto">{renderSimplePayTable("fo_pay_year")}</div>
                 )}
-              </CardContent>
-            </Card>
-          )}
-
-          {/* Additional Information */}
-          {airline.additional_info && airline.additional_info.length > 0 && (
-            <Card>
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2">
-                  <Briefcase className="h-5 w-5" />
-                  Additional Information
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                <ul className="space-y-2">
-                  {airline.additional_info.map((info, index) => (
-                    <li key={index} className="flex items-start gap-2 text-sm">
-                      <span className="text-primary mt-1">•</span>
-                      <span>{info}</span>
-                    </li>
-                  ))}
-                </ul>
-              </CardContent>
-            </Card>
-          )}
-        </div>
-
-        <div className="flex justify-end pt-4 border-t">
-          <Button onClick={() => onOpenChange(false)}>Close</Button>
+              </section>
+            )}
+          </div>
         </div>
       </DialogContent>
     </Dialog>
