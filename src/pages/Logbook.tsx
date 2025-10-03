@@ -14,7 +14,6 @@ import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import { useNavigate } from "react-router-dom";
 import { AddFlightDialog } from "@/components/forms/AddFlightDialog";
-import { CSVImportDialog } from "@/components/forms/CSVImportDialog";
 
 interface FlightEntry {
   id: string;
@@ -69,7 +68,6 @@ const Logbook = () => {
   const [flights, setFlights] = useState<FlightEntry[]>([]);
   const [isLoadingFlights, setIsLoadingFlights] = useState(true);
   const [showAddFlightDialog, setShowAddFlightDialog] = useState(false);
-  const [showCSVImportDialog, setShowCSVImportDialog] = useState(false);
   const [editingFlight, setEditingFlight] = useState<FlightEntry | null>(null);
   const [deletingFlight, setDeletingFlight] = useState<FlightEntry | null>(null);
   const [showClearAllDialog, setShowClearAllDialog] = useState(false);
@@ -442,15 +440,6 @@ const Logbook = () => {
                   <Button
                     size="lg"
                     variant="outline"
-                    className="rounded-full border-aviation-sky/40 text-aviation-sky hover:bg-aviation-sky/10"
-                    onClick={() => setShowCSVImportDialog(true)}
-                  >
-                    <Upload className="mr-2 h-5 w-5" />
-                    Import CSV
-                  </Button>
-                  <Button
-                    size="lg"
-                    variant="outline"
                     className="rounded-full border-destructive/70 text-destructive hover:bg-destructive/10"
                     onClick={() => setShowClearAllDialog(true)}
                   >
@@ -654,12 +643,6 @@ const Logbook = () => {
         onOpenChange={handleCloseDialog}
         onFlightAdded={fetchFlights}
         editingFlight={editingFlight}
-      />
-
-      <CSVImportDialog
-        open={showCSVImportDialog}
-        onOpenChange={setShowCSVImportDialog}
-        onImportComplete={fetchFlights}
       />
 
       <AlertDialog open={!!deletingFlight} onOpenChange={() => setDeletingFlight(null)}>
