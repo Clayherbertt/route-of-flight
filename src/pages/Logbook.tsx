@@ -8,7 +8,7 @@ import { Badge } from "@/components/ui/badge";
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from "@/components/ui/alert-dialog";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { Plus, Search, Filter, Download, Plane, Upload, MoreHorizontal, Edit, Trash2 } from "lucide-react";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
@@ -74,6 +74,51 @@ const Logbook = () => {
   const [deletingFlight, setDeletingFlight] = useState<FlightEntry | null>(null);
   const [showClearAllDialog, setShowClearAllDialog] = useState(false);
 
+  const fetchFlights = useCallback(async () => {
+    try {
+      setIsLoadingFlights(true);
+      const pageSize = 1000;
+      let from = 0;
+      let collected: FlightEntry[] = [];
+
+      while (true) {
+        const { data, error } = await supabase
+          .from('flight_entries')
+          .select('*')
+          .order('date', { ascending: false })
+          .order('created_at', { ascending: false })
+          .range(from, from + pageSize - 1);
+
+        if (error) {
+          throw error;
+        }
+
+        if (!data || data.length === 0) {
+          break;
+        }
+
+        collected = [...collected, ...data];
+
+        if (data.length < pageSize) {
+          break;
+        }
+
+        from += pageSize;
+      }
+
+      setFlights(collected);
+    } catch (error) {
+      console.error('Error fetching flights:', error);
+      toast({
+        title: "Error",
+        description: "Failed to load flight entries. Please try again.",
+        variant: "destructive",
+      });
+    } finally {
+      setIsLoadingFlights(false);
+    }
+  }, [toast]);
+
   // Redirect to sign in if not authenticated
   useEffect(() => {
     if (!loading && !user) {
@@ -86,33 +131,7 @@ const Logbook = () => {
     if (user) {
       fetchFlights();
     }
-  }, [user]);
-
-  const fetchFlights = async () => {
-    try {
-      setIsLoadingFlights(true);
-      const { data, error } = await supabase
-        .from('flight_entries')
-        .select('*')
-        .order('date', { ascending: false })
-        .order('created_at', { ascending: false });
-
-      if (error) {
-        throw error;
-      }
-
-      setFlights(data || []);
-    } catch (error) {
-      console.error('Error fetching flights:', error);
-      toast({
-        title: "Error",
-        description: "Failed to load flight entries. Please try again.",
-        variant: "destructive",
-      });
-    } finally {
-      setIsLoadingFlights(false);
-    }
-  };
+  }, [user, fetchFlights]);
 
   const handleEditFlight = (flight: FlightEntry) => {
     setEditingFlight(flight);
@@ -323,16 +342,6 @@ const Logbook = () => {
         <TableCell>{flight.departure_airport}</TableCell>
         <TableCell>{flight.arrival_airport}</TableCell>
         <TableCell>{flight.route || '-'}</TableCell>
-        <TableCell>{flight.time_out || flight.start_time || '-'}</TableCell>
-        <TableCell>{flight.time_off || '-'}</TableCell>
-        <TableCell>{flight.time_on || '-'}</TableCell>
-        <TableCell>{flight.time_in || flight.end_time || '-'}</TableCell>
-        <TableCell>{flight.on_duty || '-'}</TableCell>
-        <TableCell>{flight.off_duty || '-'}</TableCell>
-        <TableCell>{flight.hobbs_start ?? '-'}</TableCell>
-        <TableCell>{flight.hobbs_end ?? '-'}</TableCell>
-        <TableCell>{flight.tach_start ?? '-'}</TableCell>
-        <TableCell>{flight.tach_end ?? '-'}</TableCell>
         <TableCell className="font-medium">{flight.total_time}</TableCell>
         <TableCell>{flight.pic_time}</TableCell>
         <TableCell>{flight.sic_time ?? 0}</TableCell>
@@ -353,6 +362,16 @@ const Logbook = () => {
         <TableCell>{flight.dual_received ?? 0}</TableCell>
         <TableCell>{flight.simulated_flight ?? 0}</TableCell>
         <TableCell>{flight.ground_training ?? 0}</TableCell>
+        <TableCell>{flight.time_out || flight.start_time || '-'}</TableCell>
+        <TableCell>{flight.time_off || '-'}</TableCell>
+        <TableCell>{flight.time_on || '-'}</TableCell>
+        <TableCell>{flight.time_in || flight.end_time || '-'}</TableCell>
+        <TableCell>{flight.on_duty || '-'}</TableCell>
+        <TableCell>{flight.off_duty || '-'}</TableCell>
+        <TableCell>{flight.hobbs_start ?? '-'}</TableCell>
+        <TableCell>{flight.hobbs_end ?? '-'}</TableCell>
+        <TableCell>{flight.tach_start ?? '-'}</TableCell>
+        <TableCell>{flight.tach_end ?? '-'}</TableCell>
         <TableCell className="max-w-xs truncate">{flight.remarks || '-'}</TableCell>
         <TableCell>
           <DropdownMenu>
@@ -587,16 +606,6 @@ const Logbook = () => {
                       <TableHead>From</TableHead>
                       <TableHead>To</TableHead>
                       <TableHead>Route</TableHead>
-                      <TableHead>Time Out</TableHead>
-                      <TableHead>Time Off</TableHead>
-                      <TableHead>Time On</TableHead>
-                      <TableHead>Time In</TableHead>
-                      <TableHead>On Duty</TableHead>
-                      <TableHead>Off Duty</TableHead>
-                      <TableHead>Hobbs Start</TableHead>
-                      <TableHead>Hobbs End</TableHead>
-                      <TableHead>Tach Start</TableHead>
-                      <TableHead>Tach End</TableHead>
                       <TableHead>Total Time</TableHead>
                       <TableHead>PIC</TableHead>
                       <TableHead>SIC</TableHead>
@@ -617,6 +626,16 @@ const Logbook = () => {
                       <TableHead>Dual Received</TableHead>
                       <TableHead>Sim Flight</TableHead>
                       <TableHead>Ground Training</TableHead>
+                      <TableHead>Time Out</TableHead>
+                      <TableHead>Time Off</TableHead>
+                      <TableHead>Time On</TableHead>
+                      <TableHead>Time In</TableHead>
+                      <TableHead>On Duty</TableHead>
+                      <TableHead>Off Duty</TableHead>
+                      <TableHead>Hobbs Start</TableHead>
+                      <TableHead>Hobbs End</TableHead>
+                      <TableHead>Tach Start</TableHead>
+                      <TableHead>Tach End</TableHead>
                       <TableHead>Remarks</TableHead>
                       <TableHead className="w-[70px]">Actions</TableHead>
                     </TableRow>

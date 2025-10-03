@@ -121,18 +121,29 @@ export function coerceNumber(raw: RawValue): number | null {
   if (typeof raw === 'number' && !Number.isNaN(raw)) return raw;
 
   const str = raw.toString().trim();
-  if (!str || str.toLowerCase() === 'null' || str.toLowerCase() === 'undefined') {
+  const lower = str.toLowerCase();
+  if (!str || lower === 'null' || lower === 'undefined' || lower === 'nan') {
     return null;
   }
 
-  const duration = parseDurationLike(str);
+  const unquoted = str.replace(/^"+|"+$/g, '').replace(/^'+|'+$/g, '');
+  const cleaned = unquoted.trim();
+  if (!cleaned) {
+    return null;
+  }
+  const cleanedLower = cleaned.toLowerCase();
+  if (cleanedLower === 'nan') {
+    return null;
+  }
+
+  const duration = parseDurationLike(cleaned);
   if (duration !== null) {
     return duration;
   }
 
-  const dotted = str.includes('.')
-    ? str.replace(/,/g, '')
-    : str.replace(',', '.');
+  const dotted = cleaned.includes('.')
+    ? cleaned.replace(/,/g, '')
+    : cleaned.replace(',', '.');
 
   const parsed = parseFloat(dotted);
   if (!Number.isNaN(parsed)) {
@@ -209,6 +220,7 @@ function detectFormat(row: RawRow): 'modern' | 'legacy2019' | 'legacy2018' {
  */
 function normalizeFlightRow(row: RawRow): ForeFlightRow | null {
   const format = detectFormat(row);
+  const rawValuesArray = ((row as RawRow & { __raw?: string[] }).__raw ?? []) as string[];
   
   // Extract basic info
   const date = row.Date || row.date;
@@ -216,7 +228,7 @@ function normalizeFlightRow(row: RawRow): ForeFlightRow | null {
     return null; // Skip rows without dates
   }
   
-  const aircraftReg = (
+  let aircraftReg = (
     row.AircraftID ||
     row.aircraft_registration ||
     row.Aircraft ||
@@ -230,7 +242,7 @@ function normalizeFlightRow(row: RawRow): ForeFlightRow | null {
     row.aircraft ||
     ''
   ).toString().trim();
-  const depAirport = (
+  let depAirport = (
     row.From ||
     row.departure_airport ||
     row['Departure Airport'] ||
@@ -238,7 +250,7 @@ function normalizeFlightRow(row: RawRow): ForeFlightRow | null {
     row['From Airport'] ||
     ''
   ).toString().trim();
-  const arrAirport = (
+  let arrAirport = (
     row.To ||
     row.arrival_airport ||
     row['Arrival Airport'] ||
@@ -247,14 +259,30 @@ function normalizeFlightRow(row: RawRow): ForeFlightRow | null {
     depAirport ||
     ''
   ).toString().trim();
-  
-  if (!aircraftReg || !depAirport) {
-    return null; // Skip rows without essential data
+
+  if (!aircraftReg) {
+    aircraftReg = 'UNKNOWN';
+    console.warn('ForeFlight row missing aircraft registration', row);
+  }
+
+  if (!depAirport) {
+    depAirport = 'UNK';
+    console.warn('ForeFlight row missing departure airport', row);
+  }
+
+  if (!arrAirport) {
+    arrAirport = depAirport;
+    console.warn('ForeFlight row missing arrival airport', row);
   }
   
   let totalTime = 0;
   let picTime = 0;
   let sicTime = 0;
+
+  const coercePositive = (value: RawValue): number => {
+    const parsed = coerceNumber(value);
+    return parsed !== null && parsed > 0 ? parsed : 0;
+  };
   
   if (format === 'modern') {
     // Modern format (2020+)
@@ -291,11 +319,206 @@ function normalizeFlightRow(row: RawRow): ForeFlightRow | null {
     if (totalTime === 0) {
       totalTime = calculateFlightTime(row.TimeOut, row.TimeIn);
     }
-    
-    // For 2018, if we have total time but no PIC/SIC breakdown, assume PIC (solo training)
-    if (totalTime > 0 && picTime === 0 && sicTime === 0) {
-      picTime = totalTime;
+
+    if (totalTime === 0) {
+      const candidate = Object.entries(row).find(([header, value]) => {
+        if (value === undefined || value === null || value === '') return false;
+        const normalizedHeader = header.toString().replace(/_/g, ' ').toLowerCase();
+        if (!/(total|duration|block)/.test(normalizedHeader)) return false;
+        const parsed = coerceNumber(value);
+        return parsed !== null && parsed > 0;
+      });
+
+      if (candidate) {
+        const parsed = coerceNumber(candidate[1]);
+        if (parsed !== null && parsed > 0) {
+          totalTime = parsed;
+        }
+      }
     }
+
+    if (totalTime === 0) {
+      const fallbackFields = [
+        row.PIC,
+        row['PIC Time'],
+        row.Solo,
+        row['Dual Given'],
+        row['Dual Received'],
+        row.Night,
+        row['Night Time'],
+      ];
+
+      for (const field of fallbackFields) {
+        const candidate = coerceNumber(field);
+        if (candidate !== null && candidate > 0) {
+          totalTime = candidate;
+          break;
+        }
+      }
+    }
+
+    if (totalTime === 0) {
+      const keywords = /(time|pic|sic|solo|night|cross|instrument|dual|sim|ground|hobbs|tach|total)/i;
+      const dynamicCandidates = Object.entries(row).map(([header, value]) => {
+        if (value === undefined || value === null) return 0;
+        const normalizedHeader = header.toString().replace(/_/g, ' ');
+        if (!keywords.test(normalizedHeader)) return 0;
+        const parsed = coerceNumber(value);
+        if (parsed === null || parsed <= 0) return 0;
+        return parsed;
+      });
+
+      const rawDynamicCandidates = rawValuesArray.map((value) => {
+        if (value === undefined || value === null) return 0;
+        const trimmed = value.toString().trim();
+        if (!trimmed || trimmed === '-' || trimmed === '--') return 0;
+        const parsed = coerceNumber(trimmed);
+        if (parsed === null || parsed <= 0) return 0;
+        return parsed;
+      });
+
+      const bestCandidate = Math.max(...dynamicCandidates, ...rawDynamicCandidates, 0);
+      if (bestCandidate > 0 && bestCandidate <= 24) {
+        totalTime = bestCandidate;
+      }
+    }
+
+    totalTime = Math.max(
+      totalTime,
+      picTime,
+      sicTime,
+      coerceNumber(row.Solo) ?? 0,
+      coerceNumber(row['Dual Given']) ?? 0,
+      coerceNumber(row['Dual Received']) ?? 0
+    );
+
+    if (totalTime === 0) {
+      console.warn('Legacy flight total time still zero after fallbacks', {
+        date,
+        aircraftReg,
+        row,
+      });
+    }
+
+  if (totalTime === 0) {
+    const durationFromTimes = calculateFlightTime(row.TimeOut ?? row.time_out, row.TimeIn ?? row.time_in);
+    if (durationFromTimes > 0) {
+      totalTime = durationFromTimes;
+    }
+  }
+
+  if (totalTime === 0) {
+    const candidate = Object.entries(row).find(([header, value]) => {
+      if (value === undefined || value === null || value === '') return false;
+      const normalizedHeader = header.toString().replace(/_/g, ' ').toLowerCase();
+      if (!/(total|duration|block)/.test(normalizedHeader)) return false;
+      const parsed = coerceNumber(value);
+      return parsed !== null && parsed > 0;
+    });
+
+    if (candidate) {
+      const parsed = coerceNumber(candidate[1]);
+      if (parsed !== null && parsed > 0) {
+        totalTime = parsed;
+      }
+    }
+  }
+
+  if (totalTime === 0) {
+    const fallbackFields: RawValue[] = [
+      row.PIC,
+      row.pic_time,
+      row['PIC Time'],
+      row.Captain,
+      row.SIC,
+      row.sic_time,
+      row['SIC Time'],
+      row.SecondInCommand,
+      row.Solo,
+      row.solo_time,
+      row.cross_country_time,
+      row.CrossCountry,
+      row['Cross Country'],
+      row.XC,
+      row['Dual Given'],
+      row['Dual Received'],
+      row.Night,
+      row['Night Time'],
+      row.DayLandingsFullStop,
+      row.NightLandingsFullStop,
+      row.ActualInstrument,
+      row['Actual Instrument'],
+      row.SimulatedInstrument,
+      row['Simulated Instrument'],
+      row.SimulatedFlight,
+      row['Simulated Flight'],
+      row.GroundTraining,
+      row['Ground Training'],
+    ];
+
+    const hobbsDiff = (coerceNumber(row.HobbsEnd) ?? 0) - (coerceNumber(row.HobbsStart) ?? 0);
+    const tachDiff = (coerceNumber(row.TachEnd) ?? 0) - (coerceNumber(row.TachStart) ?? 0);
+    if (hobbsDiff > 0) fallbackFields.push(hobbsDiff);
+    if (tachDiff > 0) fallbackFields.push(tachDiff);
+
+    const fallbackCandidates = fallbackFields
+      .map(coercePositive)
+      .filter((value) => value > 0 && value <= 48);
+    const bestCandidate = fallbackCandidates.length ? Math.max(...fallbackCandidates) : 0;
+    if (bestCandidate > 0) {
+      totalTime = bestCandidate;
+    }
+  }
+
+  if (totalTime === 0) {
+    const keywords = /(time|pic|sic|solo|night|cross|instrument|dual|sim|ground|hobbs|tach|total)/i;
+    const dynamicCandidates = Object.entries(row)
+      .map(([header, value]) => {
+        if (value === undefined || value === null) return 0;
+        const normalizedHeader = header.toString().replace(/_/g, ' ');
+        if (!keywords.test(normalizedHeader)) return 0;
+        return coercePositive(value);
+      })
+      .filter((value) => value > 0 && value <= 48);
+
+    const rawDynamicCandidates = rawValuesArray
+      .map((value) => {
+        if (!value) return 0;
+        const trimmed = value.toString().trim();
+        if (!trimmed || trimmed === '-' || trimmed === '--') return 0;
+        return coercePositive(trimmed);
+      })
+      .filter((value) => value > 0 && value <= 48);
+
+    const allCandidates = [...dynamicCandidates, ...rawDynamicCandidates];
+    const bestCandidate = allCandidates.length ? Math.max(...allCandidates) : 0;
+    if (bestCandidate > 0) {
+      totalTime = bestCandidate;
+    }
+  }
+
+  totalTime = Math.max(
+    totalTime,
+    picTime,
+    sicTime,
+    coercePositive(row.Solo),
+    coercePositive(row['Dual Given']),
+    coercePositive(row['Dual Received'])
+  );
+
+  if (totalTime === 0) {
+    console.warn('ForeFlight row still zero after exhaustive fallbacks', {
+      date,
+      aircraftReg,
+      row,
+      rawValuesArray,
+    });
+  }
+
+  // For 2018, if we have total time but no PIC/SIC breakdown, assume PIC (solo training)
+  if (totalTime > 0 && picTime === 0 && sicTime === 0) {
+    picTime = totalTime;
+  }
   }
   
   return {
@@ -413,13 +636,15 @@ export async function loadForeFlightCsv(file: File): Promise<ForeFlightRow[]> {
         continue;
       }
 
-      const rowObj: RawRow = {};
+      const rowObj: RawRow & { __raw?: string[] } = {};
       flightHeaders.forEach((header, index) => {
         const cellValue = row[index];
         if (cellValue !== undefined) {
           rowObj[header] = cellValue;
         }
       });
+      rowObj.__raw = row as string[];
+      (rowObj as RawRow & { __raw?: string[] }).__raw = row as string[];
 
       const rawAircraftId = rowObj.AircraftID ?? rowObj.aircraft_registration;
       const aircraftId = typeof rawAircraftId === 'string'
