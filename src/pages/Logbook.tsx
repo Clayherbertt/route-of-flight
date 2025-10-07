@@ -7,14 +7,13 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { Badge } from "@/components/ui/badge";
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from "@/components/ui/alert-dialog";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
-import { Plus, Search, Filter, Download, Plane, Upload, MoreHorizontal, Edit, Trash2 } from "lucide-react";
+import { Plus, Search, Filter, Download, Plane, MoreHorizontal, Edit, Trash2 } from "lucide-react";
 import { useState, useEffect, useCallback } from "react";
 import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import { useNavigate } from "react-router-dom";
 import { AddFlightDialog } from "@/components/forms/AddFlightDialog";
-import { CSVImportDialog } from "@/components/forms/CSVImportDialog";
 
 interface FlightEntry {
   id: string;
@@ -69,7 +68,6 @@ const Logbook = () => {
   const [flights, setFlights] = useState<FlightEntry[]>([]);
   const [isLoadingFlights, setIsLoadingFlights] = useState(true);
   const [showAddFlightDialog, setShowAddFlightDialog] = useState(false);
-  const [showImportDialog, setShowImportDialog] = useState(false);
   const [editingFlight, setEditingFlight] = useState<FlightEntry | null>(null);
   const [deletingFlight, setDeletingFlight] = useState<FlightEntry | null>(null);
   const [showClearAllDialog, setShowClearAllDialog] = useState(false);
@@ -442,15 +440,6 @@ const Logbook = () => {
                   <Button
                     size="lg"
                     variant="outline"
-                    className="rounded-full border-border/60 text-foreground hover:bg-white/30"
-                    onClick={() => setShowImportDialog(true)}
-                  >
-                    <Upload className="mr-2 h-5 w-5" />
-                    Import CSV
-                  </Button>
-                  <Button
-                    size="lg"
-                    variant="outline"
                     className="rounded-full border-destructive/70 text-destructive hover:bg-destructive/10"
                     onClick={() => setShowClearAllDialog(true)}
                   >
@@ -701,13 +690,6 @@ const Logbook = () => {
         </AlertDialogContent>
       </AlertDialog>
 
-      <CSVImportDialog
-        open={showImportDialog}
-        onOpenChange={setShowImportDialog}
-        onImportComplete={() => {
-          fetchFlights();
-        }}
-      />
     </div>
   );
 };
