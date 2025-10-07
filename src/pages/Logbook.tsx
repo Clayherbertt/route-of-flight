@@ -14,6 +14,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import { useNavigate } from "react-router-dom";
 import { AddFlightDialog } from "@/components/forms/AddFlightDialog";
+import { CSVImportDialog } from "@/components/forms/CSVImportDialog";
 
 interface FlightEntry {
   id: string;
@@ -68,6 +69,7 @@ const Logbook = () => {
   const [flights, setFlights] = useState<FlightEntry[]>([]);
   const [isLoadingFlights, setIsLoadingFlights] = useState(true);
   const [showAddFlightDialog, setShowAddFlightDialog] = useState(false);
+  const [showImportDialog, setShowImportDialog] = useState(false);
   const [editingFlight, setEditingFlight] = useState<FlightEntry | null>(null);
   const [deletingFlight, setDeletingFlight] = useState<FlightEntry | null>(null);
   const [showClearAllDialog, setShowClearAllDialog] = useState(false);
@@ -440,6 +442,15 @@ const Logbook = () => {
                   <Button
                     size="lg"
                     variant="outline"
+                    className="rounded-full border-border/60 text-foreground hover:bg-white/30"
+                    onClick={() => setShowImportDialog(true)}
+                  >
+                    <Upload className="mr-2 h-5 w-5" />
+                    Import CSV
+                  </Button>
+                  <Button
+                    size="lg"
+                    variant="outline"
                     className="rounded-full border-destructive/70 text-destructive hover:bg-destructive/10"
                     onClick={() => setShowClearAllDialog(true)}
                   >
@@ -689,6 +700,14 @@ const Logbook = () => {
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
+
+      <CSVImportDialog
+        open={showImportDialog}
+        onOpenChange={setShowImportDialog}
+        onImportComplete={() => {
+          fetchFlights();
+        }}
+      />
     </div>
   );
 };

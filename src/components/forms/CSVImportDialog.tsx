@@ -39,7 +39,7 @@ import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
 import { Upload, FileText, CheckCircle, AlertCircle, Download } from "lucide-react";
-import { parseLogbookCsv } from "@/lib/logbook-csv";
+import { parseLogbookCsv, type FlightPayload } from "@/lib/logbook-csv";
 
 interface CSVImportDialogProps {
   open: boolean;
@@ -74,50 +74,6 @@ interface ParseResult {
   headers: string[];
   rows: CsvRow[];
   format: CsvFormat;
-}
-
-interface FlightPayload {
-  date: string;
-  aircraft_registration: string;
-  aircraft_type: string;
-  departure_airport: string;
-  arrival_airport: string;
-  total_time: number;
-  pic_time?: number;
-  sic_time?: number;
-  solo_time?: number;
-  night_time?: number;
-  cross_country_time?: number;
-  instrument_time?: number;
-  actual_instrument?: number;
-  simulated_instrument?: number;
-  holds?: number;
-  landings?: number;
-  day_takeoffs?: number;
-  day_landings?: number;
-  night_takeoffs?: number;
-  night_landings?: number;
-  day_landings_full_stop?: number;
-  night_landings_full_stop?: number;
-  approaches?: number;
-  dual_given?: number;
-  dual_received?: number;
-  simulated_flight?: number;
-  ground_training?: number;
-  route?: string;
-  remarks?: string;
-  time_out?: string;
-  time_off?: string;
-  time_on?: string;
-  time_in?: string;
-  on_duty?: string;
-  off_duty?: string;
-  start_time?: string;
-  end_time?: string;
-  hobbs_start?: number;
-  hobbs_end?: number;
-  tach_start?: number;
-  tach_end?: number;
 }
 
 const FIELD_DEFINITIONS: FieldDefinition[] = [
@@ -1129,7 +1085,7 @@ export function CSVImportDialog({
   };
 
   const validateBeforePreview = () => {
-    if (foreflightFlights) {
+    if (autoFlights) {
       setValidationErrors([]);
       setMissingRequiredFields([]);
       return true;
@@ -1299,8 +1255,8 @@ export function CSVImportDialog({
     setMissingRequiredFields([]);
     setImportResult(null);
     setProgress(0);
-    setForeflightFlights(null);
-    setForeflightReport(null);
+    setAutoFlights(null);
+    setAutoWarnings([]);
   };
 
   const handleDialogChange = (nextOpen: boolean) => {
@@ -1472,20 +1428,20 @@ export function CSVImportDialog({
                   <div>
                     <CardTitle className="text-lg">Preview Flights</CardTitle>
                     <CardDescription>
-                      Review the first few flights before importing. All {foreflightFlights ? foreflightFlights.length : csvRows.length} entries will be added.
+                      Review the first few flights before importing. All {autoFlights ? autoFlights.length : csvRows.length} entries will be added.
                     </CardDescription>
                   </div>
                   <Badge variant="outline">Step 3 of 4</Badge>
                 </div>
               </CardHeader>
               <CardContent className="space-y-4">
-                {foreflightReport && foreflightReport.warnings.length > 0 && (
+                {autoWarnings.length > 0 && (
                   <Alert>
                     <AlertCircle className="h-4 w-4" />
                     <AlertDescription>
-                      <div className="font-medium">ForeFlight warnings</div>
+                      <div className="font-medium">We noticed a few data notes</div>
                       <div className="mt-2 space-y-1 text-sm">
-                        {foreflightReport.warnings.map((warning, index) => (
+                        {autoWarnings.map((warning, index) => (
                           <div key={index}>{warning}</div>
                         ))}
                       </div>
@@ -1493,7 +1449,7 @@ export function CSVImportDialog({
                   </Alert>
                 )}
 
-                {validationErrors.length > 0 && !foreflightFlights && (
+                {validationErrors.length > 0 && !autoFlights && (
                   <Alert>
                     <AlertCircle className="h-4 w-4" />
                     <AlertDescription>
@@ -1550,16 +1506,16 @@ export function CSVImportDialog({
 
                 <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
                   <div className="text-sm text-muted-foreground">
-                    All {foreflightFlights ? foreflightFlights.length : csvRows.length} flights will be imported. Existing flights in
+                    All {autoFlights ? autoFlights.length : csvRows.length} flights will be imported. Existing flights in
                     your logbook remain untouched.
                   </div>
                   <div className="flex gap-3">
                     <Button
                       variant="outline"
                       onClick={() => {
-                        if (foreflightFlights) {
-                          setForeflightFlights(null);
-                          setForeflightReport(null);
+                        if (autoFlights) {
+                          setAutoFlights(null);
+                          setAutoWarnings([]);
                           setStep("upload");
                         } else {
                           setStep("mapping");
@@ -1570,9 +1526,9 @@ export function CSVImportDialog({
                     </Button>
                     <Button
                       onClick={startImport}
-                      disabled={!foreflightFlights && validationErrors.length > 0}
+                      disabled={!autoFlights && validationErrors.length > 0}
                     >
-                      Import {foreflightFlights ? foreflightFlights.length : csvRows.length} Flights
+                      Import {autoFlights ? autoFlights.length : csvRows.length} Flights
                     </Button>
                   </div>
                 </div>
@@ -1593,7 +1549,7 @@ export function CSVImportDialog({
               <CardContent className="space-y-4">
                 <Progress value={progress} className="w-full" />
                 <p className="text-center text-sm text-muted-foreground">
-                  Importing {foreflightFlights ? foreflightFlights.length : csvRows.length} flights...
+                  Importing {autoFlights ? autoFlights.length : csvRows.length} flights...
                 </p>
               </CardContent>
             </Card>
