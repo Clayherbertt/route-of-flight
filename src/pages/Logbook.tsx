@@ -7,13 +7,14 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { Badge } from "@/components/ui/badge";
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from "@/components/ui/alert-dialog";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
-import { Plus, Search, Filter, Download, Plane, MoreHorizontal, Edit, Trash2 } from "lucide-react";
+import { Plus, Search, Filter, Download, Plane, Upload, MoreHorizontal, Edit, Trash2 } from "lucide-react";
 import { useState, useEffect, useCallback } from "react";
 import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import { useNavigate } from "react-router-dom";
 import { AddFlightDialog } from "@/components/forms/AddFlightDialog";
+import { CSVImportDialog } from "@/components/forms/CSVImportDialog";
 
 interface FlightEntry {
   id: string;
@@ -68,6 +69,7 @@ const Logbook = () => {
   const [flights, setFlights] = useState<FlightEntry[]>([]);
   const [isLoadingFlights, setIsLoadingFlights] = useState(true);
   const [showAddFlightDialog, setShowAddFlightDialog] = useState(false);
+  const [showImportDialog, setShowImportDialog] = useState(false);
   const [editingFlight, setEditingFlight] = useState<FlightEntry | null>(null);
   const [deletingFlight, setDeletingFlight] = useState<FlightEntry | null>(null);
   const [showClearAllDialog, setShowClearAllDialog] = useState(false);
@@ -229,51 +231,13 @@ const Logbook = () => {
     return sum + time;
   }, 0);
   
-  // Multi-Engine time (assuming aircraft with "twin", "multi", numbers in type, or specific models)
-  const totalMultiEngine = flights.reduce((sum, flight) => {
-    const aircraftType = flight.aircraft_type.toLowerCase();
-    const isMultiEngine = aircraftType.includes('twin') || 
-                         aircraftType.includes('multi') || 
-                         aircraftType.includes('baron') ||
-                         aircraftType.includes('seneca') ||
-                         aircraftType.includes('aztec') ||
-                         aircraftType.includes('duchess') ||
-                         aircraftType.includes('310') ||
-                         aircraftType.includes('414') ||
-                         aircraftType.includes('421') ||
-                         aircraftType.includes('340') ||
-                         /\d{3}/.test(aircraftType); // Contains 3-digit numbers (often jets/turboprops)
-    const time = Number(flight.total_time) || 0;
-    return isMultiEngine ? sum + time : sum;
-  }, 0);
-  
-  // PIC Turbine time (assuming turbine aircraft based on type)
-  const totalPICTurbine = flights.reduce((sum, flight) => {
-    const aircraftType = flight.aircraft_type.toLowerCase();
-    const isTurbine = aircraftType.includes('jet') ||
-                     aircraftType.includes('turbine') ||
-                     aircraftType.includes('king air') ||
-                     aircraftType.includes('citation') ||
-                     aircraftType.includes('learjet') ||
-                     aircraftType.includes('falcon') ||
-                     aircraftType.includes('challenger') ||
-                     aircraftType.includes('gulfstream') ||
-                     aircraftType.includes('phenom') ||
-                     aircraftType.includes('embraer') ||
-                     /\d{3}/.test(aircraftType); // Contains 3-digit numbers (often jets)
-    const time = Number(flight.pic_time) || 0;
-    return isTurbine ? sum + time : sum;
-  }, 0);
-
   const summaryMetrics = [
     { label: "Total Flight Time", value: `${totalHours.toFixed(1)} hrs` },
     { label: "Pilot in Command", value: `${totalPIC.toFixed(1)} hrs` },
     { label: "Cross Country", value: `${totalXC.toFixed(1)} hrs` },
     { label: "Night Time", value: `${totalNight.toFixed(1)} hrs` },
     { label: "Instrument", value: `${totalInstrument.toFixed(1)} hrs` },
-    { label: "Multi-Engine", value: `${totalMultiEngine.toFixed(1)} hrs` },
     { label: "SIC Time", value: `${totalSIC.toFixed(1)} hrs` },
-    { label: "PIC Turbine", value: `${totalPICTurbine.toFixed(1)} hrs` },
   ];
 
   // Show loading state
@@ -436,6 +400,15 @@ const Logbook = () => {
                   <Button size="lg" className="rounded-full px-6" onClick={() => setShowAddFlightDialog(true)}>
                     <Plus className="mr-2 h-5 w-5" />
                     Add Flight
+                  </Button>
+                  <Button
+                    size="lg"
+                    variant="outline"
+                    className="rounded-full border-border/60 text-foreground hover:bg-white/30"
+                    onClick={() => setShowImportDialog(true)}
+                  >
+                    <Upload className="mr-2 h-5 w-5" />
+                    Import CSV
                   </Button>
                   <Button
                     size="lg"
@@ -689,6 +662,14 @@ const Logbook = () => {
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
+
+      <CSVImportDialog
+        open={showImportDialog}
+        onOpenChange={setShowImportDialog}
+        onImportComplete={() => {
+          fetchFlights();
+        }}
+      />
 
     </div>
   );
