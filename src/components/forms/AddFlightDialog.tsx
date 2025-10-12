@@ -132,6 +132,7 @@ export const AddFlightDialog = ({ open, onOpenChange, onFlightAdded, editingFlig
   const [aircraft, setAircraft] = useState<Aircraft[]>([]);
   const [showAircraftDialog, setShowAircraftDialog] = useState(false);
   const [aircraftSearchOpen, setAircraftSearchOpen] = useState(false);
+  const [supportsFullStopLandings, setSupportsFullStopLandings] = useState<boolean>(true);
 
   const form = useForm<AddFlightForm>({
     resolver: zodResolver(addFlightSchema),
@@ -166,8 +167,36 @@ export const AddFlightDialog = ({ open, onOpenChange, onFlightAdded, editingFlig
   useEffect(() => {
     if (open && user) {
       fetchAircraft();
+      checkFullStopSupport();
     }
   }, [open, user]);
+
+  const checkFullStopSupport = async () => {
+    try {
+      const { error } = await supabase
+        .from("flight_entries")
+        .select("id, day_landings_full_stop, night_landings_full_stop")
+        .limit(1);
+
+      if (error) {
+        if (
+          typeof error.message === "string" &&
+          error.message.toLowerCase().includes("day_landings_full_stop")
+        ) {
+          setSupportsFullStopLandings(false);
+          console.warn(
+            "[AddFlightDialog] flight_entries table missing full stop landing columns; values will be ignored.",
+          );
+        } else {
+          console.error("Failed to inspect flight_entries schema", error);
+        }
+      } else {
+        setSupportsFullStopLandings(true);
+      }
+    } catch (error) {
+      console.error("Failed to inspect flight_entries schema", error);
+    }
+  };
 
   // Populate form when editing a flight
   useEffect(() => {
@@ -336,19 +365,62 @@ export const AddFlightDialog = ({ open, onOpenChange, onFlightAdded, editingFlig
         remarks: values.remarks || null,
       };
 
+      if (!supportsFullStopLandings) {
+        delete (flightData as Partial<typeof flightData>).day_landings_full_stop;
+        delete (flightData as Partial<typeof flightData>).night_landings_full_stop;
+
+        if ((values.day_landings_full_stop ?? 0) > 0 || (values.night_landings_full_stop ?? 0) > 0) {
+          flightData.remarks = [
+            values.remarks?.trim(),
+            `Full-stop landings — Day: ${values.day_landings_full_stop ?? 0}, Night: ${
+              values.night_landings_full_stop ?? 0
+            }`,
+          ]
+            .filter(Boolean)
+            .join("\n");
+        }
+      }
+
       let error;
       if (editingFlight) {
         // Update existing flight
-        const result = await supabase
+        let result = await supabase
           .from('flight_entries')
           .update(flightData)
           .eq('id', editingFlight.id);
+
+        if (result.error && result.error.message?.includes("day_landings_full_stop")) {
+          const fallbackData = { ...flightData };
+          delete (fallbackData as Record<string, unknown>).day_landings_full_stop;
+          delete (fallbackData as Record<string, unknown>).night_landings_full_stop;
+          result = await supabase
+            .from('flight_entries')
+            .update(fallbackData)
+            .eq('id', editingFlight.id);
+          if (!result.error) {
+            console.warn("[AddFlight] Retried update without full-stop landing columns due to schema mismatch.");
+          }
+        }
+
         error = result.error;
       } else {
         // Insert new flight
-        const result = await supabase
+        let result = await supabase
           .from('flight_entries')
           .insert(flightData);
+
+        if (result.error && result.error.message?.includes("day_landings_full_stop")) {
+          const fallbackData = { ...flightData };
+          delete (fallbackData as Record<string, unknown>).day_landings_full_stop;
+          delete (fallbackData as Record<string, unknown>).night_landings_full_stop;
+          result = await supabase
+            .from('flight_entries')
+            .insert(fallbackData);
+          if (!result.error) {
+            console.warn("[AddFlight] Retried insert without full-stop landing columns due to schema mismatch.");
+          }
+        }
+
         error = result.error;
       }
 
@@ -364,9 +436,17 @@ export const AddFlightDialog = ({ open, onOpenChange, onFlightAdded, editingFlig
       onFlightAdded();
     } catch (error) {
       console.error('Error saving flight:', error);
+      const message =
+        typeof error === "object" && error !== null && "message" in error
+          ? String((error as { message?: string }).message)
+          : undefined;
       toast({
         title: "Error",
-        description: editingFlight ? "Failed to update flight entry. Please try again." : "Failed to add flight entry. Please try again.",
+        description:
+          message ??
+          (editingFlight
+            ? "Failed to update flight entry. Please try again."
+            : "Failed to add flight entry. Please try again."),
         variant: "destructive",
       });
     } finally {

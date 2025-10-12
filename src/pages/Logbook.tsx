@@ -221,23 +221,112 @@ const Logbook = () => {
     const time = Number(flight.night_time) || 0;
     return sum + time;
   }, 0);
-  const totalInstrument = flights.reduce((sum, flight) => {
-    const actual = Number(flight.actual_instrument) || 0;
-    const simulated = Number(flight.simulated_instrument) || 0;
-    return sum + actual + simulated;
-  }, 0);
+  const totalActualInstrument = flights.reduce(
+    (sum, flight) => sum + (Number(flight.actual_instrument) || 0),
+    0,
+  );
+  const totalSimInstrument = flights.reduce(
+    (sum, flight) => sum + (Number(flight.simulated_instrument) || 0),
+    0,
+  );
+  const totalInstrument = totalActualInstrument + totalSimInstrument;
   const totalSIC = flights.reduce((sum, flight) => {
     const time = Number(flight.sic_time) || 0;
     return sum + time;
   }, 0);
-  
+  const totalSolo = flights.reduce((sum, flight) => {
+    const time = Number(flight.solo_time) || 0;
+    return sum + time;
+  }, 0);
+
+  const formatHours = (value: number) => {
+    const rounded = Math.round(value * 100) / 100;
+    return rounded.toFixed(2).replace(/\.?0+$/, "");
+  };
+
   const summaryMetrics = [
-    { label: "Total Flight Time", value: `${totalHours.toFixed(1)} hrs` },
-    { label: "Pilot in Command", value: `${totalPIC.toFixed(1)} hrs` },
-    { label: "Cross Country", value: `${totalXC.toFixed(1)} hrs` },
-    { label: "Night Time", value: `${totalNight.toFixed(1)} hrs` },
-    { label: "Instrument", value: `${totalInstrument.toFixed(1)} hrs` },
-    { label: "SIC Time", value: `${totalSIC.toFixed(1)} hrs` },
+    { label: "Total Flight Time", value: `${formatHours(totalHours)} hrs` },
+    { label: "Pilot in Command", value: `${formatHours(totalPIC)} hrs` },
+    { label: "Cross Country", value: `${formatHours(totalXC)} hrs` },
+    { label: "Night Time", value: `${formatHours(totalNight)} hrs` },
+    { label: "Instrument", value: `${formatHours(totalInstrument)} hrs` },
+    { label: "SIC Time", value: `${formatHours(totalSIC)} hrs` },
+  ];
+
+  const totalDualGiven = flights.reduce(
+    (sum, flight) => sum + (Number(flight.dual_given) || 0),
+    0,
+  );
+  const totalDualReceived = flights.reduce(
+    (sum, flight) => sum + (Number(flight.dual_received) || 0),
+    0,
+  );
+  const totalSimulatedFlight = flights.reduce(
+    (sum, flight) => sum + (Number(flight.simulated_flight) || 0),
+    0,
+  );
+  const totalGroundTraining = flights.reduce(
+    (sum, flight) => sum + (Number(flight.ground_training) || 0),
+    0,
+  );
+  const totalApproaches = flights.reduce(
+    (sum, flight) => sum + (Number(flight.approaches) || 0),
+    0,
+  );
+  const totalApproachCount = totalApproaches;
+  const totalDayTO = flights.reduce(
+    (sum, flight) => sum + (Number(flight.day_takeoffs) || 0),
+    0,
+  );
+  const totalDayLandings = flights.reduce(
+    (sum, flight) => sum + (Number(flight.day_landings) || 0),
+    0,
+  );
+  const totalDayFullStop = flights.reduce(
+    (sum, flight) => sum + (Number(flight.day_landings_full_stop) || 0),
+    0,
+  );
+  const totalNightTO = flights.reduce(
+    (sum, flight) => sum + (Number(flight.night_takeoffs) || 0),
+    0,
+  );
+  const totalNightLandings = flights.reduce(
+    (sum, flight) => sum + (Number(flight.night_landings) || 0),
+    0,
+  );
+  const totalNightFullStops = flights.reduce(
+    (sum, flight) => sum + (Number(flight.night_landings_full_stop) || 0),
+    0,
+  );
+  const totalHolds = flights.reduce(
+    (sum, flight) => sum + (Number(flight.holds) || 0),
+    0,
+  );
+  const totalLandings = flights.reduce(
+    (sum, flight) => sum + (Number(flight.day_landings) || 0) + (Number(flight.night_landings) || 0),
+    0,
+  );
+
+  const formatMetric = (value: number, type: "hours" | "count") =>
+    type === "hours" ? `${formatHours(value)} hrs` : `${value}`;
+
+  const masterTotals = [
+    { key: "total-time", label: "Total Time", value: totalHours, type: "hours" as const },
+    { key: "pic-time", label: "PIC", value: totalPIC, type: "hours" as const },
+    { key: "sic-time", label: "SIC", value: totalSIC, type: "hours" as const },
+    { key: "solo-time", label: "Solo", value: totalSolo, type: "hours" as const },
+    { key: "night-time", label: "Night", value: totalNight, type: "hours" as const },
+    { key: "instrument-time", label: "Instrument (Total)", value: totalInstrument, type: "hours" as const },
+    { key: "actual-instrument", label: "Actual Instrument", value: totalActualInstrument, type: "hours" as const },
+    { key: "sim-instrument", label: "Sim Instrument", value: totalSimInstrument, type: "hours" as const },
+    { key: "xc-time", label: "Cross Country", value: totalXC, type: "hours" as const },
+    { key: "holds", label: "Holds", value: totalHolds, type: "count" as const },
+    { key: "approaches", label: "Approaches", value: totalApproachCount, type: "count" as const },
+    { key: "landings", label: "Landings", value: totalLandings, type: "count" as const },
+    { key: "dual-given", label: "Dual Given", value: totalDualGiven, type: "hours" as const },
+    { key: "dual-received", label: "Dual Received", value: totalDualReceived, type: "hours" as const },
+    { key: "sim-flight", label: "Sim Flight", value: totalSimulatedFlight, type: "hours" as const },
+    { key: "ground-training", label: "Ground Training", value: totalGroundTraining, type: "hours" as const },
   ];
 
   // Show loading state
@@ -274,10 +363,6 @@ const Logbook = () => {
   }, 0);
 
   const lastFlight = flights[0];
-
-  const totalApproaches = flights.reduce((sum, flight) => sum + (Number(flight.approaches) || 0), 0);
-  const totalNightFullStops = flights.reduce((sum, flight) => sum + (Number(flight.night_landings_full_stop) || 0), 0);
-  const totalDualGiven = flights.reduce((sum, flight) => sum + (Number(flight.dual_given) || 0), 0);
 
   let tableRows: React.ReactNode;
 
@@ -532,6 +617,26 @@ const Logbook = () => {
                     <p className="text-xs uppercase tracking-[0.25em] text-muted-foreground">Dual given</p>
                     <p className="mt-2 text-sm text-muted-foreground">{totalDualGiven} hrs</p>
                   </div>
+                </div>
+              </div>
+            </div>
+
+            <div className="rounded-3xl border border-border/60 bg-card/95 shadow-xl shadow-aviation-navy/15 backdrop-blur px-2 py-4">
+              <div className="overflow-x-auto">
+                <div className="flex min-w-max gap-3 px-4">
+                  {masterTotals.map((item) => (
+                    <div
+                      key={item.key}
+                      className="min-w-[160px] rounded-2xl border border-border/60 bg-background/80 px-4 py-3 shadow-sm"
+                    >
+                      <p className="text-[11px] uppercase tracking-[0.25em] text-muted-foreground">
+                        {item.label}
+                      </p>
+                      <p className="mt-2 text-lg font-semibold text-foreground">
+                        {formatMetric(item.value, item.type)}
+                      </p>
+                    </div>
+                  ))}
                 </div>
               </div>
             </div>

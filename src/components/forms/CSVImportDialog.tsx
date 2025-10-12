@@ -28,7 +28,78 @@ type MinimalFlight = {
   departure_airport: string;
   arrival_airport: string;
   total_time: number | null;
+  pic_time: number | null;
+  sic_time: number | null;
+  solo_time: number | null;
+  night_time: number | null;
+  cross_country_time: number | null;
+  actual_instrument: number | null;
+  simulated_instrument: number | null;
+  holds: number | null;
+  dual_given: number | null;
+  dual_received: number | null;
 };
+
+type FlightMappingResult =
+  | { status: "success"; flight: MinimalFlight; warnings: string[] }
+  | { status: "missing-required"; missingFields: string[]; row: Record<string, unknown> }
+  | { status: "non-flight" };
+
+const DATE_FIELD_KEYS = [
+  "Date",
+  "Flight Date",
+  "Log Date",
+  "DATE",
+  "FlightDate",
+  "Date (Local)",
+  "DateLocal",
+];
+
+const AIRCRAFT_FIELD_KEYS = [
+  "AircraftID",
+  "Aircraft ID",
+  "Aircraft",
+  "Aircraft Registration",
+  "Aircraft Registration ID",
+  "Aircraft Name",
+  "Aircraft Ident",
+  "Tail Number",
+  "Tail",
+  "Registration",
+  "Aircraft Tail Number",
+];
+
+const DEPARTURE_FIELD_KEYS = [
+  "From",
+  "FROM",
+  "Departure",
+  "Departure Airport",
+  "DepartureAirport",
+  "Departure Airport Name",
+  "Dept",
+  "Origin",
+  "Origin Airport",
+  "OriginAirport",
+  "Departure Airport ID",
+  "From Airport",
+  "FromAirport",
+];
+
+const ARRIVAL_FIELD_KEYS = [
+  "To",
+  "TO",
+  "Arrival",
+  "Arrival Airport",
+  "ArrivalAirport",
+  "Arrival Airport Name",
+  "Dest",
+  "Destination",
+  "Destination Airport",
+  "DestinationAirport",
+  "Arrival Airport ID",
+  "To Airport",
+  "ToAirport",
+];
 
 const HEADER_BOM = /^\uFEFF/;
 
@@ -186,39 +257,105 @@ const dateFromValue = (value: unknown): string | null => {
 };
 
 const normalizeAirport = (value: unknown): string => {
-  if (typeof value !== "string") return "";
-  return value.trim().toUpperCase();
+  if (typeof value === "string") {
+    return value.trim().toUpperCase();
+  }
+  if (typeof value === "number" && Number.isFinite(value)) {
+    return String(value).trim().toUpperCase();
+  }
+  return "";
+};
+
+const normalizeHoursPrecision = (hours: number): number => {
+  if (!Number.isFinite(hours)) {
+    return NaN;
+  }
+  return Math.round(hours * 1000) / 1000;
 };
 
 const parseTotalTime = (value: unknown): number | null => {
   if (value === null || value === undefined) return null;
 
   if (typeof value === "number" && Number.isFinite(value)) {
-    return Number(value.toFixed(2));
+    return normalizeHoursPrecision(value);
   }
 
-  if (typeof value === "string") {
-    const trimmed = value.trim();
-    if (!trimmed) return null;
+  if (typeof value !== "string") return null;
 
-    const colonCandidate = trimmed.includes(":")
-      ? trimmed.replace(/[^0-9:]/g, "")
-      : trimmed;
+  const trimmed = value.trim();
+  if (!trimmed) return null;
 
+  const cleaned = trimmed.replace(/\u00A0/g, " ").replace(/[–—]/g, "-").trim();
+
+  const parseFromHoursMinutes = (hours: number, minutes = 0, seconds = 0) => {
+    if (!Number.isFinite(hours) || !Number.isFinite(minutes) || !Number.isFinite(seconds)) {
+      return null;
+    }
+    const decimal = hours + minutes / 60 + seconds / 3600;
+    return normalizeHoursPrecision(decimal);
+  };
+
+  if (cleaned.includes(":")) {
+    const colonCandidate = cleaned.replace(/[^0-9:]/g, "");
     const hm = colonCandidate.match(/^(\d+):([0-5]\d)(?::([0-5]\d))?$/);
     if (hm) {
-      const hours = Number(hm[1]);
-      const minutes = Number(hm[2]);
-      const seconds = hm[3] ? Number(hm[3]) : 0;
-      const decimal = hours + minutes / 60 + seconds / 3600;
-      return Number(decimal.toFixed(2));
+      const hours = Number.parseInt(hm[1], 10);
+      const minutes = Number.parseInt(hm[2], 10);
+      const seconds = hm[3] ? Number.parseInt(hm[3], 10) : 0;
+      return parseFromHoursMinutes(hours, minutes, seconds);
     }
+  }
 
-    const normalized = trimmed.replace(/[,\u00A0]/g, "");
-    const numeric = Number.parseFloat(normalized);
-    if (Number.isFinite(numeric)) {
-      return Number(numeric.toFixed(2));
+  const plusMatch = cleaned.match(/^(\d+)\s*\+\s*(\d{1,2})$/);
+  if (plusMatch) {
+    const hours = Number.parseInt(plusMatch[1], 10);
+    const minutes = Number.parseInt(plusMatch[2], 10);
+    return parseFromHoursMinutes(hours, minutes);
+  }
+
+  const lower = cleaned.toLowerCase();
+
+  const hourWordMatch = lower.match(/^(\d+(?:\.\d+)?)\s*(?:h|hr|hrs|hour|hours)(.*)$/);
+  if (hourWordMatch) {
+    const hours = Number.parseFloat(hourWordMatch[1]);
+    let minutes = 0;
+    const remainder = hourWordMatch[2].trim();
+    if (remainder) {
+      const minuteMatch = remainder.match(/(\d{1,2})(?:\s*(?:m|min|mins|minute|minutes))?/);
+      if (minuteMatch) {
+        minutes = Number.parseInt(minuteMatch[1], 10);
+      }
     }
+    return parseFromHoursMinutes(hours, minutes);
+  }
+
+  const compact = lower.replace(/\s+/g, "");
+  const compactHmMatch = compact.match(
+    /^(\d+)(?:h|hr|hrs|hour|hours)(\d{1,2})?(?:m|min|mins|minute|minutes)?$/,
+  );
+  if (compactHmMatch) {
+    const hours = Number.parseInt(compactHmMatch[1], 10);
+    const minutes = compactHmMatch[2] ? Number.parseInt(compactHmMatch[2], 10) : 0;
+    return parseFromHoursMinutes(hours, minutes);
+  }
+
+  const minutesOnlyMatch = lower.match(/^(\d+)\s*(?:m|min|mins|minute|minutes)$/);
+  if (minutesOnlyMatch) {
+    const minutes = Number.parseInt(minutesOnlyMatch[1], 10);
+    return parseFromHoursMinutes(0, minutes);
+  }
+
+  const normalizedNumeric = (() => {
+    const withoutSpaces = cleaned.replace(/\s+/g, "");
+    if (withoutSpaces.includes(",") && !withoutSpaces.includes(".")) {
+      return withoutSpaces.replace(",", ".");
+    }
+    return withoutSpaces.replace(/,/g, "");
+  })();
+
+  const numeric = Number.parseFloat(normalizedNumeric);
+  if (Number.isFinite(numeric)) {
+    return normalizeHoursPrecision(numeric);
   }
 
   return null;
@@ -258,100 +395,298 @@ const findField = (
   return undefined;
 };
 
-const mapRowToMinimalFlight = (
+const findFieldByKeywords = (
   row: Record<string, unknown>,
-): MinimalFlight | null => {
-  const dateRaw = findField(row, [
-    "Date",
-    "Flight Date",
-    "Log Date",
-    "DATE",
-    "FlightDate",
-    "Date (Local)",
-    "DateLocal",
+  include: string[],
+  exclude: string[] = [],
+): unknown => {
+  const includeCollapsed = include.map(collapseKey);
+  const excludeCollapsed = exclude.map(collapseKey);
+
+  for (const [key, value] of Object.entries(row)) {
+    const collapsed = collapseKey(key);
+    if (
+      includeCollapsed.every((keyword) => collapsed.includes(keyword)) &&
+      !excludeCollapsed.some((keyword) => collapsed.includes(keyword))
+    ) {
+      return value;
+    }
+  }
+
+  return undefined;
+};
+
+const mapRowToMinimalFlight = (row: Record<string, unknown>): FlightMappingResult => {
+  const rowKeySet = new Set(
+    Object.keys(row)
+      .filter((key) => typeof key === "string")
+      .map((key) => collapseKey(key)),
+  );
+
+  const hasDateHeader = DATE_FIELD_KEYS.some((key) => rowKeySet.has(collapseKey(key)));
+  const hasAircraftHeader = AIRCRAFT_FIELD_KEYS.some((key) => rowKeySet.has(collapseKey(key)));
+  const hasDepartureHeader = DEPARTURE_FIELD_KEYS.some((key) => rowKeySet.has(collapseKey(key)));
+  const hasArrivalHeader = ARRIVAL_FIELD_KEYS.some((key) => rowKeySet.has(collapseKey(key)));
+
+  const dateRaw = findField(row, DATE_FIELD_KEYS);
+  const aircraftRaw = findField(row, AIRCRAFT_FIELD_KEYS);
+  const departureRaw = findField(row, DEPARTURE_FIELD_KEYS);
+  const arrivalRaw = findField(row, ARRIVAL_FIELD_KEYS);
+
+  const totalTimeRaw =
+    findField(row, [
+      "TotalTime",
+      "Total Time",
+      "Total Flight Time",
+      "Flight Time",
+      "Total Hours",
+      "TotalTime (Hours)",
+      "TotalFlightTime",
+      "FlightTime",
+      "Total",
+      "Block Time",
+      "BlockTime",
+    ]) ??
+    findFieldByKeywords(row, ["total", "time"], [
+      "night",
+      "day",
+      "pic",
+      "sic",
+      "country",
+      "actual",
+      "sim",
+      "dual",
+      "ground",
+      "solo",
+      "approach",
+      "land",
+      "hold",
+    ]);
+
+  const picTimeRaw = findField(row, [
+    "PIC",
+    "P.I.C.",
+    "Pilot In Command",
+    "PilotInCommand",
+    "Pilot in Command Time",
+    "PIC Time",
+    "Pilot Command",
+    "Pilot Command Time",
+    "PilotInCmd",
+    "PIC Hours",
   ]);
 
-  const aircraftRaw = findField(row, [
-    "AircraftID",
-    "Aircraft ID",
-    "Aircraft",
-    "Aircraft Registration",
-    "Aircraft Registration ID",
-    "Aircraft Name",
-    "Aircraft Ident",
-    "Tail Number",
-    "Tail",
-    "Registration",
-    "Aircraft Tail Number",
+  const sicTimeRaw = findField(row, [
+    "SIC",
+    "S.I.C.",
+    "Second In Command",
+    "SecondInCommand",
+    "Second in Command Time",
+    "SIC Time",
+    "Co-Pilot",
+    "CoPilot",
+    "Copilot Time",
+    "First Officer",
+    "FO Time",
+    "SIC Hours",
   ]);
 
-  const departureRaw = findField(row, [
-    "From",
-    "FROM",
-    "Departure",
-    "Departure Airport",
-    "DepartureAirport",
-    "Departure Airport Name",
-    "Dept",
-    "Origin",
-    "Origin Airport",
-    "OriginAirport",
-    "Departure Airport ID",
-    "From Airport",
-    "FromAirport",
+  const soloTimeRaw = findField(row, [
+    "Solo",
+    "Solo Time",
+    "Solo Hours",
+    "SoloTime",
+    "Solo Flight Time",
+    "SoloFlightTime",
   ]);
 
-  const arrivalRaw = findField(row, [
-    "To",
-    "TO",
-    "Arrival",
-    "Arrival Airport",
-    "ArrivalAirport",
-    "Arrival Airport Name",
-    "Dest",
-    "Destination",
-    "Destination Airport",
-    "DestinationAirport",
-    "Arrival Airport ID",
-    "To Airport",
-    "ToAirport",
+  const nightTimeRaw =
+    findField(row, [
+      "Night",
+      "Night Time",
+      "NightHours",
+      "Night Flight Time",
+      "NightFlightTime",
+      "Night Hours",
+    ]) ??
+    findFieldByKeywords(row, ["night", "time"], ["land", "takeoff", "approach"]);
+
+  const crossCountryRaw =
+    findField(row, [
+      "CrossCountry",
+      "Cross Country",
+      "Cross Country Time",
+      "CrossCountryTime",
+      "CrossCountryHours",
+      "Cross Country Hours",
+      "Cross-Country",
+      "XC",
+      "XC Time",
+      "XC Hours",
+      "X-C",
+    ]) ??
+    findFieldByKeywords(row, ["cross", "country"]);
+
+  const actualInstrumentRaw =
+    findField(row, [
+      "ActualInstrument",
+      "Actual Instrument",
+      "Actual Instrument Time",
+      "ActualInstrumentTime",
+      "Actual Instrument Hours",
+      "Actual IFR",
+      "Actual IFR Time",
+    ]) ??
+    findFieldByKeywords(row, ["actual", "instrument"]);
+
+  const simulatedInstrumentRaw =
+    findField(row, [
+      "SimulatedInstrument",
+      "Simulated Instrument",
+      "Simulated Instrument Time",
+      "SimInstrument",
+      "Sim Instrument Hours",
+      "Sim IFR",
+      "Sim IFR Time",
+      "Hood Time",
+    ]) ??
+    findFieldByKeywords(row, ["sim", "instrument"]);
+
+  const holdsRaw = findField(row, [
+    "Holds",
+    "Hold",
+    "Instrument Holds",
+    "Holding",
   ]);
 
-  const totalTimeRaw = findField(row, [
-    "TotalTime",
-    "Total Time",
-    "Total Flight Time",
-    "Flight Time",
-    "Total Hours",
-    "TotalTime (Hours)",
-    "TotalFlightTime",
-    "FlightTime",
-    "Total",
-    "Block Time",
-    "BlockTime",
-  ]);
+  const dualGivenRaw =
+    findField(row, [
+      "DualGiven",
+      "Dual Given",
+      "Instruction Given",
+      "Dual Gave",
+      "CFI Time",
+      "Instructor",
+    ]) ?? findFieldByKeywords(row, ["dual", "given"]);
+
+  const dualReceivedRaw =
+    findField(row, [
+      "DualReceived",
+      "Dual Received",
+      "Instruction Received",
+      "Dual Recv",
+      "Student Time",
+      "Dual Recieved",
+    ]) ?? findFieldByKeywords(row, ["dual", "received"]);
 
   const normalizedDate = dateFromValue(dateRaw);
-  const registration =
+  let registration =
     typeof aircraftRaw === "string"
       ? aircraftRaw.trim().toUpperCase()
       : typeof aircraftRaw === "number"
       ? String(aircraftRaw).trim().toUpperCase()
       : "";
-  const departure = normalizeAirport(departureRaw);
-  const arrival = normalizeAirport(arrivalRaw);
+  let departure = normalizeAirport(departureRaw);
+  let arrival = normalizeAirport(arrivalRaw);
+  const warnings: string[] = [];
 
-  if (!normalizedDate || !registration || !departure || !arrival) {
-    return null;
+  if (!departure || !arrival) {
+    if (typeof routeRaw === "string" && routeRaw.trim()) {
+      const normalizedRoute = routeRaw
+        .toUpperCase()
+        .replace(/[^A-Z0-9\s>-]/g, " ")
+        .replace(/\s+/g, " ")
+        .trim();
+      if (normalizedRoute) {
+        const routeTokens = normalizedRoute
+          .split(/[\s>-]+/)
+          .map((token) => token.trim())
+          .filter((token) => /^[A-Z0-9]{3,4}$/.test(token));
+        if (!departure && routeTokens.length > 0) {
+          departure = routeTokens[0];
+        }
+        if (!arrival && routeTokens.length > 0) {
+          arrival = routeTokens[routeTokens.length - 1];
+        }
+      }
+    }
+  }
+
+  if (!departure && arrival) {
+    departure = arrival;
+  } else if (!arrival && departure) {
+    arrival = departure;
+  }
+
+  if (!registration) {
+    registration = "UNKNOWN";
+    warnings.push("inferred-aircraft");
+  }
+
+  if (!departure) {
+    departure = "UNKNOWN";
+    warnings.push("inferred-departure");
+  }
+
+  if (!arrival) {
+    arrival = departure || "UNKNOWN";
+    warnings.push("inferred-arrival");
+  }
+
+  const missingFields: string[] = [];
+  if (!normalizedDate) missingFields.push("date");
+
+  const matchedRequiredCount = [hasDateHeader, hasAircraftHeader, hasDepartureHeader, hasArrivalHeader].filter(Boolean).length;
+
+  if (missingFields.length > 0) {
+    if (matchedRequiredCount < 2) {
+      return { status: "non-flight" };
+    }
+    return { status: "missing-required", missingFields, row };
+  }
+
+  const totalTime = parseTotalTime(totalTimeRaw);
+  const picTime = parseTotalTime(picTimeRaw);
+  const sicTime = parseTotalTime(sicTimeRaw);
+  const soloTime = parseTotalTime(soloTimeRaw);
+  const nightTime = parseTotalTime(nightTimeRaw);
+  const crossCountryTime = parseTotalTime(crossCountryRaw);
+  const actualInstrument = parseTotalTime(actualInstrumentRaw);
+  const simulatedInstrument = parseTotalTime(simulatedInstrumentRaw);
+  const dualGiven = parseTotalTime(dualGivenRaw);
+  const dualReceived = parseTotalTime(dualReceivedRaw);
+
+  let holds: number | null = null;
+  if (typeof holdsRaw === "number" && Number.isFinite(holdsRaw)) {
+    holds = holdsRaw;
+  } else if (typeof holdsRaw === "string" && holdsRaw.trim()) {
+    const parsed = Number.parseInt(holdsRaw.trim(), 10);
+    if (!Number.isNaN(parsed)) {
+      holds = parsed;
+    }
   }
 
   return {
-    date: normalizedDate,
-    aircraft_registration: registration,
-    aircraft_type: registration,
-    departure_airport: departure,
-    arrival_airport: arrival,
-    total_time: parseTotalTime(totalTimeRaw),
+    status: "success",
+    flight: {
+      date: normalizedDate,
+      aircraft_registration: registration,
+      aircraft_type: registration,
+      departure_airport: departure,
+      arrival_airport: arrival,
+      total_time: totalTime,
+      pic_time: picTime,
+      sic_time: sicTime,
+      solo_time: soloTime,
+      night_time: nightTime,
+      cross_country_time: crossCountryTime,
+      actual_instrument: actualInstrument,
+      simulated_instrument: simulatedInstrument,
+      holds,
+      dual_given: dualGiven,
+      dual_received: dualReceived,
+    },
+    warnings,
   };
 };
 
@@ -395,14 +730,31 @@ export const CSVImportDialog = ({ open, onOpenChange, onImportComplete }: CSVImp
       const rows = extractFlightsFromCsv(text);
 
       const flights: MinimalFlight[] = [];
+      const inferenceCounts = { aircraft: 0, departure: 0, arrival: 0 };
       let skipped = 0;
+      let nonFlightRows = 0;
+      const skippedSamples: Array<{ missingFields: string[]; row: Record<string, unknown> }> = [];
 
       for (const row of rows) {
         const mapped = mapRowToMinimalFlight(row);
-        if (mapped) {
-          flights.push(mapped);
-        } else {
+        if (mapped.status === "success") {
+          flights.push(mapped.flight);
+          if (mapped.warnings.includes("inferred-aircraft")) {
+            inferenceCounts.aircraft += 1;
+          }
+          if (mapped.warnings.includes("inferred-departure")) {
+            inferenceCounts.departure += 1;
+          }
+          if (mapped.warnings.includes("inferred-arrival")) {
+            inferenceCounts.arrival += 1;
+          }
+        } else if (mapped.status === "missing-required") {
           skipped += 1;
+          if (skippedSamples.length < 5) {
+            skippedSamples.push({ missingFields: mapped.missingFields, row: mapped.row });
+          }
+        } else {
+          nonFlightRows += 1;
         }
       }
 
@@ -416,10 +768,72 @@ export const CSVImportDialog = ({ open, onOpenChange, onImportComplete }: CSVImp
         return;
       }
 
-      const totalImportedTime = flights.reduce(
-        (sum, flight) => sum + (flight.total_time ?? 0),
+      if (skipped > 0 || nonFlightRows > 0) {
+        console.debug("[CSV Import] Skipped rows", {
+          missingRequired: skipped,
+          nonFlightRows,
+          samples: skippedSamples,
+        });
+      }
+
+      if (inferenceCounts.aircraft > 0 || inferenceCounts.departure > 0 || inferenceCounts.arrival > 0) {
+        console.debug("[CSV Import] Inferred fields", inferenceCounts);
+      }
+
+      const totalImportedTime = flights.reduce((sum, flight) => sum + (flight.total_time ?? 0), 0);
+      const totalImportedPic = flights.reduce((sum, flight) => sum + (flight.pic_time ?? 0), 0);
+      const totalImportedSic = flights.reduce((sum, flight) => sum + (flight.sic_time ?? 0), 0);
+      const totalImportedSolo = flights.reduce((sum, flight) => sum + (flight.solo_time ?? 0), 0);
+      const totalImportedNight = flights.reduce((sum, flight) => sum + (flight.night_time ?? 0), 0);
+      const totalImportedCrossCountry = flights.reduce(
+        (sum, flight) => sum + (flight.cross_country_time ?? 0),
         0,
       );
+      const totalImportedActualInstrument = flights.reduce(
+        (sum, flight) => sum + (flight.actual_instrument ?? 0),
+        0,
+      );
+      const totalImportedSimInstrument = flights.reduce(
+        (sum, flight) => sum + (flight.simulated_instrument ?? 0),
+        0,
+      );
+      const totalDualGiven = flights.reduce((sum, flight) => sum + (flight.dual_given ?? 0), 0);
+      const totalDualReceived = flights.reduce((sum, flight) => sum + (flight.dual_received ?? 0), 0);
+      const totalHolds = flights.reduce((sum, flight) => sum + (flight.holds ?? 0), 0);
+
+      const missingTotalTime = flights.filter(
+        (flight) => flight.total_time === null || flight.total_time === undefined || flight.total_time <= 0,
+      ).length;
+
+      console.debug("[CSV Import] Sample flight values", {
+        totalTime: flights.slice(0, 5).map((f) => f.total_time),
+        pic: flights.slice(0, 5).map((f) => f.pic_time),
+        sic: flights.slice(0, 5).map((f) => f.sic_time),
+        solo: flights.slice(0, 5).map((f) => f.solo_time),
+        night: flights.slice(0, 5).map((f) => f.night_time),
+        crossCountry: flights.slice(0, 5).map((f) => f.cross_country_time),
+        actualInstrument: flights.slice(0, 5).map((f) => f.actual_instrument),
+        simulatedInstrument: flights.slice(0, 5).map((f) => f.simulated_instrument),
+        holds: flights.slice(0, 5).map((f) => f.holds),
+        missingTotalTime,
+      });
+
+      const inferenceMessages: string[] = [];
+      if (inferenceCounts.departure > 0) {
+        inferenceMessages.push(
+          `filled missing departure airport on ${inferenceCounts.departure} flight${inferenceCounts.departure === 1 ? "" : "s"}`,
+        );
+      }
+      if (inferenceCounts.arrival > 0) {
+        inferenceMessages.push(
+          `filled missing arrival airport on ${inferenceCounts.arrival} flight${inferenceCounts.arrival === 1 ? "" : "s"}`,
+        );
+      }
+      if (inferenceCounts.aircraft > 0) {
+        inferenceMessages.push(
+          `filled missing aircraft on ${inferenceCounts.aircraft} flight${inferenceCounts.aircraft === 1 ? "" : "s"}`,
+        );
+      }
 
       const insertPayload = flights.map((flight) => ({
         user_id: user.id,
@@ -429,6 +843,16 @@ export const CSVImportDialog = ({ open, onOpenChange, onImportComplete }: CSVImp
         departure_airport: flight.departure_airport,
         arrival_airport: flight.arrival_airport,
         total_time: flight.total_time ?? 0,
+        pic_time: flight.pic_time ?? 0,
+        sic_time: flight.sic_time ?? 0,
+        solo_time: flight.solo_time ?? 0,
+        night_time: flight.night_time ?? 0,
+        cross_country_time: flight.cross_country_time ?? 0,
+        actual_instrument: flight.actual_instrument ?? 0,
+        simulated_instrument: flight.simulated_instrument ?? 0,
+        dual_given: flight.dual_given ?? 0,
+        dual_received: flight.dual_received ?? 0,
+        holds: flight.holds ?? 0,
       }));
 
       const { error } = await supabase.from("flight_entries").insert(insertPayload);
@@ -440,9 +864,23 @@ export const CSVImportDialog = ({ open, onOpenChange, onImportComplete }: CSVImp
       setSkippedRows(skipped);
       toast({
         title: "Import complete",
-        description: `Added ${flights.length} flights totaling ${totalImportedTime.toFixed(
-          2,
-        )} hours${skipped > 0 ? ` (skipped ${skipped} incomplete rows)` : ""}.`,
+        description: [
+          `Added ${flights.length} flights totaling ${totalImportedTime.toFixed(2)} hours`,
+          totalImportedPic > 0 ? `${totalImportedPic.toFixed(2)} PIC` : null,
+          totalImportedSic > 0 ? `${totalImportedSic.toFixed(2)} SIC` : null,
+          totalImportedSolo > 0 ? `${totalImportedSolo.toFixed(2)} solo` : null,
+          totalImportedNight > 0 ? `${totalImportedNight.toFixed(2)} night` : null,
+          totalImportedCrossCountry > 0 ? `${totalImportedCrossCountry.toFixed(2)} cross-country` : null,
+          totalImportedActualInstrument > 0 ? `${totalImportedActualInstrument.toFixed(2)} actual instrument` : null,
+          totalImportedSimInstrument > 0 ? `${totalImportedSimInstrument.toFixed(2)} simulated instrument` : null,
+          totalDualGiven > 0 ? `${totalDualGiven.toFixed(2)} dual given` : null,
+          totalDualReceived > 0 ? `${totalDualReceived.toFixed(2)} dual received` : null,
+          totalHolds > 0 ? `${totalHolds} holds` : null,
+          ...inferenceMessages,
+          skipped > 0 ? `skipped ${skipped} incomplete row${skipped === 1 ? "" : "s"}` : null,
+        ]
+          .filter(Boolean)
+          .join(" | "),
       });
 
       onImportComplete();
