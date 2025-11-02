@@ -309,8 +309,28 @@ const Logbook = () => {
     (sum, flight) => sum + (Number(flight.holds) || 0),
     0,
   );
+  // Calculate total landings
+  // Priority: Use the 'landings' field first (from AllLandings in CSV = complete total)
+  // Fallback: Sum individual fields if landings field is not available
   const totalLandings = flights.reduce(
-    (sum, flight) => sum + (Number(flight.day_landings) || 0) + (Number(flight.night_landings) || 0),
+    (sum, flight) => {
+      // Safely convert to numbers, handling null/undefined
+      const legacyLandings = flight.landings != null ? Number(flight.landings) || 0 : 0;
+      const dayLandings = flight.day_landings != null ? Number(flight.day_landings) || 0 : 0;
+      const dayFullStop = flight.day_landings_full_stop != null ? Number(flight.day_landings_full_stop) || 0 : 0;
+      const nightLandings = flight.night_landings != null ? Number(flight.night_landings) || 0 : 0;
+      const nightFullStop = flight.night_landings_full_stop != null ? Number(flight.night_landings_full_stop) || 0 : 0;
+      
+      // Priority: Use landings field (from AllLandings in CSV) - this is the most accurate total
+      // The landings field contains the complete count from AllLandings column
+      if (legacyLandings > 0) {
+        return sum + legacyLandings;
+      }
+      
+      // Fallback: Sum individual fields if landings field is not set
+      const sumOfIndividualFields = dayLandings + dayFullStop + nightLandings + nightFullStop;
+      return sum + sumOfIndividualFields;
+    },
     0,
   );
 
@@ -435,7 +455,7 @@ const Logbook = () => {
   } else {
     tableRows = flights.map((flight) => (
       <TableRow key={flight.id} className="hover:bg-muted/50">
-        <TableCell className="font-medium">{flight.date}</TableCell>
+        <TableCell className="min-w-[110px] whitespace-nowrap font-medium">{flight.date}</TableCell>
         <TableCell>
           <Badge variant="outline">{flight.aircraft_registration}</Badge>
         </TableCell>
@@ -728,7 +748,7 @@ const Logbook = () => {
                 <Table>
                   <TableHeader>
                     <TableRow>
-                      <TableHead>Date</TableHead>
+                      <TableHead className="min-w-[110px] whitespace-nowrap">Date</TableHead>
                       <TableHead>Aircraft ID</TableHead>
                       <TableHead>Type</TableHead>
                       <TableHead>From</TableHead>

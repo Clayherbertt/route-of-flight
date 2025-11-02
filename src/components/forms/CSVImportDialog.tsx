@@ -37,6 +37,13 @@ type MinimalFlight = {
   simulated_instrument: number | null;
   holds: number | null;
   approaches: number | null;
+  day_takeoffs: number | null;
+  day_landings: number | null;
+  day_landings_full_stop: number | null;
+  night_takeoffs: number | null;
+  night_landings: number | null;
+  night_landings_full_stop: number | null;
+  all_landings: number | null;
   dual_given: number | null;
   dual_received: number | null;
 };
@@ -609,6 +616,78 @@ const mapRowToMinimalFlight = (row: Record<string, unknown>): FlightMappingResul
       "Dual Recieved",
     ]) ?? findFieldByKeywords(row, ["dual", "received"]);
 
+  // Parse takeoff and landing fields from CSV
+  const dayTakeoffsRaw =
+    findField(row, [
+      "DayTakeoffs",
+      "Day Takeoffs",
+      "Day TO",
+      "DayTO",
+      "Day Takeoff",
+    ]) ??
+    findFieldByKeywords(row, ["day", "takeoff"], ["night", "landing"]);
+  
+  // ForeFlight CSV structure: DayLandingsFullStop contains day landings (full stop)
+  // But we also need to check for AllLandings which contains total landings
+  const allLandingsRaw = findField(row, [
+    "AllLandings",
+    "All Landings",
+    "Total Landings",
+    "Landings",
+  ]);
+  
+  const dayLandingsRaw =
+    findField(row, [
+      "DayLandings",
+      "Day Landings",
+      "Day LDG",
+      "DayLDG",
+      "Day Landing",
+    ]) ??
+    findFieldByKeywords(row, ["day", "landing"], ["night", "takeoff", "full", "stop"]);
+  
+  // In ForeFlight CSV, DayLandingsFullStop IS the day landings column (not separate)
+  const dayLandingsFullStopRaw =
+    findField(row, [
+      "DayLandingsFullStop",
+      "Day Landings Full Stop",
+      "Day Full Stop",
+      "DayLandingsFull",
+      "Day Landings (Full Stop)",
+    ]) ??
+    findFieldByKeywords(row, ["day", "full", "stop"], ["night"]);
+  
+  const nightTakeoffsRaw =
+    findField(row, [
+      "NightTakeoffs",
+      "Night Takeoffs",
+      "Night TO",
+      "NightTO",
+      "Night Takeoff",
+    ]) ??
+    findFieldByKeywords(row, ["night", "takeoff"], ["day", "landing"]);
+  
+  // In ForeFlight CSV, NightLandingsFullStop IS the night landings column (not separate)
+  const nightLandingsRaw =
+    findField(row, [
+      "NightLandings",
+      "Night Landings",
+      "Night LDG",
+      "NightLDG",
+      "Night Landing",
+    ]) ??
+    findFieldByKeywords(row, ["night", "landing"], ["day", "takeoff", "full", "stop"]);
+  
+  const nightLandingsFullStopRaw =
+    findField(row, [
+      "NightLandingsFullStop",
+      "Night Landings Full Stop",
+      "Night Full Stop",
+      "NightLandingsFull",
+      "Night Landings (Full Stop)",
+    ]) ??
+    findFieldByKeywords(row, ["night", "full", "stop"], ["day"]);
+
   const normalizedDate = dateFromValue(dateRaw);
   let registration =
     typeof aircraftRaw === "string"
@@ -737,6 +816,39 @@ const mapRowToMinimalFlight = (row: Record<string, unknown>): FlightMappingResul
     }
   }
 
+  // Helper function to parse integer counts (for takeoffs and landings)
+  const parseCount = (value: unknown): number | null => {
+    if (value === null || value === undefined) return null;
+    if (typeof value === "number" && Number.isFinite(value)) {
+      return Math.floor(value);
+    }
+    if (typeof value === "string" && value.trim()) {
+      const parsed = Number.parseInt(value.trim(), 10);
+      if (!Number.isNaN(parsed)) {
+        return parsed;
+      }
+    }
+    return null;
+  };
+
+  const dayTakeoffs = parseCount(dayTakeoffsRaw);
+  const dayLandingsFullStop = parseCount(dayLandingsFullStopRaw);
+  const nightTakeoffs = parseCount(nightTakeoffsRaw);
+  const nightLandingsFullStop = parseCount(nightLandingsFullStopRaw);
+  const allLandings = parseCount(allLandingsRaw);
+  
+  // In ForeFlight CSV structure:
+  // - DayLandingsFullStop contains day landings (they're all full stop in this CSV)
+  // - NightLandingsFullStop contains night landings (they're all full stop in this CSV)
+  // - AllLandings contains the total of all landings
+  // So we use DayLandingsFullStop as day_landings and also as day_landings_full_stop
+  const dayLandings = dayLandingsFullStop; // In this CSV, day landings = day landings full stop
+  const nightLandings = nightLandingsFullStop; // In this CSV, night landings = night landings full stop
+  
+  // Use AllLandings to verify/calculate if available, otherwise sum individual values
+  const calculatedTotalLandings = (dayLandings ?? 0) + (nightLandings ?? 0);
+  const totalLandings = allLandings ?? calculatedTotalLandings;
+
   return {
     status: "success",
     flight: {
@@ -755,6 +867,13 @@ const mapRowToMinimalFlight = (row: Record<string, unknown>): FlightMappingResul
       simulated_instrument: simulatedInstrument,
       holds,
       approaches,
+      day_takeoffs: dayTakeoffs,
+      day_landings: dayLandings,
+      day_landings_full_stop: dayLandingsFullStop,
+      night_takeoffs: nightTakeoffs,
+      night_landings: nightLandings,
+      night_landings_full_stop: nightLandingsFullStop,
+      all_landings: totalLandings,
       dual_given: dualGiven,
       dual_received: dualReceived,
     },
@@ -800,6 +919,14 @@ export const CSVImportDialog = ({ open, onOpenChange, onImportComplete }: CSVImp
     try {
       const text = await file.text();
       const rows = extractFlightsFromCsv(text);
+
+      // Debug: Log column names from first row to help diagnose mapping issues
+      if (rows.length > 0) {
+        const columnNames = Object.keys(rows[0]);
+        console.debug("[CSV Import] Available columns:", columnNames.filter((name) => 
+          /day|night|takeoff|landing|to|ldg/i.test(name)
+        ));
+      }
 
       const flights: MinimalFlight[] = [];
       const inferenceCounts = { aircraft: 0, departure: 0, arrival: 0 };
@@ -873,6 +1000,12 @@ export const CSVImportDialog = ({ open, onOpenChange, onImportComplete }: CSVImp
       const totalDualReceived = flights.reduce((sum, flight) => sum + (flight.dual_received ?? 0), 0);
       const totalHolds = flights.reduce((sum, flight) => sum + (flight.holds ?? 0), 0);
       const totalApproaches = flights.reduce((sum, flight) => sum + (flight.approaches ?? 0), 0);
+      const totalDayTakeoffs = flights.reduce((sum, flight) => sum + (flight.day_takeoffs ?? 0), 0);
+      const totalDayLandings = flights.reduce((sum, flight) => sum + (flight.day_landings ?? 0), 0);
+      const totalDayLandingsFullStop = flights.reduce((sum, flight) => sum + (flight.day_landings_full_stop ?? 0), 0);
+      const totalNightTakeoffs = flights.reduce((sum, flight) => sum + (flight.night_takeoffs ?? 0), 0);
+      const totalNightLandings = flights.reduce((sum, flight) => sum + (flight.night_landings ?? 0), 0);
+      const totalNightLandingsFullStop = flights.reduce((sum, flight) => sum + (flight.night_landings_full_stop ?? 0), 0);
 
       const missingTotalTime = flights.filter(
         (flight) => flight.total_time === null || flight.total_time === undefined || flight.total_time <= 0,
@@ -889,6 +1022,12 @@ export const CSVImportDialog = ({ open, onOpenChange, onImportComplete }: CSVImp
         simulatedInstrument: flights.slice(0, 5).map((f) => f.simulated_instrument),
         holds: flights.slice(0, 5).map((f) => f.holds),
         approaches: flights.slice(0, 5).map((f) => f.approaches),
+        dayTakeoffs: flights.slice(0, 5).map((f) => f.day_takeoffs),
+        dayLandings: flights.slice(0, 5).map((f) => f.day_landings),
+        dayLandingsFullStop: flights.slice(0, 5).map((f) => f.day_landings_full_stop),
+        nightTakeoffs: flights.slice(0, 5).map((f) => f.night_takeoffs),
+        nightLandings: flights.slice(0, 5).map((f) => f.night_landings),
+        nightLandingsFullStop: flights.slice(0, 5).map((f) => f.night_landings_full_stop),
         missingTotalTime,
       });
 
@@ -928,12 +1067,67 @@ export const CSVImportDialog = ({ open, onOpenChange, onImportComplete }: CSVImp
         dual_received: flight.dual_received ?? 0,
         holds: flight.holds ?? 0,
         approaches: String(flight.approaches ?? 0),
+        day_takeoffs: flight.day_takeoffs != null ? flight.day_takeoffs : 0,
+        day_landings: flight.day_landings != null ? flight.day_landings : 0,
+        day_landings_full_stop: flight.day_landings_full_stop != null ? flight.day_landings_full_stop : 0,
+        night_takeoffs: flight.night_takeoffs != null ? flight.night_takeoffs : 0,
+        night_landings: flight.night_landings != null ? flight.night_landings : 0,
+        night_landings_full_stop: flight.night_landings_full_stop != null ? flight.night_landings_full_stop : 0,
+        // Use AllLandings as the primary source - it contains the total of ALL landings
+        // In ForeFlight CSV, AllLandings includes all landing types, not just day/night full stops
+        // This is the accurate total landing count
+        landings: flight.all_landings != null ? flight.all_landings : ((flight.day_landings ?? 0) + (flight.night_landings ?? 0)),
       }));
 
-      const { error } = await supabase.from("flight_entries").insert(insertPayload);
+      // Try inserting with all columns first
+      let result = await supabase.from("flight_entries").insert(insertPayload);
 
-      if (error) {
-        throw error;
+      // If there's an error, check if it's due to missing columns
+      if (result.error) {
+        const errorMsg = result.error.message || "";
+        const hasColumnError = 
+          errorMsg.includes("day_takeoffs") ||
+          errorMsg.includes("day_landings") ||
+          errorMsg.includes("night_takeoffs") ||
+          errorMsg.includes("night_landings") ||
+          errorMsg.includes("day_landings_full_stop") ||
+          errorMsg.includes("night_landings_full_stop") ||
+          errorMsg.includes("column") && errorMsg.includes("does not exist");
+        
+        if (hasColumnError) {
+          console.warn("[CSV Import] Schema mismatch detected, retrying without landing/takeoff columns");
+          console.warn("[CSV Import] Error details:", result.error);
+          
+          // Create fallback payload without landing/takeoff columns
+          const fallbackPayload = insertPayload.map((flight) => {
+            const { 
+              day_takeoffs, 
+              day_landings, 
+              day_landings_full_stop, 
+              night_takeoffs, 
+              night_landings, 
+              night_landings_full_stop, 
+              ...rest 
+            } = flight;
+            return rest;
+          });
+          
+          result = await supabase.from("flight_entries").insert(fallbackPayload);
+          
+          if (!result.error) {
+            console.warn("[CSV Import] Successfully imported without landing/takeoff columns");
+            toast({
+              title: "Import completed with limitations",
+              description: "Flights imported successfully, but landing/takeoff data was not saved. Please apply database migrations to enable full import.",
+              variant: "default",
+            });
+          }
+        }
+      }
+
+      if (result.error) {
+        console.error("[CSV Import] Database error:", result.error);
+        throw result.error;
       }
 
       setSkippedRows(skipped);
@@ -952,6 +1146,10 @@ export const CSVImportDialog = ({ open, onOpenChange, onImportComplete }: CSVImp
           totalDualReceived > 0 ? `${totalDualReceived.toFixed(2)} dual received` : null,
           totalHolds > 0 ? `${totalHolds} holds` : null,
           totalApproaches > 0 ? `${totalApproaches} approaches` : null,
+          totalDayTakeoffs > 0 ? `${totalDayTakeoffs} day takeoffs` : null,
+          totalDayLandings > 0 ? `${totalDayLandings} day landings` : null,
+          totalNightTakeoffs > 0 ? `${totalNightTakeoffs} night takeoffs` : null,
+          totalNightLandings > 0 ? `${totalNightLandings} night landings` : null,
           ...inferenceMessages,
           skipped > 0 ? `skipped ${skipped} incomplete row${skipped === 1 ? "" : "s"}` : null,
         ]
@@ -963,9 +1161,14 @@ export const CSVImportDialog = ({ open, onOpenChange, onImportComplete }: CSVImp
       handleClose();
     } catch (error) {
       console.error("CSV import failed", error);
+      const errorMessage = error instanceof Error ? error.message : String(error);
       toast({
         title: "Import failed",
-        description: "Something went wrong while importing the CSV. Please verify the file and try again.",
+        description: errorMessage.includes("duplicate") 
+          ? "Some flights already exist in your logbook. Remove duplicates or update existing entries."
+          : errorMessage.length > 100 
+          ? `Error: ${errorMessage.substring(0, 100)}...` 
+          : errorMessage || "Something went wrong while importing the CSV. Please verify the file and try again.",
         variant: "destructive",
       });
     } finally {
