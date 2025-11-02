@@ -1,61 +1,26 @@
-project_id = "uezrpgdbeemoqrxuzaln"
+# supabase/config.toml (minimal, current format)
+
+project_id = "uezrpgdbeemoqrxuzaln"   # <-- your project ref
 
 [api]
-enabled = true
 port = 54321
 schemas = ["public", "graphql_public"]
 extra_search_path = ["public", "extensions"]
-max_rows = 1000
 
 [db]
 port = 54322
-
-[db.pooler]
-enabled = false
-port = 54329
-pool_mode = "transaction"
-default_pool_size = 20
-max_client_conn = 100
-
-[realtime]
-enabled = true
-port = 54323
+major_version = 15
 
 [studio]
-enabled = true
-port = 54324
-
-[inbucket]
-enabled = true
-port = 54325
-
-[storage]
-enabled = true
-port = 54326
-file_size_limit = "50MiB"
+port = 54323
 
 [auth]
-enabled = true
-port = 54327
 site_url = "http://127.0.0.1:3000"
-additional_redirect_urls = ["https://127.0.0.1:3000"]
+additional_redirect_urls = ["http://127.0.0.1:3000"]
 jwt_expiry = 3600
-enable_signup = true
-enable_email_confirmations = false
 
-[auth.email]
-enable_signup = true
-double_confirm_changes = true
-enable_confirmations = false
-secure_email_change_enabled = true
-enable_reauthentication = true
-
-[edge_runtime]
-enabled = true
-port = 54328
-
+# Functions config must be a table now (older configs used a bool)
 [functions]
-verify_jwt = true
-
-[functions.import-csv-flights]
-verify_jwt = false
+# (optional) keep as an empty table or add per-function blocks later
+[functions.verify_jwt]
+# import_map = "supabase/functions/import_map.json"
