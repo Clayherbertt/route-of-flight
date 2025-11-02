@@ -15,6 +15,7 @@ import { useToast } from "@/hooks/use-toast";
 import { useNavigate } from "react-router-dom";
 import { AddFlightDialog } from "@/components/forms/AddFlightDialog";
 import { CSVImportDialog } from "@/components/forms/CSVImportDialog";
+import { subMonths } from "date-fns";
 
 interface FlightEntry {
   id: string;
@@ -244,15 +245,6 @@ const Logbook = () => {
     return rounded.toFixed(2).replace(/\.?0+$/, "");
   };
 
-  const summaryMetrics = [
-    { label: "Total Flight Time", value: `${formatHours(totalHours)} hrs` },
-    { label: "Pilot in Command", value: `${formatHours(totalPIC)} hrs` },
-    { label: "Cross Country", value: `${formatHours(totalXC)} hrs` },
-    { label: "Night Time", value: `${formatHours(totalNight)} hrs` },
-    { label: "Instrument", value: `${formatHours(totalInstrument)} hrs` },
-    { label: "SIC Time", value: `${formatHours(totalSIC)} hrs` },
-  ];
-
   const totalDualGiven = flights.reduce(
     (sum, flight) => sum + (Number(flight.dual_given) || 0),
     0,
@@ -351,16 +343,63 @@ const Logbook = () => {
     return null;
   }
 
-  const thirtyDaysAgo = new Date();
+  const now = new Date();
+  const thirtyDaysAgo = new Date(now);
   thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
+  const sixMonthsAgo = subMonths(now, 6);
+  const twelveMonthsAgo = subMonths(now, 12);
+  const twentyFourMonthsAgo = subMonths(now, 24);
 
-  const recentHours = flights.reduce((sum, flight) => {
+  let last30DaysHours = 0;
+  let last6MonthsHours = 0;
+  let last12MonthsHours = 0;
+  let last24MonthsHours = 0;
+
+  flights.forEach((flight) => {
     const parsedDate = flight.date ? new Date(flight.date) : null;
-    if (parsedDate && !Number.isNaN(parsedDate.getTime()) && parsedDate >= thirtyDaysAgo) {
-      return sum + (Number(flight.total_time) || 0);
+    if (!parsedDate || Number.isNaN(parsedDate.getTime())) {
+      return;
     }
-    return sum;
-  }, 0);
+
+    const totalTime = Number(flight.total_time) || 0;
+
+    if (parsedDate >= twentyFourMonthsAgo) {
+      last24MonthsHours += totalTime;
+      if (parsedDate >= twelveMonthsAgo) {
+        last12MonthsHours += totalTime;
+        if (parsedDate >= sixMonthsAgo) {
+          last6MonthsHours += totalTime;
+          if (parsedDate >= thirtyDaysAgo) {
+            last30DaysHours += totalTime;
+          }
+        }
+      }
+    }
+  });
+
+  const recentHours = last30DaysHours;
+  const timeWindowInsights = [
+    {
+      key: "last-30-days",
+      label: "Last 30 days",
+      value: `${formatHours(last30DaysHours)} hrs`,
+    },
+    {
+      key: "last-6-months",
+      label: "Last 6 months",
+      value: `${formatHours(last6MonthsHours)} hrs`,
+    },
+    {
+      key: "last-12-months",
+      label: "Last 12 months",
+      value: `${formatHours(last12MonthsHours)} hrs`,
+    },
+    {
+      key: "last-24-months",
+      label: "Last 24 months",
+      value: `${formatHours(last24MonthsHours)} hrs`,
+    },
+  ];
 
   const lastFlight = flights[0];
 
@@ -470,7 +509,7 @@ const Logbook = () => {
           </div>
 
           <div className="relative container mx-auto px-6 py-12 lg:py-20">
-            <div className="flex flex-col gap-10 lg:flex-row lg:items-start lg:justify-between">
+            <div className="grid gap-10 lg:grid-cols-[minmax(0,1fr),360px] lg:items-start">
               <div className="max-w-2xl space-y-6">
                 <span className="inline-flex items-center gap-2 rounded-full border border-white/40 bg-white/10 px-4 py-1 text-xs uppercase tracking-[0.35em] text-aviation-sky backdrop-blur">
                   Logbook Hub
@@ -480,30 +519,6 @@ const Logbook = () => {
                   <p className="mt-4 text-lg leading-relaxed text-muted-foreground">
                     Track and manage your flight hours, currency, and experience with a cockpit-ready dashboard designed for working pilots.
                   </p>
-                </div>
-                <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
-                  <Button size="lg" className="rounded-full px-6" onClick={() => setShowAddFlightDialog(true)}>
-                    <Plus className="mr-2 h-5 w-5" />
-                    Add Flight
-                  </Button>
-                  <Button
-                    size="lg"
-                    variant="outline"
-                    className="rounded-full border-border/60 text-foreground hover:bg-white/30"
-                    onClick={() => setShowImportDialog(true)}
-                  >
-                    <Upload className="mr-2 h-5 w-5" />
-                    Import CSV
-                  </Button>
-                  <Button
-                    size="lg"
-                    variant="outline"
-                    className="rounded-full border-destructive/70 text-destructive hover:bg-destructive/10"
-                    onClick={() => setShowClearAllDialog(true)}
-                  >
-                    <Trash2 className="mr-2 h-5 w-5" />
-                    Clear All
-                  </Button>
                 </div>
               </div>
 
@@ -535,34 +550,86 @@ const Logbook = () => {
               </div>
             </div>
 
-            <div className="mt-12 grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
-              {summaryMetrics.map((metric) => (
-                <div
-                  key={metric.label}
-                  className="rounded-3xl border border-white/40 bg-white/40 p-5 shadow-lg backdrop-blur transition-transform duration-300 hover:-translate-y-1 hover:shadow-xl"
+            <div className="mt-12 space-y-8">
+              <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:gap-4">
+                <Button size="lg" className="rounded-full px-6" onClick={() => setShowAddFlightDialog(true)}>
+                  <Plus className="mr-2 h-5 w-5" />
+                  Add Flight
+                </Button>
+                <Button
+                  size="lg"
+                  variant="outline"
+                  className="rounded-full border-border/60 text-foreground hover:bg-white/30"
+                  onClick={() => setShowImportDialog(true)}
                 >
-                  <p className="text-[11px] uppercase tracking-[0.3em] text-muted-foreground">{metric.label}</p>
-                  <p className="mt-3 text-2xl font-semibold text-foreground">{metric.value}</p>
+                  <Upload className="mr-2 h-5 w-5" />
+                  Import CSV
+                </Button>
+                <Button
+                  size="lg"
+                  variant="outline"
+                  className="rounded-full border-destructive/70 text-destructive hover:bg-destructive/10"
+                  onClick={() => setShowClearAllDialog(true)}
+                >
+                  <Trash2 className="mr-2 h-5 w-5" />
+                  Clear All
+                </Button>
+              </div>
+
+              <div className="rounded-3xl border border-white/50 bg-white/45 shadow-2xl shadow-aviation-navy/20 backdrop-blur">
+                <div className="flex flex-wrap items-center justify-between gap-4 border-b border-white/40 px-6 py-5">
+                  <div>
+                    <p className="text-xs uppercase tracking-[0.3em] text-muted-foreground">Master Flight Log</p>
+                    <p className="text-sm text-muted-foreground">High-level totals across your entire logbook</p>
+                  </div>
+                  <p className="text-sm font-medium text-foreground/80">
+                    {flights.length} flights logged
+                  </p>
                 </div>
-              ))}
+                <div className="overflow-x-auto">
+                  <div className="flex min-w-max gap-3 px-6 py-4">
+                    {masterTotals.map((item) => (
+                      <div
+                        key={item.key}
+                        className="min-w-[160px] rounded-2xl border border-white/50 bg-background/70 px-4 py-3 shadow-sm"
+                      >
+                        <p className="text-[11px] uppercase tracking-[0.25em] text-muted-foreground">
+                          {item.label}
+                        </p>
+                        <p className="mt-2 text-lg font-semibold text-foreground">
+                          {formatMetric(item.value, item.type)}
+                        </p>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
         </section>
 
         <section className="relative -mt-10">
           <div className="container mx-auto px-6 pt-12 space-y-8">
-            <div className="rounded-3xl border border-border/60 bg-card/90 shadow-xl shadow-aviation-navy/15 backdrop-blur">
-              <div className="flex flex-wrap items-center justify-between gap-4 border-b border-border/60 px-6 py-5">
-                <div>
+            <div className="rounded-3xl border border-border/60 bg-card/95 shadow-xl shadow-aviation-navy/15 backdrop-blur">
+              <div className="flex flex-wrap items-start justify-between gap-4 border-b border-border/60 px-6 py-6">
+                <div className="space-y-1">
                   <p className="text-sm font-semibold text-foreground">Search &amp; Filter</p>
                   <p className="text-xs text-muted-foreground">Fine-tune your logbook view or prepare an export in seconds</p>
                 </div>
-                <div className="flex items-center gap-2">
-                  <Button variant="outline" size="sm" className="rounded-full">
+                <div className="flex flex-wrap items-center gap-2">
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    className="rounded-full border-white/40 bg-white/20 text-foreground hover:bg-white/40"
+                  >
                     <Filter className="mr-2 h-4 w-4" />
                     More Filters
                   </Button>
-                  <Button variant="outline" size="sm" className="rounded-full">
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    className="rounded-full border-white/40 bg-white/20 text-foreground hover:bg-white/40"
+                  >
                     <Download className="mr-2 h-4 w-4" />
                     Export
                   </Button>
@@ -570,73 +637,52 @@ const Logbook = () => {
               </div>
 
               <div className="px-6 py-6">
-                <div className="grid gap-5 lg:grid-cols-[minmax(0,1fr),220px] lg:items-end">
-                  <div>
-                    <Label htmlFor="search">Search flights</Label>
-                    <div className="relative mt-2">
-                      <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+                <div className="grid gap-6 lg:grid-cols-[minmax(0,1fr),280px]">
+                  <div className="rounded-3xl border border-border/50 bg-background/70 p-5 shadow-inner">
+                    <Label htmlFor="search" className="text-xs uppercase tracking-[0.3em] text-muted-foreground/80">
+                      Search flights
+                    </Label>
+                    <div className="relative mt-4">
+                      <Search className="absolute left-4 top-1/2 h-5 w-5 -translate-y-1/2 text-muted-foreground" />
                       <Input
                         id="search"
                         placeholder="Search by aircraft, route, or remarks..."
                         value={searchTerm}
                         onChange={(e) => setSearchTerm(e.target.value)}
-                        className="h-12 rounded-2xl border-border/50 bg-background/70 pl-10"
+                        className="h-14 rounded-2xl border-border/40 bg-card pl-12 text-base"
                       />
                     </div>
-                  </div>
-                  <div>
-                    <Label htmlFor="aircraft-filter">Aircraft type</Label>
-                    <Select>
-                      <SelectTrigger className="mt-2 h-12 rounded-2xl border-border/50 bg-background/70">
-                        <SelectValue placeholder="All aircraft" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="all">All Aircraft</SelectItem>
-                        <SelectItem value="c172">Cessna 172</SelectItem>
-                        <SelectItem value="pa28">Piper Cherokee</SelectItem>
-                        <SelectItem value="c152">Cessna 152</SelectItem>
-                      </SelectContent>
-                    </Select>
-                  </div>
-                </div>
-
-                <div className="mt-5 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
-                  <div className="rounded-2xl border border-border/50 bg-background/60 p-4">
-                    <p className="text-xs uppercase tracking-[0.25em] text-muted-foreground">Quick insight</p>
-                    <p className="mt-2 text-sm text-muted-foreground">{recentHours.toFixed(1)} hrs logged in the last 30 days</p>
-                  </div>
-                  <div className="rounded-2xl border border-border/50 bg-background/60 p-4">
-                    <p className="text-xs uppercase tracking-[0.25em] text-muted-foreground">Total approaches</p>
-                    <p className="mt-2 text-sm text-muted-foreground">{totalApproaches}</p>
-                  </div>
-                  <div className="rounded-2xl border border-border/50 bg-background/60 p-4">
-                    <p className="text-xs uppercase tracking-[0.25em] text-muted-foreground">Night landings</p>
-                    <p className="mt-2 text-sm text-muted-foreground">{totalNightFullStops}</p>
-                  </div>
-                  <div className="rounded-2xl border border-border/50 bg-background/60 p-4">
-                    <p className="text-xs uppercase tracking-[0.25em] text-muted-foreground">Dual given</p>
-                    <p className="mt-2 text-sm text-muted-foreground">{totalDualGiven} hrs</p>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            <div className="rounded-3xl border border-border/60 bg-card/95 shadow-xl shadow-aviation-navy/15 backdrop-blur px-2 py-4">
-              <div className="overflow-x-auto">
-                <div className="flex min-w-max gap-3 px-4">
-                  {masterTotals.map((item) => (
-                    <div
-                      key={item.key}
-                      className="min-w-[160px] rounded-2xl border border-border/60 bg-background/80 px-4 py-3 shadow-sm"
-                    >
-                      <p className="text-[11px] uppercase tracking-[0.25em] text-muted-foreground">
-                        {item.label}
-                      </p>
-                      <p className="mt-2 text-lg font-semibold text-foreground">
-                        {formatMetric(item.value, item.type)}
-                      </p>
+                    <div className="mt-6 grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
+                      {timeWindowInsights.map((insight) => (
+                        <div key={insight.key} className="rounded-2xl border border-border/40 bg-background/80 p-4">
+                          <p className="text-[10px] uppercase tracking-[0.4em] text-muted-foreground/80">{insight.label}</p>
+                          <p className="mt-2 text-base font-semibold text-foreground">{insight.value}</p>
+                        </div>
+                      ))}
                     </div>
-                  ))}
+                  </div>
+
+                  <div className="flex flex-col gap-6 rounded-3xl border border-border/50 bg-background/70 p-5 shadow-inner">
+                    <div>
+                      <Label htmlFor="aircraft-filter" className="text-xs uppercase tracking-[0.3em] text-muted-foreground/80">
+                        Aircraft type
+                      </Label>
+                      <Select>
+                        <SelectTrigger className="mt-3 h-12 rounded-2xl border-border/40 bg-card">
+                          <SelectValue placeholder="All aircraft" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="all">All Aircraft</SelectItem>
+                          <SelectItem value="c172">Cessna 172</SelectItem>
+                          <SelectItem value="pa28">Piper Cherokee</SelectItem>
+                          <SelectItem value="c152">Cessna 152</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    </div>
+                    <div className="rounded-2xl border border-dashed border-border/40 bg-background/60 p-4 text-center text-xs text-muted-foreground">
+                      Additional filters coming soon — use the search or aircraft selector above to narrow your logbook.
+                    </div>
+                  </div>
                 </div>
               </div>
             </div>

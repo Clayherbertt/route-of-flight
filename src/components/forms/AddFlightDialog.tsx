@@ -381,6 +381,20 @@ export const AddFlightDialog = ({ open, onOpenChange, onFlightAdded, editingFlig
         }
       }
 
+      // Helper function to remove time tracking columns if they don't exist
+      const removeTimeTrackingColumns = (data: typeof flightData) => {
+        const timeTrackingColumns = [
+          'time_out', 'time_off', 'time_on', 'time_in',
+          'on_duty', 'off_duty',
+          'hobbs_start', 'hobbs_end', 'tach_start', 'tach_end'
+        ];
+        const cleaned = { ...data };
+        timeTrackingColumns.forEach(col => {
+          delete (cleaned as Record<string, unknown>)[col];
+        });
+        return cleaned;
+      };
+
       let error;
       if (editingFlight) {
         // Update existing flight
@@ -389,16 +403,30 @@ export const AddFlightDialog = ({ open, onOpenChange, onFlightAdded, editingFlig
           .update(flightData)
           .eq('id', editingFlight.id);
 
-        if (result.error && result.error.message?.includes("day_landings_full_stop")) {
+        // Retry without columns that might not exist
+        if (result.error && (
+          result.error.message?.includes("day_landings_full_stop") ||
+          result.error.message?.includes("hobbs_end") ||
+          result.error.message?.includes("hobbs_start") ||
+          result.error.message?.includes("tach_start") ||
+          result.error.message?.includes("tach_end") ||
+          result.error.message?.includes("time_out") ||
+          result.error.message?.includes("time_off") ||
+          result.error.message?.includes("time_on") ||
+          result.error.message?.includes("time_in") ||
+          result.error.message?.includes("on_duty") ||
+          result.error.message?.includes("off_duty")
+        )) {
           const fallbackData = { ...flightData };
           delete (fallbackData as Record<string, unknown>).day_landings_full_stop;
           delete (fallbackData as Record<string, unknown>).night_landings_full_stop;
+          const cleanedData = removeTimeTrackingColumns(fallbackData);
           result = await supabase
             .from('flight_entries')
-            .update(fallbackData)
+            .update(cleanedData)
             .eq('id', editingFlight.id);
           if (!result.error) {
-            console.warn("[AddFlight] Retried update without full-stop landing columns due to schema mismatch.");
+            console.warn("[AddFlight] Retried update without missing columns due to schema mismatch.");
           }
         }
 
@@ -409,15 +437,29 @@ export const AddFlightDialog = ({ open, onOpenChange, onFlightAdded, editingFlig
           .from('flight_entries')
           .insert(flightData);
 
-        if (result.error && result.error.message?.includes("day_landings_full_stop")) {
+        // Retry without columns that might not exist
+        if (result.error && (
+          result.error.message?.includes("day_landings_full_stop") ||
+          result.error.message?.includes("hobbs_end") ||
+          result.error.message?.includes("hobbs_start") ||
+          result.error.message?.includes("tach_start") ||
+          result.error.message?.includes("tach_end") ||
+          result.error.message?.includes("time_out") ||
+          result.error.message?.includes("time_off") ||
+          result.error.message?.includes("time_on") ||
+          result.error.message?.includes("time_in") ||
+          result.error.message?.includes("on_duty") ||
+          result.error.message?.includes("off_duty")
+        )) {
           const fallbackData = { ...flightData };
           delete (fallbackData as Record<string, unknown>).day_landings_full_stop;
           delete (fallbackData as Record<string, unknown>).night_landings_full_stop;
+          const cleanedData = removeTimeTrackingColumns(fallbackData);
           result = await supabase
             .from('flight_entries')
-            .insert(fallbackData);
+            .insert(cleanedData);
           if (!result.error) {
-            console.warn("[AddFlight] Retried insert without full-stop landing columns due to schema mismatch.");
+            console.warn("[AddFlight] Retried insert without missing columns due to schema mismatch.");
           }
         }
 
