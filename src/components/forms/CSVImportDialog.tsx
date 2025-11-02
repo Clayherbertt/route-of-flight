@@ -36,6 +36,7 @@ type MinimalFlight = {
   actual_instrument: number | null;
   simulated_instrument: number | null;
   holds: number | null;
+  approaches: number | null;
   dual_given: number | null;
   dual_received: number | null;
 };
@@ -432,6 +433,13 @@ const mapRowToMinimalFlight = (row: Record<string, unknown>): FlightMappingResul
   const aircraftRaw = findField(row, AIRCRAFT_FIELD_KEYS);
   const departureRaw = findField(row, DEPARTURE_FIELD_KEYS);
   const arrivalRaw = findField(row, ARRIVAL_FIELD_KEYS);
+  const routeRaw = findField(row, [
+    "Route",
+    "Flight Route",
+    "Path",
+    "Flight Path",
+    "Route of Flight",
+  ]);
 
   const totalTimeRaw =
     findField(row, [
@@ -559,6 +567,28 @@ const mapRowToMinimalFlight = (row: Record<string, unknown>): FlightMappingResul
     "Holding",
   ]);
 
+  // ForeFlight CSV uses Approach1, Approach2, Approach3, Approach4, Approach5, Approach6 columns
+  // Each column contains format like "1;ILS OR LOC RWY 30C;30C;KIWA;;" where the first number is the count
+  const approach1Raw = findField(row, ["Approach1"]);
+  const approach2Raw = findField(row, ["Approach2"]);
+  const approach3Raw = findField(row, ["Approach3"]);
+  const approach4Raw = findField(row, ["Approach4"]);
+  const approach5Raw = findField(row, ["Approach5"]);
+  const approach6Raw = findField(row, ["Approach6"]);
+  
+  // Also check for single "Approaches" column (fallback for other CSV formats)
+  const approachesRaw =
+    findField(row, [
+      "Approaches",
+      "Approach",
+      "Instrument Approaches",
+      "Approach Count",
+      "Approaches Count",
+      "IFR Approaches",
+      "Instrument Approach",
+    ]) ??
+    findFieldByKeywords(row, ["approach"], ["time", "hours", "1", "2", "3", "4", "5", "6"]);
+
   const dualGivenRaw =
     findField(row, [
       "DualGiven",
@@ -666,6 +696,47 @@ const mapRowToMinimalFlight = (row: Record<string, unknown>): FlightMappingResul
     }
   }
 
+  // Helper function to extract approach count from ForeFlight format like "1;ILS OR LOC RWY 30C;30C;KIWA;;"
+  const parseApproachValue = (value: unknown): number => {
+    if (value === null || value === undefined) return 0;
+    if (typeof value === "number" && Number.isFinite(value)) {
+      return value;
+    }
+    if (typeof value === "string" && value.trim()) {
+      // Extract the first number (count) from format like "1;ILS OR LOC RWY 30C;30C;KIWA;;"
+      const match = value.trim().match(/^(\d+)/);
+      if (match) {
+        return Number.parseInt(match[1], 10);
+      }
+    }
+    return 0;
+  };
+
+  // Sum up approaches from Approach1-6 columns (ForeFlight format)
+  let approaches: number | null = null;
+  const approach1Count = parseApproachValue(approach1Raw);
+  const approach2Count = parseApproachValue(approach2Raw);
+  const approach3Count = parseApproachValue(approach3Raw);
+  const approach4Count = parseApproachValue(approach4Raw);
+  const approach5Count = parseApproachValue(approach5Raw);
+  const approach6Count = parseApproachValue(approach6Raw);
+  
+  const totalFromColumns = approach1Count + approach2Count + approach3Count + approach4Count + approach5Count + approach6Count;
+  
+  if (totalFromColumns > 0) {
+    approaches = totalFromColumns;
+  } else if (approachesRaw) {
+    // Fallback to single "Approaches" column if Approach1-6 not found
+    if (typeof approachesRaw === "number" && Number.isFinite(approachesRaw)) {
+      approaches = approachesRaw;
+    } else if (typeof approachesRaw === "string" && approachesRaw.trim()) {
+      const parsed = Number.parseInt(approachesRaw.trim(), 10);
+      if (!Number.isNaN(parsed)) {
+        approaches = parsed;
+      }
+    }
+  }
+
   return {
     status: "success",
     flight: {
@@ -683,6 +754,7 @@ const mapRowToMinimalFlight = (row: Record<string, unknown>): FlightMappingResul
       actual_instrument: actualInstrument,
       simulated_instrument: simulatedInstrument,
       holds,
+      approaches,
       dual_given: dualGiven,
       dual_received: dualReceived,
     },
@@ -800,6 +872,7 @@ export const CSVImportDialog = ({ open, onOpenChange, onImportComplete }: CSVImp
       const totalDualGiven = flights.reduce((sum, flight) => sum + (flight.dual_given ?? 0), 0);
       const totalDualReceived = flights.reduce((sum, flight) => sum + (flight.dual_received ?? 0), 0);
       const totalHolds = flights.reduce((sum, flight) => sum + (flight.holds ?? 0), 0);
+      const totalApproaches = flights.reduce((sum, flight) => sum + (flight.approaches ?? 0), 0);
 
       const missingTotalTime = flights.filter(
         (flight) => flight.total_time === null || flight.total_time === undefined || flight.total_time <= 0,
@@ -815,6 +888,7 @@ export const CSVImportDialog = ({ open, onOpenChange, onImportComplete }: CSVImp
         actualInstrument: flights.slice(0, 5).map((f) => f.actual_instrument),
         simulatedInstrument: flights.slice(0, 5).map((f) => f.simulated_instrument),
         holds: flights.slice(0, 5).map((f) => f.holds),
+        approaches: flights.slice(0, 5).map((f) => f.approaches),
         missingTotalTime,
       });
 
@@ -853,6 +927,7 @@ export const CSVImportDialog = ({ open, onOpenChange, onImportComplete }: CSVImp
         dual_given: flight.dual_given ?? 0,
         dual_received: flight.dual_received ?? 0,
         holds: flight.holds ?? 0,
+        approaches: String(flight.approaches ?? 0),
       }));
 
       const { error } = await supabase.from("flight_entries").insert(insertPayload);
@@ -876,6 +951,7 @@ export const CSVImportDialog = ({ open, onOpenChange, onImportComplete }: CSVImp
           totalDualGiven > 0 ? `${totalDualGiven.toFixed(2)} dual given` : null,
           totalDualReceived > 0 ? `${totalDualReceived.toFixed(2)} dual received` : null,
           totalHolds > 0 ? `${totalHolds} holds` : null,
+          totalApproaches > 0 ? `${totalApproaches} approaches` : null,
           ...inferenceMessages,
           skipped > 0 ? `skipped ${skipped} incomplete row${skipped === 1 ? "" : "s"}` : null,
         ]

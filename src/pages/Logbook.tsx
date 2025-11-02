@@ -261,8 +261,23 @@ const Logbook = () => {
     (sum, flight) => sum + (Number(flight.ground_training) || 0),
     0,
   );
+  // Helper function to parse approaches value (only numeric values, ignores text)
+  const parseApproaches = (value: string | null | undefined): number => {
+    if (!value) return 0;
+    const trimmed = String(value).trim();
+    if (!trimmed) return 0;
+    
+    // Only parse as integer, ignore text descriptions
+    const numeric = Number.parseInt(trimmed, 10);
+    if (!Number.isNaN(numeric) && numeric >= 0) {
+      return numeric;
+    }
+    
+    return 0;
+  };
+
   const totalApproaches = flights.reduce(
-    (sum, flight) => sum + (Number(flight.approaches) || 0),
+    (sum, flight) => sum + parseApproaches(flight.approaches),
     0,
   );
   const totalApproachCount = totalApproaches;

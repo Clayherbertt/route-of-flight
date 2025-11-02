@@ -55,7 +55,7 @@ const addFlightSchema = z.object({
   actual_instrument: z.number().min(0).optional().transform(val => val ?? 0),
   simulated_instrument: z.number().min(0).optional().transform(val => val ?? 0),
   holds: z.number().int().min(0).optional().transform(val => val ?? 0),
-  approaches: z.string().optional(),
+  approaches: z.number().int().min(0).optional().transform(val => val ?? 0),
   dual_given: z.number().min(0).optional().transform(val => val ?? 0),
   dual_received: z.number().min(0).optional().transform(val => val ?? 0),
   simulated_flight: z.number().min(0).optional().transform(val => val ?? 0),
@@ -235,7 +235,7 @@ export const AddFlightDialog = ({ open, onOpenChange, onFlightAdded, editingFlig
         actual_instrument: editingFlight.actual_instrument || 0,
         simulated_instrument: editingFlight.simulated_instrument || 0,
         holds: editingFlight.holds || 0,
-        approaches: editingFlight.approaches || "",
+        approaches: editingFlight.approaches ? Number(editingFlight.approaches) : 0,
         dual_given: editingFlight.dual_given || 0,
         dual_received: editingFlight.dual_received || 0,
         simulated_flight: editingFlight.simulated_flight || 0,
@@ -355,7 +355,7 @@ export const AddFlightDialog = ({ open, onOpenChange, onFlightAdded, editingFlig
         actual_instrument: values.actual_instrument,
         simulated_instrument: values.simulated_instrument,
         holds: values.holds,
-        approaches: values.approaches ?? '',
+        approaches: String(values.approaches ?? 0),
         dual_given: values.dual_given,
         dual_received: values.dual_received,
         simulated_flight: values.simulated_flight,
@@ -1187,7 +1187,15 @@ export const AddFlightDialog = ({ open, onOpenChange, onFlightAdded, editingFlig
                     <FormItem>
                       <FormLabel>Approaches</FormLabel>
                       <FormControl>
-                        <Input placeholder="ILS, VOR, etc." {...field} />
+                        <Input
+                          type="number"
+                          placeholder="0"
+                          value={field.value ?? ""}
+                          onChange={(e) => {
+                            const value = e.target.value;
+                            field.onChange(value === "" ? undefined : parseInt(value, 10) || 0);
+                          }}
+                        />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
