@@ -9,6 +9,7 @@ import Profile from "./pages/Profile";
 import SignIn from "./pages/SignIn";
 import Airlines from "./pages/Airlines";
 import Logbook from "./pages/Logbook";
+import Aircraft from "./pages/Aircraft";
 import Subscription from "./pages/Subscription";
 import SubscriptionSuccess from "./pages/SubscriptionSuccess";
 import Admin from "./pages/Admin";
@@ -33,6 +34,7 @@ const App = () => (
             <Route path="/signin" element={<SignIn />} />
             <Route path="/airlines" element={<Airlines />} />
             <Route path="/logbook" element={<Logbook />} />
+            <Route path="/aircraft" element={<Aircraft />} />
             <Route path="/subscription" element={<Subscription />} />
             <Route path="/subscription-success" element={<SubscriptionSuccess />} />
             <Route path="/admin" element={<Admin />} />

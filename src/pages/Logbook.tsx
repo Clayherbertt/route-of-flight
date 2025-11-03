@@ -74,6 +74,7 @@ const Logbook = () => {
   const [editingFlight, setEditingFlight] = useState<FlightEntry | null>(null);
   const [deletingFlight, setDeletingFlight] = useState<FlightEntry | null>(null);
   const [showClearAllDialog, setShowClearAllDialog] = useState(false);
+  const [aircraftMap, setAircraftMap] = useState<Map<string, { type_code: string | null; make: string; model: string }>>(new Map());
 
   const fetchFlights = useCallback(async () => {
     try {
@@ -108,6 +109,24 @@ const Logbook = () => {
       }
 
       setFlights(collected);
+
+      // Fetch aircraft data to get type information
+      const { data: aircraftData, error: aircraftError } = await supabase
+        .from("aircraft_logbook")
+        .select("aircraft_id, type_code, make, model")
+        .eq("user_id", user?.id);
+
+      if (!aircraftError && aircraftData) {
+        const map = new Map<string, { type_code: string | null; make: string; model: string }>();
+        for (const aircraft of aircraftData) {
+          map.set(aircraft.aircraft_id.toUpperCase(), {
+            type_code: aircraft.type_code,
+            make: aircraft.make,
+            model: aircraft.model,
+          });
+        }
+        setAircraftMap(map);
+      }
     } catch (error) {
       console.error('Error fetching flights:', error);
       toast({
@@ -118,7 +137,7 @@ const Logbook = () => {
     } finally {
       setIsLoadingFlights(false);
     }
-  }, [toast]);
+  }, [user, toast]);
 
   // Redirect to sign in if not authenticated
   useEffect(() => {
@@ -180,27 +199,38 @@ const Logbook = () => {
 
   const handleClearAllFlights = async () => {
     try {
-      const { error } = await supabase
+      // Delete all flight entries
+      const { error: flightsError } = await supabase
         .from('flight_entries')
         .delete()
         .eq('user_id', user?.id);
 
-      if (error) {
-        throw error;
+      if (flightsError) {
+        throw flightsError;
+      }
+
+      // Delete all aircraft associated with the user
+      const { error: aircraftError } = await supabase
+        .from('aircraft_logbook')
+        .delete()
+        .eq('user_id', user?.id);
+
+      if (aircraftError) {
+        throw aircraftError;
       }
 
       toast({
-        title: "All flights cleared",
-        description: "All flight entries have been successfully deleted.",
+        title: "All flights and aircraft cleared",
+        description: "All flight entries and aircraft have been successfully deleted.",
       });
 
       // Refresh the flights list
       fetchFlights();
     } catch (error) {
-      console.error('Error clearing flights:', error);
+      console.error('Error clearing flights and aircraft:', error);
       toast({
         title: "Error",
-        description: "Failed to clear flight entries. Please try again.",
+        description: "Failed to clear flight entries and aircraft. Please try again.",
         variant: "destructive",
       });
     } finally {
@@ -459,7 +489,17 @@ const Logbook = () => {
         <TableCell>
           <Badge variant="outline">{flight.aircraft_registration}</Badge>
         </TableCell>
-        <TableCell>{flight.aircraft_type}</TableCell>
+        <TableCell>
+          {(() => {
+            const aircraft = aircraftMap.get(flight.aircraft_registration.toUpperCase());
+            if (aircraft) {
+              // Prefer type_code, otherwise use "Make Model" format
+              return aircraft.type_code || `${aircraft.make} ${aircraft.model}`;
+            }
+            // Fallback to stored aircraft_type if no aircraft library entry found
+            return flight.aircraft_type;
+          })()}
+        </TableCell>
         <TableCell>{flight.departure_airport}</TableCell>
         <TableCell>{flight.arrival_airport}</TableCell>
         <TableCell>{flight.route || '-'}</TableCell>
@@ -833,10 +873,11 @@ const Logbook = () => {
           <AlertDialogHeader>
             <AlertDialogTitle>Clear All Flight Entries</AlertDialogTitle>
             <AlertDialogDescription>
-              Are you sure you want to delete ALL flight entries in your logbook? This action cannot be undone.
+              Are you sure you want to delete ALL flight entries and ALL aircraft in your logbook? This action cannot be undone.
               <div className="mt-2 p-2 bg-muted rounded text-sm">
                 <strong>Total flights to be deleted:</strong> {flights.length}<br />
-                <strong>Total flight time:</strong> {totalHours.toFixed(1)} hours
+                <strong>Total flight time:</strong> {totalHours.toFixed(1)} hours<br />
+                <strong>All aircraft will also be deleted.</strong>
               </div>
             </AlertDialogDescription>
           </AlertDialogHeader>

@@ -468,6 +468,40 @@ export const AddFlightDialog = ({ open, onOpenChange, onFlightAdded, editingFlig
 
       if (error) throw error;
 
+      // Create/update aircraft record after successful flight entry
+      try {
+        const aircraftRegistration = values.aircraft_registration.toUpperCase();
+        const { data: existingAircraft } = await supabase
+          .from("aircraft_logbook")
+          .select("id")
+          .eq("user_id", user.id)
+          .eq("aircraft_id", aircraftRegistration)
+          .single();
+
+        if (!existingAircraft) {
+          // Create new aircraft record with minimal data (can be updated later)
+          await supabase.from("aircraft_logbook").insert({
+            user_id: user.id,
+            equipment_type: "Aircraft",
+            aircraft_id: aircraftRegistration,
+            type_code: null,
+            category_class: "ASEL", // Default, can be updated manually
+            year: null,
+            make: values.aircraft_type.split(" ")[0] || "Unknown", // Try to extract make from type
+            model: values.aircraft_type || "Unknown",
+            gear_type: null,
+            engine_type: null,
+            complex: false,
+            taa: false,
+            high_performance: false,
+            pressurized: false,
+          });
+        }
+      } catch (aircraftError) {
+        // Log but don't fail the flight entry if aircraft creation fails
+        console.warn(`[AddFlight] Failed to create/update aircraft ${values.aircraft_registration}:`, aircraftError);
+      }
+
       toast({
         title: "Success",
         description: editingFlight ? "Flight entry updated successfully!" : "Flight entry added successfully!",

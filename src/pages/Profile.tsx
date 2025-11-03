@@ -188,6 +188,15 @@ export default function Profile() {
               <Button
                 variant="ghost"
                 className="w-full justify-start text-left"
+                onClick={() => navigate('/aircraft')}
+              >
+                <Plane className="mr-3 h-4 w-4" />
+                Aircraft
+              </Button>
+              
+              <Button
+                variant="ghost"
+                className="w-full justify-start text-left"
                 onClick={() => navigate('/subscription')}
               >
                 <Star className="mr-3 h-4 w-4" />

@@ -144,6 +144,253 @@ const looksLikeFlightsHeader = (line: string): boolean => {
   return hasDate && hasAircraft && (hasFrom || hasTo);
 };
 
+// Parse boolean values from CSV - "TRUE" means true, anything else is false
+const parseBooleanFromCSV = (value: unknown): boolean => {
+  if (value === null || value === undefined) return false;
+  if (typeof value === "string") {
+    const trimmed = value.trim();
+    if (!trimmed) return false; // Empty string is false
+    const upper = trimmed.toUpperCase();
+    return upper === "TRUE" || upper === "YES" || upper === "1";
+  }
+  if (typeof value === "boolean") return value;
+  if (typeof value === "number") return value !== 0;
+  return false;
+};
+
+// Map gear type from CSV to database-allowed values
+// Allowed: 'AM', 'FC', 'FT', 'FL', 'RC', 'RT', 'Skids', 'Skis'
+const mapGearType = (value: unknown): string | null => {
+  if (!value || typeof value !== "string") return null;
+  
+  const normalized = value.trim().toLowerCase().replace(/[_\s-]/g, "");
+  
+  // Direct matches
+  const directMap: Record<string, string> = {
+    "am": "AM",
+    "fc": "FC",
+    "ft": "FT",
+    "fl": "FL",
+    "rc": "RC",
+    "rt": "RT",
+    "skids": "Skids",
+    "skis": "Skis",
+  };
+  
+  if (directMap[normalized]) {
+    return directMap[normalized];
+  }
+  
+  // Pattern matching for common variations
+  if (normalized.includes("amphibian")) return "AM";
+  if (normalized.includes("fixed") && normalized.includes("tailwheel")) return "FC";
+  if (normalized.includes("fixed") && normalized.includes("tricycle")) return "FT";
+  if (normalized.includes("float")) return "FL";
+  if ((normalized.includes("retract") || normalized.includes("retractible")) && normalized.includes("tailwheel")) return "RC";
+  if ((normalized.includes("retract") || normalized.includes("retractible")) && normalized.includes("tricycle")) return "RT";
+  if (normalized.includes("skid")) return "Skids";
+  if (normalized.includes("ski") && !normalized.includes("skid")) return "Skis";
+  
+  return null;
+};
+
+// Map engine type from CSV to database-allowed values
+// Allowed: 'Diesel', 'Electric', 'Non-Powered', 'Piston', 'Radial', 'TurboFan', 'Turbojet', 'TurboProp', 'Turboshaft'
+const mapEngineType = (value: unknown): string | null => {
+  if (!value || typeof value !== "string") return null;
+  
+  const normalized = value.trim();
+  const lower = normalized.toLowerCase();
+  
+  // Direct matches (case-sensitive for exact matches)
+  const exactMatches: Record<string, string> = {
+    "Diesel": "Diesel",
+    "Electric": "Electric",
+    "Non-Powered": "Non-Powered",
+    "Piston": "Piston",
+    "Radial": "Radial",
+    "TurboFan": "TurboFan",
+    "Turbojet": "Turbojet",
+    "TurboProp": "TurboProp",
+    "Turboshaft": "Turboshaft",
+  };
+  
+  if (exactMatches[normalized]) {
+    return exactMatches[normalized];
+  }
+  
+  // Case-insensitive matching
+  if (lower === "diesel") return "Diesel";
+  if (lower === "electric") return "Electric";
+  if (lower === "non-powered" || lower === "nonpowered" || lower === "non powered") return "Non-Powered";
+  if (lower === "piston") return "Piston";
+  if (lower === "radial") return "Radial";
+  if (lower === "turbofan" || lower === "turbo-fan" || lower === "turbo fan") return "TurboFan";
+  if (lower === "turbojet" || lower === "turbo-jet" || lower === "turbo jet") return "Turbojet";
+  if (lower === "turboprop" || lower === "turbo-prop" || lower === "turbo prop") return "TurboProp";
+  if (lower === "turboshaft" || lower === "turbo-shaft" || lower === "turbo shaft") return "Turboshaft";
+  
+  return null;
+};
+
+// Extract aircraft data from the Aircraft Table section
+const extractAircraftDataFromCsv = (csvText: string): Map<string, {
+  aircraft_id: string;
+  type_code: string | null;
+  year: number | null;
+  make: string;
+  model: string;
+  gear_type: string | null;
+  engine_type: string | null;
+  equipment_type: string;
+  category_class: string;
+  complex: boolean;
+  taa: boolean;
+  high_performance: boolean;
+  pressurized: boolean;
+}> => {
+  const aircraftMap = new Map();
+  const text = csvText.replace(/\r\n?/g, "\n");
+  const lines = text.split("\n").map((line) => line.replace(/\uFEFF/g, ""));
+
+  // Find the Aircraft Table section
+  let aircraftSectionStart = -1;
+  let aircraftHeaderLine = -1;
+  
+  for (let i = 0; i < lines.length; i++) {
+    const line = lines[i].trim();
+    if (line.includes("Aircraft Table") || line.toLowerCase().includes("aircraftid")) {
+      aircraftSectionStart = i;
+      // Look for the header row (usually the next non-empty line)
+      for (let j = i + 1; j < lines.length && j < i + 5; j++) {
+        if (lines[j].trim() && lines[j].includes("AircraftID")) {
+          aircraftHeaderLine = j;
+          break;
+        }
+      }
+      break;
+    }
+  }
+
+  if (aircraftSectionStart === -1 || aircraftHeaderLine === -1) {
+    return aircraftMap;
+  }
+
+  // Parse the header row to find column indices
+  const headerLine = lines[aircraftHeaderLine];
+  const headers = headerLine.split(",").map((h) => h.trim());
+  
+  const aircraftIdIdx = headers.findIndex((h) => 
+    /^aircraftid$/i.test(h.replace(/\s+/g, ""))
+  );
+  const typeCodeIdx = headers.findIndex((h) => 
+    /^typecode$/i.test(h.replace(/\s+/g, ""))
+  );
+  const yearIdx = headers.findIndex((h) => 
+    /^year$/i.test(h.replace(/\s+/g, ""))
+  );
+  const makeIdx = headers.findIndex((h) => 
+    /^make$/i.test(h.replace(/\s+/g, ""))
+  );
+  const modelIdx = headers.findIndex((h) => 
+    /^model$/i.test(h.replace(/\s+/g, ""))
+  );
+  const gearTypeIdx = headers.findIndex((h) => 
+    /^geartype$/i.test(h.replace(/\s+/g, ""))
+  );
+  const engineTypeIdx = headers.findIndex((h) => 
+    /^enginetype$/i.test(h.replace(/\s+/g, ""))
+  );
+  const equipTypeIdx = headers.findIndex((h) => 
+    /^equiptype\(faa\)$/i.test(h.replace(/\s+/g, ""))
+  );
+  const aircraftClassIdx = headers.findIndex((h) => 
+    /^aircraftclass\(faa\)$/i.test(h.replace(/\s+/g, ""))
+  );
+  const complexIdx = headers.findIndex((h) => 
+    /^complexaircraft\(faa\)$/i.test(h.replace(/\s+/g, ""))
+  );
+  const taaIdx = headers.findIndex((h) => 
+    /^taa\(faa\)$/i.test(h.replace(/\s+/g, ""))
+  );
+  const highPerfIdx = headers.findIndex((h) => 
+    /^highperformance\(faa\)$/i.test(h.replace(/\s+/g, ""))
+  );
+  const pressurizedIdx = headers.findIndex((h) => 
+    /^pressurized\(faa\)$/i.test(h.replace(/\s+/g, ""))
+  );
+
+  // Parse aircraft rows (stop at first flight entry or empty section)
+  for (let i = aircraftHeaderLine + 1; i < lines.length; i++) {
+    const line = lines[i].trim();
+    
+    // Stop if we hit the flight entries section
+    if (line.includes("Date") && line.includes("AircraftID") && line.includes("From")) {
+      break;
+    }
+    
+    if (!line || !line.includes(",")) continue;
+    
+    const columns = line.split(",");
+    if (aircraftIdIdx === -1 || columns.length <= aircraftIdIdx) continue;
+    
+    const aircraftId = columns[aircraftIdIdx]?.trim();
+    if (!aircraftId || aircraftId === "AircraftID") continue; // Skip header row if duplicated
+    
+    // Map FAA aircraft class to our category_class format
+    const aircraftClassRaw = aircraftClassIdx >= 0 ? columns[aircraftClassIdx]?.trim() : "";
+    let categoryClass = "ASEL"; // Default
+    if (aircraftClassRaw) {
+      const normalized = aircraftClassRaw.toLowerCase();
+      if (normalized.includes("single") && normalized.includes("land")) categoryClass = "ASEL";
+      else if (normalized.includes("multi") && normalized.includes("land")) categoryClass = "AMEL";
+      else if (normalized.includes("single") && normalized.includes("sea")) categoryClass = "ASES";
+      else if (normalized.includes("multi") && normalized.includes("sea")) categoryClass = "AMES";
+      // Keep the raw value as fallback if it matches our enum
+      else if (["ASEL", "AMEL", "ASES", "AMES", "RH", "RG", "Glider", "LA", "LB", "PLIFT", "PL", "PS", "WL", "WS"].includes(aircraftClassRaw.toUpperCase())) {
+        categoryClass = aircraftClassRaw.toUpperCase();
+      }
+    }
+
+    const year = yearIdx >= 0 && columns[yearIdx]?.trim() 
+      ? Number.parseInt(columns[yearIdx].trim(), 10) || null 
+      : null;
+
+    aircraftMap.set(aircraftId.toUpperCase(), {
+      aircraft_id: aircraftId.toUpperCase(),
+      type_code: typeCodeIdx >= 0 && columns[typeCodeIdx]?.trim() ? columns[typeCodeIdx].trim() : null,
+      year: Number.isNaN(year) ? null : year,
+      // Make and model are required (NOT NULL), so use aircraft_id as fallback if empty
+      make: makeIdx >= 0 && columns[makeIdx]?.trim() 
+        ? columns[makeIdx].trim() 
+        : (aircraftId || "Unknown"),
+      model: modelIdx >= 0 && columns[modelIdx]?.trim() 
+        ? columns[modelIdx].trim() 
+        : (aircraftId || "Unknown"),
+      gear_type: gearTypeIdx >= 0 ? mapGearType(columns[gearTypeIdx]) : null,
+      engine_type: engineTypeIdx >= 0 ? mapEngineType(columns[engineTypeIdx]) : null,
+      // Map equipment type - normalize to match database enum values
+      equipment_type: (() => {
+        const equipTypeRaw = equipTypeIdx >= 0 && columns[equipTypeIdx]?.trim() 
+          ? columns[equipTypeIdx].trim().toLowerCase() 
+          : "";
+        if (equipTypeRaw === "aatd") return "AATD";
+        if (equipTypeRaw === "batd") return "BATD";
+        if (equipTypeRaw === "ftd") return "FTD";
+        if (equipTypeRaw === "aircraft" || equipTypeRaw === "") return "Aircraft";
+        return "Aircraft"; // Default fallback
+      })(),
+      category_class: categoryClass,
+      complex: parseBooleanFromCSV(complexIdx >= 0 ? columns[complexIdx] : null),
+      taa: parseBooleanFromCSV(taaIdx >= 0 ? columns[taaIdx] : null),
+      high_performance: parseBooleanFromCSV(highPerfIdx >= 0 ? columns[highPerfIdx] : null),
+      pressurized: parseBooleanFromCSV(pressurizedIdx >= 0 ? columns[pressurizedIdx] : null),
+    });
+  }
+
+  return aircraftMap;
+};
+
 const sliceFlightSection = (lines: string[]): string | null => {
   const normalized = lines.map((line) =>
     line.replace(/"/g, "").replace(/,/g, "").trim().toLowerCase(),
@@ -1046,6 +1293,103 @@ export const CSVImportDialog = ({ open, onOpenChange, onImportComplete }: CSVImp
         inferenceMessages.push(
           `filled missing aircraft on ${inferenceCounts.aircraft} flight${inferenceCounts.aircraft === 1 ? "" : "s"}`,
         );
+      }
+
+      // Extract aircraft data from the Aircraft Table section in CSV
+      const aircraftDataMap = extractAircraftDataFromCsv(text);
+
+      // First, create/update aircraft records for all unique aircraft in the import
+      const uniqueAircraft = new Map<string, { registration: string; type: string }>();
+      for (const flight of flights) {
+        const key = flight.aircraft_registration.toUpperCase();
+        if (!uniqueAircraft.has(key)) {
+          uniqueAircraft.set(key, {
+            registration: flight.aircraft_registration.toUpperCase(),
+            type: flight.aircraft_type,
+          });
+        }
+      }
+
+      // Upsert aircraft records (create if doesn't exist, update if it does)
+      for (const [_, aircraft] of uniqueAircraft) {
+        try {
+          // Check if aircraft already exists
+          const { data: existingAircraft } = await supabase
+            .from("aircraft_logbook")
+            .select("id")
+            .eq("user_id", user.id)
+            .eq("aircraft_id", aircraft.registration)
+            .single();
+
+          // Get aircraft data from CSV if available, otherwise use defaults
+          const csvAircraftData = aircraftDataMap.get(aircraft.registration);
+          
+          if (!existingAircraft) {
+            // Create new aircraft record
+            const aircraftPayload = csvAircraftData ? {
+              user_id: user.id,
+              equipment_type: csvAircraftData.equipment_type,
+              aircraft_id: aircraft.registration,
+              type_code: csvAircraftData.type_code,
+              category_class: csvAircraftData.category_class,
+              year: csvAircraftData.year,
+              make: csvAircraftData.make,
+              model: csvAircraftData.model,
+              gear_type: csvAircraftData.gear_type,
+              engine_type: csvAircraftData.engine_type,
+              complex: csvAircraftData.complex,
+              taa: csvAircraftData.taa,
+              high_performance: csvAircraftData.high_performance,
+              pressurized: csvAircraftData.pressurized,
+            } : {
+              // Fallback to minimal data if not in Aircraft Table
+              user_id: user.id,
+              equipment_type: "Aircraft",
+              aircraft_id: aircraft.registration,
+              type_code: null,
+              category_class: "ASEL",
+              year: null,
+              // Make and model are required (NOT NULL), so provide defaults
+              // Try to parse from aircraft type, or use registration as fallback
+              make: aircraft.type && aircraft.type.trim() 
+                ? (aircraft.type.split(" ")[0] || aircraft.registration)
+                : aircraft.registration,
+              model: aircraft.type && aircraft.type.trim() 
+                ? aircraft.type 
+                : aircraft.registration,
+              gear_type: null,
+              engine_type: null,
+              complex: false,
+              taa: false,
+              high_performance: false,
+              pressurized: false,
+            };
+
+            await supabase.from("aircraft_logbook").insert(aircraftPayload);
+          } else if (csvAircraftData) {
+            // Update existing aircraft with CSV data if available
+            await supabase
+              .from("aircraft_logbook")
+              .update({
+                type_code: csvAircraftData.type_code,
+                year: csvAircraftData.year,
+                make: csvAircraftData.make,
+                model: csvAircraftData.model,
+                gear_type: csvAircraftData.gear_type,
+                engine_type: csvAircraftData.engine_type,
+                equipment_type: csvAircraftData.equipment_type,
+                category_class: csvAircraftData.category_class,
+                complex: csvAircraftData.complex,
+                taa: csvAircraftData.taa,
+                high_performance: csvAircraftData.high_performance,
+                pressurized: csvAircraftData.pressurized,
+              })
+              .eq("id", existingAircraft.id);
+          }
+        } catch (error) {
+          // Log but don't fail the import if aircraft creation fails
+          console.warn(`[CSV Import] Failed to create/update aircraft ${aircraft.registration}:`, error);
+        }
       }
 
       const insertPayload = flights.map((flight) => ({
