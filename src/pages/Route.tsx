@@ -128,6 +128,109 @@ export default function RouteBuilder() {
       navigate('/signin');
     }
   }, [user, authLoading, navigate]);
+
+  // Fetch flight log data for progress tracking
+  useEffect(() => {
+    if (!user) return;
+
+    const fetchFlightLogData = async () => {
+      try {
+        setLoadingFlightLog(true);
+        const pageSize = 1000;
+        let from = 0;
+        let collected: any[] = [];
+
+        while (true) {
+          const { data, error } = await supabase
+            .from('flight_entries')
+            .select('*')
+            .eq('user_id', user.id)
+            .order('date', { ascending: false })
+            .order('created_at', { ascending: false })
+            .range(from, from + pageSize - 1);
+
+          if (error) throw error;
+
+          if (!data || data.length === 0) {
+            break;
+          }
+
+          collected = [...collected, ...data];
+
+          if (data.length < pageSize) {
+            break;
+          }
+
+          from += pageSize;
+        }
+
+        // Calculate totals
+        const totals = collected.reduce((acc, flight) => {
+          const nightTime = Number(flight.night_time) || 0;
+          const crossCountryTime = Number(flight.cross_country_time) || 0;
+          const dualReceived = Number(flight.dual_received) || 0;
+          const simulatedInstrumentValue = Number(flight.simulated_instrument) || 0;
+          
+          // Calculate night dual received: sum all dual_received hours for flights that also have night time
+          // This counts all dual instruction received during flights that include night time
+          const nightDualReceived = (nightTime > 0 && dualReceived > 0) 
+            ? dualReceived // Count all dual received hours for flights with night time
+            : 0;
+
+          // Calculate cross-country dual received: sum all dual_received hours for flights that also have cross-country time
+          // This counts all dual instruction received during flights that include cross-country time
+          const crossCountryDualReceived = (crossCountryTime > 0 && dualReceived > 0) 
+            ? dualReceived // Count all dual received hours for flights with cross-country time
+            : 0;
+
+          return {
+            totalHours: acc.totalHours + (Number(flight.total_time) || 0),
+            picHours: acc.picHours + (Number(flight.pic_time) || 0),
+            nightHours: acc.nightHours + nightTime,
+            crossCountryHours: acc.crossCountryHours + crossCountryTime,
+            instrumentHours: acc.instrumentHours + (Number(flight.instrument_time) || 0),
+            simulatedInstrument: acc.simulatedInstrument + simulatedInstrumentValue,
+            soloHours: acc.soloHours + (Number(flight.solo_time) || 0),
+            sicHours: acc.sicHours + (Number(flight.sic_time) || 0),
+            dualReceived: acc.dualReceived + dualReceived,
+            dualGiven: acc.dualGiven + (Number(flight.dual_given) || 0),
+            nightDualReceived: acc.nightDualReceived + nightDualReceived,
+            crossCountryDualReceived: acc.crossCountryDualReceived + crossCountryDualReceived,
+          };
+        }, {
+          totalHours: 0,
+          picHours: 0,
+          nightHours: 0,
+          crossCountryHours: 0,
+          instrumentHours: 0,
+          simulatedInstrument: 0,
+          soloHours: 0,
+          sicHours: 0,
+          dualReceived: 0,
+          dualGiven: 0,
+          nightDualReceived: 0,
+          crossCountryDualReceived: 0,
+        });
+
+        // Debug: Log simulated instrument calculation
+        console.log('🔍 Route.tsx - Simulated Instrument Calculation:');
+        console.log(`  Total flights fetched: ${collected.length}`);
+        console.log(`  Total simulated instrument hours: ${totals.simulatedInstrument}`);
+        console.log(`  Sample flights with sim instrument:`, collected
+          .filter(f => (Number(f.simulated_instrument) || 0) > 0)
+          .slice(0, 5)
+          .map(f => ({ date: f.date, simulated_instrument: f.simulated_instrument })));
+
+        setFlightLogData(totals);
+      } catch (error) {
+        console.error('Error fetching flight log data:', error);
+      } finally {
+        setLoadingFlightLog(false);
+      }
+    };
+
+    fetchFlightLogData();
+  }, [user]);
   const [studentRoute, setStudentRoute] = useState<StudentRoute[]>([]);
   const [phases, setPhases] = useState<RoutePhase[]>(ROUTE_PHASES);
   const [activePhase, setActivePhase] = useState("initial-tasks");
@@ -135,8 +238,35 @@ export default function RouteBuilder() {
   const [showWizard, setShowWizard] = useState(false);
   const [hasCompletedWizard, setHasCompletedWizard] = useState(false);
   const [expandedSteps, setExpandedSteps] = useState<Set<string>>(new Set());
-  const [expandedTasks, setExpandedTasks] = useState<Set<string>>(new Set());
   const [hasCheckedForExistingRoute, setHasCheckedForExistingRoute] = useState(false);
+  const [flightLogData, setFlightLogData] = useState<{
+    totalHours: number;
+    picHours: number;
+    nightHours: number;
+    crossCountryHours: number;
+    instrumentHours: number;
+    simulatedInstrument: number;
+    soloHours: number;
+    sicHours: number;
+    dualReceived: number;
+    dualGiven: number;
+    nightDualReceived: number; // Night hours where dual received > 0
+    crossCountryDualReceived: number; // Cross-country hours where dual received > 0
+  }>({
+    totalHours: 0,
+    picHours: 0,
+    nightHours: 0,
+    crossCountryHours: 0,
+    instrumentHours: 0,
+    simulatedInstrument: 0,
+    soloHours: 0,
+    sicHours: 0,
+    dualReceived: 0,
+    dualGiven: 0,
+    nightDualReceived: 0,
+    crossCountryDualReceived: 0,
+  });
+  const [loadingFlightLog, setLoadingFlightLog] = useState(true);
 
   // Load existing user route on component mount
   useEffect(() => {
@@ -492,17 +622,108 @@ const formatHtmlContent = (html: string) => {
     return (completedTasks / fullStep.details.length) * 100;
   };
 
-  const toggleTaskExpansion = (taskId: string) => {
-    setExpandedTasks(prev => {
-      const newSet = new Set(prev);
-      if (newSet.has(taskId)) {
-        newSet.delete(taskId);
+  // Parse requirement from task title (e.g., "40 hours total time" -> { hours: 40, type: "totalHours" })
+  const parseTaskRequirement = (title: string): { hours: number; type: string | null } | null => {
+    const hourMatch = title.match(/(\d+(?:\.\d+)?)\s*hours?\s+(?:of\s+)?(total\s+time|pic|night|cross\s+country|instrument|solo|sic|flight\s+training|simulated\s+instrument|dual|instruction|instructor)?/i);
+    if (!hourMatch) return null;
+
+    const hours = parseFloat(hourMatch[1]);
+    const typeText = hourMatch[2]?.toLowerCase() || '';
+    const titleLower = title.toLowerCase();
+
+    let type: string | null = null;
+    
+    // Check for cross-country + dual training (most specific combination after night+dual)
+    if (titleLower.includes('cross country') || titleLower.includes('cross-country')) {
+      if (titleLower.includes('flight training') || titleLower.includes('instructor') || titleLower.includes('dual') || titleLower.includes('dual received')) {
+        type = 'crossCountryDualReceived';
       } else {
-        newSet.add(taskId);
+        type = 'crossCountryHours';
       }
-      return newSet;
-    });
+    }
+    // Check for night + dual training (most specific combination)
+    else if (titleLower.includes('night') && (titleLower.includes('flight training') || titleLower.includes('instructor') || titleLower.includes('dual'))) {
+      type = 'nightDualReceived';
+    } else if (titleLower.includes('with an instructor') || 
+        titleLower.includes('with instructor') || 
+        titleLower.includes('dual instruction') ||
+        titleLower.includes('dual received') ||
+        (titleLower.includes('flight training') && (titleLower.includes('instructor') || titleLower.includes('dual')))) {
+      type = 'dualReceived';
+    } else if (titleLower.includes('dual given') || titleLower.includes('instruction given')) {
+      type = 'dualGiven';
+    } else if (typeText.includes('total time') || (typeText === '' && titleLower.includes('total time'))) {
+      type = 'totalHours';
+    } else if (typeText.includes('pic')) {
+      type = 'picHours';
+    } else if (typeText.includes('night')) {
+      type = 'nightHours';
+    } else if (titleLower.includes('simulated instrument') || (typeText.includes('simulated') && typeText.includes('instrument'))) {
+      type = 'simulatedInstrument';
+    } else if (typeText.includes('instrument') && !typeText.includes('simulated')) {
+      type = 'instrumentHours';
+    } else if (typeText.includes('solo')) {
+      type = 'soloHours';
+    } else if (typeText.includes('sic')) {
+      type = 'sicHours';
+    } else if (typeText.includes('flight training') || typeText.includes('flight')) {
+      type = 'totalHours'; // Default to total time for generic flight training
+    }
+
+    return { hours, type };
   };
+
+  // Check if task requirement is met based on flight log
+  const isTaskRequirementMet = (detail: any): boolean => {
+    const requirement = parseTaskRequirement(detail.title);
+    if (!requirement || !requirement.type) return false;
+
+    const currentHours = flightLogData[requirement.type as keyof typeof flightLogData] || 0;
+    return currentHours >= requirement.hours;
+  };
+
+  // Get progress for a task requirement
+  const getTaskProgress = (detail: any): { current: number; required: number; percentage: number } => {
+    const requirement = parseTaskRequirement(detail.title);
+    if (!requirement || !requirement.type) {
+      return { current: 0, required: 0, percentage: 0 };
+    }
+
+    const currentHours = flightLogData[requirement.type as keyof typeof flightLogData] || 0;
+    const percentage = Math.min((currentHours / requirement.hours) * 100, 100);
+
+    return {
+      current: currentHours,
+      required: requirement.hours,
+      percentage,
+    };
+  };
+
+  // Auto-check tasks when requirements are met
+  useEffect(() => {
+    if (loadingFlightLog || !user || studentRoute.length === 0 || routeSteps.length === 0) return;
+
+    const checkAndUpdate = async () => {
+      for (const step of studentRoute) {
+        const fullStep = routeSteps.find(rs => rs.id === step.stepId);
+        if (!fullStep) continue;
+
+        for (const detail of fullStep.details) {
+          const taskId = detail.id || detail.title;
+          const isCurrentlyChecked = step.taskProgress[taskId] || false;
+          const isRequirementMet = isTaskRequirementMet(detail);
+
+          // Auto-check if requirement is met and not already checked
+          if (isRequirementMet && !isCurrentlyChecked) {
+            await toggleTaskCompletion(step.id, taskId, true);
+          }
+        }
+      }
+    };
+
+    checkAndUpdate();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [flightLogData.totalHours, flightLogData.picHours, flightLogData.nightHours, flightLogData.crossCountryHours, flightLogData.instrumentHours, flightLogData.simulatedInstrument, flightLogData.dualReceived, flightLogData.dualGiven, flightLogData.nightDualReceived, flightLogData.crossCountryDualReceived, loadingFlightLog]);
 
   const toggleStepExpansion = (stepId: string) => {
     setExpandedSteps(prev => {
@@ -572,247 +793,303 @@ const formatHtmlContent = (html: string) => {
           )}
         </div>
 
-        {/* Show simple card layout when route has steps */}
+        {/* Modern Route Display */}
         {studentRoute.length > 0 && (
-          <div className="max-w-6xl mx-auto">
-            <div className="space-y-6">
+          <div className="max-w-5xl mx-auto">
+            <div className="space-y-4">
               {studentRoute.map((step, index) => {
                 const fullStep = routeSteps.find(rs => rs.id === step.stepId);
                 if (!fullStep) return null;
 
                 const isExpanded = expandedSteps.has(step.id);
                 const stepProgress = getStepProgress(step, fullStep);
+                const completedTasks = fullStep.details.filter((detail: any) => 
+                  step.taskProgress[detail.id || detail.title] || false
+                ).length;
+                const totalTasks = fullStep.details.length;
 
                 return (
-                  <div key={step.id} className="relative">
-                    <Card className="border border-border/50 shadow-sm hover:shadow-md transition-shadow">
-                      <CardContent className="p-6">
-                        <div className="flex items-center justify-between">
-                          <div className="flex-1">
-                            <h3 className="text-lg font-semibold text-foreground mb-1">
-                              {step.title}
-                            </h3>
-                            <p className="text-sm text-muted-foreground">
-                              {fullStep.description?.replace(/<[^>]*>/g, '')}
-                            </p>
-                          </div>
-                          <div className="flex items-center gap-4 ml-6">
-                            <CircularProgress 
-                              progress={stepProgress}
-                              size={48}
-                              strokeWidth={4}
-                            />
-                            <Button 
-                              variant="outline" 
-                              size="sm"
-                              onClick={() => toggleStepExpansion(step.id)}
+                  <div key={step.id} className="relative group">
+                    {/* Main Step Card */}
+                    <Card className={`border-2 transition-all duration-300 hover:shadow-lg ${
+                      isExpanded 
+                        ? 'border-primary/50 shadow-lg bg-gradient-to-br from-primary/5 to-transparent' 
+                        : 'border-border/50 hover:border-primary/30'
+                    } ${stepProgress === 100 ? 'ring-2 ring-green-500/20' : ''}`}>
+                      <CardContent className="p-0">
+                        {/* Step Header */}
+                        <div 
+                          className="p-6 cursor-pointer"
+                          onClick={() => toggleStepExpansion(step.id)}
+                        >
+                          <div className="flex items-start justify-between gap-4">
+                            <div className="flex items-start gap-4 flex-1">
+                              {/* Step Number Badge */}
+                              <div className="flex-shrink-0">
+                                <div className={`w-12 h-12 rounded-xl flex items-center justify-center font-bold text-lg transition-all ${
+                                  stepProgress === 100
+                                    ? 'bg-green-500 text-white'
+                                    : stepProgress > 0
+                                    ? 'bg-primary/10 text-primary'
+                                    : 'bg-muted text-muted-foreground'
+                                }`}>
+                                  {stepProgress === 100 ? (
+                                    <Check className="h-6 w-6" />
+                                  ) : (
+                                    index + 1
+                                  )}
+                                </div>
+                              </div>
+
+                              {/* Step Info */}
+                              <div className="flex-1 min-w-0">
+                                <div className="flex items-center gap-3 mb-2">
+                                  <h3 className={`text-xl font-bold transition-colors ${
+                                    stepProgress === 100 ? 'text-green-600 dark:text-green-400' : 'text-foreground'
+                                  }`}>
+                                    {step.title}
+                                  </h3>
+                                  {stepProgress === 100 && (
+                                    <Badge className="bg-green-500 hover:bg-green-600">
+                                      <Check className="h-3 w-3 mr-1" />
+                                      Complete
+                                    </Badge>
+                                  )}
+                                </div>
+                                <p className="text-sm text-muted-foreground mb-3 line-clamp-2">
+                                  {fullStep.description?.replace(/<[^>]*>/g, '').substring(0, 150)}
+                                  {fullStep.description && fullStep.description.length > 150 && '...'}
+                                </p>
+                                
+                                {/* Progress Bar */}
+                                <div className="space-y-2">
+                                  <div className="flex items-center justify-between text-xs">
+                                    <span className="text-muted-foreground">
+                                      {completedTasks} of {totalTasks} tasks completed
+                                    </span>
+                                    <span className="font-medium text-foreground">
+                                      {Math.round(stepProgress)}%
+                                    </span>
+                                  </div>
+                                  <Progress 
+                                    value={stepProgress} 
+                                    className="h-2"
+                                  />
+                                </div>
+                              </div>
+                            </div>
+
+                            {/* Expand/Collapse Button */}
+                            <Button
+                              variant="ghost"
+                              size="icon"
+                              className="flex-shrink-0 h-10 w-10 rounded-lg hover:bg-primary/10"
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                toggleStepExpansion(step.id);
+                              }}
                             >
-                              {isExpanded ? 'Collapse' : 'Expand'}
+                              {isExpanded ? (
+                                <ChevronDown className="h-5 w-5" />
+                              ) : (
+                                <ChevronRight className="h-5 w-5" />
+                              )}
                             </Button>
                           </div>
                         </div>
 
                         {/* Expandable Content */}
                         {isExpanded && (
-                          <div className="mt-6 border-t pt-6">
-                            {/* Show main step description if it exists and has content */}
-                            {fullStep.description && fullStep.description.trim() && (
-                              <div className="mb-6">
-                                <h4 className="font-semibold mb-3 text-lg">Overview</h4>
-                                <div className="prose prose-sm max-w-none">
-                                  {formatHtmlContent(fullStep.description)}
+                          <div className="border-t bg-muted/30">
+                            <div className="p-6 space-y-6">
+                              {/* Overview Section */}
+                              {fullStep.description && fullStep.description.trim() && (
+                                <div className="bg-card rounded-lg p-4 border border-border/50">
+                                  <h4 className="font-semibold mb-3 text-base flex items-center gap-2">
+                                    <Compass className="h-4 w-4 text-primary" />
+                                    Overview
+                                  </h4>
+                                  <div className="prose prose-sm max-w-none text-foreground">
+                                    {formatHtmlContent(fullStep.description)}
+                                  </div>
                                 </div>
-                              </div>
-                            )}
-                            
-                            <h4 className="font-semibold mb-4 text-lg">Detailed Information ({fullStep.details.length})</h4>
-                            <div className="space-y-6">
-                              {fullStep.details
-                                .sort((a, b) => {
-                                  // First sort by task type (flight first, then ground)
-                                  if (a.taskType !== b.taskType) {
-                                    if (a.taskType === 'flight') return -1;
-                                    if (b.taskType === 'flight') return 1;
-                                    return 0;
-                                  }
-                                  // Then sort by order number within the same task type
-                                  return (a.orderNumber || 0) - (b.orderNumber || 0);
-                                })
-                                .map((detail, detailIndex) => {
-                                const isCompleted = step.taskProgress[detail.id || detail.title] || false;
-                                
-                                // Debug logging
-                                console.log(`📝 Detail "${detail.title}":`, {
-                                  id: detail.id,
-                                  title: detail.title,
-                                  descriptionLength: detail.description?.length || 0,
-                                  descriptionPreview: detail.description?.substring(0, 100) + '...',
-                                  taskType: detail.taskType,
-                                  mandatory: detail.mandatory
-                                });
-                                
-                                 return (
-                                   <div key={detail.id || detailIndex} className={`border rounded-lg transition-all duration-300 ${
-                                     isCompleted ? 'bg-muted/20 opacity-75 border-muted' : 'bg-card border-border shadow-sm'
-                                   }`}>
-                                     {/* Task Header */}
-                                     <div className="flex items-start space-x-3 p-4 border-b border-border/50">
-                                          <Checkbox
-                                            id={`task-${detail.id || detailIndex}`}
-                                            checked={isCompleted}
-                                            onCheckedChange={(checked) => toggleTaskCompletion(step.id, detail.id || detail.title, !!checked)}
-                                            className="mt-1"
-                                          />
-                                       <div className="flex-1 min-w-0">
-                                         <div className="flex items-center justify-between gap-3">
-                                           <label 
-                                             htmlFor={`task-${detail.id || detailIndex}`}
-                                             className={`font-semibold cursor-pointer transition-all duration-300 text-lg ${
-                                               isCompleted ? 'line-through text-muted-foreground' : 'text-foreground'
-                                             }`}
-                                           >
-                                             {detail.title}
-                                           </label>
-                                            <div className="flex gap-2 flex-shrink-0">
-                                              {/* Flight Hours Dropdown */}
-                                              {(detail.flightHours || step.category === 'Flight Instructing') && (
-                                                <Popover>
-                                                  <PopoverTrigger asChild>
-                                                    <Button variant="outline" size="sm" className="h-6 text-xs px-2 cursor-pointer">
-                                                      {detail.flightHours || 0}h
-                                                    </Button>
-                                                  </PopoverTrigger>
-                                                  <PopoverContent className="w-64 p-3 bg-background border z-50">
-                                                    <div className="space-y-3">
-                                                      <Label className="text-sm font-medium">Flight Hours</Label>
-                                                      <Input
-                                                        type="number"
-                                                        placeholder="Enter hours"
-                                                        value={detail.flightHours || ''}
-                                                        onChange={(e) => {
-                                                          const hours = parseFloat(e.target.value) || 0
-                                                          updateTaskDetails(step.id!, detail.id || detail.title, { flightHours: hours })
-                                                        }}
-                                                        className="h-8"
-                                                      />
-                                                      {step.category === 'Flight Instructing' && (
-                                                        <>
-                                                          <Label className="text-sm font-medium">Hour Type</Label>
-                                                          <Select 
-                                                            value={(detail as any).hourType || 'ATP'} 
-                                                            onValueChange={(value) => updateTaskDetails(step.id!, detail.id || detail.title, { 
-                                                              hourType: value as 'ATP' | 'R-ATP Bachelors Degree' | 'R-ATP Associated Degree' 
-                                                            })}
-                                                          >
-                                                            <SelectTrigger className="h-8">
-                                                              <SelectValue />
-                                                            </SelectTrigger>
-                                                            <SelectContent className="bg-background border z-50">
-                                                              <SelectItem value="ATP">ATP</SelectItem>
-                                                              <SelectItem value="R-ATP Bachelors Degree">R-ATP Bachelors Degree</SelectItem>
-                                                              <SelectItem value="R-ATP Associated Degree">R-ATP Associated Degree</SelectItem>
-                                                            </SelectContent>
-                                                          </Select>
-                                                        </>
-                                                      )}
-                                                    </div>
-                                                  </PopoverContent>
-                                                </Popover>
-                                              )}
-                                              
-                                              {/* Task Type Dropdown */}
-                                              {step.category !== 'Initial Tasks' && (
-                                                <Popover>
-                                                  <PopoverTrigger asChild>
-                                                    <Button 
+                              )}
+                              
+                              {/* Tasks Section */}
+                              <div>
+                                <h4 className="font-semibold mb-4 text-base flex items-center gap-2">
+                                  <Target className="h-4 w-4 text-primary" />
+                                  Tasks & Requirements ({totalTasks})
+                                </h4>
+                                <div className="space-y-3">
+                                  {fullStep.details
+                                    .sort((a, b) => {
+                                      if (a.taskType !== b.taskType) {
+                                        if (a.taskType === 'flight') return -1;
+                                        if (b.taskType === 'flight') return 1;
+                                        return 0;
+                                      }
+                                      return (a.orderNumber || 0) - (b.orderNumber || 0);
+                                    })
+                                    .map((detail, detailIndex) => {
+                                    const isCompleted = step.taskProgress[detail.id || detail.title] || false;
+                                    const taskId = detail.id || `${step.id}-${detailIndex}`;
+                                    const requirement = parseTaskRequirement(detail.title);
+                                    const taskProgress = requirement ? getTaskProgress(detail) : null;
+                                    const isRequirementMet = requirement ? isTaskRequirementMet(detail) : false;
+                                    
+                                    return (
+                                      <div 
+                                        key={taskId}
+                                        className={`group/task rounded-lg border transition-all duration-200 ${
+                                          isCompleted || isRequirementMet
+                                            ? 'bg-green-50/50 dark:bg-green-950/20 border-green-200/50 dark:border-green-800/30' 
+                                            : 'bg-card border-border hover:border-primary/30 hover:shadow-sm'
+                                        }`}
+                                      >
+                                        {/* Task Header */}
+                                        <div className="p-4">
+                                          <div className="flex items-start gap-3">
+                                            <Checkbox
+                                              id={`task-${taskId}`}
+                                              checked={isCompleted || isRequirementMet}
+                                              onCheckedChange={(checked) => toggleTaskCompletion(step.id, detail.id || detail.title, !!checked)}
+                                              className="mt-1 flex-shrink-0"
+                                            />
+                                            <div className="flex-1 min-w-0">
+                                              <div className="flex items-start justify-between gap-3 mb-2">
+                                                <label 
+                                                  htmlFor={`task-${taskId}`}
+                                                  className={`flex-1 cursor-pointer font-medium text-base transition-all ${
+                                                    isCompleted || isRequirementMet
+                                                      ? 'line-through text-muted-foreground' 
+                                                      : 'text-foreground'
+                                                  }`}
+                                                >
+                                                  {detail.title}
+                                                </label>
+                                                <div className="flex items-center gap-2 flex-shrink-0">
+                                                  {/* Flight Hours */}
+                                                  {(detail.flightHours || step.category === 'Flight Instructing') && (
+                                                    <Popover>
+                                                      <PopoverTrigger asChild>
+                                                        <Button 
+                                                          variant="outline" 
+                                                          size="sm" 
+                                                          className="h-7 text-xs px-2"
+                                                          onClick={(e) => e.stopPropagation()}
+                                                        >
+                                                          {detail.flightHours || 0}h
+                                                        </Button>
+                                                      </PopoverTrigger>
+                                                      <PopoverContent className="w-64" onClick={(e) => e.stopPropagation()}>
+                                                        <div className="space-y-3">
+                                                          <Label className="text-sm font-medium">Flight Hours</Label>
+                                                          <Input
+                                                            type="number"
+                                                            placeholder="Enter hours"
+                                                            value={detail.flightHours || ''}
+                                                            onChange={(e) => {
+                                                              const hours = parseFloat(e.target.value) || 0
+                                                              updateTaskDetails(step.id!, detail.id || detail.title, { flightHours: hours })
+                                                            }}
+                                                          />
+                                                          {step.category === 'Flight Instructing' && (
+                                                            <>
+                                                              <Label className="text-sm font-medium">Hour Type</Label>
+                                                              <Select 
+                                                                value={(detail as any).hourType || 'ATP'} 
+                                                                onValueChange={(value) => updateTaskDetails(step.id!, detail.id || detail.title, { 
+                                                                  hourType: value as 'ATP' | 'R-ATP Bachelors Degree' | 'R-ATP Associated Degree' 
+                                                                })}
+                                                              >
+                                                                <SelectTrigger>
+                                                                  <SelectValue />
+                                                                </SelectTrigger>
+                                                                <SelectContent>
+                                                                  <SelectItem value="ATP">ATP</SelectItem>
+                                                                  <SelectItem value="R-ATP Bachelors Degree">R-ATP Bachelors Degree</SelectItem>
+                                                                  <SelectItem value="R-ATP Associated Degree">R-ATP Associated Degree</SelectItem>
+                                                                </SelectContent>
+                                                              </Select>
+                                                            </>
+                                                          )}
+                                                        </div>
+                                                      </PopoverContent>
+                                                    </Popover>
+                                                  )}
+                                                  
+                                                  {/* Task Type */}
+                                                  {step.category !== 'Initial Tasks' && (
+                                                    <Badge 
                                                       variant={detail.taskType === 'flight' ? 'default' : 'secondary'} 
-                                                      size="sm" 
-                                                      className="h-6 text-xs px-2 cursor-pointer"
+                                                      className="text-xs"
                                                     >
                                                       {detail.taskType || 'ground'}
-                                                    </Button>
-                                                  </PopoverTrigger>
-                                                  <PopoverContent className="w-48 p-3 bg-background border z-50">
-                                                    <div className="space-y-2">
-                                                      <Label className="text-sm font-medium">Task Type</Label>
-                                                      <Select 
-                                                        value={detail.taskType || 'ground'} 
-                                                        onValueChange={(value) => updateTaskDetails(step.id!, detail.id || detail.title, { 
-                                                          taskType: value as 'flight' | 'ground' 
-                                                        })}
-                                                      >
-                                                        <SelectTrigger className="h-8">
-                                                          <SelectValue />
-                                                        </SelectTrigger>
-                                                        <SelectContent className="bg-background border z-50">
-                                                          <SelectItem value="flight">Flight</SelectItem>
-                                                          <SelectItem value="ground">Ground</SelectItem>
-                                                        </SelectContent>
-                                                      </Select>
-                                                    </div>
-                                                  </PopoverContent>
-                                                </Popover>
-                                              )}
-                                              
-                                              {detail.mandatory && (
-                                                <Badge variant="destructive" className="text-xs">
-                                                  Required
-                                                </Badge>
-                                              )}
-                                              {isCompleted && (
-                                                <Badge variant="default" className="text-xs bg-green-500">
-                                                  ✓ Complete
-                                                </Badge>
-                                              )}
-                                              {detail.description && detail.description.trim() && (
-                                                <Button
-                                                  variant="ghost"
-                                                  size="sm"
-                                                  onClick={() => toggleTaskExpansion(detail.id || `${step.id}-${detailIndex}`)}
-                                                  className="h-6 w-6 p-0"
-                                                >
-                                                  {expandedTasks.has(detail.id || `${step.id}-${detailIndex}`) ? (
-                                                    <ChevronDown className="h-3 w-3" />
-                                                  ) : (
-                                                    <ChevronRight className="h-3 w-3" />
+                                                    </Badge>
                                                   )}
-                                                </Button>
+                                                  
+                                                  {/* Required Badge */}
+                                                  {detail.mandatory && (
+                                                    <Badge variant="destructive" className="text-xs">
+                                                      Required
+                                                    </Badge>
+                                                  )}
+                                                </div>
+                                              </div>
+                                              
+                                              {/* Progress Pie Chart for Flight Log Requirements */}
+                                              {requirement && requirement.type && taskProgress && (
+                                                <div className="mt-3 flex items-center gap-4 p-3 bg-muted/30 rounded-lg border border-border/50">
+                                                  <CircularProgress 
+                                                    progress={taskProgress.percentage}
+                                                    size={56}
+                                                    strokeWidth={5}
+                                                  />
+                                                  <div className="flex-1 min-w-0">
+                                                    <div className="flex items-center justify-between mb-1">
+                                                      <span className="text-sm font-medium text-foreground">
+                                                        {taskProgress.current.toFixed(1)} / {taskProgress.required} hrs
+                                                      </span>
+                                                      <span className="text-xs text-muted-foreground">
+                                                        {Math.round(taskProgress.percentage)}%
+                                                      </span>
+                                                    </div>
+                                                    <div className="text-xs text-muted-foreground">
+                                                      {taskProgress.required - taskProgress.current > 0 
+                                                        ? `${(taskProgress.required - taskProgress.current).toFixed(1)} hours remaining`
+                                                        : 'Requirement met! ✓'
+                                                      }
+                                                    </div>
+                                                  </div>
+                                                </div>
                                               )}
-                                           </div>
-                                         </div>
-                                       </div>
-                                     </div>
-                                      
-                                     {/* Detailed Content - Show rich description when expanded */}
-                                     {expandedTasks.has(detail.id || `${step.id}-${detailIndex}`) && detail.description && detail.description.trim() && (
-                                       <div className="p-4 bg-muted/10 border-t border-border/30">
-                                         <div className="prose prose-sm max-w-none">
-                                           {formatHtmlContent(detail.description)}
-                                         </div>
-                                       </div>
-                                     )}
-                                    </div>
-                                 );
-                              })}
-                            </div>
-                            
-                            {fullStep.details.length === 0 && (
-                              <div className="text-center py-8 text-muted-foreground bg-red-50 border border-red-200 rounded">
-                                <p>⚠️ No route step details found in database</p>
-                                <p className="text-xs mt-2">Step ID: {fullStep.id}</p>
-                                <p className="text-xs">Check admin panel for step details</p>
+                                            </div>
+                                          </div>
+                                        </div>
+                                      </div>
+                                    );
+                                  })}
+                                </div>
+                                
+                                {fullStep.details.length === 0 && (
+                                  <div className="text-center py-8 text-muted-foreground bg-destructive/10 border border-destructive/20 rounded-lg">
+                                    <AlertCircle className="h-8 w-8 mx-auto mb-2 text-destructive" />
+                                    <p className="font-medium">No tasks found</p>
+                                    <p className="text-xs mt-1">Step ID: {fullStep.id}</p>
+                                  </div>
+                                )}
                               </div>
-                            )}
+                            </div>
                           </div>
                         )}
                       </CardContent>
                     </Card>
                     
-                    {/* Arrow connector */}
+                    {/* Connector Line */}
                     {index < studentRoute.length - 1 && (
-                      <div className="flex justify-center py-4">
-                        <div className="w-0.5 h-8 bg-border"></div>
-                        <div className="absolute w-2 h-2 bg-border rounded-full mt-3 -ml-1"></div>
+                      <div className="flex justify-center py-2">
+                        <div className="w-0.5 h-6 bg-gradient-to-b from-primary/40 to-primary/20"></div>
                       </div>
                     )}
                   </div>
