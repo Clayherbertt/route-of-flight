@@ -7,7 +7,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { Badge } from "@/components/ui/badge";
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from "@/components/ui/alert-dialog";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
-import { Plus, Search, Filter, Download, Plane, Upload, MoreHorizontal, Edit, Trash2 } from "lucide-react";
+import { Plus, Search, Filter, Download, Plane, Upload, MoreHorizontal, Edit, Trash2, Clock } from "lucide-react";
 import { useState, useEffect, useCallback } from "react";
 import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
@@ -583,73 +583,90 @@ const Logbook = () => {
             ))}
           </div>
 
-          <div className="relative container mx-auto px-6 py-12 lg:py-20">
-            <div className="grid gap-10 lg:grid-cols-[minmax(0,1fr),360px] lg:items-start">
-              <div className="max-w-2xl space-y-6">
-                <span className="inline-flex items-center gap-2 rounded-full border border-white/40 bg-white/10 px-4 py-1 text-xs uppercase tracking-[0.35em] text-aviation-sky backdrop-blur">
-                  Logbook Hub
-                </span>
-                <div>
-                  <h1 className="text-4xl md:text-5xl font-bold tracking-tight text-foreground">Flight Logbook</h1>
-                  <p className="mt-4 text-lg leading-relaxed text-muted-foreground">
-                    Track and manage your flight hours, currency, and experience with a cockpit-ready dashboard designed for working pilots.
+          <div className="relative container mx-auto px-6 py-8 lg:py-12">
+            {/* Header Section */}
+            <div className="mb-8">
+              <div className="flex flex-col md:flex-row md:items-start md:justify-between gap-4 md:gap-6 mb-6">
+                <div className="flex-1">
+                  <h1 className="text-3xl md:text-4xl font-bold text-foreground mb-2">Flight Logbook</h1>
+                  <p className="text-muted-foreground text-sm md:text-base">
+                    Manage your flight records and track your aviation experience
                   </p>
                 </div>
-              </div>
-
-              <div className="w-full max-w-sm rounded-3xl border border-white/50 bg-white/30 p-6 shadow-2xl shadow-aviation-navy/20 backdrop-blur">
-                <p className="text-xs uppercase tracking-[0.35em] text-muted-foreground">Snapshot</p>
-                <div className="mt-5 space-y-4">
-                  <div className="flex items-center justify-between">
-                    <span className="text-sm text-muted-foreground">Flights logged</span>
-                    <span className="text-lg font-semibold text-foreground">{flights.length}</span>
-                  </div>
-                  <div className="flex items-center justify-between">
-                    <span className="text-sm text-muted-foreground">Hours past 30 days</span>
-                    <span className="text-lg font-semibold text-foreground">{recentHours.toFixed(1)}</span>
-                  </div>
-                  <div className="rounded-2xl border border-border/40 bg-card/70 p-4">
-                    <p className="text-xs uppercase tracking-[0.3em] text-muted-foreground">Most recent flight</p>
-                    {lastFlight ? (
-                      <div className="mt-3 space-y-1">
-                        <p className="text-sm font-semibold text-foreground">{lastFlight.departure_airport} → {lastFlight.arrival_airport}</p>
-                        <p className="text-xs text-muted-foreground">
-                          {lastFlight.date} · {lastFlight.aircraft_type} · {lastFlight.total_time} hrs
-                        </p>
-                      </div>
-                    ) : (
-                      <p className="mt-3 text-sm text-muted-foreground">Log your first flight to see insights here.</p>
-                    )}
-                  </div>
+                <div className="flex flex-wrap gap-2">
+                  <Button 
+                    size="default" 
+                    onClick={() => setShowAddFlightDialog(true)}
+                    className="shadow-sm"
+                  >
+                    <Plus className="mr-2 h-4 w-4" />
+                    Add Flight
+                  </Button>
+                  <Button
+                    size="default"
+                    variant="outline"
+                    onClick={() => setShowImportDialog(true)}
+                    className="shadow-sm"
+                  >
+                    <Upload className="mr-2 h-4 w-4" />
+                    Import CSV
+                  </Button>
+                  <Button
+                    size="default"
+                    variant="outline"
+                    onClick={() => setShowClearAllDialog(true)}
+                    className="text-destructive hover:text-destructive hover:bg-destructive/10"
+                  >
+                    <Trash2 className="mr-2 h-4 w-4" />
+                    Clear All
+                  </Button>
                 </div>
               </div>
-            </div>
 
-            <div className="mt-12 space-y-8">
-              <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:gap-4">
-                <Button size="lg" className="rounded-full px-6" onClick={() => setShowAddFlightDialog(true)}>
-                  <Plus className="mr-2 h-5 w-5" />
-                  Add Flight
-                </Button>
-                <Button
-                  size="lg"
-                  variant="outline"
-                  className="rounded-full border-border/60 text-foreground hover:bg-white/30"
-                  onClick={() => setShowImportDialog(true)}
-                >
-                  <Upload className="mr-2 h-5 w-5" />
-                  Import CSV
-                </Button>
-                <Button
-                  size="lg"
-                  variant="outline"
-                  className="rounded-full border-destructive/70 text-destructive hover:bg-destructive/10"
-                  onClick={() => setShowClearAllDialog(true)}
-                >
-                  <Trash2 className="mr-2 h-5 w-5" />
-                  Clear All
-                </Button>
+              {/* Quick Stats */}
+              <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+                <div className="rounded-lg border bg-card p-4 shadow-sm">
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <p className="text-xs text-muted-foreground mb-1">Total Flights</p>
+                      <p className="text-2xl font-bold text-foreground">{flights.length}</p>
+                    </div>
+                    <Plane className="h-8 w-8 text-muted-foreground/40" />
+                  </div>
+                </div>
+                <div className="rounded-lg border bg-card p-4 shadow-sm">
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <p className="text-xs text-muted-foreground mb-1">Last 30 Days</p>
+                      <p className="text-2xl font-bold text-foreground">{recentHours.toFixed(1)} hrs</p>
+                    </div>
+                    <Clock className="h-8 w-8 text-muted-foreground/40" />
+                  </div>
+                </div>
+                <div className="rounded-lg border bg-card p-4 shadow-sm">
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <p className="text-xs text-muted-foreground mb-1">Total Hours</p>
+                      <p className="text-2xl font-bold text-foreground">{formatHours(totalHours)}</p>
+                    </div>
+                    <Clock className="h-8 w-8 text-muted-foreground/40" />
+                  </div>
+                </div>
+                {lastFlight && (
+                  <div className="rounded-lg border bg-card p-4 shadow-sm">
+                    <div>
+                      <p className="text-xs text-muted-foreground mb-1">Last Flight</p>
+                      <p className="text-sm font-semibold text-foreground truncate">
+                        {lastFlight.departure_airport} → {lastFlight.arrival_airport}
+                      </p>
+                      <p className="text-xs text-muted-foreground mt-1">
+                        {lastFlight.date}
+                      </p>
+                    </div>
+                  </div>
+                )}
               </div>
+            </div>
 
               <div className="rounded-3xl border border-white/50 bg-white/45 shadow-2xl shadow-aviation-navy/20 backdrop-blur">
                 <div className="flex flex-wrap items-center justify-between gap-4 border-b border-white/40 px-6 py-5">
@@ -679,7 +696,6 @@ const Logbook = () => {
                   </div>
                 </div>
               </div>
-            </div>
           </div>
         </section>
 
