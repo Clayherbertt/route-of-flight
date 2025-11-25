@@ -17,6 +17,7 @@ import { AddFlightDialog } from "@/components/forms/AddFlightDialog";
 import { CSVImportDialog } from "@/components/forms/CSVImportDialog";
 import { subMonths, format, startOfMonth, endOfMonth, eachMonthOfInterval } from "date-fns";
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from "recharts";
+import { FlightMap } from "@/components/FlightMap";
 
 interface FlightEntry {
   id: string;
@@ -70,6 +71,7 @@ const Logbook = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [flights, setFlights] = useState<FlightEntry[]>([]);
   const [isLoadingFlights, setIsLoadingFlights] = useState(true);
+  const [dateRangeFilter, setDateRangeFilter] = useState<{ from: Date | null; to: Date | null }>({ from: null, to: null });
   const [showAddFlightDialog, setShowAddFlightDialog] = useState(false);
   const [showImportDialog, setShowImportDialog] = useState(false);
   const [editingFlight, setEditingFlight] = useState<FlightEntry | null>(null);
@@ -510,14 +512,14 @@ const Logbook = () => {
 
   const monthlyHoursData = calculateMonthlyHours();
 
-  const lastFlight = flights[0];
+  const lastFlight = flights.length > 0 ? flights[0] : null;
 
   let tableRows: React.ReactNode;
 
   if (flights.length === 0) {
     tableRows = (
       <TableRow>
-        <TableCell colSpan={5} className="h-32 text-center">
+        <TableCell colSpan={8} className="h-32 text-center">
           <div className="flex flex-col items-center justify-center text-muted-foreground">
             <Plane className="h-8 w-8 mb-2 opacity-50" />
             <p className="text-lg font-medium">No flights recorded yet</p>
@@ -539,7 +541,10 @@ const Logbook = () => {
         </TableCell>
         <TableCell>{flight.departure_airport}</TableCell>
         <TableCell>{flight.arrival_airport}</TableCell>
-        <TableCell className="font-medium">{formatHours(Number(flight.total_time) || 0)}</TableCell>
+        <TableCell className="font-medium text-center">{formatHours(Number(flight.total_time) || 0)}</TableCell>
+        <TableCell className="text-center">{formatHours(Number(flight.pic_time) || 0)}</TableCell>
+        <TableCell className="text-center">{formatHours(Number(flight.sic_time) || 0)}</TableCell>
+        <TableCell className="text-center">{formatHours(Number(flight.cross_country_time) || 0)}</TableCell>
       </TableRow>
     ));
   }
@@ -738,6 +743,12 @@ const Logbook = () => {
               </div>
             </div>
 
+            {/* Flight Map */}
+            <FlightMap 
+              flights={flights} 
+              onDateRangeChange={(dateRange) => setDateRangeFilter(dateRange)}
+            />
+
             <div className="rounded-3xl border border-border/60 bg-card/95 shadow-xl shadow-aviation-navy/15 backdrop-blur">
               <div className="flex flex-wrap items-start justify-between gap-4 border-b border-border/60 px-6 py-6">
                 <div className="space-y-1">
@@ -845,7 +856,10 @@ const Logbook = () => {
                       <TableHead>Aircraft ID</TableHead>
                       <TableHead>From</TableHead>
                       <TableHead>To</TableHead>
-                      <TableHead>Total Time</TableHead>
+                      <TableHead className="text-center">Total Time</TableHead>
+                      <TableHead className="text-center">PIC</TableHead>
+                      <TableHead className="text-center">SIC</TableHead>
+                      <TableHead className="text-center">Cross Country</TableHead>
                     </TableRow>
                   </TableHeader>
                   <TableBody>{tableRows}</TableBody>
