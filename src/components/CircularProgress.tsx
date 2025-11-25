@@ -3,13 +3,15 @@ interface CircularProgressProps {
   size?: number;
   strokeWidth?: number;
   className?: string;
+  showText?: boolean;
 }
 
 export function CircularProgress({ 
   progress, 
   size = 48, 
   strokeWidth = 4,
-  className = ""
+  className = "",
+  showText = true
 }: CircularProgressProps) {
   const center = size / 2;
   const radius = center - strokeWidth / 2;
@@ -31,6 +33,7 @@ export function CircularProgress({
           fill="none"
           stroke="hsl(var(--border))"
           strokeWidth={strokeWidth}
+          className="opacity-30"
         />
         
         {/* Progress circle */}
@@ -48,12 +51,14 @@ export function CircularProgress({
         />
       </svg>
       
-      {/* Progress text */}
-      <div className="absolute inset-0 flex items-center justify-center">
-        <span className="text-xs font-medium text-muted-foreground">
-          {Math.round(progress)}%
-        </span>
-      </div>
+      {/* Progress text - only show if showText is true and not 100% */}
+      {showText && progress < 100 && (
+        <div className="absolute inset-0 flex items-center justify-center">
+          <span className="text-[10px] font-semibold text-foreground">
+            {Math.round(progress)}%
+          </span>
+        </div>
+      )}
     </div>
   );
 }
