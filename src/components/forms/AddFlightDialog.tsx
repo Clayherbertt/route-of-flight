@@ -340,28 +340,28 @@ export const AddFlightDialog = ({ open, onOpenChange, onFlightAdded, editingFlig
         tach_end: values.tach_end,
         start_time: values.time_out || values.start_time || null,
         end_time: values.time_in || values.end_time || null,
-        total_time: values.total_time ?? 0,
-        pic_time: values.pic_time ?? 0,
-        sic_time: values.sic_time ?? 0,
-        solo_time: values.solo_time ?? 0,
-        night_time: values.night_time ?? 0,
-        cross_country_time: values.cross_country_time ?? 0,
-        day_takeoffs: values.day_takeoffs ?? 0,
-        day_landings: values.day_landings ?? 0,
-        day_landings_full_stop: values.day_landings_full_stop ?? 0,
-        night_takeoffs: values.night_takeoffs ?? 0,
-        night_landings: values.night_landings ?? 0,
-        night_landings_full_stop: values.night_landings_full_stop ?? 0,
-        actual_instrument: values.actual_instrument ?? 0,
-        simulated_instrument: values.simulated_instrument ?? 0,
-        holds: values.holds ?? 0,
+        total_time: values.total_time,
+        pic_time: values.pic_time,
+        sic_time: values.sic_time,
+        solo_time: values.solo_time,
+        night_time: values.night_time,
+        cross_country_time: values.cross_country_time,
+        day_takeoffs: values.day_takeoffs,
+        day_landings: values.day_landings,
+        day_landings_full_stop: values.day_landings_full_stop,
+        night_takeoffs: values.night_takeoffs,
+        night_landings: values.night_landings,
+        night_landings_full_stop: values.night_landings_full_stop,
+        actual_instrument: values.actual_instrument,
+        simulated_instrument: values.simulated_instrument,
+        holds: values.holds,
         approaches: String(values.approaches ?? 0),
-        dual_given: values.dual_given ?? 0,
-        dual_received: values.dual_received ?? 0,
-        simulated_flight: values.simulated_flight ?? 0,
-        ground_training: values.ground_training ?? 0,
-        instrument_time: (values.actual_instrument ?? 0) + (values.simulated_instrument ?? 0),
-        landings: (values.day_landings ?? 0) + (values.night_landings ?? 0),
+        dual_given: values.dual_given,
+        dual_received: values.dual_received,
+        simulated_flight: values.simulated_flight,
+        ground_training: values.ground_training,
+        instrument_time: values.actual_instrument + values.simulated_instrument,
+        landings: values.day_landings + values.night_landings,
         remarks: values.remarks || null,
       };
 
@@ -512,22 +512,17 @@ export const AddFlightDialog = ({ open, onOpenChange, onFlightAdded, editingFlig
       onFlightAdded();
     } catch (error) {
       console.error('Error saving flight:', error);
-      let errorMessage = editingFlight
-        ? "Failed to update flight entry. Please try again."
-        : "Failed to add flight entry. Please try again.";
-      
-      // Try to extract a more specific error message
-      if (error && typeof error === "object") {
-        if ("message" in error && error.message) {
-          errorMessage = String(error.message);
-        } else if ("error" in error && error.error && typeof error.error === "object" && "message" in error.error) {
-          errorMessage = String(error.error.message);
-        }
-      }
-      
+      const message =
+        typeof error === "object" && error !== null && "message" in error
+          ? String((error as { message?: string }).message)
+          : undefined;
       toast({
         title: "Error",
-        description: errorMessage,
+        description:
+          message ??
+          (editingFlight
+            ? "Failed to update flight entry. Please try again."
+            : "Failed to add flight entry. Please try again."),
         variant: "destructive",
       });
     } finally {

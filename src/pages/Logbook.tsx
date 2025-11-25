@@ -6,8 +6,8 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from "@/components/ui/alert-dialog";
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
-import { Plus, Search, Filter, Download, Plane, Upload, MoreHorizontal, Edit, Trash2, Clock } from "lucide-react";
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { Plus, Search, Filter, Download, Plane, Upload, Edit, Trash2, Clock } from "lucide-react";
 import { useState, useEffect, useCallback } from "react";
 import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
@@ -15,7 +15,8 @@ import { useToast } from "@/hooks/use-toast";
 import { useNavigate } from "react-router-dom";
 import { AddFlightDialog } from "@/components/forms/AddFlightDialog";
 import { CSVImportDialog } from "@/components/forms/CSVImportDialog";
-import { subMonths } from "date-fns";
+import { subMonths, format, startOfMonth, endOfMonth, eachMonthOfInterval } from "date-fns";
+import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from "recharts";
 
 interface FlightEntry {
   id: string;
@@ -74,6 +75,7 @@ const Logbook = () => {
   const [editingFlight, setEditingFlight] = useState<FlightEntry | null>(null);
   const [deletingFlight, setDeletingFlight] = useState<FlightEntry | null>(null);
   const [showClearAllDialog, setShowClearAllDialog] = useState(false);
+  const [viewingFlight, setViewingFlight] = useState<FlightEntry | null>(null);
   const [aircraftMap, setAircraftMap] = useState<Map<string, { type_code: string | null; make: string; model: string }>>(new Map());
 
   const fetchFlights = useCallback(async () => {
@@ -154,8 +156,13 @@ const Logbook = () => {
   }, [user, fetchFlights]);
 
   const handleEditFlight = (flight: FlightEntry) => {
+    setViewingFlight(null);
     setEditingFlight(flight);
     setShowAddFlightDialog(true);
+  };
+
+  const handleViewFlight = (flight: FlightEntry) => {
+    setViewingFlight(flight);
   };
 
   const handleCloseDialog = (open: boolean) => {
@@ -466,6 +473,43 @@ const Logbook = () => {
     },
   ];
 
+  // Calculate flight hours per month for the last 12 months
+  const calculateMonthlyHours = () => {
+    const now = new Date();
+    const twelveMonthsAgo = subMonths(now, 11);
+    const months = eachMonthOfInterval({
+      start: startOfMonth(twelveMonthsAgo),
+      end: endOfMonth(now),
+    });
+
+    const monthlyData = months.map((month) => {
+      const monthStart = startOfMonth(month);
+      const monthEnd = endOfMonth(month);
+      
+      const hoursInMonth = flights.reduce((sum, flight) => {
+        const flightDate = flight.date ? new Date(flight.date) : null;
+        if (!flightDate || Number.isNaN(flightDate.getTime())) {
+          return sum;
+        }
+        
+        if (flightDate >= monthStart && flightDate <= monthEnd) {
+          return sum + (Number(flight.total_time) || 0);
+        }
+        return sum;
+      }, 0);
+
+      return {
+        month: format(month, "MMMM"),
+        monthShort: format(month, "MMM"),
+        hours: Math.round(hoursInMonth * 100) / 100,
+      };
+    });
+
+    return monthlyData;
+  };
+
+  const monthlyHoursData = calculateMonthlyHours();
+
   const lastFlight = flights[0];
 
   let tableRows: React.ReactNode;
@@ -473,7 +517,7 @@ const Logbook = () => {
   if (flights.length === 0) {
     tableRows = (
       <TableRow>
-        <TableCell colSpan={38} className="h-32 text-center">
+        <TableCell colSpan={5} className="h-32 text-center">
           <div className="flex flex-col items-center justify-center text-muted-foreground">
             <Plane className="h-8 w-8 mb-2 opacity-50" />
             <p className="text-lg font-medium">No flights recorded yet</p>
@@ -484,79 +528,18 @@ const Logbook = () => {
     );
   } else {
     tableRows = flights.map((flight) => (
-      <TableRow key={flight.id} className="hover:bg-muted/50">
+      <TableRow 
+        key={flight.id} 
+        className="hover:bg-muted/50 cursor-pointer transition-colors"
+        onClick={() => handleViewFlight(flight)}
+      >
         <TableCell className="min-w-[110px] whitespace-nowrap font-medium">{flight.date}</TableCell>
         <TableCell>
           <Badge variant="outline">{flight.aircraft_registration}</Badge>
         </TableCell>
-        <TableCell>
-          {(() => {
-            const aircraft = aircraftMap.get(flight.aircraft_registration.toUpperCase());
-            if (aircraft) {
-              // Prefer type_code, otherwise use "Make Model" format
-              return aircraft.type_code || `${aircraft.make} ${aircraft.model}`;
-            }
-            // Fallback to stored aircraft_type if no aircraft library entry found
-            return flight.aircraft_type;
-          })()}
-        </TableCell>
         <TableCell>{flight.departure_airport}</TableCell>
         <TableCell>{flight.arrival_airport}</TableCell>
-        <TableCell>{flight.route || '-'}</TableCell>
-        <TableCell className="font-medium">{flight.total_time}</TableCell>
-        <TableCell>{flight.pic_time}</TableCell>
-        <TableCell>{flight.sic_time ?? 0}</TableCell>
-        <TableCell>{flight.solo_time ?? 0}</TableCell>
-        <TableCell>{flight.night_time}</TableCell>
-        <TableCell>{flight.cross_country_time}</TableCell>
-        <TableCell>{flight.actual_instrument ?? 0}</TableCell>
-        <TableCell>{flight.simulated_instrument ?? 0}</TableCell>
-        <TableCell>{flight.holds ?? 0}</TableCell>
-        <TableCell>{flight.approaches || '-'}</TableCell>
-        <TableCell>{flight.day_takeoffs ?? 0}</TableCell>
-        <TableCell>{flight.day_landings ?? 0}</TableCell>
-        <TableCell>{flight.day_landings_full_stop ?? 0}</TableCell>
-        <TableCell>{flight.night_takeoffs ?? 0}</TableCell>
-        <TableCell>{flight.night_landings ?? 0}</TableCell>
-        <TableCell>{flight.night_landings_full_stop ?? 0}</TableCell>
-        <TableCell>{flight.dual_given ?? 0}</TableCell>
-        <TableCell>{flight.dual_received ?? 0}</TableCell>
-        <TableCell>{flight.simulated_flight ?? 0}</TableCell>
-        <TableCell>{flight.ground_training ?? 0}</TableCell>
-        <TableCell>{flight.time_out || flight.start_time || '-'}</TableCell>
-        <TableCell>{flight.time_off || '-'}</TableCell>
-        <TableCell>{flight.time_on || '-'}</TableCell>
-        <TableCell>{flight.time_in || flight.end_time || '-'}</TableCell>
-        <TableCell>{flight.on_duty || '-'}</TableCell>
-        <TableCell>{flight.off_duty || '-'}</TableCell>
-        <TableCell>{flight.hobbs_start ?? '-'}</TableCell>
-        <TableCell>{flight.hobbs_end ?? '-'}</TableCell>
-        <TableCell>{flight.tach_start ?? '-'}</TableCell>
-        <TableCell>{flight.tach_end ?? '-'}</TableCell>
-        <TableCell className="max-w-xs truncate">{flight.remarks || '-'}</TableCell>
-        <TableCell>
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button variant="ghost" size="sm" className="h-8 w-8 p-0 hover:bg-muted">
-                <span className="sr-only">Open menu</span>
-                <MoreHorizontal className="h-4 w-4" />
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="end" className="w-[160px]">
-              <DropdownMenuItem onClick={() => handleEditFlight(flight)}>
-                <Edit className="h-4 w-4 mr-2" />
-                Edit Flight
-              </DropdownMenuItem>
-              <DropdownMenuItem
-                onClick={() => setDeletingFlight(flight)}
-                className="text-destructive focus:text-destructive"
-              >
-                <Trash2 className="h-4 w-4 mr-2" />
-                Delete Flight
-              </DropdownMenuItem>
-            </DropdownMenuContent>
-          </DropdownMenu>
-        </TableCell>
+        <TableCell className="font-medium">{formatHours(Number(flight.total_time) || 0)}</TableCell>
       </TableRow>
     ));
   }
@@ -701,6 +684,60 @@ const Logbook = () => {
 
         <section className="relative -mt-10">
           <div className="container mx-auto px-6 pt-12 space-y-8">
+            {/* Flight Hours Chart */}
+            <div className="rounded-3xl border border-border/60 bg-card/95 shadow-xl shadow-aviation-navy/15 backdrop-blur">
+              <div className="flex flex-wrap items-center justify-between gap-4 border-b border-border/60 px-6 py-5">
+                <div>
+                  <p className="flex items-center gap-2 text-lg font-semibold text-foreground">
+                    <Clock className="h-5 w-5 text-primary" />
+                    Flight Hours - Last 12 Months
+                  </p>
+                  <p className="text-sm text-muted-foreground">Monthly flight hours breakdown</p>
+                </div>
+              </div>
+              <div className="p-6">
+                <ResponsiveContainer width="100%" height={300}>
+                  <LineChart data={monthlyHoursData} margin={{ top: 5, right: 20, left: 0, bottom: 5 }}>
+                    <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" opacity={0.3} />
+                    <XAxis 
+                      dataKey="month"
+                      stroke="hsl(var(--muted-foreground))"
+                      style={{ fontSize: '11px' }}
+                      tick={{ fill: 'hsl(var(--muted-foreground))' }}
+                      angle={-45}
+                      textAnchor="end"
+                      height={60}
+                    />
+                    <YAxis 
+                      domain={[0, 150]}
+                      stroke="hsl(var(--muted-foreground))"
+                      style={{ fontSize: '12px' }}
+                      tick={{ fill: 'hsl(var(--muted-foreground))' }}
+                      label={{ value: 'Hours', angle: -90, position: 'insideLeft', style: { textAnchor: 'middle', fill: 'hsl(var(--muted-foreground))' } }}
+                    />
+                    <Tooltip 
+                      contentStyle={{ 
+                        backgroundColor: 'hsl(var(--card))', 
+                        border: '1px solid hsl(var(--border))',
+                        borderRadius: '8px',
+                        padding: '8px 12px'
+                      }}
+                      labelStyle={{ color: 'hsl(var(--foreground))', fontWeight: 600 }}
+                      formatter={(value: number) => [`${value.toFixed(1)} hrs`, 'Hours']}
+                    />
+                    <Line 
+                      type="monotone" 
+                      dataKey="hours" 
+                      stroke="hsl(var(--primary))" 
+                      strokeWidth={2}
+                      dot={{ fill: 'hsl(var(--primary))', r: 4 }}
+                      activeDot={{ r: 6, fill: 'hsl(var(--primary))' }}
+                    />
+                  </LineChart>
+                </ResponsiveContainer>
+              </div>
+            </div>
+
             <div className="rounded-3xl border border-border/60 bg-card/95 shadow-xl shadow-aviation-navy/15 backdrop-blur">
               <div className="flex flex-wrap items-start justify-between gap-4 border-b border-border/60 px-6 py-6">
                 <div className="space-y-1">
@@ -806,42 +843,9 @@ const Logbook = () => {
                     <TableRow>
                       <TableHead className="min-w-[110px] whitespace-nowrap">Date</TableHead>
                       <TableHead>Aircraft ID</TableHead>
-                      <TableHead>Type</TableHead>
                       <TableHead>From</TableHead>
                       <TableHead>To</TableHead>
-                      <TableHead>Route</TableHead>
                       <TableHead>Total Time</TableHead>
-                      <TableHead>PIC</TableHead>
-                      <TableHead>SIC</TableHead>
-                      <TableHead>Solo</TableHead>
-                      <TableHead>Night</TableHead>
-                      <TableHead>Cross Country</TableHead>
-                      <TableHead>Actual Instrument</TableHead>
-                      <TableHead>Sim Instrument</TableHead>
-                      <TableHead>Holds</TableHead>
-                      <TableHead>Approaches</TableHead>
-                      <TableHead>Day TO</TableHead>
-                      <TableHead>Day LDG</TableHead>
-                      <TableHead>Day Full Stop</TableHead>
-                      <TableHead>Night TO</TableHead>
-                      <TableHead>Night LDG</TableHead>
-                      <TableHead>Night Full Stop</TableHead>
-                      <TableHead>Dual Given</TableHead>
-                      <TableHead>Dual Received</TableHead>
-                      <TableHead>Sim Flight</TableHead>
-                      <TableHead>Ground Training</TableHead>
-                      <TableHead>Time Out</TableHead>
-                      <TableHead>Time Off</TableHead>
-                      <TableHead>Time On</TableHead>
-                      <TableHead>Time In</TableHead>
-                      <TableHead>On Duty</TableHead>
-                      <TableHead>Off Duty</TableHead>
-                      <TableHead>Hobbs Start</TableHead>
-                      <TableHead>Hobbs End</TableHead>
-                      <TableHead>Tach Start</TableHead>
-                      <TableHead>Tach End</TableHead>
-                      <TableHead>Remarks</TableHead>
-                      <TableHead className="w-[70px]">Actions</TableHead>
                     </TableRow>
                   </TableHeader>
                   <TableBody>{tableRows}</TableBody>
@@ -913,6 +917,211 @@ const Logbook = () => {
           fetchFlights();
         }}
       />
+
+      {/* Flight Detail Dialog */}
+      <Dialog open={!!viewingFlight} onOpenChange={(open) => !open && setViewingFlight(null)}>
+        <DialogContent className="max-w-5xl max-h-[90vh] overflow-y-auto p-0">
+          {viewingFlight && (
+            <>
+              {/* Header with gradient background */}
+              <div className="bg-gradient-to-r from-primary/10 via-primary/5 to-background border-b px-6 py-6">
+                <DialogHeader>
+                  <div className="flex items-start justify-between">
+                    <div className="space-y-1">
+                      <DialogTitle className="text-2xl font-bold">Flight Details</DialogTitle>
+                      <DialogDescription className="text-base">
+                        {viewingFlight.date} • {viewingFlight.aircraft_registration}
+                      </DialogDescription>
+                    </div>
+                  </div>
+                </DialogHeader>
+              </div>
+
+              <div className="px-6 py-6 space-y-6">
+                {/* Flight Overview Card */}
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                  <div className="rounded-xl border bg-card p-5 shadow-sm">
+                    <p className="text-xs font-medium text-muted-foreground uppercase tracking-wide mb-2">Route</p>
+                    <p className="text-2xl font-bold text-foreground">
+                      {viewingFlight.departure_airport} → {viewingFlight.arrival_airport}
+                    </p>
+                    {viewingFlight.route && (
+                      <p className="text-sm text-muted-foreground mt-1">{viewingFlight.route}</p>
+                    )}
+                  </div>
+                  
+                  <div className="rounded-xl border bg-card p-5 shadow-sm">
+                    <p className="text-xs font-medium text-muted-foreground uppercase tracking-wide mb-2">Aircraft</p>
+                    <div className="flex items-center gap-2">
+                      <Badge variant="secondary" className="text-sm font-semibold">
+                        {viewingFlight.aircraft_registration}
+                      </Badge>
+                      <span className="text-lg font-semibold text-foreground">
+                        {(() => {
+                          const aircraft = aircraftMap.get(viewingFlight.aircraft_registration.toUpperCase());
+                          if (aircraft) {
+                            return aircraft.type_code || `${aircraft.make} ${aircraft.model}`;
+                          }
+                          return viewingFlight.aircraft_type || '—';
+                        })()}
+                      </span>
+                    </div>
+                  </div>
+                  
+                  <div className="rounded-xl border bg-card p-5 shadow-sm">
+                    <p className="text-xs font-medium text-muted-foreground uppercase tracking-wide mb-2">Total Time</p>
+                    <p className="text-2xl font-bold text-primary">
+                      {formatHours(Number(viewingFlight.total_time) || 0)} hrs
+                    </p>
+                  </div>
+                </div>
+
+                {/* Flight Times Section */}
+                <div className="rounded-xl border bg-card p-6 shadow-sm">
+                  <h3 className="text-lg font-semibold mb-4 flex items-center gap-2">
+                    <Clock className="h-5 w-5 text-primary" />
+                    Flight Times
+                  </h3>
+                  <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                    {[
+                      { label: "PIC", value: formatHours(Number(viewingFlight.pic_time) || 0) },
+                      { label: "SIC", value: formatHours(Number(viewingFlight.sic_time) || 0) },
+                      { label: "Solo", value: formatHours(Number(viewingFlight.solo_time) || 0) },
+                      { label: "Night", value: formatHours(Number(viewingFlight.night_time) || 0) },
+                      { label: "Cross Country", value: formatHours(Number(viewingFlight.cross_country_time) || 0) },
+                      { label: "Actual Instrument", value: formatHours(Number(viewingFlight.actual_instrument) || 0) },
+                      { label: "Sim Instrument", value: formatHours(Number(viewingFlight.simulated_instrument) || 0) },
+                    ].map((item) => (
+                      <div key={item.label} className="flex flex-col">
+                        <p className="text-xs font-medium text-muted-foreground uppercase tracking-wide mb-1">
+                          {item.label}
+                        </p>
+                        <p className="text-lg font-semibold text-foreground">{item.value}</p>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Additional Details & Landings Grid */}
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  {/* Additional Details */}
+                  <div className="rounded-xl border bg-card p-6 shadow-sm">
+                    <h3 className="text-lg font-semibold mb-4">Additional Details</h3>
+                    <div className="grid grid-cols-2 gap-4">
+                      {[
+                        { label: "Holds", value: viewingFlight.holds ?? 0 },
+                        { label: "Approaches", value: viewingFlight.approaches || '—' },
+                        { label: "Dual Given", value: formatHours(Number(viewingFlight.dual_given) || 0) },
+                        { label: "Dual Received", value: formatHours(Number(viewingFlight.dual_received) || 0) },
+                        { label: "Sim Flight", value: formatHours(Number(viewingFlight.simulated_flight) || 0) },
+                        { label: "Ground Training", value: formatHours(Number(viewingFlight.ground_training) || 0) },
+                      ].map((item) => (
+                        <div key={item.label} className="flex flex-col">
+                          <p className="text-xs font-medium text-muted-foreground uppercase tracking-wide mb-1">
+                            {item.label}
+                          </p>
+                          <p className="text-base font-semibold text-foreground">{item.value}</p>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+
+                  {/* Landings & Takeoffs */}
+                  <div className="rounded-xl border bg-card p-6 shadow-sm">
+                    <h3 className="text-lg font-semibold mb-4">Landings & Takeoffs</h3>
+                    <div className="grid grid-cols-2 gap-4">
+                      {[
+                        { label: "Day Takeoffs", value: viewingFlight.day_takeoffs ?? 0 },
+                        { label: "Day Landings", value: viewingFlight.day_landings ?? 0 },
+                        { label: "Day Full Stop", value: viewingFlight.day_landings_full_stop ?? 0 },
+                        { label: "Total Landings", value: viewingFlight.landings ?? 0 },
+                        { label: "Night Takeoffs", value: viewingFlight.night_takeoffs ?? 0 },
+                        { label: "Night Landings", value: viewingFlight.night_landings ?? 0 },
+                        { label: "Night Full Stop", value: viewingFlight.night_landings_full_stop ?? 0 },
+                      ].map((item) => (
+                        <div key={item.label} className="flex flex-col">
+                          <p className="text-xs font-medium text-muted-foreground uppercase tracking-wide mb-1">
+                            {item.label}
+                          </p>
+                          <p className="text-base font-semibold text-foreground">{item.value}</p>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+
+                {/* Time Tracking (if available) */}
+                {(viewingFlight.time_out || viewingFlight.time_off || viewingFlight.time_on || viewingFlight.time_in || 
+                  viewingFlight.start_time || viewingFlight.end_time || viewingFlight.on_duty || viewingFlight.off_duty ||
+                  viewingFlight.hobbs_start != null || viewingFlight.hobbs_end != null || viewingFlight.tach_start != null || viewingFlight.tach_end != null) && (
+                  <div className="rounded-xl border bg-card p-6 shadow-sm">
+                    <h3 className="text-lg font-semibold mb-4">Time Tracking</h3>
+                    <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                      {[
+                        viewingFlight.time_out && { label: "Time Out", value: viewingFlight.time_out },
+                        viewingFlight.time_off && { label: "Time Off", value: viewingFlight.time_off },
+                        viewingFlight.time_on && { label: "Time On", value: viewingFlight.time_on },
+                        viewingFlight.time_in && { label: "Time In", value: viewingFlight.time_in },
+                        viewingFlight.start_time && !viewingFlight.time_out && { label: "Start Time", value: viewingFlight.start_time },
+                        viewingFlight.end_time && !viewingFlight.time_in && { label: "End Time", value: viewingFlight.end_time },
+                        viewingFlight.on_duty && { label: "On Duty", value: viewingFlight.on_duty },
+                        viewingFlight.off_duty && { label: "Off Duty", value: viewingFlight.off_duty },
+                        viewingFlight.hobbs_start != null && { label: "Hobbs Start", value: viewingFlight.hobbs_start },
+                        viewingFlight.hobbs_end != null && { label: "Hobbs End", value: viewingFlight.hobbs_end },
+                        viewingFlight.tach_start != null && { label: "Tach Start", value: viewingFlight.tach_start },
+                        viewingFlight.tach_end != null && { label: "Tach End", value: viewingFlight.tach_end },
+                      ].filter(Boolean).map((item: any) => (
+                        <div key={item.label} className="flex flex-col">
+                          <p className="text-xs font-medium text-muted-foreground uppercase tracking-wide mb-1">
+                            {item.label}
+                          </p>
+                          <p className="text-base font-semibold text-foreground">{item.value}</p>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
+
+                {/* Remarks */}
+                <div className="rounded-xl border bg-card p-6 shadow-sm">
+                  <h3 className="text-lg font-semibold mb-4">Remarks</h3>
+                  {viewingFlight.remarks ? (
+                    <p className="text-sm text-muted-foreground whitespace-pre-wrap leading-relaxed">
+                      {viewingFlight.remarks}
+                    </p>
+                  ) : (
+                    <p className="text-sm text-muted-foreground italic">No remarks recorded</p>
+                  )}
+                </div>
+
+                {/* Action Buttons */}
+                <div className="flex gap-3 pt-4 border-t">
+                  <Button
+                    onClick={() => handleEditFlight(viewingFlight)}
+                    className="flex-1 h-11"
+                    size="lg"
+                  >
+                    <Edit className="mr-2 h-4 w-4" />
+                    Edit Flight
+                  </Button>
+                  <Button
+                    variant="destructive"
+                    onClick={() => {
+                      setViewingFlight(null);
+                      setDeletingFlight(viewingFlight);
+                    }}
+                    className="h-11"
+                    size="lg"
+                  >
+                    <Trash2 className="mr-2 h-4 w-4" />
+                    Delete
+                  </Button>
+                </div>
+              </div>
+            </>
+          )}
+        </DialogContent>
+      </Dialog>
 
     </div>
   );
