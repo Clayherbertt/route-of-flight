@@ -7,7 +7,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Button } from '@/components/ui/button'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { Badge } from '@/components/ui/badge'
-import { Settings, Users, Building2, Route, Loader2, Plane, CreditCard, UserCheck } from 'lucide-react'
+import { Settings, Users, Building2, Route, Loader2, Plane, CreditCard, UserCheck, FileText } from 'lucide-react'
 
 export default function Admin() {
   const { user } = useAuth()
@@ -132,6 +132,10 @@ export default function Admin() {
                   <Button variant="outline" className="justify-start" onClick={() => navigate('/admin/routes')}>
                     <Route className="mr-2 h-4 w-4" />
                     Route Dashboard
+                  </Button>
+                  <Button variant="outline" className="justify-start" onClick={() => navigate('/admin/endorsements')}>
+                    <FileText className="mr-2 h-4 w-4" />
+                    Endorsement Library
                   </Button>
                 </div>
               </CardContent>
