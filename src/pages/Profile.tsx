@@ -6,6 +6,11 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Separator } from "@/components/ui/separator"
+import { Input } from "@/components/ui/input"
+import { Label } from "@/components/ui/label"
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
+import { SignatureCanvas } from "@/components/SignatureCanvas"
+import { useToast } from "@/hooks/use-toast"
 import { 
   User, 
   Mail, 
@@ -17,7 +22,10 @@ import {
   BarChart3,
   Settings,
   LogOut,
-  Star
+  Star,
+  Edit,
+  Save,
+  X
 } from "lucide-react"
 import Header from "@/components/layout/Header"
 import { useNavigate } from "react-router-dom"
@@ -35,6 +43,7 @@ export default function Profile() {
   const { user, signOut } = useAuth()
   const { isAdmin } = useIsAdmin()
   const navigate = useNavigate()
+  const { toast } = useToast()
   const [flightStats, setFlightStats] = useState<FlightStats>({
     totalHours: 0,
     picHours: 0,
@@ -45,12 +54,129 @@ export default function Profile() {
   })
   const [loading, setLoading] = useState(true)
   const [allFlights, setAllFlights] = useState<any[]>([])
+  
+  // Account editing state
+  const [isEditing, setIsEditing] = useState(false)
+  const [profileData, setProfileData] = useState({
+    fullName: '',
+    email: '',
+    cfiCertificateNumber: '',
+    cfiCertificateType: 'CFI',
+    cfiExpirationDate: '',
+    electronicSignature: ''
+  })
 
   useEffect(() => {
     if (user) {
       fetchFlightStats()
+      fetchProfileData()
     }
   }, [user])
+
+  const fetchProfileData = async () => {
+    if (!user) return
+
+    try {
+      const { data, error } = await supabase
+        .from('profiles')
+        .select('full_name, email, cfi_certificate_number, cfi_expiration_date, electronic_signature')
+        .eq('id', user.id)
+        .single()
+
+      if (error && error.code !== 'PGRST116') { // PGRST116 = no rows returned
+        console.error('Error fetching profile:', error)
+        return
+      }
+
+      if (data) {
+        // Parse CFI certificate number and type
+        const cfiNumber = data.cfi_certificate_number || ''
+        const certificateTypes = ['CFI', 'CFII', 'MEI', 'GI', 'AGI', 'IGI']
+        let number = cfiNumber
+        let type = 'CFI'
+        
+        for (const certType of certificateTypes) {
+          if (cfiNumber.endsWith(certType)) {
+            number = cfiNumber.slice(0, -certType.length)
+            type = certType
+            break
+          }
+        }
+
+        setProfileData({
+          fullName: data.full_name || user.user_metadata?.full_name || user.user_metadata?.display_name || '',
+          email: data.email || user.email || '',
+          cfiCertificateNumber: number,
+          cfiCertificateType: type,
+          cfiExpirationDate: data.cfi_expiration_date || '',
+          electronicSignature: data.electronic_signature || ''
+        })
+      } else {
+        // Initialize with user metadata
+        setProfileData({
+          fullName: user.user_metadata?.full_name || user.user_metadata?.display_name || '',
+          email: user.email || '',
+          cfiCertificateNumber: '',
+          cfiCertificateType: 'CFI',
+          cfiExpirationDate: '',
+          electronicSignature: ''
+        })
+      }
+    } catch (error) {
+      console.error('Error fetching profile data:', error)
+    }
+  }
+
+  const handleSave = async () => {
+    if (!user) return
+
+    try {
+      // Combine certificate number and type
+      const fullCertificateNumber = profileData.cfiCertificateNumber 
+        ? `${profileData.cfiCertificateNumber}${profileData.cfiCertificateType}`
+        : null
+
+      const { error } = await supabase
+        .from('profiles')
+        .upsert({
+          id: user.id,
+          full_name: profileData.fullName,
+          email: profileData.email,
+          cfi_certificate_number: fullCertificateNumber,
+          cfi_expiration_date: profileData.cfiExpirationDate || null,
+          electronic_signature: profileData.electronicSignature || null,
+          updated_at: new Date().toISOString()
+        }, {
+          onConflict: 'id'
+        })
+
+      if (error) {
+        throw error
+      }
+
+      toast({
+        title: "Profile updated",
+        description: "Your account information has been saved successfully.",
+      })
+
+      setIsEditing(false)
+    } catch (error: any) {
+      console.error('Error saving profile:', error)
+      toast({
+        title: "Error",
+        description: error.message || "Failed to save profile. Please try again.",
+        variant: "destructive",
+      })
+    }
+  }
+
+  const handleCancel = () => {
+    fetchProfileData()
+    setIsEditing(false)
+  }
+
+  // Check if user is an instructor (has CFI certificate number)
+  const isInstructor = !!profileData.cfiCertificateNumber || isEditing
 
   const fetchFlightStats = async () => {
     try {
@@ -364,38 +490,186 @@ export default function Profile() {
             {/* Account Information */}
             <Card>
               <CardHeader>
-                <CardTitle className="flex items-center gap-2">
-                  <Settings className="h-5 w-5" />
-                  Account Information
-                </CardTitle>
-                <CardDescription>
-                Your account details and settings
-                </CardDescription>
+                <div className="flex items-center justify-between">
+                  <div>
+                    <CardTitle className="flex items-center gap-2">
+                      <Settings className="h-5 w-5" />
+                      Account Information
+                    </CardTitle>
+                    <CardDescription>
+                      Your account details and settings
+                    </CardDescription>
+                  </div>
+                  {!isEditing ? (
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => setIsEditing(true)}
+                    >
+                      <Edit className="mr-2 h-4 w-4" />
+                      Edit
+                    </Button>
+                  ) : (
+                    <div className="flex gap-2">
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={handleCancel}
+                      >
+                        <X className="mr-2 h-4 w-4" />
+                        Cancel
+                      </Button>
+                      <Button
+                        size="sm"
+                        onClick={handleSave}
+                      >
+                        <Save className="mr-2 h-4 w-4" />
+                        Save
+                      </Button>
+                    </div>
+                  )}
+                </div>
               </CardHeader>
-            <CardContent className="space-y-4">
-                    <div>
-                <label className="text-sm font-medium text-muted-foreground mb-2 block">Email Address</label>
-                <div className="p-3 bg-muted/50 rounded-md border flex items-center gap-2">
-                          <Mail className="h-4 w-4 text-muted-foreground" />
-                          <span>{user.email}</span>
-                      </div>
+              <CardContent className="space-y-4">
+                <div>
+                  <Label htmlFor="email">Email Address</Label>
+                  {isEditing ? (
+                    <Input
+                      id="email"
+                      type="email"
+                      value={profileData.email}
+                      onChange={(e) => setProfileData({ ...profileData, email: e.target.value })}
+                      className="mt-2"
+                    />
+                  ) : (
+                    <div className="p-3 bg-muted/50 rounded-md border flex items-center gap-2 mt-2">
+                      <Mail className="h-4 w-4 text-muted-foreground" />
+                      <span>{profileData.email || user.email}</span>
                     </div>
-                    
-                    <div>
-                <label className="text-sm font-medium text-muted-foreground mb-2 block">Full Name</label>
-                <div className="p-3 bg-muted/50 rounded-md border flex items-center gap-2">
-                          <User className="h-4 w-4 text-muted-foreground" />
-                          <span>{user.user_metadata?.full_name || user.user_metadata?.display_name || "Not set"}</span>
-                      </div>
+                  )}
+                </div>
+                
+                <div>
+                  <Label htmlFor="fullName">Full Name</Label>
+                  {isEditing ? (
+                    <Input
+                      id="fullName"
+                      value={profileData.fullName}
+                      onChange={(e) => setProfileData({ ...profileData, fullName: e.target.value })}
+                      className="mt-2"
+                    />
+                  ) : (
+                    <div className="p-3 bg-muted/50 rounded-md border flex items-center gap-2 mt-2">
+                      <User className="h-4 w-4 text-muted-foreground" />
+                      <span>{profileData.fullName || user.user_metadata?.full_name || user.user_metadata?.display_name || "Not set"}</span>
                     </div>
-                    
-                    <div>
-                <label className="text-sm font-medium text-muted-foreground mb-2 block">Member Since</label>
-                <div className="p-3 bg-muted/50 rounded-md border flex items-center gap-2">
-                          <Calendar className="h-4 w-4 text-muted-foreground" />
-                          <span>{joinDate}</span>
+                  )}
+                </div>
+                
+                <div>
+                  <Label>Member Since</Label>
+                  <div className="p-3 bg-muted/50 rounded-md border flex items-center gap-2 mt-2">
+                    <Calendar className="h-4 w-4 text-muted-foreground" />
+                    <span>{joinDate}</span>
                   </div>
                 </div>
+
+                <Separator />
+
+                {/* CFI Instructor Fields */}
+                {(isInstructor || isEditing) && (
+                  <>
+                    <div className="space-y-2">
+                      <Label className="text-base font-semibold">Flight Instructor Information</Label>
+                      <p className="text-sm text-muted-foreground">
+                        Add your CFI certificate information to issue endorsements
+                      </p>
+                    </div>
+
+                    <div className="grid grid-cols-2 gap-4">
+                      <div>
+                        <Label htmlFor="cfiNumber">Certificate Number</Label>
+                        <Input
+                          id="cfiNumber"
+                          value={profileData.cfiCertificateNumber}
+                          onChange={(e) => setProfileData({ ...profileData, cfiCertificateNumber: e.target.value })}
+                          placeholder="e.g., 4083052"
+                          disabled={!isEditing}
+                          className="mt-2"
+                        />
+                      </div>
+                      <div>
+                        <Label htmlFor="cfiType">Certificate Type</Label>
+                        <Select
+                          value={profileData.cfiCertificateType}
+                          onValueChange={(value) => setProfileData({ ...profileData, cfiCertificateType: value })}
+                          disabled={!isEditing}
+                        >
+                          <SelectTrigger className="mt-2">
+                            <SelectValue />
+                          </SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value="CFI">CFI</SelectItem>
+                            <SelectItem value="CFII">CFII</SelectItem>
+                            <SelectItem value="MEI">MEI</SelectItem>
+                            <SelectItem value="GI">GI</SelectItem>
+                            <SelectItem value="AGI">AGI</SelectItem>
+                            <SelectItem value="IGI">IGI</SelectItem>
+                          </SelectContent>
+                        </Select>
+                        {isEditing && profileData.cfiCertificateNumber && (
+                          <p className="text-xs text-muted-foreground mt-1">
+                            Full number: {profileData.cfiCertificateNumber}{profileData.cfiCertificateType}
+                          </p>
+                        )}
+                      </div>
+                    </div>
+
+                    <div>
+                      <Label htmlFor="cfiExpiration">Expiration Date</Label>
+                      <Input
+                        id="cfiExpiration"
+                        type="date"
+                        value={profileData.cfiExpirationDate}
+                        onChange={(e) => setProfileData({ ...profileData, cfiExpirationDate: e.target.value })}
+                        disabled={!isEditing}
+                        className="mt-2"
+                      />
+                    </div>
+
+                    <div>
+                      <Label>Electronic Signature</Label>
+                      {isEditing ? (
+                        <div className="mt-2">
+                          <SignatureCanvas
+                            value={profileData.electronicSignature}
+                            onChange={(value) => setProfileData({ ...profileData, electronicSignature: value })}
+                            firstName={profileData.fullName.split(' ')[0] || ''}
+                            lastName={profileData.fullName.split(' ').slice(1).join(' ') || ''}
+                          />
+                        </div>
+                      ) : (
+                        <div className="mt-2 p-3 bg-muted/50 rounded-md border">
+                          {profileData.electronicSignature ? (
+                            <img 
+                              src={profileData.electronicSignature} 
+                              alt="Signature" 
+                              className="max-w-full h-20 object-contain"
+                            />
+                          ) : (
+                            <p className="text-sm text-muted-foreground">No signature on file</p>
+                          )}
+                        </div>
+                      )}
+                    </div>
+                  </>
+                )}
+
+                {!isInstructor && !isEditing && (
+                  <div className="p-3 bg-muted/50 rounded-md border text-sm text-muted-foreground">
+                    <p>Are you a Flight Instructor? Click "Edit" to add your CFI certificate information.</p>
+                  </div>
+                )}
               </CardContent>
             </Card>
 

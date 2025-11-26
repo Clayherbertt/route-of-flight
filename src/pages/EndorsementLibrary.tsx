@@ -14,6 +14,7 @@ import { Label } from '@/components/ui/label'
 import { Loader2, Search, Edit2, Save, X, FileText, AlertCircle } from 'lucide-react'
 import { useToast } from '@/hooks/use-toast'
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion'
+import { ENDORSEMENT_SECTIONS, organizeEndorsementsBySection, getSectionTitle } from '@/utils/endorsementSections'
 
 interface Endorsement {
   id: string
@@ -57,29 +58,16 @@ export default function EndorsementLibrary() {
     }
   }, [isAdmin, user])
 
-  // Organize endorsements by section
+  // Organize endorsements by section using the new categorization
   useEffect(() => {
-    const organized = new Map<string, Endorsement[]>()
-    
-    endorsements.forEach(endorsement => {
-      if (!organized.has(endorsement.section_id)) {
-        organized.set(endorsement.section_id, [])
-      }
-      organized.get(endorsement.section_id)!.push(endorsement)
-    })
-
-    // Sort endorsements within each section by display_order
-    organized.forEach((endorsements, sectionId) => {
-      endorsements.sort((a, b) => a.display_order - b.display_order)
-    })
-
+    const organized = organizeEndorsementsBySection(endorsements)
     setSections(organized)
   }, [endorsements])
 
   const fetchEndorsements = async () => {
     try {
       setLoadingEndorsements(true)
-      const { data, error } = await supabase
+      const { data, error } = await (supabase as any)
         .from('endorsements')
         .select('*')
         .eq('active', true)
@@ -104,7 +92,7 @@ export default function EndorsementLibrary() {
         }
         return
       }
-      setEndorsements(data || [])
+      setEndorsements((data || []) as Endorsement[])
     } catch (error: any) {
       console.error('Error fetching endorsements:', error)
       toast({
@@ -126,7 +114,7 @@ export default function EndorsementLibrary() {
     if (!editingEndorsement) return
 
     try {
-      const { error } = await supabase
+      const { error } = await (supabase as any)
         .from('endorsements')
         .update({ 
           endorsement_text: editText,
@@ -173,10 +161,9 @@ export default function EndorsementLibrary() {
     }
   })
 
-  // Get section title from first endorsement in section
-  const getSectionTitle = (sectionId: string) => {
-    const firstEndorsement = sections.get(sectionId)?.[0]
-    return firstEndorsement?.section_title || sectionId
+  // Get section title - use the utility function
+  const getSectionTitleForDisplay = (sectionId: string) => {
+    return getSectionTitle(sectionId)
   }
 
   // Show loading state while checking admin status
@@ -301,12 +288,21 @@ export default function EndorsementLibrary() {
           </Card>
         ) : (
           <Accordion type="multiple" className="space-y-4">
-            {Array.from(filteredSections.entries()).map(([sectionId, sectionEndorsements]) => (
+            {Array.from(filteredSections.entries())
+              .filter(([sectionId]) => sectionId !== 'other') // Filter out "other" section
+              .sort(([sectionIdA], [sectionIdB]) => {
+                const sectionA = ENDORSEMENT_SECTIONS.find(s => s.id === sectionIdA)
+                const sectionB = ENDORSEMENT_SECTIONS.find(s => s.id === sectionIdB)
+                const orderA = sectionA?.order || 999
+                const orderB = sectionB?.order || 999
+                return orderA - orderB
+              })
+              .map(([sectionId, sectionEndorsements]) => (
               <AccordionItem key={sectionId} value={sectionId} className="border rounded-lg px-4">
                 <AccordionTrigger className="hover:no-underline">
                   <div className="flex items-center justify-between w-full pr-4">
                     <div className="text-left">
-                      <h3 className="font-semibold text-lg">{getSectionTitle(sectionId)}</h3>
+                      <h3 className="font-semibold text-lg">{getSectionTitleForDisplay(sectionId)}</h3>
                       <p className="text-sm text-muted-foreground">
                         {sectionEndorsements.length} endorsement{sectionEndorsements.length !== 1 ? 's' : ''}
                       </p>

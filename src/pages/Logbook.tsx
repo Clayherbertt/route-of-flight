@@ -18,6 +18,7 @@ import { CSVImportDialog } from "@/components/forms/CSVImportDialog";
 import { subMonths, format, startOfMonth, endOfMonth, eachMonthOfInterval } from "date-fns";
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from "recharts";
 import { FlightMap } from "@/components/FlightMap";
+import { EndorsementCarousel } from "@/components/EndorsementCarousel";
 
 interface FlightEntry {
   id: string;
@@ -825,6 +826,9 @@ const Logbook = () => {
                 </div>
               </div>
             </div>
+
+            {/* Endorsement Carousel */}
+            <EndorsementCarousel />
 
             <div className="rounded-3xl border border-border/60 bg-card/95 shadow-xl shadow-aviation-navy/15 backdrop-blur">
               <div className="flex flex-wrap items-center justify-between gap-4 border-b border-border/60 px-6 py-5">
