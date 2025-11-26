@@ -289,7 +289,7 @@ export default function RouteBuilder() {
         toast.error('Failed to add step to route');
       }
     } else {
-      setStudentRoute(prev => [...prev, newStep]);
+    setStudentRoute(prev => [...prev, newStep]);
     }
   };
 
@@ -386,9 +386,9 @@ export default function RouteBuilder() {
     }));
   };
 
-  const formatHtmlContent = (html: string) => {
-    if (!html || !html.trim()) return null;
-    
+const formatHtmlContent = (html: string) => {
+  if (!html || !html.trim()) return null;
+  
     const processedHtml = html
       .replace(/<strong[^>]*>(.*?)<\/strong>/gi, '<span class="font-bold text-foreground">$1</span>')
       .replace(/<b[^>]*>(.*?)<\/b>/gi, '<span class="font-bold text-foreground">$1</span>')
@@ -411,14 +411,14 @@ export default function RouteBuilder() {
       .replace(/&lt;/g, '<')
       .replace(/&gt;/g, '>')
       .replace(/&quot;/g, '"');
-    
-    return (
-      <div 
-        className="prose prose-sm max-w-none prose-headings:text-foreground prose-p:text-foreground prose-li:text-foreground prose-strong:text-foreground prose-ul:text-foreground prose-ol:text-foreground"
+  
+  return (
+    <div 
+      className="prose prose-sm max-w-none prose-headings:text-foreground prose-p:text-foreground prose-li:text-foreground prose-strong:text-foreground prose-ul:text-foreground prose-ol:text-foreground"
         dangerouslySetInnerHTML={{ __html: processedHtml }}
-      />
-    );
-  };
+    />
+  );
+};
 
   const getStepProgress = (step: any, fullStep: any) => {
     if (!fullStep || !fullStep.details || fullStep.details.length === 0) return 0;
@@ -479,14 +479,14 @@ export default function RouteBuilder() {
             <div>
               <h1 className="text-4xl font-bold text-foreground mb-2">
                 {studentRoute.length > 0 ? "My Career Route" : "Route Builder"}
-              </h1>
+          </h1>
               <p className="text-muted-foreground text-lg">
-                {studentRoute.length > 0 
+            {studentRoute.length > 0 
                   ? "Track your progress toward your aviation career goals" 
                   : "Build your personalized path to becoming an airline pilot"}
-              </p>
+          </p>
             </div>
-            {studentRoute.length > 0 && (
+          {studentRoute.length > 0 && (
               <Button 
                 onClick={() => setShowWizard(true)}
                 variant="default"
@@ -496,26 +496,26 @@ export default function RouteBuilder() {
                 <Compass className="h-5 w-5" />
                 Adjust Route
               </Button>
-            )}
+          )}
           </div>
         </div>
 
         {/* Route Steps - Modern Timeline Design */}
         {studentRoute.length > 0 && (
           <div className="space-y-8">
-            {studentRoute.map((step, index) => {
-              const fullStep = routeSteps.find(rs => rs.id === step.stepId);
-              if (!fullStep) return null;
+              {studentRoute.map((step, index) => {
+                const fullStep = routeSteps.find(rs => rs.id === step.stepId);
+                if (!fullStep) return null;
 
-              const isExpanded = expandedSteps.has(step.id);
-              const stepProgress = getStepProgress(step, fullStep);
+                const isExpanded = expandedSteps.has(step.id);
+                const stepProgress = getStepProgress(step, fullStep);
               const completedCount = fullStep.details.filter((detail: any) => 
                 step.taskProgress[detail.id || detail.title] || false
               ).length;
               const totalTasks = fullStep.details.length;
 
-              return (
-                <div key={step.id} className="relative">
+                return (
+                  <div key={step.id} className="relative">
                   {/* Timeline Line - positioned behind the circle */}
                   {index < studentRoute.length - 1 && (
                     <div className="absolute left-7 top-20 bottom-0 w-0.5 bg-border/20" style={{ zIndex: 0 }} />
@@ -553,27 +553,27 @@ export default function RouteBuilder() {
                           {/* Step Content */}
                           <div className="flex-1 min-w-0">
                             <div className="flex items-start justify-between gap-4 mb-3">
-                              <div className="flex-1">
+                          <div className="flex-1">
                                 <h3 className="text-2xl font-bold text-foreground mb-2">
-                                  {step.title}
-                                </h3>
+                              {step.title}
+                            </h3>
                                 {fullStep.description && (
                                   <p className="text-muted-foreground line-clamp-2">
                                     {fullStep.description.replace(/<[^>]*>/g, '').substring(0, 150)}
                                     {fullStep.description.replace(/<[^>]*>/g, '').length > 150 && '...'}
-                                  </p>
+                            </p>
                                 )}
-                              </div>
+                          </div>
                               <div className="flex items-center gap-3 flex-shrink-0">
                                 <Badge variant="outline" className="text-sm px-3 py-1">
                                   {completedCount} / {totalTasks} tasks
                                 </Badge>
-                                <Button 
+                            <Button 
                                   variant="ghost" 
-                                  size="sm"
-                                  onClick={() => toggleStepExpansion(step.id)}
+                              size="sm"
+                              onClick={() => toggleStepExpansion(step.id)}
                                   className="gap-2"
-                                >
+                            >
                                   {isExpanded ? (
                                     <>
                                       <ChevronDown className="h-4 w-4" />
@@ -585,48 +585,48 @@ export default function RouteBuilder() {
                                       Show Details
                                     </>
                                   )}
-                                </Button>
+                            </Button>
                               </div>
                             </div>
                           </div>
+                          </div>
                         </div>
-                      </div>
 
                       {/* Expandable Tasks */}
-                      {isExpanded && (
+                        {isExpanded && (
                         <div className="p-6 bg-muted/20">
-                          {fullStep.description && fullStep.description.trim() && (
+                            {fullStep.description && fullStep.description.trim() && (
                             <div className="mb-8 p-4 rounded-lg bg-card border border-border/60">
                               <h4 className="font-semibold mb-3 text-lg flex items-center gap-2">
                                 <BookOpen className="h-5 w-5 text-primary" />
                                 Overview
                               </h4>
-                              <div className="prose prose-sm max-w-none">
-                                {formatHtmlContent(fullStep.description)}
+                                <div className="prose prose-sm max-w-none">
+                                  {formatHtmlContent(fullStep.description)}
+                                </div>
                               </div>
-                            </div>
-                          )}
-                          
+                            )}
+                            
                           <div className="space-y-3">
                             <h4 className="font-semibold mb-4 text-lg flex items-center gap-2">
                               <Target className="h-5 w-5 text-primary" />
                               Tasks ({totalTasks})
                             </h4>
                             
-                            {fullStep.details
-                              .sort((a, b) => {
-                                if (a.taskType !== b.taskType) {
-                                  if (a.taskType === 'flight') return -1;
-                                  if (b.taskType === 'flight') return 1;
-                                  return 0;
-                                }
-                                return (a.orderNumber || 0) - (b.orderNumber || 0);
-                              })
-                              .map((detail, detailIndex) => {
+                              {fullStep.details
+                                .sort((a, b) => {
+                                  if (a.taskType !== b.taskType) {
+                                    if (a.taskType === 'flight') return -1;
+                                    if (b.taskType === 'flight') return 1;
+                                    return 0;
+                                  }
+                                  return (a.orderNumber || 0) - (b.orderNumber || 0);
+                                })
+                                .map((detail, detailIndex) => {
                                 const isCompleted = step.taskProgress[detail.id || detail.title] || false;
                                 const isTaskExpanded = expandedTasks.has(detail.id || `${step.id}-${detailIndex}`);
                                 
-                                return (
+                                 return (
                                   <div 
                                     key={detail.id || detailIndex} 
                                     className={`group rounded-lg border transition-all duration-200 ${
@@ -636,23 +636,23 @@ export default function RouteBuilder() {
                                     }`}
                                   >
                                     <div className="flex items-start gap-4 p-4">
-                                      <Checkbox
-                                        id={`task-${detail.id || detailIndex}`}
-                                        checked={isCompleted}
-                                        onCheckedChange={(checked) => toggleTaskCompletion(step.id, detail.id || detail.title, !!checked)}
-                                        className="mt-1"
-                                      />
+                                          <Checkbox
+                                            id={`task-${detail.id || detailIndex}`}
+                                            checked={isCompleted}
+                                            onCheckedChange={(checked) => toggleTaskCompletion(step.id, detail.id || detail.title, !!checked)}
+                                            className="mt-1"
+                                          />
                                       
-                                      <div className="flex-1 min-w-0">
+                                       <div className="flex-1 min-w-0">
                                         <div className="flex items-start justify-between gap-3 mb-2">
-                                          <label 
-                                            htmlFor={`task-${detail.id || detailIndex}`}
+                                           <label 
+                                             htmlFor={`task-${detail.id || detailIndex}`}
                                             className={`font-semibold cursor-pointer text-base leading-tight ${
-                                              isCompleted ? 'line-through text-muted-foreground' : 'text-foreground'
-                                            }`}
-                                          >
-                                            {detail.title}
-                                          </label>
+                                               isCompleted ? 'line-through text-muted-foreground' : 'text-foreground'
+                                             }`}
+                                           >
+                                             {detail.title}
+                                           </label>
                                           
                                           <div className="flex items-center gap-2 flex-shrink-0">
                                             {detail.taskType && (
@@ -668,109 +668,109 @@ export default function RouteBuilder() {
                                               </Badge>
                                             )}
                                             
-                                            {(detail.flightHours || step.category === 'Flight Instructing') && (
-                                              <Popover>
-                                                <PopoverTrigger asChild>
+                                              {(detail.flightHours || step.category === 'Flight Instructing') && (
+                                                <Popover>
+                                                  <PopoverTrigger asChild>
                                                   <Button variant="outline" size="sm" className="h-7 text-xs px-2 gap-1">
                                                     <Clock className="h-3 w-3" />
-                                                    {detail.flightHours || 0}h
-                                                  </Button>
-                                                </PopoverTrigger>
+                                                      {detail.flightHours || 0}h
+                                                    </Button>
+                                                  </PopoverTrigger>
                                                 <PopoverContent className="w-64 p-4">
-                                                  <div className="space-y-3">
-                                                    <Label className="text-sm font-medium">Flight Hours</Label>
-                                                    <Input
-                                                      type="number"
-                                                      placeholder="Enter hours"
-                                                      value={detail.flightHours || ''}
-                                                      onChange={(e) => {
-                                                        const hours = parseFloat(e.target.value) || 0
+                                                    <div className="space-y-3">
+                                                      <Label className="text-sm font-medium">Flight Hours</Label>
+                                                      <Input
+                                                        type="number"
+                                                        placeholder="Enter hours"
+                                                        value={detail.flightHours || ''}
+                                                        onChange={(e) => {
+                                                          const hours = parseFloat(e.target.value) || 0
                                                         updateTaskDetails(step.id, detail.id || detail.title, { flightHours: hours })
-                                                      }}
+                                                        }}
                                                       className="h-9"
-                                                    />
-                                                    {step.category === 'Flight Instructing' && (
-                                                      <>
-                                                        <Label className="text-sm font-medium">Hour Type</Label>
-                                                        <Select 
-                                                          value={(detail as any).hourType || 'ATP'} 
+                                                      />
+                                                      {step.category === 'Flight Instructing' && (
+                                                        <>
+                                                          <Label className="text-sm font-medium">Hour Type</Label>
+                                                          <Select 
+                                                            value={(detail as any).hourType || 'ATP'} 
                                                           onValueChange={(value) => updateTaskDetails(step.id, detail.id || detail.title, { 
-                                                            hourType: value as 'ATP' | 'R-ATP Bachelors Degree' | 'R-ATP Associated Degree' 
-                                                          })}
-                                                        >
+                                                              hourType: value as 'ATP' | 'R-ATP Bachelors Degree' | 'R-ATP Associated Degree' 
+                                                            })}
+                                                          >
                                                           <SelectTrigger className="h-9">
-                                                            <SelectValue />
-                                                          </SelectTrigger>
+                                                              <SelectValue />
+                                                            </SelectTrigger>
                                                           <SelectContent>
-                                                            <SelectItem value="ATP">ATP</SelectItem>
-                                                            <SelectItem value="R-ATP Bachelors Degree">R-ATP Bachelors Degree</SelectItem>
-                                                            <SelectItem value="R-ATP Associated Degree">R-ATP Associated Degree</SelectItem>
-                                                          </SelectContent>
-                                                        </Select>
-                                                      </>
-                                                    )}
-                                                  </div>
-                                                </PopoverContent>
-                                              </Popover>
-                                            )}
+                                                              <SelectItem value="ATP">ATP</SelectItem>
+                                                              <SelectItem value="R-ATP Bachelors Degree">R-ATP Bachelors Degree</SelectItem>
+                                                              <SelectItem value="R-ATP Associated Degree">R-ATP Associated Degree</SelectItem>
+                                                            </SelectContent>
+                                                          </Select>
+                                                        </>
+                                                      )}
+                                                    </div>
+                                                  </PopoverContent>
+                                                </Popover>
+                                              )}
+                                              
+                                              {detail.mandatory && (
+                                                <Badge variant="destructive" className="text-xs">
+                                                  Required
+                                                </Badge>
+                                              )}
                                             
-                                            {detail.mandatory && (
-                                              <Badge variant="destructive" className="text-xs">
-                                                Required
-                                              </Badge>
-                                            )}
-                                            
-                                            {isCompleted && (
+                                              {isCompleted && (
                                               <Badge variant="default" className="text-xs bg-green-500/90">
                                                 <Check className="h-3 w-3 mr-1" />
                                                 Complete
-                                              </Badge>
-                                            )}
+                                                </Badge>
+                                              )}
                                             
-                                            {detail.description && detail.description.trim() && (
-                                              <Button
-                                                variant="ghost"
-                                                size="sm"
-                                                onClick={() => toggleTaskExpansion(detail.id || `${step.id}-${detailIndex}`)}
+                                              {detail.description && detail.description.trim() && (
+                                                <Button
+                                                  variant="ghost"
+                                                  size="sm"
+                                                  onClick={() => toggleTaskExpansion(detail.id || `${step.id}-${detailIndex}`)}
                                                 className="h-7 w-7 p-0"
-                                              >
+                                                >
                                                 {isTaskExpanded ? (
                                                   <ChevronDown className="h-4 w-4" />
-                                                ) : (
+                                                  ) : (
                                                   <ChevronRight className="h-4 w-4" />
-                                                )}
-                                              </Button>
-                                            )}
-                                          </div>
-                                        </div>
-                                        
+                                                  )}
+                                                </Button>
+                                              )}
+                                       </div>
+                                     </div>
+                                      
                                         {isTaskExpanded && detail.description && detail.description.trim() && (
                                           <div className="mt-3 pt-3 border-t border-border/50">
-                                            <div className="prose prose-sm max-w-none">
-                                              {formatHtmlContent(detail.description)}
-                                            </div>
-                                          </div>
-                                        )}
+                                         <div className="prose prose-sm max-w-none">
+                                           {formatHtmlContent(detail.description)}
+                                         </div>
+                                       </div>
+                                     )}
                                       </div>
                                     </div>
-                                  </div>
-                                );
+                                    </div>
+                                 );
                               })}
-                          </div>
-                          
-                          {fullStep.details.length === 0 && (
+                            </div>
+                            
+                            {fullStep.details.length === 0 && (
                             <div className="text-center py-8 text-muted-foreground bg-destructive/10 border border-destructive/20 rounded-lg">
                               <p className="font-medium">No tasks found for this step</p>
-                              <p className="text-xs mt-2">Step ID: {fullStep.id}</p>
-                            </div>
-                          )}
-                        </div>
-                      )}
-                    </CardContent>
-                  </Card>
-                </div>
-              );
-            })}
+                                <p className="text-xs mt-2">Step ID: {fullStep.id}</p>
+                              </div>
+                            )}
+                          </div>
+                        )}
+                      </CardContent>
+                    </Card>
+                  </div>
+                );
+              })}
           </div>
         )}
 
@@ -784,48 +784,48 @@ export default function RouteBuilder() {
               <h3 className="text-2xl font-bold mb-3">Ready to Build Your Career Route?</h3>
               <p className="text-muted-foreground mb-8 max-w-md mx-auto text-lg">
                 Create your personalized path from student pilot to airline pilot with our guided route builder.
-              </p>
+                </p>
               <div className="flex flex-col sm:flex-row gap-3 justify-center">
-                <Button 
+                 <Button 
                   onClick={() => setShowWizard(true)}
                   size="lg"
-                  className="gap-2"
-                >
+                   className="gap-2"
+                 >
                   <Compass className="h-5 w-5" />
                   Start Route Builder
-                </Button>
-                <Button 
-                  variant="outline"
+                   </Button>
+                 <Button 
+                   variant="outline"
                   size="lg"
-                  onClick={async () => {
-                    if (user) {
-                      try {
-                        const { error } = await supabase
-                          .from('user_routes')
-                          .delete()
-                          .eq('user_id', user.id);
-                        
-                        if (error) {
-                          toast.error('Failed to reset route');
-                          return;
-                        }
-                        
-                        setStudentRoute([]);
-                        setHasCompletedWizard(false);
-                        setHasCheckedForExistingRoute(false);
-                        setShowWizard(true);
-                        toast.success('Route reset successfully');
-                      } catch (error) {
-                        toast.error('Failed to reset route');
-                      }
-                    }
-                  }}
-                >
+                   onClick={async () => {
+                     if (user) {
+                       try {
+                         const { error } = await supabase
+                           .from('user_routes')
+                           .delete()
+                           .eq('user_id', user.id);
+                         
+                         if (error) {
+                           toast.error('Failed to reset route');
+                           return;
+                         }
+                         
+                         setStudentRoute([]);
+                         setHasCompletedWizard(false);
+                         setHasCheckedForExistingRoute(false);
+                         setShowWizard(true);
+                         toast.success('Route reset successfully');
+                       } catch (error) {
+                         toast.error('Failed to reset route');
+                       }
+                     }
+                   }}
+                 >
                   Reset & Start Over
-                </Button>
-              </div>
-            </CardContent>
-          </Card>
+                   </Button>
+                </div>
+              </CardContent>
+            </Card>
         )}
 
         {/* Route Wizard */}

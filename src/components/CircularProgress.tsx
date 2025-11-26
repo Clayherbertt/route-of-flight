@@ -53,11 +53,11 @@ export function CircularProgress({
       
       {/* Progress text - only show if showText is true and not 100% */}
       {showText && progress < 100 && (
-        <div className="absolute inset-0 flex items-center justify-center">
+      <div className="absolute inset-0 flex items-center justify-center">
           <span className="text-[10px] font-semibold text-foreground">
-            {Math.round(progress)}%
-          </span>
-        </div>
+          {Math.round(progress)}%
+        </span>
+      </div>
       )}
     </div>
   );

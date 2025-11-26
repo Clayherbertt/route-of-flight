@@ -588,26 +588,26 @@ const Logbook = () => {
                     className="shadow-sm"
                   >
                     <Plus className="mr-2 h-4 w-4" />
-                    Add Flight
-                  </Button>
-                  <Button
+                  Add Flight
+                </Button>
+                <Button
                     size="default"
-                    variant="outline"
-                    onClick={() => setShowImportDialog(true)}
+                  variant="outline"
+                  onClick={() => setShowImportDialog(true)}
                     className="shadow-sm"
-                  >
+                >
                     <Upload className="mr-2 h-4 w-4" />
-                    Import CSV
-                  </Button>
-                  <Button
+                  Import CSV
+                </Button>
+                <Button
                     size="default"
-                    variant="outline"
-                    onClick={() => setShowClearAllDialog(true)}
+                  variant="outline"
+                  onClick={() => setShowClearAllDialog(true)}
                     className="text-destructive hover:text-destructive hover:bg-destructive/10"
-                  >
+                >
                     <Trash2 className="mr-2 h-4 w-4" />
-                    Clear All
-                  </Button>
+                  Clear All
+                </Button>
                 </div>
               </div>
 
@@ -654,7 +654,7 @@ const Logbook = () => {
                   </div>
                 )}
               </div>
-            </div>
+              </div>
 
               <div className="rounded-3xl border border-white/50 bg-white/45 shadow-2xl shadow-aviation-navy/20 backdrop-blur">
                 <div className="flex flex-wrap items-center justify-between gap-4 border-b border-white/40 px-6 py-5">
@@ -681,9 +681,9 @@ const Logbook = () => {
                         </p>
                       </div>
                     ))}
-                  </div>
                 </div>
               </div>
+            </div>
           </div>
         </section>
 

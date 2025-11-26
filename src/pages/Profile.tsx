@@ -61,9 +61,9 @@ export default function Profile() {
 
       while (true) {
         const { data, error } = await supabase
-          .from('flight_entries')
+        .from('flight_entries')
           .select('*')
-          .eq('user_id', user?.id)
+        .eq('user_id', user?.id)
           .order('date', { ascending: false })
           .order('created_at', { ascending: false })
           .range(from, from + pageSize - 1);
@@ -235,11 +235,11 @@ export default function Profile() {
                   )}
                   <Badge variant="outline" className="text-xs">
                     Member since {joinDate}
-                  </Badge>
+                </Badge>
                 </div>
               </div>
             </div>
-            
+
             {/* Quick Actions */}
             <div className="flex items-center gap-3">
               <Button
@@ -357,67 +357,67 @@ export default function Profile() {
               </div>
             </div>
           </div>
-        </div>
+            </div>
 
         {/* Account & Subscription Section */}
         <div className="grid md:grid-cols-2 gap-6">
-          {/* Account Information */}
-          <Card>
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <Settings className="h-5 w-5" />
-                Account Information
-              </CardTitle>
-              <CardDescription>
+            {/* Account Information */}
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <Settings className="h-5 w-5" />
+                  Account Information
+                </CardTitle>
+                <CardDescription>
                 Your account details and settings
-              </CardDescription>
-            </CardHeader>
+                </CardDescription>
+              </CardHeader>
             <CardContent className="space-y-4">
-              <div>
+                    <div>
                 <label className="text-sm font-medium text-muted-foreground mb-2 block">Email Address</label>
                 <div className="p-3 bg-muted/50 rounded-md border flex items-center gap-2">
-                  <Mail className="h-4 w-4 text-muted-foreground" />
-                  <span>{user.email}</span>
-                </div>
-              </div>
-              
-              <div>
+                          <Mail className="h-4 w-4 text-muted-foreground" />
+                          <span>{user.email}</span>
+                      </div>
+                    </div>
+                    
+                    <div>
                 <label className="text-sm font-medium text-muted-foreground mb-2 block">Full Name</label>
                 <div className="p-3 bg-muted/50 rounded-md border flex items-center gap-2">
-                  <User className="h-4 w-4 text-muted-foreground" />
-                  <span>{user.user_metadata?.full_name || user.user_metadata?.display_name || "Not set"}</span>
-                </div>
-              </div>
-              
-              <div>
+                          <User className="h-4 w-4 text-muted-foreground" />
+                          <span>{user.user_metadata?.full_name || user.user_metadata?.display_name || "Not set"}</span>
+                      </div>
+                    </div>
+                    
+                    <div>
                 <label className="text-sm font-medium text-muted-foreground mb-2 block">Member Since</label>
                 <div className="p-3 bg-muted/50 rounded-md border flex items-center gap-2">
-                  <Calendar className="h-4 w-4 text-muted-foreground" />
-                  <span>{joinDate}</span>
+                          <Calendar className="h-4 w-4 text-muted-foreground" />
+                          <span>{joinDate}</span>
+                  </div>
                 </div>
-              </div>
-            </CardContent>
-          </Card>
+              </CardContent>
+            </Card>
 
-          {/* Subscription Status */}
-          <Card>
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <CreditCard className="h-5 w-5" />
+            {/* Subscription Status */}
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <CreditCard className="h-5 w-5" />
                 Subscription
-              </CardTitle>
-              <CardDescription>
+                </CardTitle>
+                <CardDescription>
                 Manage your premium features
-              </CardDescription>
-            </CardHeader>
+                </CardDescription>
+              </CardHeader>
             <CardContent className="space-y-4">
               <div className="flex items-center justify-between">
                 <div>
                   <Badge variant="outline" className="px-3 py-1 mb-2">
-                    Free Plan
-                  </Badge>
+                        Free Plan
+                      </Badge>
                   <p className="text-sm text-muted-foreground">
-                    Upgrade for advanced features
+                        Upgrade for advanced features
                   </p>
                 </div>
                 <Button
@@ -426,35 +426,35 @@ export default function Profile() {
                 >
                   Upgrade
                 </Button>
-              </div>
+                    </div>
               
               <Separator />
-              
-              <div className="space-y-2">
+                    
+                    <div className="space-y-2">
                 <p className="text-sm font-medium">Premium Features:</p>
                 <ul className="text-sm text-muted-foreground space-y-1.5">
-                  <li className="flex items-center gap-2">
-                    <div className="w-1.5 h-1.5 bg-primary rounded-full" />
+                        <li className="flex items-center gap-2">
+                          <div className="w-1.5 h-1.5 bg-primary rounded-full" />
                     Advanced flight analytics
-                  </li>
-                  <li className="flex items-center gap-2">
-                    <div className="w-1.5 h-1.5 bg-primary rounded-full" />
-                    Unlimited logbook entries
-                  </li>
-                  <li className="flex items-center gap-2">
-                    <div className="w-1.5 h-1.5 bg-primary rounded-full" />
-                    Export capabilities (PDF, CSV)
-                  </li>
-                  <li className="flex items-center gap-2">
-                    <div className="w-1.5 h-1.5 bg-primary rounded-full" />
+                        </li>
+                        <li className="flex items-center gap-2">
+                          <div className="w-1.5 h-1.5 bg-primary rounded-full" />
+                          Unlimited logbook entries
+                        </li>
+                        <li className="flex items-center gap-2">
+                          <div className="w-1.5 h-1.5 bg-primary rounded-full" />
+                          Export capabilities (PDF, CSV)
+                        </li>
+                        <li className="flex items-center gap-2">
+                          <div className="w-1.5 h-1.5 bg-primary rounded-full" />
                     Priority support
-                  </li>
-                </ul>
-              </div>
+                        </li>
+                      </ul>
+                    </div>
             </CardContent>
           </Card>
-        </div>
-
+                  </div>
+                  
         {/* Navigation Links - Mobile */}
         <div className="mt-6 md:hidden">
           <Card>
@@ -476,16 +476,16 @@ export default function Profile() {
                   <Plane className="mr-3 h-4 w-4" />
                   Aircraft
                 </Button>
-                <Button
+                  <Button
                   variant="ghost"
                   className="w-full justify-start"
-                  onClick={() => navigate('/subscription')}
-                >
+                    onClick={() => navigate('/subscription')}
+                  >
                   <Star className="mr-3 h-4 w-4" />
                   Subscription
-                </Button>
+                  </Button>
                 {isAdmin && (
-                  <Button
+                  <Button 
                     variant="ghost"
                     className="w-full justify-start"
                     onClick={() => navigate('/admin')}
@@ -494,10 +494,10 @@ export default function Profile() {
                     Admin Dashboard
                   </Button>
                 )}
-              </div>
-            </CardContent>
-          </Card>
-        </div>
+                </div>
+              </CardContent>
+            </Card>
+          </div>
       </main>
     </div>
   )
