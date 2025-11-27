@@ -809,48 +809,81 @@ export function EndorsementCarousel() {
                   <p className="text-sm text-muted-foreground">Loading instructor information...</p>
                 </div>
               ) : instructorProfile ? (
-                <div className="rounded-lg border border-border/60 bg-muted/30 p-4 space-y-4">
-                  <div className="grid grid-cols-2 gap-4">
-                    <div>
-                      <Label className="text-xs text-muted-foreground mb-1 block">Full Name</Label>
-                      <p className="text-sm font-medium text-foreground">
-                        {instructorProfile.full_name || 'Not provided'}
+                <div className="space-y-4">
+                  {/* Check if all required fields are present */}
+                  {(!instructorProfile.cfi_certificate_number || !instructorProfile.cfi_expiration_date || !instructorProfile.electronic_signature) && (
+                    <div className="rounded-lg border border-yellow-200/50 bg-yellow-50/50 dark:border-yellow-900/50 dark:bg-yellow-900/10 p-3">
+                      <p className="text-xs font-semibold text-foreground mb-1">
+                        ⚠️ Missing Required Information
                       </p>
-                    </div>
-                    <div>
-                      <Label className="text-xs text-muted-foreground mb-1 block">Certificate Number</Label>
-                      <p className="text-sm font-mono font-medium text-foreground">
-                        {instructorProfile.cfi_certificate_number || 'Not provided'}
+                      <p className="text-xs text-foreground">
+                        You must complete all required instructor fields (Certificate Number, Expiration Date, and Signature) in your Profile page before issuing endorsements.
                       </p>
-                    </div>
-                    <div>
-                      <Label className="text-xs text-muted-foreground mb-1 block">Expiration Date</Label>
-                      <p className="text-sm font-medium text-foreground">
-                        {instructorProfile.cfi_expiration_date 
-                          ? format(new Date(instructorProfile.cfi_expiration_date), 'MMM d, yyyy')
-                          : 'Not provided'}
-                      </p>
-                    </div>
-                  </div>
-                  
-                  {instructorProfile.electronic_signature && (
-                    <div>
-                      <Label className="text-xs text-muted-foreground mb-2 block">Electronic Signature</Label>
-                      <div className="rounded border border-border/40 bg-background p-3 flex items-center justify-center">
-                        <img 
-                          src={instructorProfile.electronic_signature} 
-                          alt="Instructor Signature" 
-                          className="max-h-20 max-w-full object-contain"
-                        />
-                      </div>
                     </div>
                   )}
+                  
+                  <div className="rounded-lg border border-border/60 bg-muted/30 p-4 space-y-4">
+                    <div className="grid grid-cols-2 gap-4">
+                      <div>
+                        <Label className="text-xs text-muted-foreground mb-1 block">Full Name</Label>
+                        <p className="text-sm font-medium text-foreground">
+                          {instructorProfile.full_name || 'Not provided'}
+                        </p>
+                      </div>
+                      <div>
+                        <Label className="text-xs text-muted-foreground mb-1 block">
+                          Certificate Number {!instructorProfile.cfi_certificate_number && <span className="text-destructive">*</span>}
+                        </Label>
+                        <p className={`text-sm font-mono font-medium ${instructorProfile.cfi_certificate_number ? 'text-foreground' : 'text-destructive'}`}>
+                          {instructorProfile.cfi_certificate_number || 'Not provided'}
+                        </p>
+                      </div>
+                      <div>
+                        <Label className="text-xs text-muted-foreground mb-1 block">
+                          Expiration Date {!instructorProfile.cfi_expiration_date && <span className="text-destructive">*</span>}
+                        </Label>
+                        <p className={`text-sm font-medium ${instructorProfile.cfi_expiration_date ? 'text-foreground' : 'text-destructive'}`}>
+                          {instructorProfile.cfi_expiration_date 
+                            ? format(new Date(instructorProfile.cfi_expiration_date), 'MMM d, yyyy')
+                            : 'Not provided'}
+                        </p>
+                      </div>
+                    </div>
+                    
+                    <div>
+                      <Label className="text-xs text-muted-foreground mb-2 block">
+                        Electronic Signature {!instructorProfile.electronic_signature && <span className="text-destructive">*</span>}
+                      </Label>
+                      {instructorProfile.electronic_signature ? (
+                        <div className="rounded border border-border/40 bg-background p-3 flex items-center justify-center">
+                          <img 
+                            src={instructorProfile.electronic_signature} 
+                            alt="Instructor Signature" 
+                            className="max-h-20 max-w-full object-contain"
+                          />
+                        </div>
+                      ) : (
+                        <p className="text-sm text-destructive">Not provided</p>
+                      )}
+                    </div>
+                  </div>
                 </div>
               ) : (
                 <div className="rounded-lg border border-yellow-200/50 bg-yellow-50/50 dark:border-yellow-900/50 dark:bg-yellow-900/10 p-4">
-                  <p className="text-sm text-foreground">
+                  <p className="text-sm font-semibold text-foreground mb-2">
+                    Instructor Profile Incomplete
+                  </p>
+                  <p className="text-sm text-foreground mb-2">
                     Please complete your instructor profile information in your Profile page to issue endorsements.
                   </p>
+                  <div className="text-xs text-muted-foreground space-y-1">
+                    <p className="font-medium">Required fields:</p>
+                    <ul className="list-disc list-inside space-y-0.5 ml-2">
+                      <li>CFI Certificate Number</li>
+                      <li>CFI Expiration Date</li>
+                      <li>Electronic Signature</li>
+                    </ul>
+                  </div>
                 </div>
               )}
             </div>
@@ -895,6 +928,27 @@ export function EndorsementCarousel() {
                   toast({
                     title: "Incomplete Profile",
                     description: "Please complete your instructor profile before issuing endorsements.",
+                    variant: "destructive",
+                  })
+                  return
+                }
+
+                // Safeguard: Verify all required instructor information is present
+                const missingFields: string[] = []
+                if (!instructorProfile.cfi_certificate_number || instructorProfile.cfi_certificate_number.trim() === '') {
+                  missingFields.push('CFI Certificate Number')
+                }
+                if (!instructorProfile.cfi_expiration_date) {
+                  missingFields.push('CFI Expiration Date')
+                }
+                if (!instructorProfile.electronic_signature || instructorProfile.electronic_signature.trim() === '') {
+                  missingFields.push('Electronic Signature')
+                }
+
+                if (missingFields.length > 0) {
+                  toast({
+                    title: "Incomplete Instructor Information",
+                    description: `Please complete the following required fields in your Profile page before issuing endorsements: ${missingFields.join(', ')}`,
                     variant: "destructive",
                   })
                   return
@@ -1010,7 +1064,17 @@ export function EndorsementCarousel() {
                   })
                 }
               }}
-              disabled={!recipientEmail || !recipientName || !!emailValidationError || validatingEmail || loadingInstructorProfile || !editableEndorsementText.trim()}
+              disabled={
+                !recipientEmail || 
+                !recipientName || 
+                !!emailValidationError || 
+                validatingEmail || 
+                loadingInstructorProfile || 
+                !editableEndorsementText.trim() ||
+                !instructorProfile?.cfi_certificate_number ||
+                !instructorProfile?.cfi_expiration_date ||
+                !instructorProfile?.electronic_signature
+              }
               className="w-full sm:w-auto"
             >
               Issue Endorsement

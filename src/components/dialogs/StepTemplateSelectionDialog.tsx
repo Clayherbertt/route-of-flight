@@ -15,7 +15,8 @@ import {
   Plane, 
   Trophy,
   BookOpen,
-  Clock
+  Clock,
+  Users
 } from 'lucide-react'
 
 interface StepTemplate {
@@ -34,7 +35,7 @@ interface StepTemplate {
     hourType?: 'ATP' | 'R-ATP'
     hourRequirementTitle?: string
     hourRequirement?: number
-    details: Array<{
+      details: Array<{
       title: string
       description: string
       checked: boolean
@@ -42,6 +43,7 @@ interface StepTemplate {
       taskType?: 'flight' | 'ground'
       mandatory?: boolean
       published?: boolean
+      requiresFlightHours?: boolean
     }>
   }
 }
@@ -97,6 +99,22 @@ const stepTemplates: StepTemplate[] = [
       hourRequirement: 0,
       details: []
     }
+  },
+  {
+    id: 'cadet-programs',
+    title: 'Cadet Programs',
+    description: 'Create a cadet program step with toggleable flight hour requirements',
+    icon: 'Users',
+    category: 'Programs',
+    defaultStructure: {
+      title: '',
+      description: '',
+      mandatory: false,
+      allowCustomerReorder: false,
+      status: 'draft' as const,
+      category: 'Cadet Programs',
+      details: []
+    }
   }
 ]
 
@@ -106,7 +124,8 @@ const iconMap = {
   Plane,
   Trophy,
   BookOpen,
-  Clock
+  Clock,
+  Users
 }
 
 interface StepTemplateSelectionDialogProps {

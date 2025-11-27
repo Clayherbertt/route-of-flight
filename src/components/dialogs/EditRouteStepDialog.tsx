@@ -6,7 +6,7 @@ import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Badge } from '@/components/ui/badge';
 import { Switch } from '@/components/ui/switch';
-import { Plus, X, Plane, GripVertical } from 'lucide-react';
+import { Plus, X, Plane, GripVertical, Users } from 'lucide-react';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Separator } from '@/components/ui/separator';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
@@ -25,12 +25,14 @@ interface SortableTaskItemProps {
   onUpdateTitle: (index: number, title: string) => void;
   onUpdateHours?: (index: number, hours: number | undefined) => void;
   onUpdateDescription?: (index: number, description: string) => void;
+  onToggleRequiresHours?: (index: number, requires: boolean) => void;
   onRemove: (index: number) => void;
   showHours?: boolean;
   showDescription?: boolean;
+  showToggleableHours?: boolean;
 }
 
-function SortableTaskItem({ task, taskIndex, originalIndex, onToggleCompleted, onUpdateTitle, onUpdateHours, onUpdateDescription, onRemove, showHours = false, showDescription = false }: SortableTaskItemProps) {
+function SortableTaskItem({ task, taskIndex, originalIndex, onToggleCompleted, onUpdateTitle, onUpdateHours, onUpdateDescription, onToggleRequiresHours, onRemove, showHours = false, showDescription = false, showToggleableHours = false }: SortableTaskItemProps) {
   const {
     attributes,
     listeners,
@@ -77,7 +79,33 @@ function SortableTaskItem({ task, taskIndex, originalIndex, onToggleCompleted, o
         </Button>
       </div>
       
-      {showHours && onUpdateHours && (
+      {showToggleableHours && onToggleRequiresHours && (
+        <div className="flex items-center gap-3 ml-10">
+          <div className="flex items-center gap-2">
+            <Switch
+              checked={task.requiresFlightHours || false}
+              onCheckedChange={(checked) => onToggleRequiresHours(originalIndex, checked)}
+            />
+            <Label className="text-sm">Requires flight hours</Label>
+          </div>
+          {task.requiresFlightHours && onUpdateHours && (
+            <div className="flex items-center gap-2">
+              <Label className="text-sm whitespace-nowrap">Required hours:</Label>
+              <Input 
+                type="number" 
+                value={task.flightHours || ''} 
+                onChange={(e) => onUpdateHours(originalIndex, e.target.value ? parseInt(e.target.value) : undefined)} 
+                placeholder="0" 
+                className="w-24" 
+                min="0" 
+              />
+              <span className="text-sm text-muted-foreground">hours</span>
+            </div>
+          )}
+        </div>
+      )}
+      
+      {showHours && !showToggleableHours && onUpdateHours && (
         <div className="flex items-center gap-2 ml-10">
           <Label className="text-sm whitespace-nowrap">Required hours:</Label>
           <Input 
@@ -115,6 +143,7 @@ interface RouteStepDetail {
   taskType: 'flight' | 'ground';
   mandatory?: boolean;
   published?: boolean;
+  requiresFlightHours?: boolean;
 }
 interface RouteStep {
   id: string;
@@ -149,6 +178,9 @@ export function EditRouteStepDialog({
   const [newFlightTitle, setNewFlightTitle] = useState('');
   const [newFlightHours, setNewFlightHours] = useState('');
   const [newGroundTitle, setNewGroundTitle] = useState('');
+  const [newCadetTitle, setNewCadetTitle] = useState('');
+  const [newCadetHours, setNewCadetHours] = useState('');
+  const [newCadetRequiresHours, setNewCadetRequiresHours] = useState(false);
 
   const sensors = useSensors(
     useSensor(PointerSensor),
@@ -271,6 +303,20 @@ export function EditRouteStepDialog({
       details: newDetails
     });
   };
+
+  const toggleRequiresFlightHours = (index: number, requires: boolean) => {
+    if (!editedStep) return;
+    const updatedDetails = [...editedStep.details];
+    updatedDetails[index] = {
+      ...updatedDetails[index],
+      requiresFlightHours: requires,
+      flightHours: requires ? updatedDetails[index].flightHours : undefined
+    };
+    setEditedStep({
+      ...editedStep,
+      details: updatedDetails
+    });
+  };
   const updateTaskDescription = (index: number, description: string) => {
     const newDetails = [...editedStep.details];
     newDetails[index] = {
@@ -317,6 +363,8 @@ export function EditRouteStepDialog({
   };
   const flightTasks = editedStep.details.filter(detail => detail.taskType === 'flight');
   const groundTasks = editedStep.details.filter(detail => detail.taskType === 'ground');
+  const cadetTasks = editedStep.category === 'Cadet Programs' ? editedStep.details : [];
+
   return <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="max-w-6xl max-h-[85vh] overflow-y-auto">
         <DialogHeader>
@@ -423,7 +471,75 @@ export function EditRouteStepDialog({
           <Separator />
 
           {/* Conditional rendering based on category */}
-          {editedStep.category === 'Initial Tasks' ? (
+          {editedStep.category === 'Cadet Programs' ? (
+            /* Cadet Programs Template - Toggleable flight hours */
+            <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
+              <div className="space-y-4">
+                <div className="flex items-center gap-2">
+                  <Users className="h-5 w-5" />
+                  <h3 className="text-lg font-semibold">Cadet Program Requirements</h3>
+                  <Badge variant="default">{cadetTasks.length} items</Badge>
+                </div>
+                
+                <div className="space-y-3">
+                  <SortableContext items={cadetTasks.map((_, index) => `task-${index}`)} strategy={verticalListSortingStrategy}>
+                    {cadetTasks.map((task, taskIndex) => (
+                      <SortableTaskItem
+                        key={`task-${taskIndex}`}
+                        task={task}
+                        taskIndex={taskIndex}
+                        originalIndex={taskIndex}
+                        onToggleCompleted={toggleTaskCompleted}
+                        onUpdateTitle={updateTaskTitle}
+                        onUpdateHours={updateTaskHours}
+                        onToggleRequiresHours={toggleRequiresFlightHours}
+                        onRemove={removeDetail}
+                        showToggleableHours={true}
+                      />
+                    ))}
+                  </SortableContext>
+                  
+                  <div className="border-2 border-dashed rounded-lg p-4 space-y-3">
+                    <h4 className="font-medium text-sm">Add Cadet Program Requirement</h4>
+                    <div className="space-y-3">
+                      <Input 
+                        value={newCadetTitle} 
+                        onChange={e => setNewCadetTitle(e.target.value)} 
+                        placeholder="Add requirement (e.g., Complete ground school)" 
+                        className="w-full" 
+                      />
+                      <div className="flex items-center gap-3">
+                        <div className="flex items-center gap-2">
+                          <Switch
+                            checked={newCadetRequiresHours}
+                            onCheckedChange={setNewCadetRequiresHours}
+                          />
+                          <Label className="text-sm">Requires flight hours</Label>
+                        </div>
+                        {newCadetRequiresHours && (
+                          <div className="flex items-center gap-2">
+                            <Input 
+                              type="number" 
+                              value={newCadetHours} 
+                              onChange={e => setNewCadetHours(e.target.value)} 
+                              placeholder="Hours" 
+                              className="w-24" 
+                              min="0" 
+                            />
+                            <span className="text-sm text-muted-foreground">hours</span>
+                          </div>
+                        )}
+                      </div>
+                      <Button onClick={addCadetTask} disabled={!newCadetTitle.trim()}>
+                        <Plus className="h-4 w-4 mr-2" />
+                        Add Requirement
+                      </Button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </DndContext>
+          ) : editedStep.category === 'Initial Tasks' ? (
             /* Initial Tasks Template - Simple task list */
             <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
               <div className="space-y-4">

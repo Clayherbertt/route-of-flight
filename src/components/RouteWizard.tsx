@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
-import { Check, ChevronRight, Plane, Heart, GraduationCap, Building, Users, MapPin, Target, BookOpen } from "lucide-react";
+import { Check, ChevronRight, Plane, Heart, GraduationCap, Building, Users, MapPin, Target, BookOpen, Compass } from "lucide-react";
 
 interface RouteWizardProps {
   isOpen: boolean;
@@ -34,7 +34,7 @@ const WIZARD_STEPS: WizardStep[] = [
     icon: Target,
     required: true,
     categories: ["Initial Tasks"],
-    instructions: "These initial steps are going to help kickstart your aviation journey as well as give you the initial tools to be successful."
+    instructions: "These first two initial steps are required as they are extremely important before getting into flying."
   },
   {
     id: "initial-training",
@@ -101,6 +101,7 @@ const WIZARD_STEPS: WizardStep[] = [
 ];
 
 export function RouteWizard({ isOpen, onClose, onStepAdd, availableSteps }: RouteWizardProps) {
+  const [showIntro, setShowIntro] = useState(true);
   const [currentStep, setCurrentStep] = useState(0);
   const [selectedSteps, setSelectedSteps] = useState<Record<string, string[]>>({});
   const [careerPathChoice, setCareerPathChoice] = useState<string>("");
@@ -197,6 +198,19 @@ export function RouteWizard({ isOpen, onClose, onStepAdd, availableSteps }: Rout
     if (currentStep > 0) {
       setCurrentStep(currentStep - 1);
     }
+  };
+
+  const handleBeginWizard = () => {
+    setShowIntro(false);
+  };
+
+  // Reset intro screen when dialog closes
+  const handleClose = () => {
+    setShowIntro(true);
+    setCurrentStep(0);
+    setSelectedSteps({});
+    setCareerPathChoice("");
+    onClose();
   };
 
   const canProceed = () => {
@@ -318,82 +332,166 @@ export function RouteWizard({ isOpen, onClose, onStepAdd, availableSteps }: Rout
   };
 
   return (
-    <Dialog open={isOpen} onOpenChange={onClose}>
+    <Dialog open={isOpen} onOpenChange={handleClose}>
       <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
-        <DialogHeader>
-          <DialogTitle className="flex items-center gap-2 text-2xl">
-            <Plane className="h-6 w-6 text-primary" />
-            Flight Career Route Builder
-          </DialogTitle>
-          <DialogDescription>
-            Let's build your personalized path to becoming an airline pilot
-          </DialogDescription>
-        </DialogHeader>
+        {showIntro ? (
+          // Introduction Screen
+          <>
+            <DialogHeader>
+              <DialogTitle className="flex items-center gap-2 text-2xl">
+                <Plane className="h-6 w-6 text-primary" />
+                Flight Career Route Builder
+              </DialogTitle>
+              <DialogDescription>
+                Build your personalized path to becoming an airline pilot
+              </DialogDescription>
+            </DialogHeader>
 
-        <div className="space-y-6">
-          {/* Progress Bar */}
-          <div className="space-y-2">
-            <div className="flex justify-between text-sm">
-              <span>Step {currentStep + 1} of {wizardSteps.length}</span>
-              <span>{Math.round(progress)}% Complete</span>
+            <div className="space-y-6 py-4">
+              <Card className="border-2 border-primary/20">
+                <CardContent className="p-8">
+                  <div className="space-y-6 text-center">
+                    <div className="flex justify-center">
+                      <div className="p-4 bg-primary/10 rounded-full">
+                        <Compass className="h-12 w-12 text-primary" />
+                      </div>
+                    </div>
+                    
+                    <div className="space-y-4">
+                      <h3 className="text-2xl font-bold text-foreground">
+                        Welcome to the Route Builder
+                      </h3>
+                      <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
+                        This wizard will help you create a personalized career roadmap tailored to your aviation goals. 
+                        We'll guide you through selecting the training, certifications, and career milestones that will 
+                        take you from where you are today to your dream airline job.
+                      </p>
+                    </div>
+
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mt-8">
+                      <div className="space-y-2">
+                        <div className="p-3 bg-primary/10 rounded-lg w-fit mx-auto">
+                          <Target className="h-6 w-6 text-primary" />
+                        </div>
+                        <h4 className="font-semibold">Set Your Goals</h4>
+                        <p className="text-sm text-muted-foreground">
+                          Define your career path and training objectives
+                        </p>
+                      </div>
+                      <div className="space-y-2">
+                        <div className="p-3 bg-primary/10 rounded-lg w-fit mx-auto">
+                          <GraduationCap className="h-6 w-6 text-primary" />
+                        </div>
+                        <h4 className="font-semibold">Plan Your Training</h4>
+                        <p className="text-sm text-muted-foreground">
+                          Select certifications and courses you need
+                        </p>
+                      </div>
+                      <div className="space-y-2">
+                        <div className="p-3 bg-primary/10 rounded-lg w-fit mx-auto">
+                          <Plane className="h-6 w-6 text-primary" />
+                        </div>
+                        <h4 className="font-semibold">Track Progress</h4>
+                        <p className="text-sm text-muted-foreground">
+                          Monitor your journey to the airlines
+                        </p>
+                      </div>
+                    </div>
+
+                    <div className="pt-6">
+                      <Button 
+                        onClick={handleBeginWizard}
+                        size="lg"
+                        className="gap-2 px-8 py-6 text-lg"
+                      >
+                        Begin Route Builder
+                        <ChevronRight className="h-5 w-5" />
+                      </Button>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
             </div>
-            <Progress value={progress} className="h-2" />
-          </div>
+          </>
+        ) : (
+          // Wizard Steps
+          <>
+            <DialogHeader>
+              <DialogTitle className="flex items-center gap-2 text-2xl">
+                <Plane className="h-6 w-6 text-primary" />
+                Flight Career Route Builder
+              </DialogTitle>
+              <DialogDescription>
+                Let's build your personalized path to becoming an airline pilot
+              </DialogDescription>
+            </DialogHeader>
 
-          {/* Current Step */}
-          <Card>
-            <CardHeader>
-              <div className="flex items-center gap-3">
-                <div className="p-2 bg-primary/10 rounded-lg">
-                  <currentWizardStep.icon className="h-6 w-6 text-primary" />
+            <div className="space-y-6">
+              {/* Progress Bar */}
+              <div className="space-y-2">
+                <div className="flex justify-between text-sm">
+                  <span>Step {currentStep + 1} of {wizardSteps.length}</span>
+                  <span>{Math.round(progress)}% Complete</span>
                 </div>
-                <div>
-                  <CardTitle className="flex items-center gap-2">
-                    {currentWizardStep.title}
-                    {currentWizardStep.required && (
-                      <Badge variant="destructive">Required</Badge>
-                    )}
-                  </CardTitle>
-                  <div className="text-muted-foreground">{currentWizardStep.description}</div>
+                <Progress value={progress} className="h-2" />
+              </div>
+
+              {/* Current Step */}
+              <Card>
+                <CardHeader>
+                  <div className="flex items-center gap-3">
+                    <div className="p-2 bg-primary/10 rounded-lg">
+                      <currentWizardStep.icon className="h-6 w-6 text-primary" />
+                    </div>
+                    <div>
+                      <CardTitle className="flex items-center gap-2">
+                        {currentWizardStep.title}
+                        {currentWizardStep.required && (
+                          <Badge variant="destructive">Required</Badge>
+                        )}
+                      </CardTitle>
+                      <div className="text-muted-foreground">{currentWizardStep.description}</div>
+                    </div>
+                  </div>
+                </CardHeader>
+                <CardContent>
+                  {renderStepSelection()}
+                </CardContent>
+              </Card>
+
+              {/* Navigation */}
+              <div className="flex justify-between">
+                <Button 
+                  variant="outline" 
+                  onClick={handleBack}
+                  disabled={currentStep === 0}
+                >
+                  Back
+                </Button>
+                
+                <div className="flex gap-2">
+                  {!currentWizardStep.required && (
+                    <Button 
+                      variant="ghost"
+                      onClick={handleNext}
+                    >
+                      Skip
+                    </Button>
+                  )}
+                  
+                  <Button 
+                    onClick={handleNext}
+                    disabled={currentWizardStep.required && !canProceed()}
+                    className="gap-2"
+                  >
+                    {currentStep === wizardSteps.length - 1 ? 'Finish' : 'Next'}
+                    <ChevronRight className="h-4 w-4" />
+                  </Button>
                 </div>
               </div>
-            </CardHeader>
-            <CardContent>
-              {renderStepSelection()}
-            </CardContent>
-          </Card>
-
-          {/* Navigation */}
-          <div className="flex justify-between">
-            <Button 
-              variant="outline" 
-              onClick={handleBack}
-              disabled={currentStep === 0}
-            >
-              Back
-            </Button>
-            
-            <div className="flex gap-2">
-              {!currentWizardStep.required && (
-                <Button 
-                  variant="ghost"
-                  onClick={handleNext}
-                >
-                  Skip
-                </Button>
-              )}
-              
-              <Button 
-                onClick={handleNext}
-                disabled={currentWizardStep.required && !canProceed()}
-                className="gap-2"
-              >
-                {currentStep === wizardSteps.length - 1 ? 'Finish' : 'Next'}
-                <ChevronRight className="h-4 w-4" />
-              </Button>
             </div>
-          </div>
-        </div>
+          </>
+        )}
       </DialogContent>
     </Dialog>
   );
