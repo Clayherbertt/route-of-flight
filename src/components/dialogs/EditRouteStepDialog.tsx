@@ -178,9 +178,7 @@ export function EditRouteStepDialog({
   const [newFlightTitle, setNewFlightTitle] = useState('');
   const [newFlightHours, setNewFlightHours] = useState('');
   const [newGroundTitle, setNewGroundTitle] = useState('');
-  const [newCadetTitle, setNewCadetTitle] = useState('');
-  const [newCadetHours, setNewCadetHours] = useState('');
-  const [newCadetRequiresHours, setNewCadetRequiresHours] = useState(false);
+  const [newCadetRequirement, setNewCadetRequirement] = useState('');
 
   const sensors = useSensors(
     useSensor(PointerSensor),
@@ -192,7 +190,18 @@ export function EditRouteStepDialog({
   // Reset edited step when step prop changes or dialog opens/closes
   useEffect(() => {
     if (step) {
-      setEditedStep(step);
+      console.log('EditRouteStepDialog: Loading step', {
+        id: step.id,
+        title: step.title,
+        description: step.description,
+        descriptionLength: step.description?.length,
+        hasDescription: !!step.description
+      });
+      // Ensure description is always a string, even if null/undefined
+      setEditedStep({
+        ...step,
+        description: step.description || ''
+      });
     } else {
       setEditedStep(null);
     }
@@ -229,7 +238,7 @@ export function EditRouteStepDialog({
     const stepToSave: RouteStep = {
       ...editedStep,
       title: editedStep.title.replace(/<[^>]*>/g, '').trim(), // Strip HTML tags from title
-      description: editedStep.description.trim(),
+      description: editedStep.description || '', // Preserve description (can contain HTML from rich text editor)
       category: editedStep.category || 'Primary Training',
       details: editedStep.details.map((detail, index) => ({
         ...detail,
@@ -273,6 +282,21 @@ export function EditRouteStepDialog({
         }]
       });
       setNewGroundTitle('');
+    }
+  };
+  const addCadetRequirement = () => {
+    if (newCadetRequirement.trim()) {
+      setEditedStep({
+        ...editedStep,
+        details: [...editedStep.details, {
+          title: newCadetRequirement.trim(),
+          description: '',
+          checked: false,
+          orderNumber: editedStep.details.length,
+          taskType: 'ground'
+        }]
+      });
+      setNewCadetRequirement('');
     }
   };
   const removeDetail = (index: number) => {
@@ -363,7 +387,6 @@ export function EditRouteStepDialog({
   };
   const flightTasks = editedStep.details.filter(detail => detail.taskType === 'flight');
   const groundTasks = editedStep.details.filter(detail => detail.taskType === 'ground');
-  const cadetTasks = editedStep.category === 'Cadet Programs' ? editedStep.details : [];
 
   return <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="max-w-6xl max-h-[85vh] overflow-y-auto">
@@ -387,15 +410,33 @@ export function EditRouteStepDialog({
 
             <div className="space-y-2">
               <Label htmlFor="description">Task Description</Label>
-              <RichTextEditor 
-                value={editedStep.description} 
-                onChange={(value) => setEditedStep({
-                  ...editedStep,
-                  description: value
-                })} 
-                placeholder="Describe what this training step involves..." 
-                height="120px"
-              />
+              {(() => {
+                const descriptionValue = editedStep.description || '';
+                console.log('EditRouteStepDialog: Rendering RichTextEditor', {
+                  stepId: editedStep.id,
+                  descriptionValue: descriptionValue.substring(0, 100),
+                  descriptionLength: descriptionValue.length,
+                  hasValue: !!descriptionValue
+                });
+                return (
+                  <RichTextEditor 
+                    key={`description-${editedStep.id}-${open}`}
+                    value={descriptionValue} 
+                    onChange={(value) => {
+                      console.log('EditRouteStepDialog: Description changed', {
+                        newValue: value.substring(0, 100),
+                        length: value.length
+                      });
+                      setEditedStep({
+                        ...editedStep,
+                        description: value || ''
+                      });
+                    }} 
+                    placeholder="Describe what this training step involves..." 
+                    height="120px"
+                  />
+                );
+              })()}
             </div>
 
             <div className="space-y-2">
@@ -472,18 +513,18 @@ export function EditRouteStepDialog({
 
           {/* Conditional rendering based on category */}
           {editedStep.category === 'Cadet Programs' ? (
-            /* Cadet Programs Template - Toggleable flight hours */
+            /* Cadet Programs Template - Simple requirements list */
             <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
               <div className="space-y-4">
                 <div className="flex items-center gap-2">
                   <Users className="h-5 w-5" />
-                  <h3 className="text-lg font-semibold">Cadet Program Requirements</h3>
-                  <Badge variant="default">{cadetTasks.length} items</Badge>
+                  <h3 className="text-lg font-semibold">Program Requirements</h3>
+                  <Badge variant="default">{editedStep.details.length} items</Badge>
                 </div>
                 
                 <div className="space-y-3">
-                  <SortableContext items={cadetTasks.map((_, index) => `task-${index}`)} strategy={verticalListSortingStrategy}>
-                    {cadetTasks.map((task, taskIndex) => (
+                  <SortableContext items={editedStep.details.map((_, index) => `task-${index}`)} strategy={verticalListSortingStrategy}>
+                    {editedStep.details.map((task, taskIndex) => (
                       <SortableTaskItem
                         key={`task-${taskIndex}`}
                         task={task}
@@ -491,48 +532,28 @@ export function EditRouteStepDialog({
                         originalIndex={taskIndex}
                         onToggleCompleted={toggleTaskCompleted}
                         onUpdateTitle={updateTaskTitle}
-                        onUpdateHours={updateTaskHours}
-                        onToggleRequiresHours={toggleRequiresFlightHours}
                         onRemove={removeDetail}
-                        showToggleableHours={true}
+                        showDescription={false}
                       />
                     ))}
                   </SortableContext>
                   
-                  <div className="border-2 border-dashed rounded-lg p-4 space-y-3">
-                    <h4 className="font-medium text-sm">Add Cadet Program Requirement</h4>
-                    <div className="space-y-3">
+                  <div className="border-2 border-dashed rounded-lg p-4">
+                    <h4 className="font-medium text-sm mb-3">Add Requirement</h4>
+                    <div className="flex items-center gap-2">
                       <Input 
-                        value={newCadetTitle} 
-                        onChange={e => setNewCadetTitle(e.target.value)} 
-                        placeholder="Add requirement (e.g., Complete ground school)" 
-                        className="w-full" 
+                        value={newCadetRequirement} 
+                        onChange={e => setNewCadetRequirement(e.target.value)} 
+                        placeholder="Add requirement (e.g., Complete ground school, Hold valid medical certificate)" 
+                        className="flex-1" 
+                        onKeyDown={(e) => {
+                          if (e.key === 'Enter' && newCadetRequirement.trim()) {
+                            addCadetRequirement();
+                          }
+                        }}
                       />
-                      <div className="flex items-center gap-3">
-                        <div className="flex items-center gap-2">
-                          <Switch
-                            checked={newCadetRequiresHours}
-                            onCheckedChange={setNewCadetRequiresHours}
-                          />
-                          <Label className="text-sm">Requires flight hours</Label>
-                        </div>
-                        {newCadetRequiresHours && (
-                          <div className="flex items-center gap-2">
-                            <Input 
-                              type="number" 
-                              value={newCadetHours} 
-                              onChange={e => setNewCadetHours(e.target.value)} 
-                              placeholder="Hours" 
-                              className="w-24" 
-                              min="0" 
-                            />
-                            <span className="text-sm text-muted-foreground">hours</span>
-                          </div>
-                        )}
-                      </div>
-                      <Button onClick={addCadetTask} disabled={!newCadetTitle.trim()}>
-                        <Plus className="h-4 w-4 mr-2" />
-                        Add Requirement
+                      <Button onClick={addCadetRequirement} disabled={!newCadetRequirement.trim()}>
+                        <Plus className="h-4 w-4" />
                       </Button>
                     </div>
                   </div>

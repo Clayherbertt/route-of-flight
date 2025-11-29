@@ -35,7 +35,7 @@ interface StepTemplate {
     hourType?: 'ATP' | 'R-ATP'
     hourRequirementTitle?: string
     hourRequirement?: number
-      details: Array<{
+    details: Array<{
       title: string
       description: string
       checked: boolean

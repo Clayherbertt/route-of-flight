@@ -1,4 +1,4 @@
-import React, { useMemo, useEffect } from 'react'
+import React, { useMemo, useEffect, useRef } from 'react'
 import ReactQuill from 'react-quill'
 import 'react-quill/dist/quill.snow.css'
 import { cn } from '@/lib/utils'
@@ -9,6 +9,7 @@ interface RichTextEditorProps {
   placeholder?: string
   className?: string
   height?: string
+  key?: string | number
 }
 
 export function RichTextEditor({ 
@@ -16,8 +17,11 @@ export function RichTextEditor({
   onChange, 
   placeholder, 
   className,
-  height = '120px'
+  height = '120px',
+  key
 }: RichTextEditorProps) {
+  const quillRef = useRef<ReactQuill>(null)
+  
   const modules = useMemo(() => ({
     toolbar: [
       ['bold', 'italic', 'underline'],
@@ -30,6 +34,29 @@ export function RichTextEditor({
     'bold', 'italic', 'underline',
     'list', 'bullet'
   ]
+
+  // Force update ReactQuill when value changes externally
+  useEffect(() => {
+    if (quillRef.current) {
+      const quill = quillRef.current.getEditor()
+      const currentContent = quill.root.innerHTML
+      const normalizedValue = value || ''
+      const isEmpty = !currentContent || currentContent === '<p><br></p>' || currentContent.trim() === '<p></p>'
+      
+      console.log('RichTextEditor: Checking content update', {
+        currentContent: currentContent.substring(0, 50),
+        newValue: normalizedValue.substring(0, 50),
+        isEmpty,
+        shouldUpdate: isEmpty || (normalizedValue && currentContent !== normalizedValue)
+      })
+      
+      // Update if editor is empty and we have a value, or if values don't match
+      if ((isEmpty && normalizedValue) || (normalizedValue && currentContent !== normalizedValue)) {
+        console.log('RichTextEditor: Setting content to', normalizedValue.substring(0, 100))
+        quill.root.innerHTML = normalizedValue
+      }
+    }
+  }, [value])
 
   useEffect(() => {
     // Only inject styles once
@@ -68,8 +95,10 @@ export function RichTextEditor({
   return (
     <div className={cn("rich-text-editor", className)}>
       <ReactQuill
+        ref={quillRef}
+        key={key}
         theme="snow"
-        value={value}
+        value={value || ''}
         onChange={onChange}
         placeholder={placeholder}
         modules={modules}

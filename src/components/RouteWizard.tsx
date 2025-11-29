@@ -416,80 +416,80 @@ export function RouteWizard({ isOpen, onClose, onStepAdd, availableSteps }: Rout
         ) : (
           // Wizard Steps
           <>
-            <DialogHeader>
-              <DialogTitle className="flex items-center gap-2 text-2xl">
-                <Plane className="h-6 w-6 text-primary" />
-                Flight Career Route Builder
-              </DialogTitle>
-              <DialogDescription>
-                Let's build your personalized path to becoming an airline pilot
-              </DialogDescription>
-            </DialogHeader>
+        <DialogHeader>
+          <DialogTitle className="flex items-center gap-2 text-2xl">
+            <Plane className="h-6 w-6 text-primary" />
+            Flight Career Route Builder
+          </DialogTitle>
+          <DialogDescription>
+            Let's build your personalized path to becoming an airline pilot
+          </DialogDescription>
+        </DialogHeader>
 
-            <div className="space-y-6">
-              {/* Progress Bar */}
-              <div className="space-y-2">
-                <div className="flex justify-between text-sm">
-                  <span>Step {currentStep + 1} of {wizardSteps.length}</span>
-                  <span>{Math.round(progress)}% Complete</span>
-                </div>
-                <Progress value={progress} className="h-2" />
-              </div>
-
-              {/* Current Step */}
-              <Card>
-                <CardHeader>
-                  <div className="flex items-center gap-3">
-                    <div className="p-2 bg-primary/10 rounded-lg">
-                      <currentWizardStep.icon className="h-6 w-6 text-primary" />
-                    </div>
-                    <div>
-                      <CardTitle className="flex items-center gap-2">
-                        {currentWizardStep.title}
-                        {currentWizardStep.required && (
-                          <Badge variant="destructive">Required</Badge>
-                        )}
-                      </CardTitle>
-                      <div className="text-muted-foreground">{currentWizardStep.description}</div>
-                    </div>
-                  </div>
-                </CardHeader>
-                <CardContent>
-                  {renderStepSelection()}
-                </CardContent>
-              </Card>
-
-              {/* Navigation */}
-              <div className="flex justify-between">
-                <Button 
-                  variant="outline" 
-                  onClick={handleBack}
-                  disabled={currentStep === 0}
-                >
-                  Back
-                </Button>
-                
-                <div className="flex gap-2">
-                  {!currentWizardStep.required && (
-                    <Button 
-                      variant="ghost"
-                      onClick={handleNext}
-                    >
-                      Skip
-                    </Button>
-                  )}
-                  
-                  <Button 
-                    onClick={handleNext}
-                    disabled={currentWizardStep.required && !canProceed()}
-                    className="gap-2"
-                  >
-                    {currentStep === wizardSteps.length - 1 ? 'Finish' : 'Next'}
-                    <ChevronRight className="h-4 w-4" />
-                  </Button>
-                </div>
-              </div>
+        <div className="space-y-6">
+          {/* Progress Bar */}
+          <div className="space-y-2">
+            <div className="flex justify-between text-sm">
+              <span>Step {currentStep + 1} of {wizardSteps.length}</span>
+              <span>{Math.round(progress)}% Complete</span>
             </div>
+            <Progress value={progress} className="h-2" />
+          </div>
+
+          {/* Current Step */}
+          <Card>
+            <CardHeader>
+              <div className="flex items-center gap-3">
+                <div className="p-2 bg-primary/10 rounded-lg">
+                  <currentWizardStep.icon className="h-6 w-6 text-primary" />
+                </div>
+                <div>
+                  <CardTitle className="flex items-center gap-2">
+                    {currentWizardStep.title}
+                    {currentWizardStep.required && (
+                      <Badge variant="destructive">Required</Badge>
+                    )}
+                  </CardTitle>
+                  <div className="text-muted-foreground">{currentWizardStep.description}</div>
+                </div>
+              </div>
+            </CardHeader>
+            <CardContent>
+              {renderStepSelection()}
+            </CardContent>
+          </Card>
+
+          {/* Navigation */}
+          <div className="flex justify-between">
+            <Button 
+              variant="outline" 
+              onClick={handleBack}
+              disabled={currentStep === 0}
+            >
+              Back
+            </Button>
+            
+            <div className="flex gap-2">
+              {!currentWizardStep.required && (
+                <Button 
+                  variant="ghost"
+                  onClick={handleNext}
+                >
+                  Skip
+                </Button>
+              )}
+              
+              <Button 
+                onClick={handleNext}
+                disabled={currentWizardStep.required && !canProceed()}
+                className="gap-2"
+              >
+                {currentStep === wizardSteps.length - 1 ? 'Finish' : 'Next'}
+                <ChevronRight className="h-4 w-4" />
+              </Button>
+            </div>
+          </div>
+        </div>
           </>
         )}
       </DialogContent>
