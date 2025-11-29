@@ -161,7 +161,7 @@ export function SortableRouteStepCard({
                              {detail.flightHours}h
                            </Badge>
                          )}
-                         {step.category !== 'Initial Tasks' && (
+                         {step.category !== 'Initial Tasks' && step.category !== 'Cadet Programs' && (
                            <Badge 
                              variant={detail.taskType === 'flight' ? 'default' : 'secondary'} 
                              className="text-xs"
