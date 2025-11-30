@@ -43,17 +43,11 @@ export function RichTextEditor({
       const normalizedValue = value || ''
       const isEmpty = !currentContent || currentContent === '<p><br></p>' || currentContent.trim() === '<p></p>'
       
-      console.log('RichTextEditor: Checking content update', {
-        currentContent: currentContent.substring(0, 50),
-        newValue: normalizedValue.substring(0, 50),
-        isEmpty,
-        shouldUpdate: isEmpty || (normalizedValue && currentContent !== normalizedValue)
-      })
-      
       // Update if editor is empty and we have a value, or if values don't match
       if ((isEmpty && normalizedValue) || (normalizedValue && currentContent !== normalizedValue)) {
-        console.log('RichTextEditor: Setting content to', normalizedValue.substring(0, 100))
-        quill.root.innerHTML = normalizedValue
+        // Use setContents with clipboard conversion to properly maintain Quill's Delta state
+        const delta = quill.clipboard.convert({ html: normalizedValue })
+        quill.setContents(delta, 'silent')
       }
     }
   }, [value])

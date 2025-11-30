@@ -110,7 +110,7 @@ export function useRouteSteps() {
     try {
       let stepId = step.id;
 
-      if (!stepId || stepId.trim() === '') {
+      if (!stepId || stepId.trim() === '' || stepId === 'undefined') {
         // Create new step
         const { data: newStep, error: createError } = await supabase
           .from('route_steps')
@@ -203,13 +203,16 @@ export function useRouteSteps() {
         if (detailsError) throw detailsError
       }
 
-      // Refresh data
-      await fetchRouteSteps()
-
+      // Don't refetch - let the UI update optimistically
+      // The component will handle updating local state
+      
       toast({
         title: "Success",
         description: step.id ? "Route step updated successfully" : "Route step created successfully"
       })
+      
+      // Return the saved step data so the component can update optimistically
+      return { stepId, step }
     } catch (error) {
       console.error('Error saving route step:', error)
       toast({
@@ -358,6 +361,7 @@ export function useRouteSteps() {
 
   return {
     routeSteps,
+    setRouteSteps,
     loading,
     saveRouteStep,
     updateStepDetailChecked,

@@ -190,13 +190,6 @@ export function EditRouteStepDialog({
   // Reset edited step when step prop changes or dialog opens/closes
   useEffect(() => {
     if (step) {
-      console.log('EditRouteStepDialog: Loading step', {
-        id: step.id,
-        title: step.title,
-        description: step.description,
-        descriptionLength: step.description?.length,
-        hasDescription: !!step.description
-      });
       // Ensure description is always a string, even if null/undefined
       setEditedStep({
         ...step,
@@ -233,22 +226,55 @@ export function EditRouteStepDialog({
     }
   };
   if (!editedStep) return null;
-  const handleSave = () => {
-    // Ensure all data is properly formatted before saving
-    const stepToSave: RouteStep = {
-      ...editedStep,
-      title: editedStep.title.replace(/<[^>]*>/g, '').trim(), // Strip HTML tags from title
-      description: editedStep.description || '', // Preserve description (can contain HTML from rich text editor)
-      category: editedStep.category || 'Primary Training',
-      details: editedStep.details.map((detail, index) => ({
-        ...detail,
-        title: detail.title.replace(/<[^>]*>/g, '').trim(), // Strip HTML tags from detail titles
-        orderNumber: index,
-        taskType: detail.taskType || 'flight'
-      }))
-    };
-    onSave(stepToSave);
-    onOpenChange(false);
+  const handleSave = async () => {
+    try {
+      // Ensure all data is properly formatted before saving
+      // Preserve Cadet Programs category - if it was set to Cadet Programs, always keep it
+      const originalCategory = step?.category || editedStep.category
+      const isCadetProgram = originalCategory === 'Cadet Programs' || editedStep.category === 'Cadet Programs'
+      
+      const stepToSave: RouteStep = {
+        ...editedStep,
+        id: (editedStep.id && editedStep.id.trim() !== '') ? editedStep.id : undefined, // Allow undefined for new steps
+        title: editedStep.title.replace(/<[^>]*>/g, '').trim(), // Strip HTML tags from title
+        description: editedStep.description || '', // Preserve description (can contain HTML from rich text editor)
+        category: isCadetProgram ? 'Cadet Programs' : (editedStep.category || 'Primary Training'),
+        icon: editedStep.icon || 'GraduationCap',
+        orderNumber: editedStep.orderNumber ?? 0,
+        mandatory: editedStep.mandatory ?? false,
+        allowCustomerReorder: editedStep.allowCustomerReorder ?? false,
+        status: editedStep.status || 'draft',
+        nextSteps: editedStep.nextSteps || [],
+        connectedFrom: editedStep.connectedFrom || [],
+        details: editedStep.details.map((detail, index) => ({
+          ...detail,
+          title: detail.title.replace(/<[^>]*>/g, '').trim(), // Strip HTML tags from detail titles
+          orderNumber: index,
+          taskType: detail.taskType || 'flight'
+        }))
+      };
+      
+      // Ensure required fields are present
+      if (!stepToSave.title || stepToSave.title.trim() === '') {
+        alert('Please enter a title for this step')
+        return
+      }
+      
+      console.log('EditRouteStepDialog: Saving step:', {
+        id: stepToSave.id,
+        title: stepToSave.title,
+        category: stepToSave.category,
+        icon: stepToSave.icon,
+        orderNumber: stepToSave.orderNumber,
+        detailsCount: stepToSave.details.length
+      });
+      
+      await onSave(stepToSave);
+      onOpenChange(false);
+    } catch (error) {
+      console.error('EditRouteStepDialog: Error saving step:', error);
+      alert(`Failed to save step: ${error instanceof Error ? error.message : 'Unknown error'}. Please try again.`);
+    }
   };
   const addFlightTask = () => {
     if (newFlightTitle.trim()) {
@@ -410,50 +436,57 @@ export function EditRouteStepDialog({
 
             <div className="space-y-2">
               <Label htmlFor="description">Task Description</Label>
-              {(() => {
-                const descriptionValue = editedStep.description || '';
-                console.log('EditRouteStepDialog: Rendering RichTextEditor', {
-                  stepId: editedStep.id,
-                  descriptionValue: descriptionValue.substring(0, 100),
-                  descriptionLength: descriptionValue.length,
-                  hasValue: !!descriptionValue
-                });
-                return (
-                  <RichTextEditor 
-                    key={`description-${editedStep.id}-${open}`}
-                    value={descriptionValue} 
-                    onChange={(value) => {
-                      console.log('EditRouteStepDialog: Description changed', {
-                        newValue: value.substring(0, 100),
-                        length: value.length
-                      });
-                      setEditedStep({
-                        ...editedStep,
-                        description: value || ''
-                      });
-                    }} 
-                    placeholder="Describe what this training step involves..." 
-                    height="120px"
-                  />
-                );
-              })()}
+              <RichTextEditor 
+                key={`description-${editedStep.id}-${open}`}
+                value={editedStep.description || ''} 
+                onChange={(value) => {
+                  setEditedStep({
+                    ...editedStep,
+                    description: value || ''
+                  });
+                }} 
+                placeholder="Describe what this training step involves..." 
+                height="120px"
+              />
             </div>
 
             <div className="space-y-2">
               <Label htmlFor="category">Category</Label>
-              <Select value={editedStep.category} onValueChange={value => setEditedStep({
-              ...editedStep,
-              category: value
-            })}>
-                <SelectTrigger>
-                  <SelectValue placeholder="Select a category" />
-                </SelectTrigger>
-                <SelectContent className="bg-background border z-50">
-                  {CATEGORIES.map(category => <SelectItem key={category} value={category}>
-                      {category}
-                    </SelectItem>)}
-                </SelectContent>
-              </Select>
+              {(() => {
+                // Lock category to Cadet Programs if it was created from that template
+                const originalCategory = step?.category || editedStep.category
+                const isCadetProgram = originalCategory === 'Cadet Programs' || editedStep.category === 'Cadet Programs'
+                
+                if (isCadetProgram) {
+                  // For Cadet Programs, show as disabled/read-only
+                  return (
+                    <div className="flex items-center gap-2">
+                      <Input 
+                        value="Cadet Programs" 
+                        disabled 
+                        className="bg-muted"
+                      />
+                      <span className="text-xs text-muted-foreground">(Locked for Cadet Programs)</span>
+                    </div>
+                  )
+                }
+                
+                return (
+                  <Select value={editedStep.category} onValueChange={value => setEditedStep({
+                    ...editedStep,
+                    category: value
+                  })}>
+                    <SelectTrigger>
+                      <SelectValue placeholder="Select a category" />
+                    </SelectTrigger>
+                    <SelectContent className="bg-background border z-50">
+                      {CATEGORIES.map(category => <SelectItem key={category} value={category}>
+                          {category}
+                        </SelectItem>)}
+                    </SelectContent>
+                  </Select>
+                )
+              })()}
             </div>
 
             <div className="flex items-center justify-between">
