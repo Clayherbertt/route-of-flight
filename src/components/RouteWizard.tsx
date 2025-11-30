@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -10,7 +10,9 @@ interface RouteWizardProps {
   isOpen: boolean;
   onClose: () => void;
   onStepAdd: (stepId: string) => Promise<void>;
+  onStepRemove?: (stepId: string) => Promise<void>; // Optional callback to remove steps
   availableSteps: any[];
+  currentUserRoute?: Array<{ stepId: string; [key: string]: any }>; // User's current route steps
 }
 
 interface WizardStep {
@@ -74,8 +76,8 @@ const WIZARD_STEPS: WizardStep[] = [
     description: "Join an airline pathway program",
     icon: Users,
     required: false,
-    categories: ["Airline Programs"],
-    instructions: "Optional: Select a cadet or pathway program that partners with airlines.",
+    categories: ["Cadet Programs"],
+    instructions: "Optional: Select a cadet or pathway program that partners with airlines. These programs provide structured paths to airline careers with mentorship and guaranteed interviews.",
     multiSelect: false
   },
   {
@@ -100,11 +102,13 @@ const WIZARD_STEPS: WizardStep[] = [
   }
 ];
 
-export function RouteWizard({ isOpen, onClose, onStepAdd, availableSteps }: RouteWizardProps) {
+export function RouteWizard({ isOpen, onClose, onStepAdd, onStepRemove, availableSteps, currentUserRoute = [] }: RouteWizardProps) {
   const [showIntro, setShowIntro] = useState(true);
   const [currentStep, setCurrentStep] = useState(0);
   const [selectedSteps, setSelectedSteps] = useState<Record<string, string[]>>({});
   const [careerPathChoice, setCareerPathChoice] = useState<string>("");
+  const [hasInitialized, setHasInitialized] = useState(false);
+  const [initialSelectedSteps, setInitialSelectedSteps] = useState<Record<string, string[]>>({}); // Track initial state
 
   // Dynamically generate wizard steps based on career path choice
   const getWizardSteps = (): WizardStep[] => {
@@ -135,12 +139,92 @@ export function RouteWizard({ isOpen, onClose, onStepAdd, availableSteps }: Rout
   const currentWizardStep = wizardSteps[currentStep];
   const progress = ((currentStep + 1) / wizardSteps.length) * 100;
 
+  // Initialize selected steps from user's current route when wizard opens (only once)
+  useEffect(() => {
+    if (isOpen && !hasInitialized && currentUserRoute.length > 0 && availableSteps.length > 0) {
+      const preSelected: Record<string, string[]> = {};
+      let hasFlightInstructing = false;
+      
+      // First pass: Check if user has Flight Instructing steps
+      currentUserRoute.forEach(userStep => {
+        const step = availableSteps.find(s => s.id === userStep.stepId);
+        if (step && step.category === 'Flight Instructing') {
+          hasFlightInstructing = true;
+        }
+      });
+      
+      // Pre-select "Flight Instructor Route" if user has Flight Instructing steps
+      // This must be set BEFORE getting wizard steps so the flight-instructing step is included
+      if (hasFlightInstructing) {
+        setCareerPathChoice("instructor");
+        preSelected['career-path'] = ["instructor"];
+      }
+      
+      // Compute wizard steps based on whether user has Flight Instructing (not state, since state update is async)
+      // This matches the logic in getWizardSteps() but uses the computed value instead of state
+      const baseSteps = WIZARD_STEPS.slice(0, 3); // Initial Tasks, Initial Training, Career Path Choice
+      let computedWizardSteps: WizardStep[];
+      
+      if (hasFlightInstructing) {
+        const flightInstructingStep: WizardStep = {
+          id: "flight-instructing",
+          title: "Flight Instructing",
+          description: "CFI, CFII, MEI certifications and requirements",
+          icon: BookOpen,
+          required: true,
+          categories: ["Flight Instructing"],
+          instructions: "Select the flight instruction certifications and requirements for your route.",
+          multiSelect: true,
+          orderMatters: false
+        };
+        const remainingSteps = WIZARD_STEPS.slice(3); // Cadet Program, Regional, Major
+        computedWizardSteps = [...baseSteps, flightInstructingStep, ...remainingSteps];
+      } else {
+        computedWizardSteps = WIZARD_STEPS;
+      }
+      
+      // Second pass: Match user's route steps to wizard steps
+      currentUserRoute.forEach(userStep => {
+        // Find the step by ID from availableSteps
+        const step = availableSteps.find(s => s.id === userStep.stepId);
+        if (!step) return;
+        
+        // Find which wizard step this belongs to by checking categories
+        computedWizardSteps.forEach(wizardStep => {
+          if (wizardStep.categories.includes(step.category)) {
+            const stepKey = wizardStep.id;
+            if (!preSelected[stepKey]) {
+              preSelected[stepKey] = [];
+            }
+            // Add the step ID to the pre-selected list for this wizard step
+            if (!preSelected[stepKey].includes(step.id)) {
+              preSelected[stepKey].push(step.id);
+            }
+          }
+        });
+      });
+      
+      // Set all pre-selected steps at once
+      if (Object.keys(preSelected).length > 0) {
+        setSelectedSteps(preSelected);
+        setInitialSelectedSteps(preSelected); // Store initial state for comparison
+      }
+      
+      setHasInitialized(true);
+    }
+    
+    // Reset initialization flag when wizard closes
+    if (!isOpen) {
+      setHasInitialized(false);
+    }
+  }, [isOpen, currentUserRoute, availableSteps, hasInitialized]);
+
   const getAvailableStepsForCategory = (categories: string[]) => {
     const filtered = availableSteps.filter(step => 
       categories.includes(step.category) && step.status === 'published'
     );
     
-    // Auto-select initial tasks on first step
+    // Auto-select initial tasks on first step (only once when wizard first opens)
     if (currentStep === 0 && currentWizardStep.id === "initial-tasks") {
       const stepKey = currentWizardStep.id;
       if (filtered.length > 0 && (selectedSteps[stepKey] || []).length === 0) {
@@ -152,7 +236,13 @@ export function RouteWizard({ isOpen, onClose, onStepAdd, availableSteps }: Rout
     return filtered;
   };
 
-  const handleStepSelect = (stepId: string) => {
+  const handleStepSelect = (stepId: string, event?: React.MouseEvent) => {
+    // Prevent event propagation
+    if (event) {
+      event.stopPropagation();
+      event.preventDefault();
+    }
+    
     const stepKey = currentWizardStep.id;
     
     // Prevent unchecking initial tasks - they're required
@@ -160,37 +250,98 @@ export function RouteWizard({ isOpen, onClose, onStepAdd, availableSteps }: Rout
       return;
     }
     
-    if (currentWizardStep.multiSelect) {
-      setSelectedSteps(prev => {
-        const current = prev[stepKey] || [];
-        const isSelected = current.includes(stepId);
-        
+    // Use functional update to ensure we get the latest state
+    setSelectedSteps(prev => {
+      const current = prev[stepKey] || [];
+      const isSelected = current.includes(stepId);
+      
+      if (currentWizardStep.multiSelect) {
+        // For multi-select, toggle the item
         if (isSelected) {
-          return { ...prev, [stepKey]: current.filter(id => id !== stepId) };
+          const newSelection = { ...prev, [stepKey]: current.filter(id => id !== stepId) };
+          return newSelection;
         } else {
-          return { ...prev, [stepKey]: [...current, stepId] };
+          const newSelection = { ...prev, [stepKey]: [...current, stepId] };
+          return newSelection;
         }
-      });
-    } else {
-      setSelectedSteps(prev => ({ ...prev, [stepKey]: [stepId] }));
-    }
+      } else {
+        // For single-select, allow toggling - if already selected, deselect it
+        if (isSelected) {
+          // Deselect by removing it
+          const newSelection = { ...prev, [stepKey]: [] };
+          return newSelection;
+        } else {
+          // Select it
+          const newSelection = { ...prev, [stepKey]: [stepId] };
+          return newSelection;
+        }
+      }
+    });
   };
 
   const handleNext = async () => {
-    // Add selected steps to route
     const stepKey = currentWizardStep.id;
     const selected = selectedSteps[stepKey] || [];
+    const initialSelected = initialSelectedSteps[stepKey] || [];
     
-    // Save each selected step
-    for (const stepId of selected) {
+    // Find steps that were deselected (were in initial but not in current)
+    const deselected = initialSelected.filter(id => !selected.includes(id));
+    
+    // Find steps that were newly selected (not in initial but in current)
+    const newlySelected = selected.filter(id => !initialSelected.includes(id));
+    
+    // Remove deselected steps
+    if (onStepRemove && deselected.length > 0) {
+      for (const stepId of deselected) {
+        await onStepRemove(stepId);
+      }
+    }
+    
+    // Add newly selected steps
+    for (const stepId of newlySelected) {
       await onStepAdd(stepId);
     }
+    
+    // Update initial state to reflect current state for next step
+    setInitialSelectedSteps(prev => ({
+      ...prev,
+      [stepKey]: selected
+    }));
 
     if (currentStep < wizardSteps.length - 1) {
       setCurrentStep(currentStep + 1);
     } else {
-      // Wizard complete - close the wizard
+      // Wizard complete - sync all remaining steps
+      await syncAllSteps();
       onClose();
+    }
+  };
+  
+  // Sync all steps when wizard completes
+  const syncAllSteps = async () => {
+    // Compare all wizard steps
+    for (const wizardStep of wizardSteps) {
+      const stepKey = wizardStep.id;
+      const selected = selectedSteps[stepKey] || [];
+      const initialSelected = initialSelectedSteps[stepKey] || [];
+      
+      // Find steps that were deselected
+      const deselected = initialSelected.filter(id => !selected.includes(id));
+      
+      // Find steps that were newly selected
+      const newlySelected = selected.filter(id => !initialSelected.includes(id));
+      
+      // Remove deselected steps
+      if (onStepRemove && deselected.length > 0) {
+        for (const stepId of deselected) {
+          await onStepRemove(stepId);
+        }
+      }
+      
+      // Add newly selected steps
+      for (const stepId of newlySelected) {
+        await onStepAdd(stepId);
+      }
     }
   };
 
@@ -205,11 +356,16 @@ export function RouteWizard({ isOpen, onClose, onStepAdd, availableSteps }: Rout
   };
 
   // Reset intro screen when dialog closes
-  const handleClose = () => {
+  const handleClose = async () => {
+    // Before closing, sync all steps to ensure deselected items are removed
+    await syncAllSteps();
+    
     setShowIntro(true);
     setCurrentStep(0);
     setSelectedSteps({});
+    setInitialSelectedSteps({});
     setCareerPathChoice("");
+    setHasInitialized(false);
     onClose();
   };
 
@@ -289,8 +445,11 @@ export function RouteWizard({ isOpen, onClose, onStepAdd, availableSteps }: Rout
           {availableSteps.map((step) => {
             // Get the icon component from lucide-react
             const IconComponent = step.icon === "BookOpen" ? BookOpen : 
-                               step.icon === "Plane" ? Plane : 
-                               BookOpen; // fallback to BookOpen for initial tasks
+                               step.icon === "Plane" ? Plane :
+                               step.icon === "Users" ? Users :
+                               step.icon === "GraduationCap" ? GraduationCap :
+                               step.icon === "Target" ? Target :
+                               BookOpen; // fallback to BookOpen
             
             return (
               <Card 
@@ -298,7 +457,7 @@ export function RouteWizard({ isOpen, onClose, onStepAdd, availableSteps }: Rout
                 className={`transition-all hover:shadow-md ${
                   selectedForThisStep.includes(step.id) ? 'ring-2 ring-primary' : ''
                 } ${currentWizardStep.id === 'initial-tasks' ? 'cursor-not-allowed opacity-70' : 'cursor-pointer'}`}
-                onClick={currentWizardStep.id === 'initial-tasks' ? undefined : () => handleStepSelect(step.id)}
+                onClick={currentWizardStep.id === 'initial-tasks' ? undefined : (e) => handleStepSelect(step.id, e)}
               >
                 <CardContent className="p-4">
                   <div className="flex items-center justify-between">

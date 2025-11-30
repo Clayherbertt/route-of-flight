@@ -67,6 +67,23 @@ export function useRouteSteps() {
         const nextSteps = connections?.filter(conn => conn.from_step_id === step.id).map(conn => conn.to_step_id) || []
         const connectedFrom = connections?.filter(conn => conn.to_step_id === step.id).map(conn => conn.from_step_id) || []
 
+        // Deduplicate details by content (title + description) to prevent duplicates
+        // This handles cases where duplicate records exist in the database
+        const uniqueDetails = stepDetails.reduce((acc, detail) => {
+          // Create a key based on content, not just ID
+          const contentKey = `${detail.title.trim().toLowerCase()}-${(detail.description || '').trim().toLowerCase()}`
+          const orderKey = detail.order_number
+          
+          // If we haven't seen this content before, or if this one has a lower order_number (keep the first one)
+          if (!acc.has(contentKey) || acc.get(contentKey).order_number > orderKey) {
+            acc.set(contentKey, detail)
+          }
+          return acc
+        }, new Map())
+        
+        const deduplicatedDetails = Array.from(uniqueDetails.values())
+          .sort((a, b) => a.order_number - b.order_number)
+
         return {
           id: step.id,
           title: step.title,
@@ -77,7 +94,7 @@ export function useRouteSteps() {
           allowCustomerReorder: step.allow_customer_reorder,
           status: step.status as 'draft' | 'published',
           category: step.category || 'Primary Training',
-          details: stepDetails.map(detail => ({
+          details: deduplicatedDetails.map(detail => ({
             id: detail.id,
             title: detail.title,
             description: detail.description,
@@ -184,23 +201,39 @@ export function useRouteSteps() {
           throw new Error(`Cannot insert details: Route step ${stepId} does not exist`)
         }
 
-        const { error: detailsError } = await supabase
-          .from('route_step_details')
-          .insert(
-            step.details.map((detail, index) => ({
-              route_step_id: stepId,
-              title: detail.title,
-              description: detail.description,
-              checked: detail.checked,
-              flight_hours: detail.flightHours || null,
-              order_number: index,
-              task_type: detail.taskType || 'flight',
-              mandatory: detail.mandatory || false,
-              published: true // Always publish new details so they're immediately accessible
-            }))
-          )
+        // Deduplicate details before inserting to prevent duplicates
+        // Remove duplicates based on content, not just index
+        const uniqueDetails = step.details.reduce((acc, detail) => {
+          // Use title + description as key to identify true duplicates
+          const contentKey = `${detail.title.trim().toLowerCase()}-${(detail.description || '').trim().toLowerCase()}`
+          if (!acc.has(contentKey)) {
+            acc.set(contentKey, detail)
+          }
+          return acc
+        }, new Map())
+        
+        const detailsToInsert = Array.from(uniqueDetails.values()).map((detail, index) => ({
+          route_step_id: stepId,
+          title: detail.title.trim(),
+          description: detail.description || '',
+          checked: detail.checked || false,
+          flight_hours: detail.flightHours || null,
+          order_number: index,
+          task_type: detail.taskType || 'flight',
+          mandatory: detail.mandatory || false,
+          published: true // Always publish new details so they're immediately accessible
+        }))
 
-        if (detailsError) throw detailsError
+        if (detailsToInsert.length > 0) {
+          const { error: detailsError } = await supabase
+            .from('route_step_details')
+            .insert(detailsToInsert)
+
+          if (detailsError) {
+            console.error('Error inserting details:', detailsError)
+            throw detailsError
+          }
+        }
       }
 
       // Don't refetch - let the UI update optimistically

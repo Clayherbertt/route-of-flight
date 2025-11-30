@@ -314,9 +314,55 @@ export default function RouteBuilder() {
     addStepToRoute(step.id);
   };
 
-  const removeStepFromRoute = (stepId: string) => {
-    setStudentRoute(prev => prev.filter(step => step.id !== stepId));
+  const removeStepFromRoute = async (stepId: string) => {
+    // Find the step in the route to get its stepId (not the route entry id)
+    const routeEntry = studentRoute.find(s => s.stepId === stepId);
+    if (!routeEntry) {
+      // If not found by stepId, try by id (for backward compatibility)
+      const entryById = studentRoute.find(s => s.id === stepId);
+      if (entryById) {
+        // Remove from local state
+        setStudentRoute(prev => prev.filter(step => step.id !== stepId));
+        toast.success("Step removed from your route");
+        
+        // Remove from database if user is logged in
+        if (user) {
+          try {
+            const { error } = await supabase
+              .from('user_routes')
+              .delete()
+              .eq('user_id', user.id)
+              .eq('route_step_id', entryById.stepId);
+            
+            if (error) throw error;
+          } catch (error) {
+            console.error('Error removing step from database:', error);
+            toast.error('Failed to remove step from database');
+          }
+        }
+      }
+      return;
+    }
+    
+    // Remove from local state
+    setStudentRoute(prev => prev.filter(step => step.stepId !== stepId));
     toast.success("Step removed from your route");
+    
+    // Remove from database if user is logged in
+    if (user) {
+      try {
+        const { error } = await supabase
+          .from('user_routes')
+          .delete()
+          .eq('user_id', user.id)
+          .eq('route_step_id', stepId);
+        
+        if (error) throw error;
+      } catch (error) {
+        console.error('Error removing step from database:', error);
+        toast.error('Failed to remove step from database');
+      }
+    }
   };
 
   const toggleStepCompletion = (stepId: string) => {
@@ -655,7 +701,7 @@ const formatHtmlContent = (html: string) => {
                                            </label>
                                           
                                           <div className="flex items-center gap-2 flex-shrink-0">
-                                            {detail.taskType && (
+                                            {detail.taskType && step.category !== 'Cadet Programs' && step.category !== 'Initial Tasks' && (
                                               <Badge 
                                                 variant={detail.taskType === 'flight' ? 'default' : 'secondary'}
                                                 className="text-xs"
@@ -838,7 +884,11 @@ const formatHtmlContent = (html: string) => {
           onStepAdd={async (stepId: string) => {
             await addStepToRoute(stepId);
           }}
+          onStepRemove={async (stepId: string) => {
+            await removeStepFromRoute(stepId);
+          }}
           availableSteps={routeSteps}
+          currentUserRoute={studentRoute}
         />
       </main>
     </div>
