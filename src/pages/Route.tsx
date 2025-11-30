@@ -4,17 +4,13 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
-import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 import { useAuth } from "@/contexts/AuthContext";
 import { useNavigate } from "react-router-dom";
 import { useRouteSteps } from "@/hooks/useRouteSteps";
 import { RouteWizard } from "@/components/RouteWizard";
 import { supabase } from "@/integrations/supabase/client";
 import { CircularProgress } from "@/components/CircularProgress";
-import { Check, Target, Compass, ChevronDown, ChevronRight, Clock, Plane, BookOpen } from "lucide-react";
+import { Check, Target, Compass, ChevronDown, ChevronRight, Plane, BookOpen } from "lucide-react";
 import { toast } from "sonner";
 import React from "react";
 
@@ -134,7 +130,6 @@ export default function RouteBuilder() {
   const [showWizard, setShowWizard] = useState(false);
   const [hasCompletedWizard, setHasCompletedWizard] = useState(false);
   const [expandedSteps, setExpandedSteps] = useState<Set<string>>(new Set());
-  const [expandedTasks, setExpandedTasks] = useState<Set<string>>(new Set());
   const [hasCheckedForExistingRoute, setHasCheckedForExistingRoute] = useState(false);
 
   // Load existing user route on component mount
@@ -167,10 +162,13 @@ export default function RouteBuilder() {
           for (const userRoute of userRoutes) {
             const step = routeSteps.find(s => s.id === userRoute.route_step_id);
             if (step) {
+              // When loading existing route, initialize tasks as unchecked
+              // Task progress should be loaded from user's saved progress if it exists
+              // For now, start all tasks as unchecked - they'll be checked when user marks them
               const taskProgress: Record<string, boolean> = {};
               step.details.forEach(detail => {
                 if (detail.id) {
-                  taskProgress[detail.id] = detail.checked;
+                  taskProgress[detail.id] = false; // Start unchecked, user will check as they complete tasks
                 }
               });
 
@@ -236,7 +234,7 @@ export default function RouteBuilder() {
     return getPhaseProgress(previousPhase.id) === 100;
   };
 
-  const addStepToRoute = async (stepId: string) => {
+  const addStepToRoute = async (stepId: string, suppressToast: boolean = false) => {
     const step = routeSteps.find(s => s.id === stepId);
     if (!step) {
       console.error('❌ Step not found:', stepId);
@@ -245,14 +243,18 @@ export default function RouteBuilder() {
 
     const existingStep = studentRoute.find(s => s.stepId === stepId);
     if (existingStep) {
-      toast.error(`${step.title} is already in your route`);
+      if (!suppressToast) {
+        toast.error(`${step.title} is already in your route`);
+      }
       return;
     }
 
+    // Initialize all tasks as unchecked for new routes
+    // Tasks should only be checked when the user explicitly marks them as complete
     const taskProgress: Record<string, boolean> = {};
     step.details.forEach(detail => {
       if (detail.id) {
-        taskProgress[detail.id] = detail.checked;
+        taskProgress[detail.id] = false; // Always start unchecked for new routes
       }
     });
 
@@ -283,10 +285,14 @@ export default function RouteBuilder() {
         if (error) throw error;
 
         setStudentRoute(prev => [...prev, newStep]);
-        toast.success(`${step.title} added to your route`);
+        if (!suppressToast) {
+          toast.success(`${step.title} added to your route`);
+        }
       } catch (error) {
         console.error('Error adding step:', error);
-        toast.error('Failed to add step to route');
+        if (!suppressToast) {
+          toast.error('Failed to add step to route');
+        }
       }
     } else {
     setStudentRoute(prev => [...prev, newStep]);
@@ -476,18 +482,6 @@ const formatHtmlContent = (html: string) => {
     return (completedTasks / fullStep.details.length) * 100;
   };
 
-  const toggleTaskExpansion = (taskId: string) => {
-    setExpandedTasks(prev => {
-      const newSet = new Set(prev);
-      if (newSet.has(taskId)) {
-        newSet.delete(taskId);
-      } else {
-        newSet.add(taskId);
-      }
-      return newSet;
-    });
-  };
-
   const toggleStepExpansion = (stepId: string) => {
     setExpandedSteps(prev => {
       const newSet = new Set(prev);
@@ -670,8 +664,6 @@ const formatHtmlContent = (html: string) => {
                                 })
                                 .map((detail, detailIndex) => {
                                 const isCompleted = step.taskProgress[detail.id || detail.title] || false;
-                                const isTaskExpanded = expandedTasks.has(detail.id || `${step.id}-${detailIndex}`);
-                                
                                  return (
                                   <div 
                                     key={detail.id || detailIndex} 
@@ -714,52 +706,6 @@ const formatHtmlContent = (html: string) => {
                                               </Badge>
                                             )}
                                             
-                                              {(detail.flightHours || step.category === 'Flight Instructing') && (
-                                                <Popover>
-                                                  <PopoverTrigger asChild>
-                                                  <Button variant="outline" size="sm" className="h-7 text-xs px-2 gap-1">
-                                                    <Clock className="h-3 w-3" />
-                                                      {detail.flightHours || 0}h
-                                                    </Button>
-                                                  </PopoverTrigger>
-                                                <PopoverContent className="w-64 p-4">
-                                                    <div className="space-y-3">
-                                                      <Label className="text-sm font-medium">Flight Hours</Label>
-                                                      <Input
-                                                        type="number"
-                                                        placeholder="Enter hours"
-                                                        value={detail.flightHours || ''}
-                                                        onChange={(e) => {
-                                                          const hours = parseFloat(e.target.value) || 0
-                                                        updateTaskDetails(step.id, detail.id || detail.title, { flightHours: hours })
-                                                        }}
-                                                      className="h-9"
-                                                      />
-                                                      {step.category === 'Flight Instructing' && (
-                                                        <>
-                                                          <Label className="text-sm font-medium">Hour Type</Label>
-                                                          <Select 
-                                                            value={(detail as any).hourType || 'ATP'} 
-                                                          onValueChange={(value) => updateTaskDetails(step.id, detail.id || detail.title, { 
-                                                              hourType: value as 'ATP' | 'R-ATP Bachelors Degree' | 'R-ATP Associated Degree' 
-                                                            })}
-                                                          >
-                                                          <SelectTrigger className="h-9">
-                                                              <SelectValue />
-                                                            </SelectTrigger>
-                                                          <SelectContent>
-                                                              <SelectItem value="ATP">ATP</SelectItem>
-                                                              <SelectItem value="R-ATP Bachelors Degree">R-ATP Bachelors Degree</SelectItem>
-                                                              <SelectItem value="R-ATP Associated Degree">R-ATP Associated Degree</SelectItem>
-                                                            </SelectContent>
-                                                          </Select>
-                                                        </>
-                                                      )}
-                                                    </div>
-                                                  </PopoverContent>
-                                                </Popover>
-                                              )}
-                                              
                                               {detail.mandatory && (
                                                 <Badge variant="destructive" className="text-xs">
                                                   Required
@@ -772,31 +718,8 @@ const formatHtmlContent = (html: string) => {
                                                 Complete
                                                 </Badge>
                                               )}
-                                            
-                                              {detail.description && detail.description.trim() && (
-                                                <Button
-                                                  variant="ghost"
-                                                  size="sm"
-                                                  onClick={() => toggleTaskExpansion(detail.id || `${step.id}-${detailIndex}`)}
-                                                className="h-7 w-7 p-0"
-                                                >
-                                                {isTaskExpanded ? (
-                                                  <ChevronDown className="h-4 w-4" />
-                                                  ) : (
-                                                  <ChevronRight className="h-4 w-4" />
-                                                  )}
-                                                </Button>
-                                              )}
                                        </div>
                                      </div>
-                                      
-                                        {isTaskExpanded && detail.description && detail.description.trim() && (
-                                          <div className="mt-3 pt-3 border-t border-border/50">
-                                         <div className="prose prose-sm max-w-none">
-                                           {formatHtmlContent(detail.description)}
-                                         </div>
-                                       </div>
-                                     )}
                                       </div>
                                     </div>
                                     </div>
@@ -882,7 +805,7 @@ const formatHtmlContent = (html: string) => {
             setHasCompletedWizard(true);
           }}
           onStepAdd={async (stepId: string) => {
-            await addStepToRoute(stepId);
+            await addStepToRoute(stepId, true); // Suppress toast notifications from wizard
           }}
           onStepRemove={async (stepId: string) => {
             await removeStepFromRoute(stepId);
