@@ -251,10 +251,10 @@ export function RouteWizard({ isOpen, onClose, onStepAdd, onStepRemove, availabl
     }
     
     // Use functional update to ensure we get the latest state
-    setSelectedSteps(prev => {
-      const current = prev[stepKey] || [];
-      const isSelected = current.includes(stepId);
-      
+      setSelectedSteps(prev => {
+        const current = prev[stepKey] || [];
+        const isSelected = current.includes(stepId);
+        
       if (currentWizardStep.multiSelect) {
         // For multi-select, toggle the item
         if (isSelected) {
@@ -270,12 +270,12 @@ export function RouteWizard({ isOpen, onClose, onStepAdd, onStepRemove, availabl
           // Deselect by removing it
           const newSelection = { ...prev, [stepKey]: [] };
           return newSelection;
-        } else {
+    } else {
           // Select it
           const newSelection = { ...prev, [stepKey]: [stepId] };
           return newSelection;
         }
-      }
+    }
     });
   };
 
@@ -445,7 +445,7 @@ export function RouteWizard({ isOpen, onClose, onStepAdd, onStepRemove, availabl
           {availableSteps.map((step) => {
             // Get the icon component from lucide-react
             const IconComponent = step.icon === "BookOpen" ? BookOpen : 
-                               step.icon === "Plane" ? Plane :
+                               step.icon === "Plane" ? Plane : 
                                step.icon === "Users" ? Users :
                                step.icon === "GraduationCap" ? GraduationCap :
                                step.icon === "Target" ? Target :

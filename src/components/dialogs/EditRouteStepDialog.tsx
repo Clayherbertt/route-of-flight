@@ -228,15 +228,15 @@ export function EditRouteStepDialog({
   if (!editedStep) return null;
   const handleSave = async () => {
     try {
-      // Ensure all data is properly formatted before saving
+    // Ensure all data is properly formatted before saving
       // Preserve Cadet Programs category - if it was set to Cadet Programs, always keep it
       const originalCategory = step?.category || editedStep.category
       const isCadetProgram = originalCategory === 'Cadet Programs' || editedStep.category === 'Cadet Programs'
       
-      const stepToSave: RouteStep = {
-        ...editedStep,
+    const stepToSave: RouteStep = {
+      ...editedStep,
         id: (editedStep.id && editedStep.id.trim() !== '') ? editedStep.id : undefined, // Allow undefined for new steps
-        title: editedStep.title.replace(/<[^>]*>/g, '').trim(), // Strip HTML tags from title
+      title: editedStep.title.replace(/<[^>]*>/g, '').trim(), // Strip HTML tags from title
         description: editedStep.description || '', // Preserve description (can contain HTML from rich text editor)
         category: isCadetProgram ? 'Cadet Programs' : (editedStep.category || 'Primary Training'),
         icon: editedStep.icon || 'GraduationCap',
@@ -246,13 +246,13 @@ export function EditRouteStepDialog({
         status: editedStep.status || 'draft',
         nextSteps: editedStep.nextSteps || [],
         connectedFrom: editedStep.connectedFrom || [],
-        details: editedStep.details.map((detail, index) => ({
-          ...detail,
-          title: detail.title.replace(/<[^>]*>/g, '').trim(), // Strip HTML tags from detail titles
-          orderNumber: index,
-          taskType: detail.taskType || 'flight'
-        }))
-      };
+      details: editedStep.details.map((detail, index) => ({
+        ...detail,
+        title: detail.title.replace(/<[^>]*>/g, '').trim(), // Strip HTML tags from detail titles
+        orderNumber: index,
+        taskType: detail.taskType || 'flight'
+      }))
+    };
       
       // Ensure required fields are present
       if (!stepToSave.title || stepToSave.title.trim() === '') {
@@ -270,7 +270,7 @@ export function EditRouteStepDialog({
       });
       
       await onSave(stepToSave);
-      onOpenChange(false);
+    onOpenChange(false);
     } catch (error) {
       console.error('EditRouteStepDialog: Error saving step:', error);
       alert(`Failed to save step: ${error instanceof Error ? error.message : 'Unknown error'}. Please try again.`);
@@ -441,7 +441,7 @@ export function EditRouteStepDialog({
                 value={editedStep.description || ''} 
                 onChange={(value) => {
                   setEditedStep({
-                    ...editedStep,
+                  ...editedStep,
                     description: value || ''
                   });
                 }} 
@@ -472,19 +472,19 @@ export function EditRouteStepDialog({
                 }
                 
                 return (
-                  <Select value={editedStep.category} onValueChange={value => setEditedStep({
-                    ...editedStep,
-                    category: value
-                  })}>
-                    <SelectTrigger>
-                      <SelectValue placeholder="Select a category" />
-                    </SelectTrigger>
-                    <SelectContent className="bg-background border z-50">
-                      {CATEGORIES.map(category => <SelectItem key={category} value={category}>
-                          {category}
-                        </SelectItem>)}
-                    </SelectContent>
-                  </Select>
+              <Select value={editedStep.category} onValueChange={value => setEditedStep({
+              ...editedStep,
+              category: value
+            })}>
+                <SelectTrigger>
+                  <SelectValue placeholder="Select a category" />
+                </SelectTrigger>
+                <SelectContent className="bg-background border z-50">
+                  {CATEGORIES.map(category => <SelectItem key={category} value={category}>
+                      {category}
+                    </SelectItem>)}
+                </SelectContent>
+              </Select>
                 )
               })()}
             </div>

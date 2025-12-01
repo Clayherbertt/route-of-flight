@@ -213,16 +213,16 @@ export function useRouteSteps() {
         }, new Map())
         
         const detailsToInsert = Array.from(uniqueDetails.values()).map((detail, index) => ({
-          route_step_id: stepId,
+              route_step_id: stepId,
           title: detail.title.trim(),
           description: detail.description || '',
           checked: detail.checked || false,
-          flight_hours: detail.flightHours || null,
-          order_number: index,
-          task_type: detail.taskType || 'flight',
-          mandatory: detail.mandatory || false,
-          published: true // Always publish new details so they're immediately accessible
-        }))
+              flight_hours: detail.flightHours || null,
+              order_number: index,
+              task_type: detail.taskType || 'flight',
+              mandatory: detail.mandatory || false,
+              published: true // Always publish new details so they're immediately accessible
+            }))
 
         if (detailsToInsert.length > 0) {
           const { error: detailsError } = await supabase
@@ -238,7 +238,7 @@ export function useRouteSteps() {
 
       // Don't refetch - let the UI update optimistically
       // The component will handle updating local state
-      
+
       toast({
         title: "Success",
         description: step.id ? "Route step updated successfully" : "Route step created successfully"

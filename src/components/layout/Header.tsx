@@ -44,7 +44,7 @@ const Header = () => {
             className="text-sm font-medium text-muted-foreground hover:text-foreground smooth-transition"
           >
             <FileText className="inline h-4 w-4 mr-2" />
-            Resume Review
+            Resume
           </Link>
         </nav>
 

@@ -169,18 +169,18 @@ export default function RouteDashboard() {
   }
 
   const handleSelectTemplate = (template: any) => {
-    // Create new step from template with next order number
-    const nextOrderNumber = Math.max(...routeSteps.map(s => s.orderNumber), 0) + 1
-    
-    const newStep = {
-      ...template.defaultStructure,
+      // Create new step from template with next order number
+      const nextOrderNumber = Math.max(...routeSteps.map(s => s.orderNumber), 0) + 1
+      
+      const newStep = {
+        ...template.defaultStructure,
       id: '', // Empty ID means it's a new step
-      orderNumber: nextOrderNumber,
-      icon: template.icon,
-      nextSteps: [],
-      connectedFrom: []
-    }
-    
+        orderNumber: nextOrderNumber,
+        icon: template.icon,
+        nextSteps: [],
+        connectedFrom: []
+      }
+      
     console.log('RouteDashboard: Opening edit dialog for new step from template:', {
       templateId: template.id,
       category: newStep.category,
@@ -417,16 +417,16 @@ export default function RouteDashboard() {
                 </div>
               </AccordionTrigger>
               <AccordionContent className="pt-4">
-                <DndContext 
-                  sensors={sensors}
-                  collisionDetection={closestCenter}
-                  onDragEnd={handleDragEnd}
-                >
-                  <SortableContext 
+          <DndContext 
+            sensors={sensors}
+            collisionDetection={closestCenter}
+            onDragEnd={handleDragEnd}
+          >
+            <SortableContext 
                     items={stepGroups['initial-flight-training'].map(step => step.id!).filter(Boolean)} 
-                    strategy={verticalListSortingStrategy}
-                  >
-                    <div className="space-y-4">
+              strategy={verticalListSortingStrategy}
+            >
+              <div className="space-y-4">
                       {stepGroups['initial-flight-training'].map((step) => {
                         if (!step.id) return null
                         return (
@@ -476,15 +476,15 @@ export default function RouteDashboard() {
                     <div className="space-y-4">
                       {stepGroups['flight-instructing'].map((step) => {
                         if (!step.id) return null
-                        return (
-                          <SortableRouteStepCard
+                  return (
+                      <SortableRouteStepCard
                             key={step.id}
-                            step={step}
-                            isExpanded={expandedCards[step.id] || false}
-                            onToggleExpansion={() => toggleCardExpansion(step.id!)}
-                            onEdit={() => handleEditStep(step)}
-                            onDelete={() => handleDeleteStep(step.id!)}
-                          />
+                        step={step}
+                        isExpanded={expandedCards[step.id] || false}
+                        onToggleExpansion={() => toggleCardExpansion(step.id!)}
+                        onEdit={() => handleEditStep(step)}
+                        onDelete={() => handleDeleteStep(step.id!)}
+                      />
                         )
                       })}
                       {stepGroups['flight-instructing'].length === 0 && (
@@ -507,8 +507,8 @@ export default function RouteDashboard() {
                     <p className="text-sm text-muted-foreground">
                       {stepGroups['working-as-flight-instructor'].length} step{stepGroups['working-as-flight-instructor'].length !== 1 ? 's' : ''}
                     </p>
-                  </div>
-                </div>
+                          </div>
+                        </div>
               </AccordionTrigger>
               <AccordionContent className="pt-4">
                 <DndContext 
@@ -586,9 +586,9 @@ export default function RouteDashboard() {
                           No steps in this category yet
                         </p>
                       )}
-                    </div>
-                  </SortableContext>
-                </DndContext>
+              </div>
+            </SortableContext>
+          </DndContext>
               </AccordionContent>
             </AccordionItem>
           </Accordion>
