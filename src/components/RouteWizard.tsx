@@ -9,7 +9,7 @@ import { Check, ChevronRight, Plane, Heart, GraduationCap, Building, Users, MapP
 interface RouteWizardProps {
   isOpen: boolean;
   onClose: () => void;
-  onStepAdd: (stepId: string) => Promise<void>;
+  onStepAdd: (stepId: string, wizardStepKey?: string) => Promise<void>;
   onStepRemove?: (stepId: string) => Promise<void>; // Optional callback to remove steps
   availableSteps: any[];
   currentUserRoute?: Array<{ stepId: string; [key: string]: any }>; // User's current route steps
@@ -297,9 +297,9 @@ export function RouteWizard({ isOpen, onClose, onStepAdd, onStepRemove, availabl
       }
     }
     
-    // Add newly selected steps
+    // Add newly selected steps with wizard step key for ordering
     for (const stepId of newlySelected) {
-      await onStepAdd(stepId);
+      await onStepAdd(stepId, stepKey);
     }
     
     // Update initial state to reflect current state for next step

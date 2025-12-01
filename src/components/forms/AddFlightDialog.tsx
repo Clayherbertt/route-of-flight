@@ -19,6 +19,70 @@ import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/contexts/AuthContext";
 import { AddAircraftDialog } from "./AddAircraftDialog";
 
+// Helper component for editable number inputs that allows free editing
+const EditableNumberInput = ({ 
+  value, 
+  onChange, 
+  placeholder, 
+  isInteger = false 
+}: { 
+  value: number | undefined; 
+  onChange: (value: number | undefined) => void; 
+  placeholder: string;
+  isInteger?: boolean;
+}) => {
+  const [localValue, setLocalValue] = useState<string>(
+    value != null ? value.toString() : ""
+  );
+  const [isFocused, setIsFocused] = useState(false);
+
+  // Only sync when value changes externally AND we're not focused (to avoid conflicts during editing)
+  useEffect(() => {
+    if (!isFocused) {
+      setLocalValue(value != null ? value.toString() : "");
+    }
+  }, [value, isFocused]);
+
+  return (
+    <Input
+      type="text"
+      inputMode={isInteger ? "numeric" : "decimal"}
+      placeholder={placeholder}
+      value={localValue}
+      onFocus={() => {
+        setIsFocused(true);
+      }}
+      onChange={(e) => {
+        const newVal = e.target.value;
+        // Always update local state immediately - no restrictions
+        setLocalValue(newVal);
+        // Don't update form field during typing - only on blur
+        // This allows complete freedom to edit
+      }}
+      onBlur={() => {
+        setIsFocused(false);
+        // Finalize on blur - validate and update form field
+        const trimmed = localValue.trim();
+        if (trimmed === '' || trimmed === '.' || trimmed === '-') {
+          onChange(undefined);
+          setLocalValue('');
+        } else {
+          const num = isInteger ? parseInt(trimmed, 10) : parseFloat(trimmed);
+          if (isNaN(num) || !isFinite(num)) {
+            // Invalid input - reset to empty
+            onChange(undefined);
+            setLocalValue('');
+          } else {
+            // Valid number - update form field and normalize display
+            onChange(num);
+            setLocalValue(num.toString());
+          }
+        }
+      }}
+    />
+  );
+};
+
 const addFlightSchema = z.object({
   date: z.date({
     required_error: "Flight date is required.",
@@ -316,8 +380,14 @@ export const AddFlightDialog = ({ open, onOpenChange, onFlightAdded, editingFlig
   };
 
   const onSubmit = async (values: AddFlightForm) => {
-    if (!user) return;
+    console.log('onSubmit called with values:', values);
+    
+    if (!user) {
+      console.error('No user found, cannot submit');
+      return;
+    }
 
+    console.log('Starting flight submission...');
     setIsSubmitting(true);
     try {
       const flightData = {
@@ -832,12 +902,11 @@ export const AddFlightDialog = ({ open, onOpenChange, onFlightAdded, editingFlig
                     <FormItem>
                       <FormLabel>Hobbs Start</FormLabel>
                       <FormControl>
-                        <Input
-                          type="number"
-                          step="0.1"
+                        <EditableNumberInput
+                          value={field.value}
+                          onChange={field.onChange}
                           placeholder="0.0"
-                          value={field.value || ""}
-                          onChange={(e) => field.onChange(parseFloat(e.target.value) || undefined)}
+                          isInteger={false}
                         />
                       </FormControl>
                       <FormMessage />
@@ -852,12 +921,11 @@ export const AddFlightDialog = ({ open, onOpenChange, onFlightAdded, editingFlig
                     <FormItem>
                       <FormLabel>Hobbs End</FormLabel>
                       <FormControl>
-                        <Input
-                          type="number"
-                          step="0.1"
+                        <EditableNumberInput
+                          value={field.value}
+                          onChange={field.onChange}
                           placeholder="0.0"
-                          value={field.value || ""}
-                          onChange={(e) => field.onChange(parseFloat(e.target.value) || undefined)}
+                          isInteger={false}
                         />
                       </FormControl>
                       <FormMessage />
@@ -872,12 +940,11 @@ export const AddFlightDialog = ({ open, onOpenChange, onFlightAdded, editingFlig
                     <FormItem>
                       <FormLabel>Tach Start</FormLabel>
                       <FormControl>
-                        <Input
-                          type="number"
-                          step="0.1"
+                        <EditableNumberInput
+                          value={field.value}
+                          onChange={field.onChange}
                           placeholder="0.0"
-                          value={field.value || ""}
-                          onChange={(e) => field.onChange(parseFloat(e.target.value) || undefined)}
+                          isInteger={false}
                         />
                       </FormControl>
                       <FormMessage />
@@ -892,12 +959,11 @@ export const AddFlightDialog = ({ open, onOpenChange, onFlightAdded, editingFlig
                     <FormItem>
                       <FormLabel>Tach End</FormLabel>
                       <FormControl>
-                        <Input
-                          type="number"
-                          step="0.1"
+                        <EditableNumberInput
+                          value={field.value}
+                          onChange={field.onChange}
                           placeholder="0.0"
-                          value={field.value || ""}
-                          onChange={(e) => field.onChange(parseFloat(e.target.value) || undefined)}
+                          isInteger={false}
                         />
                       </FormControl>
                       <FormMessage />
@@ -918,12 +984,11 @@ export const AddFlightDialog = ({ open, onOpenChange, onFlightAdded, editingFlig
                     <FormItem>
                       <FormLabel>Total Time</FormLabel>
                       <FormControl>
-                        <Input
-                          type="number"
-                          step="0.1"
+                        <EditableNumberInput
+                          value={field.value}
+                          onChange={field.onChange}
                           placeholder="0.0"
-                          value={field.value || ""}
-                          onChange={(e) => field.onChange(parseFloat(e.target.value) || undefined)}
+                          isInteger={false}
                         />
                       </FormControl>
                       <FormMessage />
@@ -938,12 +1003,11 @@ export const AddFlightDialog = ({ open, onOpenChange, onFlightAdded, editingFlig
                     <FormItem>
                       <FormLabel>PIC</FormLabel>
                       <FormControl>
-                        <Input
-                          type="number"
-                          step="0.1"
+                        <EditableNumberInput
+                          value={field.value}
+                          onChange={field.onChange}
                           placeholder="0.0"
-                          value={field.value || ""}
-                          onChange={(e) => field.onChange(parseFloat(e.target.value) || undefined)}
+                          isInteger={false}
                         />
                       </FormControl>
                       <FormMessage />
@@ -958,12 +1022,11 @@ export const AddFlightDialog = ({ open, onOpenChange, onFlightAdded, editingFlig
                     <FormItem>
                       <FormLabel>SIC</FormLabel>
                       <FormControl>
-                        <Input
-                          type="number"
-                          step="0.1"
+                        <EditableNumberInput
+                          value={field.value}
+                          onChange={field.onChange}
                           placeholder="0.0"
-                          value={field.value || ""}
-                          onChange={(e) => field.onChange(parseFloat(e.target.value) || undefined)}
+                          isInteger={false}
                         />
                       </FormControl>
                       <FormMessage />
@@ -978,12 +1041,11 @@ export const AddFlightDialog = ({ open, onOpenChange, onFlightAdded, editingFlig
                     <FormItem>
                       <FormLabel>Solo</FormLabel>
                       <FormControl>
-                        <Input
-                          type="number"
-                          step="0.1"
+                        <EditableNumberInput
+                          value={field.value}
+                          onChange={field.onChange}
                           placeholder="0.0"
-                          value={field.value || ""}
-                          onChange={(e) => field.onChange(parseFloat(e.target.value) || undefined)}
+                          isInteger={false}
                         />
                       </FormControl>
                       <FormMessage />
@@ -998,12 +1060,11 @@ export const AddFlightDialog = ({ open, onOpenChange, onFlightAdded, editingFlig
                     <FormItem>
                       <FormLabel>Night</FormLabel>
                       <FormControl>
-                        <Input
-                          type="number"
-                          step="0.1"
+                        <EditableNumberInput
+                          value={field.value}
+                          onChange={field.onChange}
                           placeholder="0.0"
-                          value={field.value || ""}
-                          onChange={(e) => field.onChange(parseFloat(e.target.value) || undefined)}
+                          isInteger={false}
                         />
                       </FormControl>
                       <FormMessage />
@@ -1018,12 +1079,11 @@ export const AddFlightDialog = ({ open, onOpenChange, onFlightAdded, editingFlig
                     <FormItem>
                       <FormLabel>Cross Country</FormLabel>
                       <FormControl>
-                        <Input
-                          type="number"
-                          step="0.1"
+                        <EditableNumberInput
+                          value={field.value}
+                          onChange={field.onChange}
                           placeholder="0.0"
-                          value={field.value || ""}
-                          onChange={(e) => field.onChange(parseFloat(e.target.value) || undefined)}
+                          isInteger={false}
                         />
                       </FormControl>
                       <FormMessage />
@@ -1043,11 +1103,11 @@ export const AddFlightDialog = ({ open, onOpenChange, onFlightAdded, editingFlig
                     <FormItem>
                       <FormLabel>Day Takeoffs</FormLabel>
                       <FormControl>
-                        <Input
-                          type="number"
+                        <EditableNumberInput
+                          value={field.value}
+                          onChange={field.onChange}
                           placeholder="0"
-                          value={field.value || ""}
-                          onChange={(e) => field.onChange(parseInt(e.target.value) || undefined)}
+                          isInteger={true}
                         />
                       </FormControl>
                       <FormMessage />
@@ -1062,11 +1122,11 @@ export const AddFlightDialog = ({ open, onOpenChange, onFlightAdded, editingFlig
                     <FormItem>
                       <FormLabel>Day Landings</FormLabel>
                       <FormControl>
-                        <Input
-                          type="number"
+                        <EditableNumberInput
+                          value={field.value}
+                          onChange={field.onChange}
                           placeholder="0"
-                          value={field.value || ""}
-                          onChange={(e) => field.onChange(parseInt(e.target.value) || undefined)}
+                          isInteger={true}
                         />
                       </FormControl>
                       <FormMessage />
@@ -1081,11 +1141,11 @@ export const AddFlightDialog = ({ open, onOpenChange, onFlightAdded, editingFlig
                     <FormItem>
                       <FormLabel>Day Landings (Full Stop)</FormLabel>
                       <FormControl>
-                        <Input
-                          type="number"
+                        <EditableNumberInput
+                          value={field.value}
+                          onChange={field.onChange}
                           placeholder="0"
-                          value={field.value || ""}
-                          onChange={(e) => field.onChange(parseInt(e.target.value) || undefined)}
+                          isInteger={true}
                         />
                       </FormControl>
                       <FormMessage />
@@ -1100,11 +1160,11 @@ export const AddFlightDialog = ({ open, onOpenChange, onFlightAdded, editingFlig
                     <FormItem>
                       <FormLabel>Night Takeoffs</FormLabel>
                       <FormControl>
-                        <Input
-                          type="number"
+                        <EditableNumberInput
+                          value={field.value}
+                          onChange={field.onChange}
                           placeholder="0"
-                          value={field.value || ""}
-                          onChange={(e) => field.onChange(parseInt(e.target.value) || undefined)}
+                          isInteger={true}
                         />
                       </FormControl>
                       <FormMessage />
@@ -1119,11 +1179,11 @@ export const AddFlightDialog = ({ open, onOpenChange, onFlightAdded, editingFlig
                     <FormItem>
                       <FormLabel>Night Landings</FormLabel>
                       <FormControl>
-                        <Input
-                          type="number"
+                        <EditableNumberInput
+                          value={field.value}
+                          onChange={field.onChange}
                           placeholder="0"
-                          value={field.value || ""}
-                          onChange={(e) => field.onChange(parseInt(e.target.value) || undefined)}
+                          isInteger={true}
                         />
                       </FormControl>
                       <FormMessage />
@@ -1138,11 +1198,11 @@ export const AddFlightDialog = ({ open, onOpenChange, onFlightAdded, editingFlig
                     <FormItem>
                       <FormLabel>Night Landings (Full Stop)</FormLabel>
                       <FormControl>
-                        <Input
-                          type="number"
+                        <EditableNumberInput
+                          value={field.value}
+                          onChange={field.onChange}
                           placeholder="0"
-                          value={field.value || ""}
-                          onChange={(e) => field.onChange(parseInt(e.target.value) || undefined)}
+                          isInteger={true}
                         />
                       </FormControl>
                       <FormMessage />
@@ -1162,12 +1222,11 @@ export const AddFlightDialog = ({ open, onOpenChange, onFlightAdded, editingFlig
                     <FormItem>
                       <FormLabel>Actual Instrument</FormLabel>
                       <FormControl>
-                        <Input 
-                          type="number" 
-                          step="0.1" 
+                        <EditableNumberInput
+                          value={field.value}
+                          onChange={field.onChange}
                           placeholder="0.0"
-                          value={field.value || ""}
-                          onChange={(e) => field.onChange(parseFloat(e.target.value) || undefined)}
+                          isInteger={false}
                         />
                       </FormControl>
                       <FormMessage />
@@ -1182,12 +1241,11 @@ export const AddFlightDialog = ({ open, onOpenChange, onFlightAdded, editingFlig
                     <FormItem>
                       <FormLabel>Simulated Instrument</FormLabel>
                       <FormControl>
-                        <Input 
-                          type="number" 
-                          step="0.1" 
+                        <EditableNumberInput
+                          value={field.value}
+                          onChange={field.onChange}
                           placeholder="0.0"
-                          value={field.value || ""}
-                          onChange={(e) => field.onChange(parseFloat(e.target.value) || undefined)}
+                          isInteger={false}
                         />
                       </FormControl>
                       <FormMessage />
@@ -1202,11 +1260,11 @@ export const AddFlightDialog = ({ open, onOpenChange, onFlightAdded, editingFlig
                     <FormItem>
                       <FormLabel>Holds</FormLabel>
                       <FormControl>
-                        <Input 
-                          type="number" 
+                        <EditableNumberInput
+                          value={field.value}
+                          onChange={field.onChange}
                           placeholder="0"
-                          value={field.value || ""}
-                          onChange={(e) => field.onChange(parseInt(e.target.value) || undefined)}
+                          isInteger={true}
                         />
                       </FormControl>
                       <FormMessage />
@@ -1221,14 +1279,11 @@ export const AddFlightDialog = ({ open, onOpenChange, onFlightAdded, editingFlig
                     <FormItem>
                       <FormLabel>Approaches</FormLabel>
                       <FormControl>
-                        <Input
-                          type="number"
+                        <EditableNumberInput
+                          value={field.value}
+                          onChange={field.onChange}
                           placeholder="0"
-                          value={field.value ?? ""}
-                          onChange={(e) => {
-                            const value = e.target.value;
-                            field.onChange(value === "" ? undefined : parseInt(value, 10) || 0);
-                          }}
+                          isInteger={true}
                         />
                       </FormControl>
                       <FormMessage />
@@ -1243,12 +1298,11 @@ export const AddFlightDialog = ({ open, onOpenChange, onFlightAdded, editingFlig
                     <FormItem>
                       <FormLabel>Dual Given</FormLabel>
                       <FormControl>
-                        <Input 
-                          type="number" 
-                          step="0.1" 
+                        <EditableNumberInput
+                          value={field.value}
+                          onChange={field.onChange}
                           placeholder="0.0"
-                          value={field.value || ""}
-                          onChange={(e) => field.onChange(parseFloat(e.target.value) || undefined)}
+                          isInteger={false}
                         />
                       </FormControl>
                       <FormMessage />
@@ -1263,12 +1317,11 @@ export const AddFlightDialog = ({ open, onOpenChange, onFlightAdded, editingFlig
                     <FormItem>
                       <FormLabel>Dual Received</FormLabel>
                       <FormControl>
-                        <Input 
-                          type="number" 
-                          step="0.1" 
+                        <EditableNumberInput
+                          value={field.value}
+                          onChange={field.onChange}
                           placeholder="0.0"
-                          value={field.value || ""}
-                          onChange={(e) => field.onChange(parseFloat(e.target.value) || undefined)}
+                          isInteger={false}
                         />
                       </FormControl>
                       <FormMessage />
@@ -1283,12 +1336,11 @@ export const AddFlightDialog = ({ open, onOpenChange, onFlightAdded, editingFlig
                     <FormItem>
                       <FormLabel>Simulated Flight</FormLabel>
                       <FormControl>
-                        <Input 
-                          type="number" 
-                          step="0.1" 
+                        <EditableNumberInput
+                          value={field.value}
+                          onChange={field.onChange}
                           placeholder="0.0"
-                          value={field.value || ""}
-                          onChange={(e) => field.onChange(parseFloat(e.target.value) || undefined)}
+                          isInteger={false}
                         />
                       </FormControl>
                       <FormMessage />
@@ -1303,12 +1355,11 @@ export const AddFlightDialog = ({ open, onOpenChange, onFlightAdded, editingFlig
                     <FormItem>
                       <FormLabel>Ground Training</FormLabel>
                       <FormControl>
-                        <Input 
-                          type="number" 
-                          step="0.1" 
+                        <EditableNumberInput
+                          value={field.value}
+                          onChange={field.onChange}
                           placeholder="0.0"
-                          value={field.value || ""}
-                          onChange={(e) => field.onChange(parseFloat(e.target.value) || undefined)}
+                          isInteger={false}
                         />
                       </FormControl>
                       <FormMessage />
@@ -1346,7 +1397,21 @@ export const AddFlightDialog = ({ open, onOpenChange, onFlightAdded, editingFlig
               >
                 Cancel
               </Button>
-              <Button type="submit" disabled={isSubmitting}>
+              <Button 
+                type="submit" 
+                disabled={isSubmitting}
+                onClick={(e) => {
+                  // Debug: Log form state when button is clicked
+                  console.log('Add Flight button clicked');
+                  console.log('Form errors:', form.formState.errors);
+                  console.log('Form values:', form.getValues());
+                  console.log('Is form valid:', form.formState.isValid);
+                  console.log('Is submitting:', isSubmitting);
+                  
+                  // Don't prevent default - let the form submit normally
+                  // The form's onSubmit handler will handle validation
+                }}
+              >
                 {isSubmitting ? (editingFlight ? "Updating..." : "Adding...") : (editingFlight ? "Update Flight" : "Add Flight")}
               </Button>
             </DialogFooter>
