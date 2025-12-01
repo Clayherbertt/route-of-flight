@@ -19,6 +19,7 @@ import RouteDashboard from "./pages/RouteDashboard";
 import RouteBuilder from "./pages/Route";
 import EndorsementLibrary from "./pages/EndorsementLibrary";
 import NotFound from "./pages/NotFound";
+import Resume from "./pages/Resume";
 
 const queryClient = new QueryClient();
 
@@ -32,6 +33,7 @@ const App = () => (
           <Routes>
             <Route path="/" element={<Index />} />
             <Route path="/profile" element={<Profile />} />
+            <Route path="/resume" element={<Resume />} />
             <Route path="/signin" element={<SignIn />} />
             <Route path="/airlines" element={<Airlines />} />
             <Route path="/logbook" element={<Logbook />} />
