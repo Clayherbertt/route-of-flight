@@ -93,6 +93,7 @@ const Logbook = () => {
           .from('flight_entries')
           .select('*')
           .order('date', { ascending: false })
+          .order('start_time', { ascending: false, nullsFirst: false })
           .order('created_at', { ascending: false })
           .range(from, from + pageSize - 1);
 
@@ -112,6 +113,45 @@ const Logbook = () => {
 
         from += pageSize;
       }
+
+      // Client-side sort to ensure proper chronological order
+      // Sort by date DESC, then by start_time DESC (later times first), then created_at DESC
+      collected.sort((a, b) => {
+        // First, compare dates
+        const dateA = new Date(a.date).getTime();
+        const dateB = new Date(b.date).getTime();
+        if (dateA !== dateB) {
+          return dateB - dateA; // DESC order
+        }
+
+        // If same date, compare start_time
+        // Parse time strings (HH:MM:SS or HH:MM) - handle null/undefined
+        const parseTime = (timeStr: string | null | undefined): number => {
+          if (!timeStr) return -1; // Null times sort last
+          const parts = timeStr.split(':').map(Number);
+          return (parts[0] || 0) * 3600 + (parts[1] || 0) * 60 + (parts[2] || 0);
+        };
+        
+        const timeA = parseTime(a.start_time);
+        const timeB = parseTime(b.start_time);
+        
+        // If both have times, compare them
+        if (timeA >= 0 && timeB >= 0) {
+          if (timeA !== timeB) {
+            return timeB - timeA; // DESC order (later times first)
+          }
+        } else if (timeA >= 0 && timeB < 0) {
+          return -1; // Flights with time come before flights without time
+        } else if (timeA < 0 && timeB >= 0) {
+          return 1; // Flights without time come after flights with time
+        }
+        // If both are null, continue to created_at comparison
+
+        // If same date and time (or both null), use created_at as tiebreaker
+        const createdA = new Date(a.created_at).getTime();
+        const createdB = new Date(b.created_at).getTime();
+        return createdB - createdA; // DESC order
+      });
 
       setFlights(collected);
 

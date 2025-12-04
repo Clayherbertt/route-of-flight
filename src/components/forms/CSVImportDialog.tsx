@@ -23,6 +23,7 @@ type CSVImportDialogProps = {
 
 type MinimalFlight = {
   date: string;
+  start_time: string | null;
   aircraft_registration: string;
   aircraft_type: string;
   departure_airport: string;
@@ -64,6 +65,9 @@ const DATE_FIELD_KEYS = [
 ];
 
 const AIRCRAFT_FIELD_KEYS = [
+  "Tail No.",
+  "Tail No",
+  "Tail Number",
   "AircraftID",
   "Aircraft ID",
   "Aircraft",
@@ -71,7 +75,6 @@ const AIRCRAFT_FIELD_KEYS = [
   "Aircraft Registration ID",
   "Aircraft Name",
   "Aircraft Ident",
-  "Tail Number",
   "Tail",
   "Registration",
   "Aircraft Tail Number",
@@ -280,9 +283,12 @@ const extractAircraftDataFromCsv = (csvText: string): Map<string, {
   const headerLine = lines[aircraftHeaderLine];
   const headers = headerLine.split(",").map((h) => h.trim());
   
-  const aircraftIdIdx = headers.findIndex((h) => 
-    /^aircraftid$/i.test(h.replace(/\s+/g, ""))
-  );
+  const aircraftIdIdx = headers.findIndex((h) => {
+    const normalized = h.replace(/\s+/g, "").toLowerCase();
+    return /^aircraftid$/i.test(normalized) || 
+           /^tailno\.?$/i.test(normalized) ||
+           /^tailnumber$/i.test(normalized);
+  });
   const typeCodeIdx = headers.findIndex((h) => 
     /^typecode$/i.test(h.replace(/\s+/g, ""))
   );
@@ -461,7 +467,11 @@ const extractFlightsFromCsv = (csvText: string): Record<string, unknown>[] => {
   );
 };
 
-const dateFromValue = (value: unknown): string | null => {
+/**
+ * Parse flight date/time from CSV format (e.g., "2025-11-05 19:23 Z")
+ * Returns an object with date (YYYY-MM-DD) and time (HH:MM:SS) in UTC
+ */
+const parseFlightDateTime = (value: unknown): { date: string; time: string | null } | null => {
   if (value === null || value === undefined) return null;
 
   if (typeof value === "number" && Number.isFinite(value)) {
@@ -469,7 +479,10 @@ const dateFromValue = (value: unknown): string | null => {
     const ms = value * 86400000;
     const parsed = new Date(excelEpoch.getTime() + ms);
     if (!Number.isNaN(parsed.getTime())) {
-      return parsed.toISOString().slice(0, 10);
+      return {
+        date: parsed.toISOString().slice(0, 10),
+        time: null
+      };
     }
   }
 
@@ -477,11 +490,45 @@ const dateFromValue = (value: unknown): string | null => {
     const trimmed = value.trim();
     if (!trimmed) return null;
 
-    const direct = new Date(trimmed);
-    if (!Number.isNaN(direct.getTime())) {
-      return direct.toISOString().slice(0, 10);
+    // Handle format: "YYYY-MM-DD HH:MM Z" or "YYYY-MM-DD HH:MM:SS Z"
+    const zuluMatch = trimmed.match(/^(\d{4}-\d{2}-\d{2})\s+(\d{1,2}):(\d{2})(?::(\d{2}))?\s+Z$/i);
+    if (zuluMatch) {
+      const [, dateStr, hours, minutes, seconds = "00"] = zuluMatch;
+      const date = new Date(`${dateStr}T${hours.padStart(2, '0')}:${minutes}:${seconds}Z`);
+      if (!Number.isNaN(date.getTime())) {
+        return {
+          date: date.toISOString().slice(0, 10),
+          time: `${hours.padStart(2, '0')}:${minutes}:${seconds.padStart(2, '0')}` // Ensure seconds are always included
+        };
+      }
     }
 
+    // Handle format: "YYYY-MM-DD HH:MM" (assume UTC if no timezone)
+    const dateTimeMatch = trimmed.match(/^(\d{4}-\d{2}-\d{2})\s+(\d{1,2}):(\d{2})(?::(\d{2}))?$/);
+    if (dateTimeMatch) {
+      const [, dateStr, hours, minutes, seconds = "00"] = dateTimeMatch;
+      const date = new Date(`${dateStr}T${hours.padStart(2, '0')}:${minutes}:${seconds}Z`);
+      if (!Number.isNaN(date.getTime())) {
+        return {
+          date: date.toISOString().slice(0, 10),
+          time: `${hours.padStart(2, '0')}:${minutes}:${seconds.padStart(2, '0')}` // Ensure seconds are always included
+        };
+      }
+    }
+
+    // Try direct Date parsing (handles ISO strings and other formats)
+    const direct = new Date(trimmed);
+    if (!Number.isNaN(direct.getTime())) {
+      // Extract time if it's a full datetime
+      const isoString = direct.toISOString();
+      const hasTime = trimmed.includes(':') || trimmed.includes('T');
+      return {
+        date: isoString.slice(0, 10),
+        time: hasTime ? isoString.slice(11, 19) : null
+      };
+    }
+
+    // Handle MM/DD/YYYY or MM-DD-YYYY format
     const mmdd = trimmed.match(/^(\d{1,2})[/-](\d{1,2})[/-](\d{2,4})$/);
     if (mmdd) {
       let month = Number(mmdd[1]);
@@ -491,10 +538,14 @@ const dateFromValue = (value: unknown): string | null => {
       if (month > 12) [month, day] = [day, month];
       const parsed = new Date(Date.UTC(year, month - 1, day));
       if (!Number.isNaN(parsed.getTime())) {
-        return parsed.toISOString().slice(0, 10);
+        return {
+          date: parsed.toISOString().slice(0, 10),
+          time: null
+        };
       }
     }
 
+    // Handle Excel serial numbers
     if (/^\d{4,5}$/.test(trimmed)) {
       const serial = Number(trimmed);
       if (Number.isFinite(serial)) {
@@ -502,13 +553,25 @@ const dateFromValue = (value: unknown): string | null => {
         const ms = serial * 86400000;
         const parsed = new Date(excelEpoch.getTime() + ms);
         if (!Number.isNaN(parsed.getTime())) {
-          return parsed.toISOString().slice(0, 10);
+          return {
+            date: parsed.toISOString().slice(0, 10),
+            time: null
+          };
         }
       }
     }
   }
 
   return null;
+};
+
+/**
+ * Legacy function for backward compatibility - extracts only date
+ * @deprecated Use parseFlightDateTime instead
+ */
+const dateFromValue = (value: unknown): string | null => {
+  const parsed = parseFlightDateTime(value);
+  return parsed ? parsed.date : null;
 };
 
 const normalizeAirport = (value: unknown): string => {
@@ -708,6 +771,11 @@ const mapRowToMinimalFlight = (row: Record<string, unknown>): FlightMappingResul
       "Total",
       "Block Time",
       "BlockTime",
+      "BLK HRS",
+      "Blk Hrs",
+      "Blk Hrs.",
+      "Block Hours",
+      "BlockHours",
     ]) ??
     findFieldByKeywords(row, ["total", "time"], [
       "night",
@@ -935,7 +1003,9 @@ const mapRowToMinimalFlight = (row: Record<string, unknown>): FlightMappingResul
     ]) ??
     findFieldByKeywords(row, ["night", "full", "stop"], ["day"]);
 
-  const normalizedDate = dateFromValue(dateRaw);
+  const dateTimeParsed = parseFlightDateTime(dateRaw);
+  const normalizedDate = dateTimeParsed ? dateTimeParsed.date : null;
+  const normalizedTime = dateTimeParsed ? dateTimeParsed.time : null;
   let registration =
     typeof aircraftRaw === "string"
       ? aircraftRaw.trim().toUpperCase()
@@ -1100,6 +1170,7 @@ const mapRowToMinimalFlight = (row: Record<string, unknown>): FlightMappingResul
     status: "success",
     flight: {
       date: normalizedDate,
+      start_time: normalizedTime,
       aircraft_registration: registration,
       aircraft_type: registration,
       departure_airport: departure,
@@ -1392,9 +1463,11 @@ export const CSVImportDialog = ({ open, onOpenChange, onImportComplete }: CSVImp
         }
       }
 
+      // Build insert payload with proper date/time ordering
       const insertPayload = flights.map((flight) => ({
         user_id: user.id,
         date: flight.date,
+        start_time: flight.start_time,
         aircraft_registration: flight.aircraft_registration,
         aircraft_type: flight.aircraft_type,
         departure_airport: flight.departure_airport,
@@ -1417,9 +1490,6 @@ export const CSVImportDialog = ({ open, onOpenChange, onImportComplete }: CSVImp
         night_takeoffs: flight.night_takeoffs != null ? flight.night_takeoffs : 0,
         night_landings: flight.night_landings != null ? flight.night_landings : 0,
         night_landings_full_stop: flight.night_landings_full_stop != null ? flight.night_landings_full_stop : 0,
-        // Use AllLandings as the primary source - it contains the total of ALL landings
-        // In ForeFlight CSV, AllLandings includes all landing types, not just day/night full stops
-        // This is the accurate total landing count
         landings: flight.all_landings != null ? flight.all_landings : ((flight.day_landings ?? 0) + (flight.night_landings ?? 0)),
       }));
 

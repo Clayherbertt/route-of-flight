@@ -726,6 +726,8 @@ export default function RouteBuilder() {
             .select('*')
             .eq('user_id', user.id)
             .order('date', { ascending: false })
+            .order('start_time', { ascending: false, nullsFirst: false })
+            .order('created_at', { ascending: false })
             .range(from, from + pageSize - 1);
 
           if (flightsError) {
@@ -938,6 +940,8 @@ export default function RouteBuilder() {
             .select('*')
             .eq('user_id', user.id)
             .order('date', { ascending: false })
+            .order('start_time', { ascending: false, nullsFirst: false })
+            .order('created_at', { ascending: false })
             .range(from, from + pageSize - 1);
 
           if (error) {
@@ -1031,6 +1035,8 @@ export default function RouteBuilder() {
             .select('*')
             .eq('user_id', user.id)
             .order('date', { ascending: false })
+            .order('start_time', { ascending: false, nullsFirst: false })
+            .order('created_at', { ascending: false })
             .range(from, from + pageSize - 1);
 
           if (error) {

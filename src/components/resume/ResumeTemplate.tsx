@@ -4,6 +4,41 @@ interface ResumeTemplateProps {
   data: ResumeData
 }
 
+/**
+ * Format date string to "Month Year" format
+ * Handles numeric formats like "08/2025" or "8/2021" and converts to "August 2025" or "August 2021"
+ * Leaves "Present" and already formatted dates unchanged
+ */
+const formatDate = (dateStr: string): string => {
+  if (!dateStr || dateStr.trim() === "") return ""
+  if (dateStr === "Present" || dateStr === "present") return "Present"
+  
+  // Check if it's already in "Month Year" format (contains a month name)
+  const monthNames = ["January", "February", "March", "April", "May", "June",
+    "July", "August", "September", "October", "November", "December"]
+  const hasMonthName = monthNames.some(month => 
+    dateStr.toLowerCase().includes(month.toLowerCase())
+  )
+  if (hasMonthName) {
+    return dateStr // Already formatted, return as-is
+  }
+  
+  // Try to parse numeric formats: MM/YYYY or M/YYYY
+  const numericMatch = dateStr.match(/^(\d{1,2})\/(\d{4})$/)
+  if (numericMatch) {
+    const monthNum = parseInt(numericMatch[1], 10)
+    const year = numericMatch[2]
+    
+    if (monthNum >= 1 && monthNum <= 12) {
+      const monthName = monthNames[monthNum - 1]
+      return `${monthName} ${year}`
+    }
+  }
+  
+  // If we can't parse it, return as-is
+  return dateStr
+}
+
 export function ResumeTemplate({ data }: ResumeTemplateProps) {
   // Sort professional experience by date (reverse chronological)
   const sortedExperience = [...data.professionalExperience].sort((a, b) => {
@@ -73,7 +108,7 @@ export function ResumeTemplate({ data }: ResumeTemplateProps) {
         maxWidth: "8.5in",
         margin: "0 auto",
         padding: "0.5in",
-        fontFamily: "serif",
+        fontFamily: "Arial, sans-serif",
         fontSize: "11pt",
         lineHeight: "1.4",
         color: "#000000",
@@ -288,7 +323,9 @@ export function ResumeTemplate({ data }: ResumeTemplateProps) {
                   fontWeight: "bold",
                   fontSize: "11pt"
                 }}>
-                  {exp.startDate && exp.endDate ? `${exp.startDate} - ${exp.endDate}` : exp.startDate || exp.endDate || ""}
+                  {exp.startDate && exp.endDate 
+                    ? `${formatDate(exp.startDate)} - ${formatDate(exp.endDate)}` 
+                    : formatDate(exp.startDate || exp.endDate || "")}
                 </span>
               </div>
 
@@ -303,15 +340,26 @@ export function ResumeTemplate({ data }: ResumeTemplateProps) {
                 </div>
               )}
 
-              {/* Regulatory context and aircraft */}
-              {exp.regulatoryContext && (
-                <div style={{
+              {/* Job duties as bullet points */}
+              {exp.jobDuties && exp.jobDuties.filter(duty => duty.trim()).length > 0 && (
+                <ul style={{
                   fontSize: "11pt",
                   marginBottom: "0.05in",
-                  fontStyle: "italic"
+                  marginLeft: "0.25in",
+                  paddingLeft: "0.1in",
+                  listStyleType: "disc",
+                  listStylePosition: "outside"
                 }}>
-                  {exp.regulatoryContext}
-                </div>
+                  {exp.jobDuties.filter(duty => duty.trim()).map((duty, index) => (
+                    <li key={index} style={{ 
+                      marginBottom: "0.05in",
+                      marginLeft: "0.1in",
+                      paddingLeft: "0.05in"
+                    }}>
+                      {duty}
+                    </li>
+                  ))}
+                </ul>
               )}
 
               {exp.aircraft && (
@@ -375,7 +423,9 @@ export function ResumeTemplate({ data }: ResumeTemplateProps) {
                   fontWeight: "bold",
                   fontSize: "11pt"
                 }}>
-                  {edu.startDate && edu.endDate ? `${edu.startDate} - ${edu.endDate}` : edu.startDate || edu.endDate || ""}
+                  {edu.startDate && edu.endDate 
+                    ? `${formatDate(edu.startDate)} - ${formatDate(edu.endDate)}` 
+                    : formatDate(edu.startDate || edu.endDate || "")}
                 </span>
               </div>
 

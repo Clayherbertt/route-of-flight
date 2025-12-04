@@ -17,7 +17,7 @@ export interface ProfessionalExperience {
   cityState?: string
   startDate: string
   endDate: string
-  regulatoryContext: string
+  jobDuties: string[]
   aircraft: string
 }
 
@@ -48,12 +48,17 @@ export interface ResumeData {
 }
 
 const FLIGHT_HOUR_CATEGORIES = [
-  "Total Time",
-  "Total PIC",
-  "Multi-Engine Time",
-  "Total Turbine Time",
+  "Total Time (TT)",
+  "Pilot-in-Command (PIC) Time",
+  "Second-in-Command (SIC) Time",
+  "Multi-Engine Time (ME)",
+  "Single-Engine Time (SE)",
   "Turbine PIC",
-  "Turbine SIC"
+  "Turbine SIC",
+  "Cross-Country (XC) Time",
+  "Instrument Time (IFR / Actual Instrument)",
+  "Simulated Instrument Time (Hood)",
+  "Night Time"
 ]
 
 export function ResumeBuilder() {
@@ -89,7 +94,7 @@ export function ResumeBuilder() {
           cityState: "",
           startDate: "",
           endDate: "",
-          regulatoryContext: "",
+          jobDuties: [""],
           aircraft: "",
         }
       ]
@@ -110,6 +115,42 @@ export function ResumeBuilder() {
     setResumeData(prev => ({
       ...prev,
       professionalExperience: prev.professionalExperience.filter(exp => exp.id !== id)
+    }))
+  }
+
+  const addJobDuty = (expId: string) => {
+    setResumeData(prev => ({
+      ...prev,
+      professionalExperience: prev.professionalExperience.map(exp =>
+        exp.id === expId
+          ? { ...exp, jobDuties: [...exp.jobDuties, ""] }
+          : exp
+      )
+    }))
+  }
+
+  const removeJobDuty = (expId: string, dutyIndex: number) => {
+    setResumeData(prev => ({
+      ...prev,
+      professionalExperience: prev.professionalExperience.map(exp =>
+        exp.id === expId
+          ? { ...exp, jobDuties: exp.jobDuties.filter((_, index) => index !== dutyIndex) }
+          : exp
+      )
+    }))
+  }
+
+  const updateJobDuty = (expId: string, dutyIndex: number, value: string) => {
+    setResumeData(prev => ({
+      ...prev,
+      professionalExperience: prev.professionalExperience.map(exp =>
+        exp.id === expId
+          ? {
+              ...exp,
+              jobDuties: exp.jobDuties.map((duty, index) => (index === dutyIndex ? value : duty))
+            }
+          : exp
+      )
     }))
   }
 
@@ -150,6 +191,8 @@ export function ResumeBuilder() {
   const toggleFlightHourCategory = (category: string) => {
     setResumeData(prev => {
       const isSelected = prev.selectedFlightHourCategories.includes(category)
+      
+      // Allow free selection/deselection - no restrictions
       return {
         ...prev,
         selectedFlightHourCategories: isSelected
@@ -199,7 +242,7 @@ export function ResumeBuilder() {
                 id="fullName"
                 value={resumeData.fullName}
                 onChange={(e) => setResumeData(prev => ({ ...prev, fullName: e.target.value }))}
-                placeholder="Enter your full name"
+                placeholder=""
               />
             </div>
             <div>
@@ -211,7 +254,7 @@ export function ResumeBuilder() {
                 id="location"
                 value={resumeData.location}
                 onChange={(e) => setResumeData(prev => ({ ...prev, location: e.target.value }))}
-                placeholder="Scottsdale, AZ"
+                placeholder=""
               />
             </div>
             <div>
@@ -224,7 +267,7 @@ export function ResumeBuilder() {
                 type="email"
                 value={resumeData.email}
                 onChange={(e) => setResumeData(prev => ({ ...prev, email: e.target.value }))}
-                placeholder="your.email@example.com"
+                placeholder=""
               />
             </div>
             <div>
@@ -236,7 +279,7 @@ export function ResumeBuilder() {
                 id="phone"
                 value={resumeData.phone}
                 onChange={(e) => setResumeData(prev => ({ ...prev, phone: e.target.value }))}
-                placeholder="(555) 123-4567"
+                placeholder=""
               />
             </div>
             <div>
@@ -248,7 +291,7 @@ export function ResumeBuilder() {
                 id="objective"
                 value={resumeData.objective}
                 onChange={(e) => setResumeData(prev => ({ ...prev, objective: e.target.value.toUpperCase() }))}
-                placeholder="FIRST OFFICER POSITION WITH [AIRLINE]"
+                placeholder=""
               />
             </div>
           </div>
@@ -281,7 +324,7 @@ export function ResumeBuilder() {
                     <Input
                       value={exp.jobTitle}
                       onChange={(e) => updateProfessionalExperience(exp.id, "jobTitle", e.target.value)}
-                      placeholder="First Officer"
+                      placeholder=""
                     />
                   </div>
                   <div>
@@ -289,15 +332,15 @@ export function ResumeBuilder() {
                     <Input
                       value={exp.company}
                       onChange={(e) => updateProfessionalExperience(exp.id, "company", e.target.value)}
-                      placeholder="Company name"
+                      placeholder=""
                     />
                   </div>
                   <div>
-                    <Label>City/State (optional)</Label>
+                    <Label>City/State</Label>
                     <Input
                       value={exp.cityState || ""}
                       onChange={(e) => updateProfessionalExperience(exp.id, "cityState", e.target.value)}
-                      placeholder="City, State (optional)"
+                      placeholder=""
                     />
                   </div>
                   <div className="grid grid-cols-2 gap-4">
@@ -306,7 +349,7 @@ export function ResumeBuilder() {
                       <Input
                         value={exp.startDate}
                         onChange={(e) => updateProfessionalExperience(exp.id, "startDate", e.target.value)}
-                        placeholder="Month Year"
+                        placeholder=""
                       />
                     </div>
                     <div>
@@ -314,24 +357,48 @@ export function ResumeBuilder() {
                       <Input
                         value={exp.endDate}
                         onChange={(e) => updateProfessionalExperience(exp.id, "endDate", e.target.value)}
-                        placeholder="Month Year or Present"
+                        placeholder=""
                       />
                     </div>
                   </div>
                   <div>
-                    <Label>Regulatory / Operational Context</Label>
-                    <Input
-                      value={exp.regulatoryContext}
-                      onChange={(e) => updateProfessionalExperience(exp.id, "regulatoryContext", e.target.value)}
-                      placeholder="e.g., Performed SIC duties in accordance with FAR 121"
-                    />
+                    <Label>Job duties/description</Label>
+                    {exp.jobDuties.map((duty, dutyIndex) => (
+                      <div key={dutyIndex} className="flex gap-2 mb-2">
+                        <Input
+                          value={duty}
+                          onChange={(e) => updateJobDuty(exp.id, dutyIndex, e.target.value)}
+                          placeholder=""
+                          className="flex-1"
+                        />
+                        {exp.jobDuties.length > 1 && (
+                          <Button
+                            type="button"
+                            variant="ghost"
+                            size="sm"
+                            onClick={() => removeJobDuty(exp.id, dutyIndex)}
+                          >
+                            Remove
+                          </Button>
+                        )}
+                      </div>
+                    ))}
+                    <Button
+                      type="button"
+                      variant="outline"
+                      size="sm"
+                      onClick={() => addJobDuty(exp.id)}
+                      className="mt-2"
+                    >
+                      Add another job duty/description
+                    </Button>
                   </div>
                   <div>
                     <Label>Aircraft / Fleet Used</Label>
                     <Input
                       value={exp.aircraft}
                       onChange={(e) => updateProfessionalExperience(exp.id, "aircraft", e.target.value)}
-                      placeholder="e.g., Boeing 737, CL-650"
+                      placeholder=""
                     />
                   </div>
                 </div>
@@ -370,7 +437,7 @@ export function ResumeBuilder() {
                     <Input
                       value={edu.schoolName}
                       onChange={(e) => updateEducation(edu.id, "schoolName", e.target.value)}
-                      placeholder="School name"
+                      placeholder=""
                     />
                   </div>
                   <div>
@@ -378,7 +445,7 @@ export function ResumeBuilder() {
                     <Input
                       value={edu.degree}
                       onChange={(e) => updateEducation(edu.id, "degree", e.target.value)}
-                      placeholder="e.g., Bachelor of Science"
+                      placeholder=""
                     />
                   </div>
                   <div>
@@ -386,7 +453,7 @@ export function ResumeBuilder() {
                     <Input
                       value={edu.major}
                       onChange={(e) => updateEducation(edu.id, "major", e.target.value)}
-                      placeholder="e.g., Aeronautical Management (Professional Flight)"
+                      placeholder=""
                     />
                   </div>
                   <div className="grid grid-cols-2 gap-4">
@@ -395,7 +462,7 @@ export function ResumeBuilder() {
                       <Input
                         value={edu.startDate}
                         onChange={(e) => updateEducation(edu.id, "startDate", e.target.value)}
-                        placeholder="Month Year"
+                        placeholder=""
                       />
                     </div>
                     <div>
@@ -403,7 +470,7 @@ export function ResumeBuilder() {
                       <Input
                         value={edu.endDate}
                         onChange={(e) => updateEducation(edu.id, "endDate", e.target.value)}
-                        placeholder="Month Year"
+                        placeholder=""
                       />
                     </div>
                   </div>
@@ -412,7 +479,7 @@ export function ResumeBuilder() {
                     <Input
                       value={edu.specialNote || ""}
                       onChange={(e) => updateEducation(edu.id, "specialNote", e.target.value)}
-                      placeholder="e.g., 141 Enrollment Through [School]"
+                      placeholder=""
                     />
                   </div>
                 </div>
@@ -444,7 +511,7 @@ export function ResumeBuilder() {
                   ...prev,
                   certificates: e.target.value.split("\n").filter(line => line.trim())
                 }))}
-                placeholder="Enter each certificate on a new line"
+                placeholder=""
                 rows={3}
               />
             </div>
@@ -459,7 +526,7 @@ export function ResumeBuilder() {
                   ...prev,
                   typeRatings: e.target.value.split("\n").filter(line => line.trim())
                 }))}
-                placeholder="Enter each type rating on a new line"
+                placeholder=""
                 rows={3}
               />
             </div>
@@ -474,7 +541,7 @@ export function ResumeBuilder() {
                   ...prev,
                   medicalAndOther: e.target.value.split("\n").filter(line => line.trim())
                 }))}
-                placeholder="Enter each credential on a new line"
+                placeholder=""
                 rows={3}
               />
             </div>
@@ -489,7 +556,7 @@ export function ResumeBuilder() {
                   ...prev,
                   instructorRatings: e.target.value.split("\n").filter(line => line.trim())
                 }))}
-                placeholder="Enter each rating on a new line"
+                placeholder=""
                 rows={3}
               />
             </div>
@@ -504,18 +571,30 @@ export function ResumeBuilder() {
               <p className="text-sm text-muted-foreground mb-4">
                 From the list below, select which flight-hour items you want to show in your FLIGHT HOURS section:
               </p>
+              <p className="text-sm font-medium text-amber-600 mb-4">
+                You must select exactly 3, 6, or 9 categories for proper formatting.
+              </p>
             </div>
             <div className="space-y-2">
-              {FLIGHT_HOUR_CATEGORIES.map(category => (
-                <div key={category} className="flex items-center space-x-2">
-                  <Checkbox
-                    id={category}
-                    checked={resumeData.selectedFlightHourCategories.includes(category)}
-                    onCheckedChange={() => toggleFlightHourCategory(category)}
-                  />
-                  <Label htmlFor={category} className="cursor-pointer">{category}</Label>
-                </div>
-              ))}
+              {FLIGHT_HOUR_CATEGORIES.map(category => {
+                const isSelected = resumeData.selectedFlightHourCategories.includes(category)
+                
+                return (
+                  <div key={category} className="flex items-center space-x-2">
+                    <Checkbox
+                      id={category}
+                      checked={isSelected}
+                      onCheckedChange={() => toggleFlightHourCategory(category)}
+                    />
+                    <Label 
+                      htmlFor={category} 
+                      className="cursor-pointer"
+                    >
+                      {category}
+                    </Label>
+                  </div>
+                )
+              })}
             </div>
             <Separator />
             <div>
@@ -527,7 +606,7 @@ export function ResumeBuilder() {
                 <Input
                   value={newCustomCategory}
                   onChange={(e) => setNewCustomCategory(e.target.value)}
-                  placeholder="B-737"
+                  placeholder=""
                   onKeyPress={(e) => {
                     if (e.key === "Enter") {
                       e.preventDefault()
@@ -542,33 +621,37 @@ export function ResumeBuilder() {
               {customCategories.length > 0 && (
                 <div className="mt-4 space-y-2">
                   <p className="text-sm font-medium">Custom Categories:</p>
-                  {customCategories.map(cat => (
-                    <div key={cat} className="flex items-center space-x-2">
-                      <Checkbox
-                        id={`custom-${cat}`}
-                        checked={resumeData.selectedFlightHourCategories.includes(cat)}
-                        onCheckedChange={() => toggleFlightHourCategory(cat)}
-                      />
-                      <Label htmlFor={`custom-${cat}`} className="cursor-pointer">{cat}</Label>
-                    </div>
-                  ))}
+                  {customCategories.map(cat => {
+                    const isSelected = resumeData.selectedFlightHourCategories.includes(cat)
+                    
+                    return (
+                      <div key={cat} className="flex items-center space-x-2">
+                        <Checkbox
+                          id={`custom-${cat}`}
+                          checked={isSelected}
+                          onCheckedChange={() => toggleFlightHourCategory(cat)}
+                        />
+                        <Label 
+                          htmlFor={`custom-${cat}`} 
+                          className="cursor-pointer"
+                        >
+                          {cat}
+                        </Label>
+                      </div>
+                    )
+                  })}
                 </div>
               )}
             </div>
-            {resumeData.selectedFlightHourCategories.length > 0 && (
-              <div className="mt-4 p-4 bg-muted rounded-lg">
-                <p className="text-sm font-medium mb-2">You have chosen to display the following flight-hour items:</p>
-                <ul className="list-disc list-inside text-sm">
-                  {resumeData.selectedFlightHourCategories.map(cat => (
-                    <li key={cat}>{cat}</li>
-                  ))}
-                </ul>
-              </div>
-            )}
           </div>
         )
 
       case 6:
+        // Only show categories that are currently selected (filter out any stale selections)
+        const validSelectedCategories = resumeData.selectedFlightHourCategories.filter(cat => 
+          FLIGHT_HOUR_CATEGORIES.includes(cat) || customCategories.includes(cat)
+        )
+        
         return (
           <div className="space-y-4">
             <div>
@@ -577,18 +660,22 @@ export function ResumeBuilder() {
                 Please provide the numeric totals for each selected category:
               </p>
             </div>
-            {resumeData.selectedFlightHourCategories.map(category => (
-              <div key={category}>
-                <Label htmlFor={`hours-${category}`}>What is your {category}?</Label>
-                <Input
-                  id={`hours-${category}`}
-                  type="number"
-                  value={resumeData.flightHours[category] || ""}
-                  onChange={(e) => updateFlightHours(category, e.target.value)}
-                  placeholder="0"
-                />
-              </div>
-            ))}
+            {validSelectedCategories.length === 0 ? (
+              <p className="text-sm text-muted-foreground">No categories selected. Please go back and select at least one category.</p>
+            ) : (
+              validSelectedCategories.map(category => (
+                <div key={category}>
+                  <Label htmlFor={`hours-${category}`}>What is your {category}?</Label>
+                  <Input
+                    id={`hours-${category}`}
+                    type="number"
+                    value={resumeData.flightHours[category] || ""}
+                    onChange={(e) => updateFlightHours(category, e.target.value)}
+                    placeholder=""
+                  />
+                </div>
+              ))
+            )}
           </div>
         )
 
@@ -632,7 +719,9 @@ export function ResumeBuilder() {
       case 4:
         return true // Certificates are optional
       case 5:
-        return resumeData.selectedFlightHourCategories.length > 0
+        const selectedCount = resumeData.selectedFlightHourCategories.length
+        // Only allow proceeding if exactly 3, 6, or 9 categories are selected
+        return selectedCount === 3 || selectedCount === 6 || selectedCount === 9
       case 6:
         return resumeData.selectedFlightHourCategories.every(cat => 
           resumeData.flightHours[cat] !== undefined && resumeData.flightHours[cat] > 0
