@@ -7,7 +7,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { Badge } from "@/components/ui/badge";
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from "@/components/ui/alert-dialog";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog";
-import { Plus, Search, Filter, Download, Plane, Upload, Edit, Trash2, Clock } from "lucide-react";
+import { Plus, Search, Filter, Download, Plane, Upload, Edit, Trash2, Clock, Calculator } from "lucide-react";
 import { useState, useEffect, useCallback } from "react";
 import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
@@ -15,6 +15,7 @@ import { useToast } from "@/hooks/use-toast";
 import { useNavigate } from "react-router-dom";
 import { AddFlightDialog } from "@/components/forms/AddFlightDialog";
 import { CSVImportDialog } from "@/components/forms/CSVImportDialog";
+import { FlightHoursPredictionsDialog } from "@/components/dialogs/FlightHoursPredictionsDialog";
 import { subMonths, format, startOfMonth, endOfMonth, eachMonthOfInterval } from "date-fns";
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from "recharts";
 import { FlightMap } from "@/components/FlightMap";
@@ -79,6 +80,7 @@ const Logbook = () => {
   const [deletingFlight, setDeletingFlight] = useState<FlightEntry | null>(null);
   const [showClearAllDialog, setShowClearAllDialog] = useState(false);
   const [viewingFlight, setViewingFlight] = useState<FlightEntry | null>(null);
+  const [showPredictionsDialog, setShowPredictionsDialog] = useState(false);
   const [aircraftMap, setAircraftMap] = useState<Map<string, { type_code: string | null; make: string; model: string }>>(new Map());
 
   const fetchFlights = useCallback(async () => {
@@ -740,6 +742,15 @@ const Logbook = () => {
                   </p>
                   <p className="text-sm text-muted-foreground">Monthly flight hours breakdown</p>
                 </div>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => setShowPredictionsDialog(true)}
+                  className="flex items-center gap-2"
+                >
+                  <Calculator className="h-4 w-4" />
+                  Predictions
+                </Button>
               </div>
               <div className="p-6">
                 <ResponsiveContainer width="100%" height={300}>
@@ -972,8 +983,15 @@ const Logbook = () => {
         open={showImportDialog}
         onOpenChange={setShowImportDialog}
         onImportComplete={() => {
-          fetchFlights();
+          silentRefreshFlights();
         }}
+      />
+
+      <FlightHoursPredictionsDialog
+        open={showPredictionsDialog}
+        onOpenChange={setShowPredictionsDialog}
+        monthlyHoursData={monthlyHoursData}
+        currentTotalHours={totalHours}
       />
 
       {/* Flight Detail Dialog */}
