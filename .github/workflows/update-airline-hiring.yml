@@ -1,0 +1,20 @@
+name: Update Airline Hiring Status
+
+
+on:
+  schedule:
+    # Runs daily at 2 AM UTC (cron format)
+    - cron: '0 2 * * *'
+  workflow_dispatch: # Allows manual triggering from the GitHub UI
+
+jobs:
+  update-hiring:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Call Supabase Edge Function
+        run: |
+          curl --fail -X POST \
+            'https://uezrpgdbeemoqrxuzaln.supabase.co/functions/v1/update-airline-hiring' \
+            -H 'Authorization: Bearer ${{ secrets.SUPABASE_ANON_KEY }}' \
+            -H 'Content-Type: application/json' \
+            -d '{}'
