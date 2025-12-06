@@ -23,6 +23,13 @@ interface AirlineDetailsDialogProps {
 export function AirlineDetailsDialog({ open, onOpenChange, airline }: AirlineDetailsDialogProps) {
   if (!airline) return null;
 
+  // Debug: Log pay scale image URLs
+  if (airline.pay_scale_image_url) {
+    console.log('Pay scale image URLs:', airline.pay_scale_image_url);
+    console.log('Is array?', Array.isArray(airline.pay_scale_image_url));
+    console.log('Length:', airline.pay_scale_image_url.length);
+  }
+
   const summaryMetrics = [
     {
       label: "Fleet size",
@@ -283,14 +290,33 @@ export function AirlineDetailsDialog({ open, onOpenChange, airline }: AirlineDet
               </section>
             )}
 
-            {(airline.fo_pay_year_1 || airline.captain_pay_year_1 || airline.fo_narrowbody_pay_year_1 || airline.captain_narrowbody_pay_year_1) && (
+            {((airline.pay_scale_image_url && Array.isArray(airline.pay_scale_image_url) && airline.pay_scale_image_url.length > 0) || airline.fo_pay_year_1 || airline.captain_pay_year_1 || airline.fo_narrowbody_pay_year_1 || airline.captain_narrowbody_pay_year_1) && (
               <section className="rounded-2xl border border-border/60 bg-card/80 p-6 space-y-6 text-sm">
                 <div className="flex items-center gap-3 text-foreground">
                   <DollarSign className="h-5 w-5 text-primary" />
                   <h3 className="text-lg font-semibold">Pay information</h3>
                 </div>
 
-                {airline.fo_pay_year_1 && airline.captain_pay_year_1 ? (
+                {airline.pay_scale_image_url && Array.isArray(airline.pay_scale_image_url) && airline.pay_scale_image_url.length > 0 ? (
+                  <div className="flex flex-col gap-4">
+                    {airline.pay_scale_image_url.map((imageUrl, index) => {
+                      if (!imageUrl || typeof imageUrl !== 'string') return null;
+                      return (
+                        <div key={index} className="w-full">
+                          <img 
+                            src={imageUrl} 
+                            alt={`Pay scales ${index + 1}`} 
+                            className="w-full h-auto rounded-lg border border-border/40"
+                            onError={(e) => {
+                              console.error('Failed to load pay scale image:', imageUrl);
+                              (e.target as HTMLImageElement).style.display = 'none';
+                            }}
+                          />
+                        </div>
+                      );
+                    })}
+                  </div>
+                ) : airline.fo_pay_year_1 && airline.captain_pay_year_1 ? (
                   <div className="grid md:grid-cols-2 gap-6">
                     <div>
                       <h4 className="font-semibold mb-3 text-lg">First Officer</h4>

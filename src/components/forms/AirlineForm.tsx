@@ -6,8 +6,10 @@ import { Textarea } from '@/components/ui/textarea';
 import { Label } from '@/components/ui/label';
 import { Switch } from '@/components/ui/switch';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { X, Plus, Plane, DollarSign, Users, MapPin, Building2 } from 'lucide-react';
+import { X, Plus, Plane, DollarSign, Users, MapPin, Building2, Upload, Image as ImageIcon } from 'lucide-react';
 import { AirlineData } from '@/hooks/useAirlines';
+import { supabase } from '@/integrations/supabase/client';
+import { useToast } from '@/hooks/use-toast';
 
 interface AirlineFormProps {
   airline?: AirlineData;
@@ -86,7 +88,11 @@ export function AirlineForm({ airline, onSubmit, onCancel, isSubmitting = false 
     preferred_qualifications: airline?.preferred_qualifications || [''],
     inside_scoop: airline?.inside_scoop || [''],
     additional_info: airline?.additional_info || [''],
+    pay_scale_image_url: airline?.pay_scale_image_url || [],
   });
+
+  const { toast } = useToast();
+  const [uploadingImage, setUploadingImage] = useState(false);
 
   // Update form data when airline prop changes
   useEffect(() => {
@@ -152,9 +158,104 @@ export function AirlineForm({ airline, onSubmit, onCancel, isSubmitting = false 
         preferred_qualifications: airline.preferred_qualifications || [''],
         inside_scoop: airline.inside_scoop || [''],
         additional_info: airline.additional_info || [''],
+        pay_scale_image_url: airline.pay_scale_image_url || [],
       });
     }
   }, [airline]);
+
+  const handleImageUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (!file) return;
+
+    // Validate file type
+    if (!file.type.startsWith('image/')) {
+      toast({
+        title: "Error",
+        description: "Please upload an image file",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    // Validate file size (max 5MB)
+    if (file.size > 5 * 1024 * 1024) {
+      toast({
+        title: "Error",
+        description: "Image size must be less than 5MB",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    try {
+      setUploadingImage(true);
+
+      // Create a unique filename
+      const fileExt = file.name.split('.').pop();
+      const fileName = `pay-scales-${airline?.id || 'new'}-${Date.now()}.${fileExt}`;
+      const filePath = `airline-pay-scales/${fileName}`;
+
+      // Use the bucket name that matches what's in Supabase (case-sensitive)
+      const bucketName = 'Airline-assets';
+
+      // Upload to Supabase storage
+      const { data: uploadData, error: uploadError } = await supabase.storage
+        .from(bucketName)
+        .upload(filePath, file, {
+          cacheControl: '3600',
+          upsert: false
+        });
+
+      if (uploadError) {
+        console.error('Upload error details:', uploadError);
+        // Provide more specific error messages
+        if (uploadError.message.includes('Bucket not found') || uploadError.message.includes('does not exist')) {
+          throw new Error(`Storage bucket "${bucketName}" does not exist. Please create it in the Supabase Dashboard.`);
+        } else if (uploadError.message.includes('new row violates row-level security')) {
+          throw new Error('Permission denied. Please check storage bucket policies in Supabase Dashboard.');
+        } else if (uploadError.message.includes('duplicate')) {
+          throw new Error('A file with this name already exists. Please try again.');
+        } else {
+          throw new Error(uploadError.message || 'Upload failed');
+        }
+      }
+
+      // Get public URL
+      const { data: { publicUrl } } = supabase.storage
+        .from(bucketName)
+        .getPublicUrl(filePath);
+
+      // Add image URL to the array
+      setFormData(prev => ({
+        ...prev,
+        pay_scale_image_url: [...(prev.pay_scale_image_url || []), publicUrl]
+      }));
+
+      toast({
+        title: "Success",
+        description: "Pay scale image uploaded successfully",
+      });
+    } catch (error: any) {
+      console.error('Error uploading image:', error);
+      const errorMessage = error?.message || 'Failed to upload image. Please try again.';
+      toast({
+        title: "Error",
+        description: errorMessage,
+        variant: "destructive",
+      });
+    } finally {
+      setUploadingImage(false);
+      // Reset the file input so the same file can be selected again if needed
+      event.target.value = '';
+    }
+  };
+
+  const handleRemoveImage = (index: number) => {
+    setFormData(prev => ({
+      ...prev,
+      pay_scale_image_url: (prev.pay_scale_image_url || []).filter((_, i) => i !== index)
+    }));
+  };
 
   const formatPayValue = (value: string) => {
     if (!value) return '';
@@ -250,6 +351,7 @@ export function AirlineForm({ airline, onSubmit, onCancel, isSubmitting = false 
       preferred_qualifications: cleanedFormData.preferred_qualifications.filter(qual => qual.trim() !== ''),
       inside_scoop: cleanedFormData.inside_scoop.filter(scoop => scoop.trim() !== ''),
       additional_info: cleanedFormData.additional_info.filter(info => info.trim() !== ''),
+      pay_scale_image_url: (cleanedFormData.pay_scale_image_url || []).filter(url => url && url.trim() !== ''),
     };
 
     await onSubmit(filteredData);
@@ -612,140 +714,94 @@ export function AirlineForm({ airline, onSubmit, onCancel, isSubmitting = false 
             </div>
           </div>
 
-          {/* Pay Scales */}
-          <div className="space-y-6">
-            {formData.name === 'Alaska Airlines' ? (
-              /* Simple Pay Scale for Alaska Airlines */
-              <div>
-                <h4 className="font-semibold mb-4 text-lg">Pay Scales</h4>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  <div>
-                    <h5 className="font-medium mb-3">First Officer</h5>
-                    <div className="space-y-2">
-                      {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map((year) => (
-                        <Input 
-                          key={year}
-                          placeholder={`Year ${year} (e.g., 108.34)`}
-                          value={(formData as any)[`fo_narrowbody_pay_year_${year}`] || ''}
-                          onChange={(e) => handleInputChange(`fo_narrowbody_pay_year_${year}`, e.target.value)}
-                          onBlur={(e) => {
-                            if (e.target.value.trim()) {
-                              handlePayInputBlur(`fo_narrowbody_pay_year_${year}`, e.target.value);
-                            }
-                          }}
+          {/* Pay Scales Image Upload */}
+          <div className="space-y-4">
+            <div>
+              <Label className="text-sm font-medium mb-2 block">Pay Scales</Label>
+              <p className="text-sm text-muted-foreground mb-4">
+                Upload one or more screenshots or images of the pay scales table
+              </p>
+              
+              {formData.pay_scale_image_url && formData.pay_scale_image_url.length > 0 ? (
+                <div className="space-y-4">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    {formData.pay_scale_image_url.map((imageUrl, index) => (
+                      <div key={index} className="relative group border rounded-lg overflow-hidden">
+                        <img 
+                          src={imageUrl} 
+                          alt={`Pay scales ${index + 1}`} 
+                          className="w-full h-auto max-h-96 object-contain"
                         />
-                      ))}
-                    </div>
-                  </div>
-                  <div>
-                    <h5 className="font-medium mb-3">Captain</h5>
-                    <div className="space-y-2">
-                      {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map((year) => (
-                        <Input 
-                          key={year}
-                          placeholder={`Year ${year} (e.g., 309.03)`}
-                          value={(formData as any)[`captain_narrowbody_pay_year_${year}`] || ''}
-                          onChange={(e) => handleInputChange(`captain_narrowbody_pay_year_${year}`, e.target.value)}
-                          onBlur={(e) => {
-                            if (e.target.value.trim()) {
-                              handlePayInputBlur(`captain_narrowbody_pay_year_${year}`, e.target.value);
-                            }
-                          }}
-                        />
-                      ))}
-                    </div>
-                  </div>
-                </div>
-              </div>
-            ) : (
-              <>
-                {/* Narrow Body Pay Scales */}
-                <div>
-                  <h4 className="font-semibold mb-4 text-lg">Narrow Body Pay Scales</h4>
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <div>
-                      <h5 className="font-medium mb-3">First Officer - Narrow Body</h5>
-                      <div className="space-y-2">
-                        {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map((year) => (
-                          <Input 
-                            key={year}
-                            placeholder={`Year ${year} (e.g., 108.34)`}
-                            value={(formData as any)[`fo_narrowbody_pay_year_${year}`] || ''}
-                            onChange={(e) => handleInputChange(`fo_narrowbody_pay_year_${year}`, e.target.value)}
-                            onBlur={(e) => {
-                              if (e.target.value.trim()) {
-                                handlePayInputBlur(`fo_narrowbody_pay_year_${year}`, e.target.value);
-                              }
-                            }}
-                          />
-                        ))}
+                        <Button
+                          type="button"
+                          variant="destructive"
+                          size="icon"
+                          className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity"
+                          onClick={() => handleRemoveImage(index)}
+                        >
+                          <X className="h-4 w-4" />
+                        </Button>
                       </div>
-                    </div>
-                    <div>
-                      <h5 className="font-medium mb-3">Captain - Narrow Body</h5>
-                      <div className="space-y-2">
-                        {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map((year) => (
-                          <Input 
-                            key={year}
-                            placeholder={`Year ${year} (e.g., 309.03)`}
-                            value={(formData as any)[`captain_narrowbody_pay_year_${year}`] || ''}
-                            onChange={(e) => handleInputChange(`captain_narrowbody_pay_year_${year}`, e.target.value)}
-                            onBlur={(e) => {
-                              if (e.target.value.trim()) {
-                                handlePayInputBlur(`captain_narrowbody_pay_year_${year}`, e.target.value);
-                              }
-                            }}
-                          />
-                        ))}
-                      </div>
-                    </div>
+                    ))}
+                  </div>
+                  <div className="border-2 border-dashed rounded-lg p-6 text-center">
+                    <input
+                      type="file"
+                      accept="image/*"
+                      onChange={handleImageUpload}
+                      className="hidden"
+                      id="pay-scale-image-upload"
+                      disabled={uploadingImage}
+                    />
+                    <label
+                      htmlFor="pay-scale-image-upload"
+                      className="cursor-pointer flex flex-col items-center gap-2"
+                    >
+                      {uploadingImage ? (
+                        <>
+                          <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-primary"></div>
+                          <span className="text-sm text-muted-foreground">Uploading...</span>
+                        </>
+                      ) : (
+                        <>
+                          <Upload className="h-6 w-6 text-muted-foreground" />
+                          <span className="text-sm font-medium">Add another image</span>
+                          <span className="text-xs text-muted-foreground">PNG, JPG, or GIF up to 5MB</span>
+                        </>
+                      )}
+                    </label>
                   </div>
                 </div>
-
-                {/* Wide Body Pay Scales */}
-                <div>
-                  <h4 className="font-semibold mb-4 text-lg">Wide Body Pay Scales</h4>
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <div>
-                      <h5 className="font-medium mb-3">First Officer - Wide Body</h5>
-                      <div className="space-y-2">
-                        {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map((year) => (
-                          <Input 
-                            key={year}
-                            placeholder={`Year ${year} (e.g., 108.34)`}
-                            value={(formData as any)[`fo_widebody_pay_year_${year}`] || ''}
-                            onChange={(e) => handleInputChange(`fo_widebody_pay_year_${year}`, e.target.value)}
-                            onBlur={(e) => {
-                              if (e.target.value.trim()) {
-                                handlePayInputBlur(`fo_widebody_pay_year_${year}`, e.target.value);
-                              }
-                            }}
-                          />
-                        ))}
-                      </div>
-                    </div>
-                    <div>
-                      <h5 className="font-medium mb-3">Captain - Wide Body</h5>
-                      <div className="space-y-2">
-                        {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map((year) => (
-                          <Input 
-                            key={year}
-                            placeholder={`Year ${year} (e.g., 383.12)`}
-                            value={(formData as any)[`captain_widebody_pay_year_${year}`] || ''}
-                            onChange={(e) => handleInputChange(`captain_widebody_pay_year_${year}`, e.target.value)}
-                            onBlur={(e) => {
-                              if (e.target.value.trim()) {
-                                handlePayInputBlur(`captain_widebody_pay_year_${year}`, e.target.value);
-                              }
-                            }}
-                          />
-                        ))}
-                      </div>
-                    </div>
-                  </div>
+              ) : (
+                <div className="border-2 border-dashed rounded-lg p-8 text-center">
+                  <input
+                    type="file"
+                    accept="image/*"
+                    onChange={handleImageUpload}
+                    className="hidden"
+                    id="pay-scale-image-upload"
+                    disabled={uploadingImage}
+                  />
+                  <label
+                    htmlFor="pay-scale-image-upload"
+                    className="cursor-pointer flex flex-col items-center gap-2"
+                  >
+                    {uploadingImage ? (
+                      <>
+                        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
+                        <span className="text-sm text-muted-foreground">Uploading...</span>
+                      </>
+                    ) : (
+                      <>
+                        <Upload className="h-8 w-8 text-muted-foreground" />
+                        <span className="text-sm font-medium">Click to upload pay scales image</span>
+                        <span className="text-xs text-muted-foreground">PNG, JPG, or GIF up to 5MB</span>
+                      </>
+                    )}
+                  </label>
                 </div>
-              </>
-            )}
+              )}
+            </div>
           </div>
         </CardContent>
       </Card>

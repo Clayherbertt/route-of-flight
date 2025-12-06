@@ -89,6 +89,7 @@ export interface AirlineData {
   additional_info: string[];
   category: string;
   active: boolean;
+  pay_scale_image_url?: string[];
   created_at: string;
   updated_at: string;
 }
@@ -178,6 +179,29 @@ const transformDatabaseAirline = (dbAirline: DatabaseAirline): AirlineData => ({
   additional_info: dbAirline.additional_info || [],
   category: dbAirline.category || 'Majors',
   active: dbAirline.active,
+  pay_scale_image_url: (() => {
+    const payScaleData = (dbAirline as any).pay_scale_image_url;
+    if (!payScaleData) return [];
+    
+    // If it's already an array, return it
+    if (Array.isArray(payScaleData)) {
+      return payScaleData.filter(url => url && typeof url === 'string');
+    }
+    
+    // If it's a string, try to parse it as JSON
+    if (typeof payScaleData === 'string') {
+      try {
+        const parsed = JSON.parse(payScaleData);
+        return Array.isArray(parsed) ? parsed.filter(url => url && typeof url === 'string') : [parsed];
+      } catch {
+        // If parsing fails, treat it as a single URL
+        return [payScaleData];
+      }
+    }
+    
+    // If it's a single value, wrap it in an array
+    return [payScaleData];
+  })(),
   created_at: dbAirline.created_at,
   updated_at: dbAirline.updated_at,
 });

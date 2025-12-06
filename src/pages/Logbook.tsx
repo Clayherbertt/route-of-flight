@@ -83,9 +83,12 @@ const Logbook = () => {
   const [showPredictionsDialog, setShowPredictionsDialog] = useState(false);
   const [aircraftMap, setAircraftMap] = useState<Map<string, { type_code: string | null; make: string; model: string }>>(new Map());
 
-  const fetchFlights = useCallback(async () => {
+  // Shared function to fetch and process flights
+  const fetchAndProcessFlights = useCallback(async (showLoading: boolean = true) => {
     try {
-      setIsLoadingFlights(true);
+      if (showLoading) {
+        setIsLoadingFlights(true);
+      }
       const pageSize = 1000;
       let from = 0;
       let collected: FlightEntry[] = [];
@@ -182,9 +185,21 @@ const Logbook = () => {
         variant: "destructive",
       });
     } finally {
-      setIsLoadingFlights(false);
+      if (showLoading) {
+        setIsLoadingFlights(false);
+      }
     }
   }, [user, toast]);
+
+  // Regular fetch with loading state (for initial load)
+  const fetchFlights = useCallback(() => {
+    return fetchAndProcessFlights(true);
+  }, [fetchAndProcessFlights]);
+
+  // Silent refresh without loading state (for after save/edit/delete)
+  const silentRefreshFlights = useCallback(() => {
+    return fetchAndProcessFlights(false);
+  }, [fetchAndProcessFlights]);
 
   // Redirect to sign in if not authenticated
   useEffect(() => {
@@ -235,8 +250,8 @@ const Logbook = () => {
         description: "Flight entry has been successfully deleted.",
       });
 
-      // Refresh the flights list
-      fetchFlights();
+      // Refresh the flights list silently (no white screen)
+      silentRefreshFlights();
     } catch (error) {
       console.error('Error deleting flight:', error);
       toast({
@@ -276,8 +291,8 @@ const Logbook = () => {
         description: "All flight entries and aircraft have been successfully deleted.",
       });
 
-      // Refresh the flights list
-      fetchFlights();
+      // Refresh the flights list silently (no white screen)
+      silentRefreshFlights();
     } catch (error) {
       console.error('Error clearing flights and aircraft:', error);
       toast({
@@ -929,7 +944,7 @@ const Logbook = () => {
       <AddFlightDialog
         open={showAddFlightDialog}
         onOpenChange={handleCloseDialog}
-        onFlightAdded={fetchFlights}
+        onFlightAdded={silentRefreshFlights}
         editingFlight={editingFlight}
       />
 
