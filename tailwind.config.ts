@@ -57,13 +57,28 @@ export default {
 					blue: 'hsl(var(--aviation-blue))',
 					sky: 'hsl(var(--aviation-sky))',
 					navy: 'hsl(var(--aviation-navy))',
-					light: 'hsl(var(--aviation-light))'
+					light: 'hsl(var(--aviation-light))',
+					// Figma homepage primary color variants
+					primary: 'rgb(10, 46, 118)',
+					'primary-70': 'rgba(10, 46, 118, 0.7)',
+					'primary-50': 'rgba(10, 46, 118, 0.5)',
+					'primary-20': 'rgba(10, 46, 118, 0.2)',
+					'primary-15': 'rgba(10, 46, 118, 0.15)',
+					'primary-10': 'rgba(10, 46, 118, 0.1)',
+					'primary-8': 'rgba(10, 46, 118, 0.08)',
+					'primary-5': 'rgba(10, 46, 118, 0.05)',
+					'primary-2': 'rgba(10, 46, 118, 0.02)'
 				}
 			},
 			backgroundImage: {
 				'aviation-gradient': 'var(--gradient-aviation)',
 				'sky-gradient': 'var(--gradient-sky)',
-				'subtle-gradient': 'var(--gradient-subtle)'
+				'subtle-gradient': 'var(--gradient-subtle)',
+				// Figma homepage gradients
+				'figma-primary': 'linear-gradient(to right, rgb(10, 46, 118), rgba(10, 46, 118, 0.7))',
+				'figma-primary-soft': 'linear-gradient(to bottom right, rgba(10, 46, 118, 0.05), rgba(10, 46, 118, 0.1))',
+				'figma-white-to-slate': 'linear-gradient(to bottom, white, rgb(248, 250, 252))',
+				'figma-slate-to-white': 'linear-gradient(to bottom, rgb(248, 250, 252), white)'
 			},
 			boxShadow: {
 				'aviation': 'var(--shadow-aviation)',
@@ -75,7 +90,9 @@ export default {
 			borderRadius: {
 				lg: 'var(--radius)',
 				md: 'calc(var(--radius) - 2px)',
-				sm: 'calc(var(--radius) - 4px)'
+				sm: 'calc(var(--radius) - 4px)',
+				// Figma homepage border radius values (already covered by Tailwind defaults)
+				// rounded-full, rounded-2xl, rounded-xl, rounded-lg are standard Tailwind
 			},
 			keyframes: {
 				'accordion-down': {

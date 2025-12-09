@@ -5,6 +5,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { AuthProvider } from "@/contexts/AuthContext";
 import Index from "./pages/Index";
+import HomeFigma from "./pages/HomeFigma";
 import Profile from "./pages/Profile";
 import SignIn from "./pages/SignIn";
 import Airlines from "./pages/Airlines";
@@ -31,7 +32,7 @@ const App = () => (
         <Sonner />
         <BrowserRouter>
           <Routes>
-            <Route path="/" element={<Index />} />
+            <Route path="/" element={<HomeFigma />} />
             <Route path="/profile" element={<Profile />} />
             <Route path="/resume" element={<Resume />} />
             <Route path="/signin" element={<SignIn />} />
