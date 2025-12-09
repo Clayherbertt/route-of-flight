@@ -1,13 +1,14 @@
 import { useState } from "react";
+import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Plane, ArrowLeft } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
 import { toast } from "sonner";
+import logo from "@/assets/ROF Blue PNG.png";
 
 const SignIn = () => {
   const navigate = useNavigate();
@@ -77,17 +78,48 @@ const SignIn = () => {
   };
 
   return (
-    <div className="min-h-screen bg-background flex items-center justify-center px-6">
+    <div className="min-h-screen flex items-center justify-center bg-gray-50 p-4">
       <div className="w-full max-w-md">
-        <div className="flex items-center justify-center mb-8">
-          <Link to="/" className="flex items-center space-x-2 text-primary hover:opacity-80">
-            <ArrowLeft className="h-5 w-5" />
-            <Plane className="h-8 w-8" />
-            <span className="text-xl font-bold">Route of Flight</span>
-          </Link>
+        {/* Animated Logo */}
+        <div className="text-center -mb-12">
+          <motion.div
+            initial={{ opacity: 0, scale: 0.5, y: -50 }}
+            animate={{ opacity: 1, scale: 1, y: 0 }}
+            transition={{ 
+              duration: 1,
+              ease: "easeOut",
+              scale: {
+                type: "spring",
+                stiffness: 80,
+                damping: 12
+              }
+            }}
+            className="flex justify-center"
+          >
+            <Link 
+              to="/" 
+              className="flex items-center relative no-underline focus:outline-none focus:ring-0 hover:opacity-100"
+              style={{ outline: 'none' }}
+            >
+              <motion.img 
+                src={logo} 
+                alt="Route of Flight" 
+                className="h-80 w-auto"
+                initial={{ filter: "blur(10px)" }}
+                animate={{ filter: "blur(0px)" }}
+                transition={{ duration: 0.8, delay: 0.2 }}
+              />
+            </Link>
+          </motion.div>
         </div>
 
-        <Card>
+        {/* Animated Sign In Form */}
+        <motion.div
+          initial={{ opacity: 0, y: 30 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6, delay: 0.8 }}
+        >
+          <Card>
           <CardHeader className="text-center">
             <CardTitle className="text-2xl">Welcome</CardTitle>
             <CardDescription>
@@ -219,6 +251,7 @@ const SignIn = () => {
             </Tabs>
           </CardContent>
         </Card>
+        </motion.div>
       </div>
     </div>
   );

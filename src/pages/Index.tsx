@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { motion } from "framer-motion";
 import Header from "@/components/layout/Header";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -47,35 +47,74 @@ const Index = () => {
       
       {/* Hero Section */}
       <section className="relative overflow-hidden bg-gradient-to-br from-primary/10 via-background to-primary/5 pt-20 pb-32">
+        {/* Enhanced background effects */}
         <div className="absolute inset-0 bg-grid-pattern opacity-5"></div>
+        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[800px] h-[800px] bg-primary/5 rounded-full blur-3xl"></div>
+        <div className="absolute bottom-0 right-0 w-[600px] h-[600px] bg-accent/10 rounded-full blur-3xl"></div>
+        
         <div className="container mx-auto px-4 relative z-10">
           <div className="max-w-4xl mx-auto text-center space-y-8">
-            <Badge variant="secondary" className="px-4 py-1.5 text-sm">
-              <Plane className="h-3.5 w-3.5 mr-2" />
-              Professional Pilot Platform
-            </Badge>
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6 }}
+            >
+              <Badge variant="secondary" className="px-4 py-1.5 text-sm border-primary/20 bg-primary/5 backdrop-blur-sm">
+                <Plane className="h-3.5 w-3.5 mr-2" />
+                Professional Pilot Platform
+              </Badge>
+            </motion.div>
             
-            <h1 className="text-5xl md:text-6xl lg:text-7xl font-bold leading-tight">
+            <motion.h1 
+              className="text-5xl md:text-6xl lg:text-7xl font-bold leading-tight"
+              initial={{ opacity: 0, y: 30 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.8, delay: 0.2 }}
+            >
               Navigate Your
-              <span className="block bg-gradient-to-r from-primary to-primary/70 bg-clip-text text-transparent mt-2">
+              <motion.span 
+                className="block bg-gradient-to-r from-primary to-primary/70 bg-clip-text text-transparent mt-2"
+                initial={{ opacity: 0, scale: 0.9 }}
+                animate={{ opacity: 1, scale: 1 }}
+                transition={{ duration: 0.8, delay: 0.4 }}
+              >
                 Aviation Career
-              </span>
-            </h1>
+              </motion.span>
+            </motion.h1>
             
-            <p className="text-xl md:text-2xl text-muted-foreground max-w-2xl mx-auto leading-relaxed">
+            <motion.p 
+              className="text-xl md:text-2xl text-muted-foreground max-w-2xl mx-auto leading-relaxed"
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6, delay: 0.6 }}
+            >
               The complete digital logbook and career platform for professional pilots. 
               Track hours, maintain currency, and build a roadmap to your dream airline.
-            </p>
+            </motion.p>
             
-            <div className="flex flex-col sm:flex-row gap-4 justify-center pt-4">
-              <Button size="lg" className="px-8 text-base h-12" onClick={handleGetStarted}>
+            <motion.div 
+              className="flex flex-col sm:flex-row gap-4 justify-center pt-4"
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6, delay: 0.8 }}
+            >
+              <Button 
+                size="lg" 
+                className="px-8 text-base h-12 shadow-lg hover:shadow-xl transition-shadow" 
+                onClick={handleGetStarted}
+              >
                 Get Started Free
                 <ArrowRight className="ml-2 h-5 w-5" />
               </Button>
-              <Button size="lg" variant="outline" className="px-8 text-base h-12" onClick={handleViewAirlines}>
+              <Button 
+                size="lg" 
+                variant="outline" 
+                className="px-8 text-base h-12 border-2 hover:bg-primary/5 transition-colors" 
+                onClick={handleViewAirlines}
+              >
                 Explore Airlines
               </Button>
-            </div>
+            </motion.div>
           </div>
         </div>
       </section>
@@ -84,9 +123,16 @@ const Index = () => {
       <section className="py-20 bg-background">
         <div className="container mx-auto px-4">
           <div className="grid md:grid-cols-3 gap-8 max-w-6xl mx-auto">
-            <Card className="border-2 hover:border-primary/50 transition-colors">
-              <CardHeader>
-                <div className="h-12 w-12 rounded-lg bg-primary/10 flex items-center justify-center mb-4">
+            <motion.div
+              initial={{ opacity: 0, y: 30 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true, margin: "-100px" }}
+              transition={{ duration: 0.6 }}
+              whileHover={{ y: -5, transition: { duration: 0.2 } }}
+            >
+              <Card className="border-2 hover:border-primary/50 transition-all shadow-md hover:shadow-xl bg-gradient-to-br from-card to-card/50">
+                <CardHeader>
+                <div className="h-12 w-12 rounded-lg bg-gradient-to-br from-primary/20 to-primary/10 flex items-center justify-center mb-4 shadow-sm">
                   <Book className="h-6 w-6 text-primary" />
                 </div>
                 <CardTitle>Digital Logbook</CardTitle>
@@ -95,30 +141,47 @@ const Index = () => {
                 </CardDescription>
               </CardHeader>
             </Card>
+            </motion.div>
 
-            <Card className="border-2 hover:border-primary/50 transition-colors">
-              <CardHeader>
-                <div className="h-12 w-12 rounded-lg bg-primary/10 flex items-center justify-center mb-4">
-                  <Building2 className="h-6 w-6 text-primary" />
-                </div>
-                <CardTitle>Airline Database</CardTitle>
-                <CardDescription>
-                  Comprehensive data on hiring requirements and fleet information
-                </CardDescription>
-              </CardHeader>
-            </Card>
+            <motion.div
+              initial={{ opacity: 0, y: 30 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true, margin: "-100px" }}
+              transition={{ duration: 0.6, delay: 0.1 }}
+              whileHover={{ y: -5, transition: { duration: 0.2 } }}
+            >
+              <Card className="border-2 hover:border-primary/50 transition-all shadow-md hover:shadow-xl bg-gradient-to-br from-card to-card/50">
+                <CardHeader>
+                  <div className="h-12 w-12 rounded-lg bg-gradient-to-br from-primary/20 to-primary/10 flex items-center justify-center mb-4 shadow-sm">
+                    <Building2 className="h-6 w-6 text-primary" />
+                  </div>
+                  <CardTitle>Airline Database</CardTitle>
+                  <CardDescription>
+                    Comprehensive data on hiring requirements and fleet information
+                  </CardDescription>
+                </CardHeader>
+              </Card>
+            </motion.div>
 
-            <Card className="border-2 hover:border-primary/50 transition-colors">
-              <CardHeader>
-                <div className="h-12 w-12 rounded-lg bg-primary/10 flex items-center justify-center mb-4">
-                  <Compass className="h-6 w-6 text-primary" />
-                </div>
-                <CardTitle>Route Builder</CardTitle>
-                <CardDescription>
-                  Step-by-step guide from zero hours to airline pilot
-                </CardDescription>
-              </CardHeader>
-            </Card>
+            <motion.div
+              initial={{ opacity: 0, y: 30 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true, margin: "-100px" }}
+              transition={{ duration: 0.6, delay: 0.2 }}
+              whileHover={{ y: -5, transition: { duration: 0.2 } }}
+            >
+              <Card className="border-2 hover:border-primary/50 transition-all shadow-md hover:shadow-xl bg-gradient-to-br from-card to-card/50">
+                <CardHeader>
+                  <div className="h-12 w-12 rounded-lg bg-gradient-to-br from-primary/20 to-primary/10 flex items-center justify-center mb-4 shadow-sm">
+                    <Compass className="h-6 w-6 text-primary" />
+                  </div>
+                  <CardTitle>Route Builder</CardTitle>
+                  <CardDescription>
+                    Step-by-step guide from zero hours to airline pilot
+                  </CardDescription>
+                </CardHeader>
+              </Card>
+            </motion.div>
           </div>
         </div>
       </section>
@@ -127,8 +190,14 @@ const Index = () => {
       <section className="py-24 bg-muted/30">
         <div className="container mx-auto px-4">
           <div className="grid lg:grid-cols-2 gap-12 items-center max-w-6xl mx-auto">
-            <div className="space-y-6">
-              <Badge variant="outline" className="w-fit">
+            <motion.div 
+              className="space-y-6"
+              initial={{ opacity: 0, x: -50 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              viewport={{ once: true, margin: "-100px" }}
+              transition={{ duration: 0.6 }}
+            >
+              <Badge variant="outline" className="w-fit border-primary/20 bg-primary/5">
                 <Book className="h-3.5 w-3.5 mr-2" />
                 Smart Logbook
               </Badge>
@@ -175,9 +244,15 @@ const Index = () => {
                 Start Your Logbook
                 <ArrowRight className="ml-2 h-5 w-5" />
               </Button>
-            </div>
+            </motion.div>
 
-            <div className="relative">
+            <motion.div 
+              className="relative"
+              initial={{ opacity: 0, x: 50 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              viewport={{ once: true, margin: "-100px" }}
+              transition={{ duration: 0.6, delay: 0.2 }}
+            >
               <Card className="border-2 shadow-2xl">
                 <CardHeader className="border-b bg-muted/50">
                   <div className="flex items-center justify-between">
@@ -220,7 +295,7 @@ const Index = () => {
                   </div>
                 </CardContent>
               </Card>
-            </div>
+            </motion.div>
           </div>
         </div>
       </section>
@@ -229,8 +304,14 @@ const Index = () => {
       <section className="py-24 bg-background">
         <div className="container mx-auto px-4">
           <div className="grid lg:grid-cols-2 gap-12 items-center max-w-6xl mx-auto">
-            <div className="relative order-2 lg:order-1">
-              <Card className="border-2 shadow-2xl">
+            <motion.div 
+              className="relative order-2 lg:order-1"
+              initial={{ opacity: 0, x: -50 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              viewport={{ once: true, margin: "-100px" }}
+              transition={{ duration: 0.6 }}
+            >
+              <Card className="border-2 shadow-2xl bg-gradient-to-br from-card via-card to-card/95 backdrop-blur-sm">
                 <CardHeader className="border-b bg-muted/50">
                   <div className="flex items-center justify-between">
                     <CardTitle className="text-lg">Airline Database</CardTitle>
@@ -286,10 +367,16 @@ const Index = () => {
                   </div>
                 </CardContent>
               </Card>
-            </div>
+            </motion.div>
 
-            <div className="space-y-6 order-1 lg:order-2">
-              <Badge variant="outline" className="w-fit">
+            <motion.div 
+              className="space-y-6 order-1 lg:order-2"
+              initial={{ opacity: 0, x: 50 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              viewport={{ once: true, margin: "-100px" }}
+              transition={{ duration: 0.6, delay: 0.2 }}
+            >
+              <Badge variant="outline" className="w-fit border-primary/20 bg-primary/5">
                 <Building2 className="h-3.5 w-3.5 mr-2" />
                 Airline Intelligence
               </Badge>
@@ -335,7 +422,7 @@ const Index = () => {
                 Explore Database
                 <ArrowRight className="ml-2 h-5 w-5" />
               </Button>
-            </div>
+            </motion.div>
           </div>
         </div>
       </section>
@@ -344,8 +431,14 @@ const Index = () => {
       <section className="py-24 bg-muted/30">
         <div className="container mx-auto px-4">
           <div className="grid lg:grid-cols-2 gap-12 items-center max-w-6xl mx-auto">
-            <div className="space-y-6">
-              <Badge variant="outline" className="w-fit">
+            <motion.div 
+              className="space-y-6"
+              initial={{ opacity: 0, x: -50 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              viewport={{ once: true, margin: "-100px" }}
+              transition={{ duration: 0.6 }}
+            >
+              <Badge variant="outline" className="w-fit border-primary/20 bg-primary/5">
                 <Compass className="h-3.5 w-3.5 mr-2" />
                 Career Planning
               </Badge>
@@ -392,10 +485,16 @@ const Index = () => {
                 Start Building Your Route
                 <ArrowRight className="ml-2 h-5 w-5" />
               </Button>
-            </div>
+            </motion.div>
 
-            <div className="relative">
-              <Card className="border-2 shadow-2xl">
+            <motion.div 
+              className="relative"
+              initial={{ opacity: 0, x: 50 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              viewport={{ once: true, margin: "-100px" }}
+              transition={{ duration: 0.6, delay: 0.2 }}
+            >
+              <Card className="border-2 shadow-2xl bg-gradient-to-br from-card via-card to-card/95 backdrop-blur-sm">
                 <CardHeader className="border-b bg-muted/50">
                   <div className="flex items-center justify-between">
                     <CardTitle className="text-lg">Route Builder</CardTitle>
@@ -452,7 +551,7 @@ const Index = () => {
                   </div>
                 </CardContent>
               </Card>
-            </div>
+            </motion.div>
           </div>
         </div>
       </section>
@@ -461,19 +560,31 @@ const Index = () => {
       <section className="py-24 bg-background">
         <div className="container mx-auto px-4">
           <div className="max-w-4xl mx-auto text-center space-y-12">
-            <div>
+            <motion.div
+              initial={{ opacity: 0, y: 30 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true, margin: "-100px" }}
+              transition={{ duration: 0.6 }}
+            >
               <h2 className="text-4xl md:text-5xl font-bold mb-4">
                 Everything You Need to Advance Your Career
               </h2>
               <p className="text-xl text-muted-foreground">
                 Professional tools designed specifically for pilots
               </p>
-            </div>
+            </motion.div>
 
             <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-              <Card className="border-2">
+              <motion.div
+                initial={{ opacity: 0, y: 30 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true, margin: "-100px" }}
+                transition={{ duration: 0.6 }}
+                whileHover={{ y: -5, transition: { duration: 0.2 } }}
+              >
+                <Card className="border-2 shadow-md hover:shadow-xl bg-gradient-to-br from-card to-card/50 transition-all">
                 <CardHeader>
-                  <div className="h-12 w-12 rounded-lg bg-primary/10 flex items-center justify-center mb-4 mx-auto">
+                  <div className="h-12 w-12 rounded-lg bg-gradient-to-br from-primary/20 to-primary/10 flex items-center justify-center mb-4 mx-auto shadow-sm">
                     <Upload className="h-6 w-6 text-primary" />
                   </div>
                   <CardTitle className="text-lg">Easy Import</CardTitle>
@@ -482,66 +593,107 @@ const Index = () => {
                   </CardDescription>
                 </CardHeader>
               </Card>
+              </motion.div>
 
-              <Card className="border-2">
-                <CardHeader>
-                  <div className="h-12 w-12 rounded-lg bg-primary/10 flex items-center justify-center mb-4 mx-auto">
-                    <BarChart3 className="h-6 w-6 text-primary" />
-                  </div>
-                  <CardTitle className="text-lg">Analytics</CardTitle>
-                  <CardDescription>
-                    Track progress with detailed statistics
-                  </CardDescription>
-                </CardHeader>
-              </Card>
+              <motion.div
+                initial={{ opacity: 0, y: 30 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true, margin: "-100px" }}
+                transition={{ duration: 0.6, delay: 0.1 }}
+                whileHover={{ y: -5, transition: { duration: 0.2 } }}
+              >
+                <Card className="border-2 shadow-md hover:shadow-xl bg-gradient-to-br from-card to-card/50 transition-all">
+                  <CardHeader>
+                    <div className="h-12 w-12 rounded-lg bg-gradient-to-br from-primary/20 to-primary/10 flex items-center justify-center mb-4 mx-auto shadow-sm">
+                      <BarChart3 className="h-6 w-6 text-primary" />
+                    </div>
+                    <CardTitle className="text-lg">Analytics</CardTitle>
+                    <CardDescription>
+                      Track progress with detailed statistics
+                    </CardDescription>
+                  </CardHeader>
+                </Card>
+              </motion.div>
 
-              <Card className="border-2">
-                <CardHeader>
-                  <div className="h-12 w-12 rounded-lg bg-primary/10 flex items-center justify-center mb-4 mx-auto">
-                    <Shield className="h-6 w-6 text-primary" />
-                  </div>
-                  <CardTitle className="text-lg">Secure</CardTitle>
-                  <CardDescription>
-                    Your data is encrypted and secure
-                  </CardDescription>
-                </CardHeader>
-              </Card>
+              <motion.div
+                initial={{ opacity: 0, y: 30 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true, margin: "-100px" }}
+                transition={{ duration: 0.6, delay: 0.2 }}
+                whileHover={{ y: -5, transition: { duration: 0.2 } }}
+              >
+                <Card className="border-2 shadow-md hover:shadow-xl bg-gradient-to-br from-card to-card/50 transition-all">
+                  <CardHeader>
+                    <div className="h-12 w-12 rounded-lg bg-gradient-to-br from-primary/20 to-primary/10 flex items-center justify-center mb-4 mx-auto shadow-sm">
+                      <Shield className="h-6 w-6 text-primary" />
+                    </div>
+                    <CardTitle className="text-lg">Secure</CardTitle>
+                    <CardDescription>
+                      Your data is encrypted and secure
+                    </CardDescription>
+                  </CardHeader>
+                </Card>
+              </motion.div>
 
-              <Card className="border-2">
-                <CardHeader>
-                  <div className="h-12 w-12 rounded-lg bg-primary/10 flex items-center justify-center mb-4 mx-auto">
-                    <Zap className="h-6 w-6 text-primary" />
-                  </div>
+              <motion.div
+                initial={{ opacity: 0, y: 30 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true, margin: "-100px" }}
+                transition={{ duration: 0.6, delay: 0.3 }}
+                whileHover={{ y: -5, transition: { duration: 0.2 } }}
+              >
+                <Card className="border-2 shadow-md hover:shadow-xl bg-gradient-to-br from-card to-card/50 transition-all">
+                  <CardHeader>
+                    <div className="h-12 w-12 rounded-lg bg-gradient-to-br from-primary/20 to-primary/10 flex items-center justify-center mb-4 mx-auto shadow-sm">
+                      <Zap className="h-6 w-6 text-primary" />
+                    </div>
                   <CardTitle className="text-lg">Fast</CardTitle>
                   <CardDescription>
                     Lightning-fast performance
                   </CardDescription>
                 </CardHeader>
               </Card>
+              </motion.div>
 
-              <Card className="border-2">
-                <CardHeader>
-                  <div className="h-12 w-12 rounded-lg bg-primary/10 flex items-center justify-center mb-4 mx-auto">
-                    <Globe className="h-6 w-6 text-primary" />
-                  </div>
-                  <CardTitle className="text-lg">Cloud Sync</CardTitle>
-                  <CardDescription>
-                    Access your logbook anywhere
-                  </CardDescription>
-                </CardHeader>
-              </Card>
+              <motion.div
+                initial={{ opacity: 0, y: 30 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true, margin: "-100px" }}
+                transition={{ duration: 0.6, delay: 0.4 }}
+                whileHover={{ y: -5, transition: { duration: 0.2 } }}
+              >
+                <Card className="border-2 shadow-md hover:shadow-xl bg-gradient-to-br from-card to-card/50 transition-all">
+                  <CardHeader>
+                    <div className="h-12 w-12 rounded-lg bg-gradient-to-br from-primary/20 to-primary/10 flex items-center justify-center mb-4 mx-auto shadow-sm">
+                      <Globe className="h-6 w-6 text-primary" />
+                    </div>
+                    <CardTitle className="text-lg">Cloud Sync</CardTitle>
+                    <CardDescription>
+                      Access your logbook anywhere
+                    </CardDescription>
+                  </CardHeader>
+                </Card>
+              </motion.div>
 
-              <Card className="border-2">
-                <CardHeader>
-                  <div className="h-12 w-12 rounded-lg bg-primary/10 flex items-center justify-center mb-4 mx-auto">
-                    <FileText className="h-6 w-6 text-primary" />
-                  </div>
+              <motion.div
+                initial={{ opacity: 0, y: 30 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true, margin: "-100px" }}
+                transition={{ duration: 0.6, delay: 0.5 }}
+                whileHover={{ y: -5, transition: { duration: 0.2 } }}
+              >
+                <Card className="border-2 shadow-md hover:shadow-xl bg-gradient-to-br from-card to-card/50 transition-all">
+                  <CardHeader>
+                    <div className="h-12 w-12 rounded-lg bg-gradient-to-br from-primary/20 to-primary/10 flex items-center justify-center mb-4 mx-auto shadow-sm">
+                      <FileText className="h-6 w-6 text-primary" />
+                    </div>
                   <CardTitle className="text-lg">Reports</CardTitle>
                   <CardDescription>
                     Generate professional reports
                   </CardDescription>
                 </CardHeader>
               </Card>
+              </motion.div>
             </div>
           </div>
         </div>
@@ -550,7 +702,13 @@ const Index = () => {
       {/* CTA Section */}
       <section className="py-24 bg-gradient-to-br from-primary/10 via-background to-primary/5">
         <div className="container mx-auto px-4">
-          <div className="max-w-3xl mx-auto text-center space-y-8">
+          <motion.div 
+            className="max-w-3xl mx-auto text-center space-y-8"
+            initial={{ opacity: 0, y: 30 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, margin: "-100px" }}
+            transition={{ duration: 0.6 }}
+          >
             <h2 className="text-4xl md:text-5xl font-bold">
               Ready to Take Control of Your Career?
             </h2>
@@ -566,7 +724,7 @@ const Index = () => {
                 Explore Features
               </Button>
             </div>
-          </div>
+          </motion.div>
         </div>
       </section>
 
