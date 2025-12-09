@@ -57,14 +57,14 @@ const Header = () => {
             className="text-sm font-medium text-muted-foreground hover:text-foreground smooth-transition"
           >
             <Route className="inline h-4 w-4 mr-2" />
-            Route
+            Route Builder
           </Link>
           <Link
             to="/resume"
             className="text-sm font-medium text-muted-foreground hover:text-foreground smooth-transition"
           >
             <FileText className="inline h-4 w-4 mr-2" />
-            Resume
+            Resume Builder
           </Link>
         </nav>
 
@@ -82,7 +82,7 @@ const Header = () => {
               </Link>
               <Link to="/signin">
                 <Button variant="default" size="sm">
-                  Get Started
+                  Sign Up
                 </Button>
               </Link>
             </>
