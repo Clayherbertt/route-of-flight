@@ -1,18 +1,20 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate, useSearchParams } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
+import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import logo from "@/assets/ROF Blue PNG.png";
 
 const SignIn = () => {
   const navigate = useNavigate();
-  const { signIn, signUp, resetPassword } = useAuth();
+  const [searchParams] = useSearchParams();
+  const { signIn, signUp, resetPassword, user } = useAuth();
   const [loading, setLoading] = useState(false);
   const [resetLoading, setResetLoading] = useState(false);
   const [signInForm, setSignInForm] = useState({ email: "", password: "" });
@@ -23,6 +25,56 @@ const SignIn = () => {
     password: "", 
     confirmPassword: "" 
   });
+
+  // Get the default tab from URL params
+  const defaultTab = searchParams.get('tab') || 'signin';
+
+  // Check for pending subscription when user becomes authenticated
+  useEffect(() => {
+    const checkPendingSubscription = async () => {
+      if (!user) return;
+      
+      const pendingPriceId = localStorage.getItem('pendingSubscriptionPriceId');
+      if (!pendingPriceId) return;
+
+      console.log('User authenticated, checking for pending subscription:', pendingPriceId);
+      
+      // Clear the pending subscription from localStorage
+      localStorage.removeItem('pendingSubscriptionPriceId');
+      localStorage.removeItem('pendingSubscriptionPlan');
+      localStorage.removeItem('pendingSubscriptionBilling');
+      
+      // Wait a bit more to ensure session is fully established
+      await new Promise(resolve => setTimeout(resolve, 1000));
+      
+      // Create Stripe checkout session
+      try {
+        const { data, error } = await supabase.functions.invoke("create-checkout", {
+          body: { priceId: pendingPriceId },
+        });
+
+        if (error) {
+          console.error("Error creating checkout session:", error);
+          toast.error(error.message || "Failed to create checkout session");
+          toast.info("You can subscribe from the subscription page.");
+          return;
+        }
+
+        if (data?.url) {
+          toast.success("Redirecting to checkout...");
+          window.location.href = data.url;
+        } else {
+          console.error("No checkout URL returned from create-checkout");
+          toast.info("You can subscribe from the subscription page.");
+        }
+      } catch (checkoutError: any) {
+        console.error("Unexpected error starting checkout:", checkoutError);
+        toast.info("You can subscribe from the subscription page.");
+      }
+    };
+
+    checkPendingSubscription();
+  }, [user]);
 
   const handleSignIn = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -50,9 +102,76 @@ const SignIn = () => {
     setLoading(true);
     
     try {
-      await signUp(signUpForm.email, signUpForm.password, signUpForm.firstName, signUpForm.lastName);
-      toast.success("Account created! Please check your email to verify your account.");
-      navigate("/");
+      const { data: signUpData, error: signUpError } = await supabase.auth.signUp({
+        email: signUpForm.email,
+        password: signUpForm.password,
+        options: {
+          emailRedirectTo: `${window.location.origin}/`,
+          data: {
+            first_name: signUpForm.firstName,
+            last_name: signUpForm.lastName,
+            display_name: signUpForm.firstName ? `${signUpForm.firstName} ${signUpForm.lastName || ''}`.trim() : undefined
+          }
+        }
+      });
+
+      if (signUpError) {
+        throw signUpError;
+      }
+
+      // Check if there's a pending subscription
+      const pendingPriceId = localStorage.getItem('pendingSubscriptionPriceId');
+      
+      if (pendingPriceId && signUpData?.session) {
+        // User has a session immediately (email confirmation disabled or auto-confirmed)
+        // Clear the pending subscription from localStorage
+        localStorage.removeItem('pendingSubscriptionPriceId');
+        localStorage.removeItem('pendingSubscriptionPlan');
+        localStorage.removeItem('pendingSubscriptionBilling');
+        
+        // Wait a moment for the session to be fully established
+        await new Promise(resolve => setTimeout(resolve, 1000));
+        
+        // Create Stripe checkout session
+        try {
+          const { data, error } = await supabase.functions.invoke("create-checkout", {
+            body: { priceId: pendingPriceId },
+          });
+
+          if (error) {
+            console.error("Error creating checkout session:", error);
+            toast.error(error.message || "Failed to create checkout session");
+            toast.success("Account created! You can subscribe from the subscription page.");
+            navigate("/");
+            return;
+          }
+
+          if (data?.url) {
+            toast.success("Account created! Redirecting to checkout...");
+            window.location.href = data.url;
+            return;
+          } else {
+            console.error("No checkout URL returned from create-checkout");
+            toast.success("Account created! You can subscribe from the subscription page.");
+            navigate("/");
+            return;
+          }
+        } catch (checkoutError: any) {
+          console.error("Unexpected error starting checkout:", checkoutError);
+          toast.success("Account created! You can subscribe from the subscription page.");
+          navigate("/");
+          return;
+        }
+      } else if (pendingPriceId) {
+        // No session yet - email verification required
+        // The useEffect hook will handle redirecting to Stripe once user verifies email and signs in
+        toast.success("Account created! Please check your email to verify your account. After verification, you'll be redirected to checkout.");
+        navigate("/");
+      } else {
+        // No pending subscription, just navigate home
+        toast.success("Account created! Please check your email to verify your account.");
+        navigate("/");
+      }
     } catch (error: any) {
       toast.error(error.message || "Failed to create account");
     } finally {
@@ -127,7 +246,7 @@ const SignIn = () => {
             </CardDescription>
           </CardHeader>
           <CardContent>
-            <Tabs defaultValue="signin" className="w-full">
+            <Tabs defaultValue={defaultTab} className="w-full">
               <TabsList className="grid w-full grid-cols-2">
                 <TabsTrigger value="signin">Sign In</TabsTrigger>
                 <TabsTrigger value="signup">Sign Up</TabsTrigger>

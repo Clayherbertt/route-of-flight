@@ -16,8 +16,13 @@
     --popover: 0 0% 100%;
     --popover-foreground: 220 85% 8%;
 
-    /* Aviation navy primary with sky accent */
-    --primary: 220 85% 25%;
+    /* Brand colors - Standard gradient system */
+    --brand-dark: #17293F;
+    --brand-medium: #24587E;
+    --brand-light: #C8CCD2;
+    
+    /* Primary colors using brand colors */
+    --primary: 220 85% 25%; /* Using brand-medium equivalent for compatibility */
     --primary-foreground: 210 40% 98%;
     --primary-hover: 220 85% 20%;
 
@@ -39,13 +44,18 @@
 
     --radius: 0.75rem;
 
-    /* Aviation-specific design tokens */
+    /* Aviation-specific design tokens (kept for backward compatibility) */
     --aviation-blue: 220 85% 25%;
     --aviation-sky: 200 85% 55%;
     --aviation-navy: 220 90% 15%;
     --aviation-light: 210 30% 97%;
     
-    /* Gradients */
+    /* Standard Gradients - Brand gradient system */
+    --gradient-primary: linear-gradient(135deg, #17293F 0%, #24587E 100%);
+    --gradient-primary-hover: linear-gradient(135deg, #24587E 0%, #17293F 100%);
+    --gradient-full: linear-gradient(135deg, #17293F 0%, #24587E 50%, #C8CCD2 100%);
+    
+    /* Legacy gradients (kept for backward compatibility) */
     --gradient-aviation: linear-gradient(135deg, hsl(var(--aviation-navy)), hsl(var(--aviation-blue)));
     --gradient-sky: linear-gradient(90deg, hsl(var(--aviation-sky)), hsl(var(--aviation-navy)));
     --gradient-subtle: linear-gradient(180deg, hsl(var(--aviation-light)), hsl(var(--background)));
@@ -169,6 +179,65 @@
 }
 
 @layer components {
+  /* Standard gradient classes - use these moving forward */
+  .gradient-primary {
+    background: var(--gradient-primary);
+  }
+  
+  .gradient-primary-hover:hover {
+    background: var(--gradient-primary-hover);
+  }
+  
+  .gradient-full {
+    background: var(--gradient-full);
+  }
+  
+  .gradient-button {
+    background: var(--gradient-primary);
+  }
+  
+  .gradient-button:hover {
+    background: var(--gradient-primary-hover);
+  }
+  
+  .gradient-border {
+    border-color: #24587E;
+  }
+  
+  .gradient-shadow {
+    box-shadow: 0 10px 30px -10px rgba(36, 88, 126, 0.3);
+  }
+  
+  /* Legacy brand classes (aliases for backward compatibility) */
+  .brand-gradient {
+    background: var(--gradient-full);
+  }
+  
+  .brand-gradient-primary {
+    background: var(--gradient-primary);
+  }
+  
+  .brand-gradient-hover {
+    background: var(--gradient-primary-hover);
+  }
+  
+  .brand-button {
+    background: var(--gradient-primary);
+  }
+  
+  .brand-button:hover {
+    background: var(--gradient-primary-hover);
+  }
+  
+  .brand-shadow {
+    box-shadow: 0 10px 30px -10px rgba(36, 88, 126, 0.3);
+  }
+  
+  .brand-border {
+    border-color: #24587E;
+  }
+  
+  /* Legacy aviation gradients (kept for backward compatibility) */
   .aviation-gradient {
     background: var(--gradient-aviation);
   }
@@ -215,5 +284,14 @@
   .text-accent-gradient {
     @apply bg-clip-text text-transparent;
     background-image: var(--gradient-sky);
+  }
+  
+  /* Graph paper grid pattern */
+  .bg-grid-pattern {
+    background-image: 
+      linear-gradient(rgba(148, 163, 184, 0.4) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(148, 163, 184, 0.4) 1px, transparent 1px);
+    background-size: 30px 30px;
+    background-position: center center;
   }
 }
