@@ -9,6 +9,13 @@ import { Separator } from "@/components/ui/separator"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog"
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu"
 import { SignatureCanvas } from "@/components/SignatureCanvas"
 import { useToast } from "@/hooks/use-toast"
 import { 
@@ -25,7 +32,8 @@ import {
   Star,
   Edit,
   Save,
-  X
+  X,
+  UserCircle
 } from "lucide-react"
 import Header from "@/components/layout/Header"
 import { useNavigate } from "react-router-dom"
@@ -57,6 +65,7 @@ export default function Profile() {
   
   // Account editing state
   const [isEditing, setIsEditing] = useState(false)
+  const [showAccountDialog, setShowAccountDialog] = useState(false)
   const [profileData, setProfileData] = useState({
     fullName: '',
     email: '',
@@ -160,6 +169,7 @@ export default function Profile() {
       })
 
       setIsEditing(false)
+      setShowAccountDialog(false)
     } catch (error: any) {
       console.error('Error saving profile:', error)
       toast({
@@ -369,22 +379,28 @@ export default function Profile() {
 
             {/* Quick Actions */}
             <div className="flex items-center gap-3">
-              <Button
-                variant="outline"
-                onClick={() => navigate('/logbook')}
-                className="hidden md:flex"
-              >
-                <BarChart3 className="mr-2 h-4 w-4" />
-                View Logbook
-              </Button>
-              <Button
-                variant="outline"
-                onClick={() => navigate('/aircraft')}
-                className="hidden md:flex"
-              >
-                <Plane className="mr-2 h-4 w-4" />
-                Aircraft
-              </Button>
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button variant="outline">
+                    <Settings className="mr-2 h-4 w-4" />
+                    Manage Account
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="end">
+                  <DropdownMenuItem onClick={() => setShowAccountDialog(true)}>
+                    <UserCircle className="mr-2 h-4 w-4" />
+                    Account Information
+                  </DropdownMenuItem>
+                  <DropdownMenuItem onClick={() => navigate('/aircraft')}>
+                    <Plane className="mr-2 h-4 w-4" />
+                    Aircraft
+                  </DropdownMenuItem>
+                  <DropdownMenuItem onClick={() => navigate('/subscription')}>
+                    <CreditCard className="mr-2 h-4 w-4" />
+                    Subscription
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
               {isAdmin && (
                 <Button
                   variant="outline"
@@ -486,194 +502,8 @@ export default function Profile() {
           </div>
             </div>
 
-        {/* Account & Subscription Section */}
-        <div className="grid md:grid-cols-2 gap-6">
-            {/* Account Information */}
-            <Card>
-              <CardHeader>
-                <div className="flex items-center justify-between">
-                  <div>
-                    <CardTitle className="flex items-center gap-2">
-                      <Settings className="h-5 w-5" />
-                      Account Information
-                    </CardTitle>
-                    <CardDescription>
-                      Your account details and settings
-                    </CardDescription>
-                  </div>
-                  {!isEditing ? (
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      onClick={() => setIsEditing(true)}
-                    >
-                      <Edit className="mr-2 h-4 w-4" />
-                      Edit
-                    </Button>
-                  ) : (
-                    <div className="flex gap-2">
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        onClick={handleCancel}
-                      >
-                        <X className="mr-2 h-4 w-4" />
-                        Cancel
-                      </Button>
-                      <Button
-                        size="sm"
-                        onClick={handleSave}
-                      >
-                        <Save className="mr-2 h-4 w-4" />
-                        Save
-                      </Button>
-                    </div>
-                  )}
-                </div>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                <div>
-                  <Label htmlFor="email">Email Address</Label>
-                  {isEditing ? (
-                    <Input
-                      id="email"
-                      type="email"
-                      value={profileData.email}
-                      onChange={(e) => setProfileData({ ...profileData, email: e.target.value })}
-                      className="mt-2"
-                    />
-                  ) : (
-                    <div className="p-3 bg-muted/50 rounded-md border flex items-center gap-2 mt-2">
-                      <Mail className="h-4 w-4 text-muted-foreground" />
-                      <span>{profileData.email || user.email}</span>
-                    </div>
-                  )}
-                </div>
-                
-                <div>
-                  <Label htmlFor="fullName">Full Name</Label>
-                  {isEditing ? (
-                    <Input
-                      id="fullName"
-                      value={profileData.fullName}
-                      onChange={(e) => setProfileData({ ...profileData, fullName: e.target.value })}
-                      className="mt-2"
-                    />
-                  ) : (
-                    <div className="p-3 bg-muted/50 rounded-md border flex items-center gap-2 mt-2">
-                      <User className="h-4 w-4 text-muted-foreground" />
-                      <span>{profileData.fullName || user.user_metadata?.full_name || user.user_metadata?.display_name || "Not set"}</span>
-                    </div>
-                  )}
-                </div>
-                
-                <div>
-                  <Label>Member Since</Label>
-                  <div className="p-3 bg-muted/50 rounded-md border flex items-center gap-2 mt-2">
-                    <Calendar className="h-4 w-4 text-muted-foreground" />
-                    <span>{joinDate}</span>
-                  </div>
-                </div>
-
-                <Separator />
-
-                {/* CFI Instructor Fields */}
-                {(isInstructor || isEditing) && (
-                  <>
-                    <div className="space-y-2">
-                      <Label className="text-base font-semibold">Flight Instructor Information</Label>
-                      <p className="text-sm text-muted-foreground">
-                        Add your CFI certificate information to issue endorsements
-                      </p>
-                    </div>
-
-                    <div className="grid grid-cols-2 gap-4">
-                      <div>
-                        <Label htmlFor="cfiNumber">Certificate Number</Label>
-                        <Input
-                          id="cfiNumber"
-                          value={profileData.cfiCertificateNumber}
-                          onChange={(e) => setProfileData({ ...profileData, cfiCertificateNumber: e.target.value })}
-                          placeholder="e.g., 4083052"
-                          disabled={!isEditing}
-                          className="mt-2"
-                        />
-                      </div>
-                      <div>
-                        <Label htmlFor="cfiType">Certificate Type</Label>
-                        <Select
-                          value={profileData.cfiCertificateType}
-                          onValueChange={(value) => setProfileData({ ...profileData, cfiCertificateType: value })}
-                          disabled={!isEditing}
-                        >
-                          <SelectTrigger className="mt-2">
-                            <SelectValue />
-                          </SelectTrigger>
-                          <SelectContent>
-                            <SelectItem value="CFI">CFI</SelectItem>
-                            <SelectItem value="CFII">CFII</SelectItem>
-                            <SelectItem value="MEI">MEI</SelectItem>
-                            <SelectItem value="GI">GI</SelectItem>
-                            <SelectItem value="AGI">AGI</SelectItem>
-                            <SelectItem value="IGI">IGI</SelectItem>
-                          </SelectContent>
-                        </Select>
-                        {isEditing && profileData.cfiCertificateNumber && (
-                          <p className="text-xs text-muted-foreground mt-1">
-                            Full number: {profileData.cfiCertificateNumber}{profileData.cfiCertificateType}
-                          </p>
-                        )}
-                      </div>
-                    </div>
-
-                    <div>
-                      <Label htmlFor="cfiExpiration">Expiration Date</Label>
-                      <Input
-                        id="cfiExpiration"
-                        type="date"
-                        value={profileData.cfiExpirationDate}
-                        onChange={(e) => setProfileData({ ...profileData, cfiExpirationDate: e.target.value })}
-                        disabled={!isEditing}
-                        className="mt-2"
-                      />
-                    </div>
-
-                    <div>
-                      <Label>Electronic Signature</Label>
-                      {isEditing ? (
-                        <div className="mt-2">
-                          <SignatureCanvas
-                            value={profileData.electronicSignature}
-                            onChange={(value) => setProfileData({ ...profileData, electronicSignature: value })}
-                            firstName={profileData.fullName.split(' ')[0] || ''}
-                            lastName={profileData.fullName.split(' ').slice(1).join(' ') || ''}
-                          />
-                        </div>
-                      ) : (
-                        <div className="mt-2 p-3 bg-muted/50 rounded-md border">
-                          {profileData.electronicSignature ? (
-                            <img 
-                              src={profileData.electronicSignature} 
-                              alt="Signature" 
-                              className="max-w-full h-20 object-contain"
-                            />
-                          ) : (
-                            <p className="text-sm text-muted-foreground">No signature on file</p>
-                          )}
-                        </div>
-                      )}
-                    </div>
-                  </>
-                )}
-
-                {!isInstructor && !isEditing && (
-                  <div className="p-3 bg-muted/50 rounded-md border text-sm text-muted-foreground">
-                    <p>Are you a Flight Instructor? Click "Edit" to add your CFI certificate information.</p>
-                  </div>
-                )}
-              </CardContent>
-            </Card>
-
+        {/* Subscription Section */}
+        <div className="grid md:grid-cols-1 gap-6">
             {/* Subscription Status */}
             <Card>
               <CardHeader>
@@ -774,6 +604,190 @@ export default function Profile() {
             </Card>
           </div>
       </main>
+
+      {/* Account Information Dialog */}
+      <Dialog open={showAccountDialog} onOpenChange={setShowAccountDialog}>
+        <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2">
+              <Settings className="h-5 w-5" />
+              Account Information
+            </DialogTitle>
+            <DialogDescription>
+              Your account details and settings
+            </DialogDescription>
+          </DialogHeader>
+          <div className="space-y-4 mt-4">
+            <div>
+              <Label htmlFor="dialog-email">Email Address</Label>
+              {isEditing ? (
+                <Input
+                  id="dialog-email"
+                  type="email"
+                  value={profileData.email}
+                  onChange={(e) => setProfileData({ ...profileData, email: e.target.value })}
+                  className="mt-2"
+                />
+              ) : (
+                <div className="p-3 bg-muted/50 rounded-md border flex items-center gap-2 mt-2">
+                  <Mail className="h-4 w-4 text-muted-foreground" />
+                  <span>{profileData.email || user.email}</span>
+                </div>
+              )}
+            </div>
+            
+            <div>
+              <Label htmlFor="dialog-fullName">Full Name</Label>
+              {isEditing ? (
+                <Input
+                  id="dialog-fullName"
+                  value={profileData.fullName}
+                  onChange={(e) => setProfileData({ ...profileData, fullName: e.target.value })}
+                  className="mt-2"
+                />
+              ) : (
+                <div className="p-3 bg-muted/50 rounded-md border flex items-center gap-2 mt-2">
+                  <User className="h-4 w-4 text-muted-foreground" />
+                  <span>{profileData.fullName || user.user_metadata?.full_name || user.user_metadata?.display_name || "Not set"}</span>
+                </div>
+              )}
+            </div>
+            
+            <div>
+              <Label>Member Since</Label>
+              <div className="p-3 bg-muted/50 rounded-md border flex items-center gap-2 mt-2">
+                <Calendar className="h-4 w-4 text-muted-foreground" />
+                <span>{joinDate}</span>
+              </div>
+            </div>
+
+            <Separator />
+
+            {/* CFI Instructor Fields */}
+            {(isInstructor || isEditing) && (
+              <>
+                <div className="space-y-2">
+                  <Label className="text-base font-semibold">Flight Instructor Information</Label>
+                  <p className="text-sm text-muted-foreground">
+                    Add your CFI certificate information to issue endorsements
+                  </p>
+                </div>
+
+                <div className="grid grid-cols-2 gap-4">
+                  <div>
+                    <Label htmlFor="dialog-cfiNumber">Certificate Number</Label>
+                    <Input
+                      id="dialog-cfiNumber"
+                      value={profileData.cfiCertificateNumber}
+                      onChange={(e) => setProfileData({ ...profileData, cfiCertificateNumber: e.target.value })}
+                      placeholder="e.g., 4083052"
+                      disabled={!isEditing}
+                      className="mt-2"
+                    />
+                  </div>
+                  <div>
+                    <Label htmlFor="dialog-cfiType">Certificate Type</Label>
+                    <Select
+                      value={profileData.cfiCertificateType}
+                      onValueChange={(value) => setProfileData({ ...profileData, cfiCertificateType: value })}
+                      disabled={!isEditing}
+                    >
+                      <SelectTrigger className="mt-2">
+                        <SelectValue />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="CFI">CFI</SelectItem>
+                        <SelectItem value="CFII">CFII</SelectItem>
+                        <SelectItem value="MEI">MEI</SelectItem>
+                        <SelectItem value="GI">GI</SelectItem>
+                        <SelectItem value="AGI">AGI</SelectItem>
+                        <SelectItem value="IGI">IGI</SelectItem>
+                      </SelectContent>
+                    </Select>
+                    {isEditing && profileData.cfiCertificateNumber && (
+                      <p className="text-xs text-muted-foreground mt-1">
+                        Full number: {profileData.cfiCertificateNumber}{profileData.cfiCertificateType}
+                      </p>
+                    )}
+                  </div>
+                </div>
+
+                <div>
+                  <Label htmlFor="dialog-cfiExpiration">Expiration Date</Label>
+                  <Input
+                    id="dialog-cfiExpiration"
+                    type="date"
+                    value={profileData.cfiExpirationDate}
+                    onChange={(e) => setProfileData({ ...profileData, cfiExpirationDate: e.target.value })}
+                    disabled={!isEditing}
+                    className="mt-2"
+                  />
+                </div>
+
+                <div>
+                  <Label>Electronic Signature</Label>
+                  {isEditing ? (
+                    <div className="mt-2">
+                      <SignatureCanvas
+                        value={profileData.electronicSignature}
+                        onChange={(value) => setProfileData({ ...profileData, electronicSignature: value })}
+                        firstName={profileData.fullName.split(' ')[0] || ''}
+                        lastName={profileData.fullName.split(' ').slice(1).join(' ') || ''}
+                      />
+                    </div>
+                  ) : (
+                    <div className="mt-2 p-3 bg-muted/50 rounded-md border">
+                      {profileData.electronicSignature ? (
+                        <img 
+                          src={profileData.electronicSignature} 
+                          alt="Signature" 
+                          className="max-w-full h-20 object-contain"
+                        />
+                      ) : (
+                        <p className="text-sm text-muted-foreground">No signature on file</p>
+                      )}
+                    </div>
+                  )}
+                </div>
+              </>
+            )}
+
+            {!isInstructor && !isEditing && (
+              <div className="p-3 bg-muted/50 rounded-md border text-sm text-muted-foreground">
+                <p>Are you a Flight Instructor? Click "Edit" to add your CFI certificate information.</p>
+              </div>
+            )}
+
+            <div className="flex justify-end gap-2 pt-4 border-t">
+              {!isEditing ? (
+                <Button
+                  variant="outline"
+                  onClick={() => setIsEditing(true)}
+                >
+                  <Edit className="mr-2 h-4 w-4" />
+                  Edit
+                </Button>
+              ) : (
+                <>
+                  <Button
+                    variant="outline"
+                    onClick={handleCancel}
+                  >
+                    <X className="mr-2 h-4 w-4" />
+                    Cancel
+                  </Button>
+                  <Button
+                    onClick={handleSave}
+                  >
+                    <Save className="mr-2 h-4 w-4" />
+                    Save
+                  </Button>
+                </>
+              )}
+            </div>
+          </div>
+        </DialogContent>
+      </Dialog>
     </div>
   )
 }
