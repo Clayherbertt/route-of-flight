@@ -50,6 +50,13 @@ serve(async (req) => {
     
     if (customers.data.length === 0) {
       logStep("No customer found, updating unsubscribed state");
+      // Check if subscriber record exists
+      const { data: existingSubscriber } = await supabaseClient
+        .from("subscribers")
+        .select("current_plan_slug, trial_start_at, trial_end_at")
+        .eq("user_id", user.id)
+        .maybeSingle();
+      
       await supabaseClient.from("subscribers").upsert({
         email: user.email,
         user_id: user.id,
@@ -57,6 +64,7 @@ serve(async (req) => {
         subscribed: false,
         subscription_tier: null,
         subscription_end: null,
+        current_plan_slug: existingSubscriber?.current_plan_slug || "basic",
         updated_at: new Date().toISOString(),
       }, { onConflict: 'email' });
       return new Response(JSON.stringify({ subscribed: false }), {
@@ -82,23 +90,44 @@ serve(async (req) => {
       subscriptionEnd = new Date(subscription.current_period_end * 1000).toISOString();
       logStep("Active subscription found", { subscriptionId: subscription.id, endDate: subscriptionEnd });
       
-      // Determine subscription tier from price amount
+      // Determine subscription tier from price amount or metadata
       const priceId = subscription.items.data[0].price.id;
       const price = await stripe.prices.retrieve(priceId);
       const amount = price.unit_amount || 0;
       
-      if (amount === 2499) {
-        subscriptionTier = "Standard";
-      } else if (amount === 5999) {
-        subscriptionTier = "Premium";
+      // Check for plan slug in metadata first (new system)
+      const planSlug = price.metadata?.plan_slug || subscription.metadata?.plan_slug;
+      
+      if (planSlug) {
+        // Use plan slug from metadata if available
+        subscriptionTier = planSlug;
       } else {
-        subscriptionTier = "Unknown";
+        // Fallback to price-based mapping (legacy)
+        // Map to new plan slugs: basic, pro, pro-plus
+        if (amount === 1200) {
+          subscriptionTier = "pro"; // $12/month = Pro
+        } else if (amount === 2000) {
+          subscriptionTier = "pro-plus"; // $20/month = Pro Plus
+        } else if (amount === 12900) {
+          subscriptionTier = "pro"; // $129/year = Pro
+        } else if (amount === 21600) {
+          subscriptionTier = "pro-plus"; // $216/year = Pro Plus
+        } else {
+          subscriptionTier = "basic"; // Default to basic
+        }
       }
-      logStep("Determined subscription tier", { priceId, amount, subscriptionTier });
+      logStep("Determined subscription tier", { priceId, amount, planSlug, subscriptionTier });
     } else {
       logStep("No active subscription found");
     }
 
+    // Get existing subscriber to preserve trial info
+    const { data: existingSubscriber } = await supabaseClient
+      .from("subscribers")
+      .select("current_plan_slug, trial_start_at, trial_end_at")
+      .eq("user_id", user.id)
+      .maybeSingle();
+    
     await supabaseClient.from("subscribers").upsert({
       email: user.email,
       user_id: user.id,
@@ -106,6 +135,9 @@ serve(async (req) => {
       subscribed: hasActiveSub,
       subscription_tier: subscriptionTier,
       subscription_end: subscriptionEnd,
+      current_plan_slug: subscriptionTier || existingSubscriber?.current_plan_slug || "basic",
+      trial_start_at: existingSubscriber?.trial_start_at || null,
+      trial_end_at: existingSubscriber?.trial_end_at || null,
       updated_at: new Date().toISOString(),
     }, { onConflict: 'email' });
 

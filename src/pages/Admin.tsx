@@ -125,7 +125,7 @@ export default function Admin() {
                     <Building2 className="mr-2 h-4 w-4" />
                     Manage Airlines
                   </Button>
-                  <Button variant="outline" className="justify-start">
+                  <Button variant="outline" className="justify-start" onClick={() => navigate('/admin/subscriptions')}>
                     <CreditCard className="mr-2 h-4 w-4" />
                     Subscription Management
                   </Button>

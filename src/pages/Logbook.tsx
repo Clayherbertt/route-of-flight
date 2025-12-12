@@ -16,6 +16,9 @@ import { useNavigate } from "react-router-dom";
 import { AddFlightDialog } from "@/components/forms/AddFlightDialog";
 import { CSVImportDialog } from "@/components/forms/CSVImportDialog";
 import { FlightHoursPredictionsDialog } from "@/components/dialogs/FlightHoursPredictionsDialog";
+import { useSubscription } from "@/hooks/useSubscription";
+import { hasFeature, FeatureKey } from "@/lib/featureGates";
+import { FeatureGate } from "@/components/feature-gating/FeatureGate";
 import { subMonths, format, startOfMonth, endOfMonth, eachMonthOfInterval } from "date-fns";
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from "recharts";
 import { FlightMap } from "@/components/FlightMap";
@@ -757,15 +760,31 @@ const Logbook = () => {
                   </p>
                   <p className="text-sm text-muted-foreground">Monthly flight hours breakdown</p>
                 </div>
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={() => setShowPredictionsDialog(true)}
-                  className="flex items-center gap-2"
+                <FeatureGate 
+                  feature={FeatureKey.LOGBOOK_PREDICTIONS_TOOL}
+                  showUpgradePrompt={false}
+                  fallback={
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => navigate('/subscription')}
+                      className="flex items-center gap-2"
+                    >
+                      <Calculator className="h-4 w-4" />
+                      Predictions
+                    </Button>
+                  }
                 >
-                  <Calculator className="h-4 w-4" />
-                  Predictions
-                </Button>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => setShowPredictionsDialog(true)}
+                    className="flex items-center gap-2"
+                  >
+                    <Calculator className="h-4 w-4" />
+                    Predictions
+                  </Button>
+                </FeatureGate>
               </div>
               <div className="p-6">
                 <ResponsiveContainer width="100%" height={300}>
@@ -811,10 +830,12 @@ const Logbook = () => {
             </div>
 
             {/* Flight Map */}
-            <FlightMap 
-              flights={flights} 
-              onDateRangeChange={(dateRange) => setDateRangeFilter(dateRange)}
-            />
+            <FeatureGate feature={FeatureKey.LOGBOOK_WORLD_MAP_VIEW}>
+              <FlightMap 
+                flights={flights} 
+                onDateRangeChange={(dateRange) => setDateRangeFilter(dateRange)}
+              />
+            </FeatureGate>
 
             <div className="rounded-3xl border border-border/60 bg-card/95 shadow-xl shadow-aviation-navy/15 backdrop-blur">
               <div className="flex flex-wrap items-start justify-between gap-4 border-b border-border/60 px-6 py-6">

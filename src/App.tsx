@@ -16,6 +16,7 @@ import SubscriptionSuccess from "./pages/SubscriptionSuccess";
 import Admin from "./pages/Admin";
 import UserManagement from "./pages/UserManagement";
 import ManageAirlines from "./pages/ManageAirlines";
+import ManageSubscriptions from "./pages/ManageSubscriptions";
 import RouteDashboard from "./pages/RouteDashboard";
 import RouteBuilder from "./pages/Route";
 import EndorsementLibrary from "./pages/EndorsementLibrary";
@@ -44,6 +45,7 @@ const App = () => (
             <Route path="/admin" element={<Admin />} />
             <Route path="/admin/users" element={<UserManagement />} />
             <Route path="/admin/airlines" element={<ManageAirlines />} />
+            <Route path="/admin/subscriptions" element={<ManageSubscriptions />} />
             <Route path="/admin/routes" element={<RouteDashboard />} />
             <Route path="/admin/endorsements" element={<EndorsementLibrary />} />
             <Route path="/route" element={<RouteBuilder />} />

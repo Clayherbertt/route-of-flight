@@ -6,6 +6,9 @@ import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { useAuth } from "@/contexts/AuthContext";
 import { useNavigate } from "react-router-dom";
+import { useSubscription } from "@/hooks/useSubscription";
+import { hasFeature, FeatureKey } from "@/lib/featureGates";
+import { FeatureGate } from "@/components/feature-gating/FeatureGate";
 import { useRouteSteps } from "@/hooks/useRouteSteps";
 import { RouteWizard } from "@/components/RouteWizard";
 import { supabase } from "@/integrations/supabase/client";
@@ -2257,8 +2260,8 @@ const formatHtmlContent = (html: string) => {
   return (
     <div className="min-h-screen bg-gradient-to-b from-background via-aviation-light/40 to-background">
       <Header />
-      
-      <main className="container mx-auto px-4 py-6 max-w-7xl">
+      <FeatureGate feature={FeatureKey.ROUTE_BUILDER_ACCESS}>
+        <main className="container mx-auto px-4 py-6 max-w-7xl">
         {/* Modern Header Section */}
         <div className="mb-8">
           <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-6">
@@ -2746,6 +2749,7 @@ const formatHtmlContent = (html: string) => {
           currentUserRoute={studentRoute}
         />
       </main>
+      </FeatureGate>
     </div>
   );
 }

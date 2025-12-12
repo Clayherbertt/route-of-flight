@@ -18,6 +18,9 @@ import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/contexts/AuthContext";
 import { AddAircraftDialog } from "./AddAircraftDialog";
+import { useSubscription } from "@/hooks/useSubscription";
+import { hasFeature, FeatureKey } from "@/lib/featureGates";
+import { useNavigate } from "react-router-dom";
 
 // Helper component for editable number inputs that allows free editing
 const EditableNumberInput = ({ 
@@ -192,6 +195,8 @@ interface Aircraft {
 export const AddFlightDialog = ({ open, onOpenChange, onFlightAdded, editingFlight }: AddFlightDialogProps) => {
   const { user } = useAuth();
   const { toast } = useToast();
+  const navigate = useNavigate();
+  const { subscription } = useSubscription();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [aircraft, setAircraft] = useState<Aircraft[]>([]);
   const [showAircraftDialog, setShowAircraftDialog] = useState(false);
@@ -502,6 +507,31 @@ export const AddFlightDialog = ({ open, onOpenChange, onFlightAdded, editingFlig
 
         error = result.error;
       } else {
+        // Check logbook entry limit for Basic users
+        const hasUnlimitedEntries = hasFeature(subscription, FeatureKey.LOGBOOK_UNLIMITED_ENTRIES);
+        
+        if (!hasUnlimitedEntries) {
+          // Count existing entries for Basic users
+          const { count, error: countError } = await supabase
+            .from('flight_entries')
+            .select('*', { count: 'exact', head: true })
+            .eq('user_id', user.id);
+
+          if (countError) {
+            console.error('Error counting flights:', countError);
+          } else if (count !== null && count >= 3) {
+            toast({
+              title: "Entry Limit Reached",
+              description: "Basic plan allows up to 3 logbook entries. Upgrade to Pro or Pro Plus for unlimited entries.",
+              variant: "destructive",
+            });
+            setIsSubmitting(false);
+            onOpenChange(false);
+            navigate('/subscription');
+            return;
+          }
+        }
+
         // Insert new flight
         let result = await supabase
           .from('flight_entries')

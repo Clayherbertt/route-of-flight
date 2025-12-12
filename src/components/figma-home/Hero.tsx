@@ -1,5 +1,5 @@
 import { motion } from 'framer-motion';
-import { BookOpen, Database, Route, ChevronRight } from 'lucide-react';
+import { BookOpen, Database, Route, ChevronRight, CreditCard } from 'lucide-react';
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
@@ -132,7 +132,7 @@ export function Hero() {
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
           >
-            <Link to="/airlines">
+            <Link to="/subscription">
               <Button
                 variant="outline"
                 className="w-full sm:w-auto px-6 sm:px-8 py-3 sm:py-4 bg-white text-slate-700 border-2 text-sm sm:text-base"
@@ -140,8 +140,8 @@ export function Hero() {
                   borderColor: 'rgba(10, 46, 118, 0.2)'
                 }}
               >
-                Explore Airlines
-                <Database className="w-4 h-4 sm:w-5 sm:h-5" />
+                Plan/Pricing
+                <CreditCard className="w-4 h-4 sm:w-5 sm:h-5" />
               </Button>
             </Link>
           </motion.div>

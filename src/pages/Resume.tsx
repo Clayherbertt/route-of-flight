@@ -3,6 +3,8 @@ import Header from "@/components/layout/Header"
 import { useAuth } from "@/contexts/AuthContext"
 import { useNavigate } from "react-router-dom"
 import { useEffect } from "react"
+import { FeatureGate } from "@/components/feature-gating/FeatureGate"
+import { FeatureKey } from "@/lib/featureGates"
 
 export default function Resume() {
   const { user, loading } = useAuth()
@@ -34,15 +36,17 @@ export default function Resume() {
   return (
     <div className="min-h-screen bg-background">
       <Header />
-      <main className="container mx-auto px-6 py-8 max-w-5xl">
-        <div className="mb-6">
-          <h1 className="text-3xl font-bold mb-2">Resume Builder</h1>
-          <p className="text-muted-foreground">
-            Create a professional aviation resume. Fill out the form below and export it as a PDF.
-          </p>
-        </div>
-        <ResumeBuilder />
-      </main>
+      <FeatureGate feature={FeatureKey.RESUME_BUILDER_ACCESS}>
+        <main className="container mx-auto px-6 py-8 max-w-5xl">
+          <div className="mb-6">
+            <h1 className="text-3xl font-bold mb-2">Resume Builder</h1>
+            <p className="text-muted-foreground">
+              Create a professional aviation resume. Fill out the form below and export it as a PDF.
+            </p>
+          </div>
+          <ResumeBuilder />
+        </main>
+      </FeatureGate>
     </div>
   )
 }

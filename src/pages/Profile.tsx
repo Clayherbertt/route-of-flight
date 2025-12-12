@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react"
 import { useAuth } from "@/contexts/AuthContext"
 import { useIsAdmin } from "@/hooks/useIsAdmin"
+import { useSubscription } from "@/hooks/useSubscription"
 import { supabase } from "@/integrations/supabase/client"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
@@ -9,7 +10,7 @@ import { Separator } from "@/components/ui/separator"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog"
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog"
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -33,7 +34,8 @@ import {
   Edit,
   Save,
   X,
-  UserCircle
+  UserCircle,
+  Check
 } from "lucide-react"
 import Header from "@/components/layout/Header"
 import { useNavigate } from "react-router-dom"
@@ -66,6 +68,10 @@ export default function Profile() {
   // Account editing state
   const [isEditing, setIsEditing] = useState(false)
   const [showAccountDialog, setShowAccountDialog] = useState(false)
+  const [showSubscriptionDialog, setShowSubscriptionDialog] = useState(false)
+  const [currentPlan, setCurrentPlan] = useState<any>(null)
+  const [loadingPlan, setLoadingPlan] = useState(false)
+  const { subscription } = useSubscription()
   const [profileData, setProfileData] = useState({
     fullName: '',
     email: '',
@@ -81,6 +87,50 @@ export default function Profile() {
       fetchProfileData()
     }
   }, [user])
+
+  // Fetch current plan when subscription changes
+  const fetchCurrentPlan = async (planSlug: string) => {
+    try {
+      setLoadingPlan(true)
+      const { data, error } = await supabase
+        .from('subscription_plans')
+        .select('*')
+        .eq('slug', planSlug)
+        .eq('is_active', true)
+        .single()
+
+      if (error) throw error
+      setCurrentPlan(data)
+    } catch (error: any) {
+      console.error('Error fetching current plan:', error)
+    } finally {
+      setLoadingPlan(false)
+    }
+  }
+
+  useEffect(() => {
+    if (subscription?.current_plan_slug) {
+      fetchCurrentPlan(subscription.current_plan_slug)
+    }
+  }, [subscription])
+
+  // Fetch plan when dialog opens
+  useEffect(() => {
+    if (showSubscriptionDialog && subscription?.current_plan_slug) {
+      fetchCurrentPlan(subscription.current_plan_slug)
+    }
+  }, [showSubscriptionDialog, subscription])
+
+  const formatPrice = (cents: number | null): string => {
+    if (cents === null) return 'Free'
+    return `$${(cents / 100).toFixed(2)}`
+  }
+
+  const isInTrial = () => {
+    if (!subscription?.trial_end_at) return false
+    const trialEnd = new Date(subscription.trial_end_at)
+    return trialEnd > new Date()
+  }
 
   const fetchProfileData = async () => {
     if (!user) return
@@ -395,7 +445,7 @@ export default function Profile() {
                     <Plane className="mr-2 h-4 w-4" />
                     Aircraft
                   </DropdownMenuItem>
-                  <DropdownMenuItem onClick={() => navigate('/subscription')}>
+                  <DropdownMenuItem onClick={() => setShowSubscriptionDialog(true)}>
                     <CreditCard className="mr-2 h-4 w-4" />
                     Subscription
                   </DropdownMenuItem>
@@ -502,63 +552,6 @@ export default function Profile() {
           </div>
             </div>
 
-        {/* Subscription Section */}
-        <div className="grid md:grid-cols-1 gap-6">
-            {/* Subscription Status */}
-            <Card>
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2">
-                  <CreditCard className="h-5 w-5" />
-                Subscription
-                </CardTitle>
-                <CardDescription>
-                Manage your premium features
-                </CardDescription>
-              </CardHeader>
-            <CardContent className="space-y-4">
-              <div className="flex items-center justify-between">
-                <div>
-                  <Badge variant="outline" className="px-3 py-1 mb-2">
-                        Free Plan
-                      </Badge>
-                  <p className="text-sm text-muted-foreground">
-                        Upgrade for advanced features
-                  </p>
-                </div>
-                <Button
-                  variant="default"
-                  onClick={() => navigate('/subscription')}
-                >
-                  Upgrade
-                </Button>
-                    </div>
-              
-              <Separator />
-                    
-                    <div className="space-y-2">
-                <p className="text-sm font-medium">Premium Features:</p>
-                <ul className="text-sm text-muted-foreground space-y-1.5">
-                        <li className="flex items-center gap-2">
-                          <div className="w-1.5 h-1.5 bg-primary rounded-full" />
-                    Advanced flight analytics
-                        </li>
-                        <li className="flex items-center gap-2">
-                          <div className="w-1.5 h-1.5 bg-primary rounded-full" />
-                          Unlimited logbook entries
-                        </li>
-                        <li className="flex items-center gap-2">
-                          <div className="w-1.5 h-1.5 bg-primary rounded-full" />
-                          Export capabilities (PDF, CSV)
-                        </li>
-                        <li className="flex items-center gap-2">
-                          <div className="w-1.5 h-1.5 bg-primary rounded-full" />
-                    Priority support
-                        </li>
-                      </ul>
-                    </div>
-            </CardContent>
-          </Card>
-                  </div>
                   
         {/* Navigation Links - Mobile */}
         <div className="mt-6 md:hidden">
@@ -584,7 +577,7 @@ export default function Profile() {
                   <Button
                   variant="ghost"
                   className="w-full justify-start"
-                    onClick={() => navigate('/subscription')}
+                    onClick={() => setShowSubscriptionDialog(true)}
                   >
                   <Star className="mr-3 h-4 w-4" />
                   Subscription
@@ -786,6 +779,146 @@ export default function Profile() {
               )}
             </div>
           </div>
+        </DialogContent>
+      </Dialog>
+
+      {/* Subscription Dialog */}
+      <Dialog open={showSubscriptionDialog} onOpenChange={setShowSubscriptionDialog}>
+        <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2">
+              <CreditCard className="h-5 w-5" />
+              Current Subscription Plan
+            </DialogTitle>
+            <DialogDescription>
+              Your current subscription plan and features
+            </DialogDescription>
+          </DialogHeader>
+          
+          {loadingPlan ? (
+            <div className="flex items-center justify-center py-8">
+              <div className="text-muted-foreground">Loading plan details...</div>
+            </div>
+          ) : currentPlan ? (
+            <div className="space-y-4 mt-4">
+              {/* Plan Name and Status */}
+              <div className="p-4 bg-muted/50 rounded-lg border">
+                <div className="flex items-center justify-between mb-2">
+                  <h3 className="text-2xl font-bold">{currentPlan.name}</h3>
+                  {subscription?.subscribed ? (
+                    <Badge variant="default">Active</Badge>
+                  ) : (
+                    <Badge variant="outline">Free</Badge>
+                  )}
+                </div>
+                <p className="text-muted-foreground">{currentPlan.description}</p>
+              </div>
+
+              {/* Trial Status */}
+              {isInTrial() && subscription?.current_plan_slug === 'basic' && (
+                <div className="p-4 bg-blue-50 dark:bg-blue-950 rounded-lg border border-blue-200 dark:border-blue-800">
+                  <div className="flex items-center gap-2 mb-1">
+                    <Clock className="h-4 w-4 text-blue-600 dark:text-blue-400" />
+                    <span className="font-semibold text-blue-900 dark:text-blue-100">7-Day Free Trial Active</span>
+                  </div>
+                  <p className="text-sm text-blue-700 dark:text-blue-300">
+                    Your trial expires on {subscription.trial_end_at ? new Date(subscription.trial_end_at).toLocaleDateString() : ''}. 
+                    You currently have access to Route Builder and Résumé Builder.
+                  </p>
+                </div>
+              )}
+
+              {/* Pricing */}
+              {!currentPlan.is_free && (
+                <div className="p-4 bg-muted/50 rounded-lg border">
+                  <h4 className="font-semibold mb-2">Pricing</h4>
+                  <div className="space-y-1">
+                    <div className="flex justify-between">
+                      <span className="text-muted-foreground">Monthly:</span>
+                      <span className="font-medium">{formatPrice(currentPlan.monthly_price_cents)}/month</span>
+                    </div>
+                    {currentPlan.yearly_price_cents && (
+                      <div className="flex justify-between">
+                        <span className="text-muted-foreground">Yearly:</span>
+                        <span className="font-medium">{formatPrice(currentPlan.yearly_price_cents)}/year</span>
+                      </div>
+                    )}
+                  </div>
+                </div>
+              )}
+
+              {/* Features */}
+              {currentPlan.features && currentPlan.features.length > 0 && (
+                <div className="p-4 bg-muted/50 rounded-lg border">
+                  <h4 className="font-semibold mb-3">What's Included</h4>
+                  <ul className="space-y-2">
+                    {currentPlan.features.map((feature: string, idx: number) => (
+                      <li key={idx} className="flex items-start gap-2">
+                        <Check className="h-4 w-4 text-primary flex-shrink-0 mt-0.5" />
+                        <span className="text-sm">{feature}</span>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              )}
+
+              {/* Limitations */}
+              {currentPlan.limitations && currentPlan.limitations.length > 0 && (
+                <div className="p-4 bg-muted/50 rounded-lg border">
+                  <h4 className="font-semibold mb-3">Limitations</h4>
+                  <ul className="space-y-2">
+                    {currentPlan.limitations.map((limitation: string, idx: number) => (
+                      <li key={idx} className="flex items-start gap-2">
+                        <X className="h-4 w-4 text-destructive flex-shrink-0 mt-0.5" />
+                        <span className="text-sm text-muted-foreground">{limitation}</span>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              )}
+            </div>
+          ) : (
+            <div className="text-center py-8">
+              <p className="text-muted-foreground">Unable to load plan details</p>
+            </div>
+          )}
+
+          <DialogFooter className="flex flex-col sm:flex-row gap-2">
+            <Button
+              variant="outline"
+              onClick={() => setShowSubscriptionDialog(false)}
+              className="w-full sm:w-auto"
+            >
+              Close
+            </Button>
+            {subscription?.current_plan_slug && 
+             (subscription.current_plan_slug === 'pro' || subscription.current_plan_slug === 'pro-plus') && 
+             subscription?.subscribed && (
+              <Button
+                variant="destructive"
+                onClick={() => {
+                  // TODO: Implement cancel plan functionality
+                  toast({
+                    title: "Cancel Plan",
+                    description: "Plan cancellation functionality coming soon. Please contact support to cancel your subscription.",
+                    variant: "default"
+                  })
+                }}
+                className="w-full sm:w-auto"
+              >
+                Cancel Plan
+              </Button>
+            )}
+            <Button
+              onClick={() => {
+                setShowSubscriptionDialog(false)
+                navigate('/subscription')
+              }}
+              className="w-full sm:w-auto"
+            >
+              Change Plan
+            </Button>
+          </DialogFooter>
         </DialogContent>
       </Dialog>
     </div>
