@@ -1,11 +1,14 @@
 import { motion } from 'framer-motion';
 import { ChevronRight, Sparkles } from 'lucide-react';
 import { useState } from 'react';
+import { Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
+import { useAuth } from '@/contexts/AuthContext';
 
 export function CTASection() {
   const [isPrimaryHovered, setIsPrimaryHovered] = useState(false);
   const [isSecondaryHovered, setIsSecondaryHovered] = useState(false);
+  const { user } = useAuth();
 
   const primaryColor = 'rgb(10, 46, 118)';
   const primaryColor70 = 'rgba(10, 46, 118, 0.7)';
@@ -67,29 +70,33 @@ export function CTASection() {
           viewport={{ once: true }}
           transition={{ duration: 0.6, delay: 0.4 }}
         >
-          <motion.div
-            className="w-full sm:w-auto"
-            whileHover={{ scale: 1.05 }}
-            whileTap={{ scale: 0.95 }}
-            onMouseEnter={() => setIsPrimaryHovered(true)}
-            onMouseLeave={() => setIsPrimaryHovered(false)}
-          >
-            <Button
-              className="w-full sm:w-auto px-6 sm:px-8 py-3 sm:py-4 text-white shadow-lg text-sm sm:text-base"
-              style={{
-                backgroundColor: primaryColor,
-                boxShadow: `0 10px 30px ${primaryColor70}`
-              }}
+          {!user && (
+            <motion.div
+              className="w-full sm:w-auto"
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+              onMouseEnter={() => setIsPrimaryHovered(true)}
+              onMouseLeave={() => setIsPrimaryHovered(false)}
             >
-              Get Started Free
-              <motion.div
-                animate={{ x: isPrimaryHovered ? 5 : 0 }}
-                transition={{ duration: 0.3 }}
-              >
-                <ChevronRight className="w-4 h-4 sm:w-5 sm:h-5" />
-              </motion.div>
-            </Button>
-          </motion.div>
+              <Link to="/signin">
+                <Button
+                  className="w-full sm:w-auto px-6 sm:px-8 py-3 sm:py-4 text-white shadow-lg text-sm sm:text-base"
+                  style={{
+                    backgroundColor: primaryColor,
+                    boxShadow: `0 10px 30px ${primaryColor70}`
+                  }}
+                >
+                  Get Started Free
+                  <motion.div
+                    animate={{ x: isPrimaryHovered ? 5 : 0 }}
+                    transition={{ duration: 0.3 }}
+                  >
+                    <ChevronRight className="w-4 h-4 sm:w-5 sm:h-5" />
+                  </motion.div>
+                </Button>
+              </Link>
+            </motion.div>
+          )}
 
           <motion.div
             className="w-full sm:w-auto"

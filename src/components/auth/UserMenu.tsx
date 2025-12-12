@@ -10,7 +10,7 @@ import {
 import { Avatar, AvatarFallback } from "@/components/ui/avatar"
 import { useAuth } from "@/contexts/AuthContext"
 import { useIsAdmin } from "@/hooks/useIsAdmin"
-import { User, Settings, LogOut, Shield, CreditCard } from "lucide-react"
+import { User, Settings, LogOut, Shield, CreditCard, Book, Building2, Route, FileText } from "lucide-react"
 import { useNavigate } from "react-router-dom"
 
 export function UserMenu() {
@@ -41,6 +41,22 @@ export function UserMenu() {
     navigate("/subscription")
   }
 
+  const handleLogbook = () => {
+    navigate("/logbook")
+  }
+
+  const handleAirlines = () => {
+    navigate("/airlines")
+  }
+
+  const handleRouteBuilder = () => {
+    navigate("/route")
+  }
+
+  const handleResumeBuilder = () => {
+    navigate("/resume")
+  }
+
   if (!user) return null
 
   const userInitials = user.email
@@ -68,6 +84,23 @@ export function UserMenu() {
             </p>
           </div>
         </DropdownMenuLabel>
+        <DropdownMenuSeparator />
+        <DropdownMenuItem onClick={handleLogbook}>
+          <Book className="mr-2 h-4 w-4" />
+          <span>Logbook</span>
+        </DropdownMenuItem>
+        <DropdownMenuItem onClick={handleAirlines}>
+          <Building2 className="mr-2 h-4 w-4" />
+          <span>Airlines</span>
+        </DropdownMenuItem>
+        <DropdownMenuItem onClick={handleRouteBuilder}>
+          <Route className="mr-2 h-4 w-4" />
+          <span>Route Builder</span>
+        </DropdownMenuItem>
+        <DropdownMenuItem onClick={handleResumeBuilder}>
+          <FileText className="mr-2 h-4 w-4" />
+          <span>Resume Builder</span>
+        </DropdownMenuItem>
         <DropdownMenuSeparator />
         <DropdownMenuItem onClick={handleProfile}>
           <User className="mr-2 h-4 w-4" />

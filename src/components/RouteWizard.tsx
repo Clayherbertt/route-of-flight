@@ -11,6 +11,7 @@ interface RouteWizardProps {
   onClose: () => void;
   onStepAdd: (stepId: string, wizardStepKey?: string) => Promise<void>;
   onStepRemove?: (stepId: string) => Promise<void>; // Optional callback to remove steps
+  onResetRoute?: () => Promise<void>; // Optional callback to reset route
   availableSteps: any[];
   currentUserRoute?: Array<{ stepId: string; [key: string]: any }>; // User's current route steps
 }
@@ -102,7 +103,7 @@ const WIZARD_STEPS: WizardStep[] = [
   }
 ];
 
-export function RouteWizard({ isOpen, onClose, onStepAdd, onStepRemove, availableSteps, currentUserRoute = [] }: RouteWizardProps) {
+export function RouteWizard({ isOpen, onClose, onStepAdd, onStepRemove, onResetRoute, availableSteps, currentUserRoute = [] }: RouteWizardProps) {
   const [showIntro, setShowIntro] = useState(true);
   const [currentStep, setCurrentStep] = useState(0);
   const [selectedSteps, setSelectedSteps] = useState<Record<string, string[]>>({});
@@ -225,11 +226,18 @@ export function RouteWizard({ isOpen, onClose, onStepAdd, onStepRemove, availabl
     );
     
     // Auto-select initial tasks on first step (only once when wizard first opens)
+    // Also ensure they're always selected - they're required
     if (currentStep === 0 && currentWizardStep.id === "initial-tasks") {
       const stepKey = currentWizardStep.id;
-      if (filtered.length > 0 && (selectedSteps[stepKey] || []).length === 0) {
-        const initialTaskIds = filtered.map(step => step.id);
-        setSelectedSteps(prev => ({ ...prev, [stepKey]: initialTaskIds }));
+      const initialTaskIds = filtered.map(step => step.id);
+      const currentSelected = selectedSteps[stepKey] || [];
+      
+      // Always ensure all initial tasks are selected (they're required)
+      if (filtered.length > 0) {
+        const allSelected = [...new Set([...currentSelected, ...initialTaskIds])];
+        if (allSelected.length !== currentSelected.length || allSelected.some(id => !initialTaskIds.includes(id))) {
+          setSelectedSteps(prev => ({ ...prev, [stepKey]: initialTaskIds }));
+        }
       }
     }
     
@@ -284,13 +292,54 @@ export function RouteWizard({ isOpen, onClose, onStepAdd, onStepRemove, availabl
     const selected = selectedSteps[stepKey] || [];
     const initialSelected = initialSelectedSteps[stepKey] || [];
     
+    // For initial-tasks, ensure ALL selected steps are added to the route
+    if (stepKey === 'initial-tasks') {
+      console.log('✅ Processing initial tasks step:', {
+        selected: selected,
+        currentUserRoute: currentUserRoute.map(ur => ur.stepId)
+      });
+      
+      // Ensure all initial tasks are added to the route
+      for (const stepId of selected) {
+        // Check if step is already in user's route
+        const isInRoute = currentUserRoute.some(ur => ur.stepId === stepId);
+        if (!isInRoute) {
+          console.log('➕ Adding initial task to route:', stepId);
+          try {
+            await onStepAdd(stepId, stepKey);
+            console.log('✅ Successfully added initial task:', stepId);
+          } catch (error) {
+            console.error('❌ Failed to add initial task:', stepId, error);
+            toast.error(`Failed to save step. Please try again.`);
+          }
+        } else {
+          console.log('✓ Initial task already in route:', stepId);
+        }
+      }
+      
+      // Update initial state
+      setInitialSelectedSteps(prev => ({
+        ...prev,
+        [stepKey]: selected
+      }));
+      
+      // Move to next step
+      if (currentStep < wizardSteps.length - 1) {
+        setCurrentStep(currentStep + 1);
+      } else {
+        await syncAllSteps();
+        onClose();
+      }
+      return;
+    }
+    
     // Find steps that were deselected (were in initial but not in current)
     const deselected = initialSelected.filter(id => !selected.includes(id));
     
     // Find steps that were newly selected (not in initial but in current)
     const newlySelected = selected.filter(id => !initialSelected.includes(id));
     
-    // Remove deselected steps
+    // Remove deselected steps (only for non-initial-tasks)
     if (onStepRemove && deselected.length > 0) {
       for (const stepId of deselected) {
         await onStepRemove(stepId);
@@ -299,7 +348,13 @@ export function RouteWizard({ isOpen, onClose, onStepAdd, onStepRemove, availabl
     
     // Add newly selected steps with wizard step key for ordering
     for (const stepId of newlySelected) {
-      await onStepAdd(stepId, stepKey);
+      try {
+        await onStepAdd(stepId, stepKey);
+        console.log('✅ Successfully added step:', stepId);
+      } catch (error) {
+        console.error('❌ Failed to add step:', stepId, error);
+        toast.error(`Failed to save step. Please try again.`);
+      }
     }
     
     // Update initial state to reflect current state for next step
@@ -319,28 +374,60 @@ export function RouteWizard({ isOpen, onClose, onStepAdd, onStepRemove, availabl
   
   // Sync all steps when wizard completes
   const syncAllSteps = async () => {
+    console.log('🔄 Syncing all steps on wizard completion');
     // Compare all wizard steps
     for (const wizardStep of wizardSteps) {
       const stepKey = wizardStep.id;
       const selected = selectedSteps[stepKey] || [];
       const initialSelected = initialSelectedSteps[stepKey] || [];
       
-      // Find steps that were deselected
-      const deselected = initialSelected.filter(id => !selected.includes(id));
+      console.log(`📋 Wizard step "${stepKey}":`, {
+        selected: selected,
+        initialSelected: initialSelected,
+        availableSteps: getAvailableStepsForCategory(wizardStep.categories).map(s => s.id)
+      });
       
-      // Find steps that were newly selected
-      const newlySelected = selected.filter(id => !initialSelected.includes(id));
+      // For initial-tasks, ensure ALL selected steps are added (they're required)
+      if (stepKey === 'initial-tasks') {
+        console.log('✅ Initial tasks - ensuring all selected are added:', selected);
+        for (const stepId of selected) {
+          // Check if step is already in user's route
+          const isInRoute = currentUserRoute.some(ur => ur.stepId === stepId);
+          if (!isInRoute) {
+            console.log('➕ Adding initial task to route:', stepId);
+            await onStepAdd(stepId, stepKey);
+          } else {
+            console.log('✓ Initial task already in route:', stepId);
+          }
+        }
+        continue; // Skip the rest of the logic for initial-tasks
+      }
+      
+      // For other steps, ensure all currently selected steps are in the route
+      // This handles the case where user selects items but closes wizard without clicking Next
+      for (const stepId of selected) {
+        const isInRoute = currentUserRoute.some(ur => ur.stepId === stepId);
+        if (!isInRoute) {
+          console.log('➕ Adding step to route (from sync):', stepId);
+          try {
+            await onStepAdd(stepId, stepKey);
+            console.log('✅ Successfully added step:', stepId);
+          } catch (error) {
+            console.error('❌ Failed to add step:', stepId, error);
+            toast.error(`Failed to save step. Please check the console for details.`);
+          }
+        }
+      }
+      
+      // Find steps that were deselected (were in initial but not in current)
+      const deselected = initialSelected.filter(id => !selected.includes(id));
       
       // Remove deselected steps
       if (onStepRemove && deselected.length > 0) {
         for (const stepId of deselected) {
+          console.log('➖ Removing deselected step:', stepId);
           await onStepRemove(stepId);
         }
-      }
-      
-      // Add newly selected steps
-      for (const stepId of newlySelected) {
-        await onStepAdd(stepId);
       }
     }
   };
@@ -356,9 +443,21 @@ export function RouteWizard({ isOpen, onClose, onStepAdd, onStepRemove, availabl
   };
 
   // Reset intro screen when dialog closes
-  const handleClose = async () => {
-    // Before closing, sync all steps to ensure deselected items are removed
-    await syncAllSteps();
+  const handleClose = async (open?: boolean) => {
+    // If dialog is being opened, don't do anything
+    if (open === true) {
+      return;
+    }
+    
+    console.log('🔄 Wizard closing - syncing all steps...');
+    try {
+      // Before closing, sync all steps to ensure deselected items are removed
+      await syncAllSteps();
+      console.log('✅ All steps synced successfully');
+    } catch (error) {
+      console.error('❌ Error syncing steps on close:', error);
+      toast.error('Some steps may not have been saved. Please try again.');
+    }
     
     setShowIntro(true);
     setCurrentStep(0);
@@ -454,9 +553,9 @@ export function RouteWizard({ isOpen, onClose, onStepAdd, onStepRemove, availabl
             return (
               <Card 
                 key={step.id}
-                className={`transition-all hover:shadow-md ${
+                className={`transition-all ${
                   selectedForThisStep.includes(step.id) ? 'ring-2 ring-primary' : ''
-                } ${currentWizardStep.id === 'initial-tasks' ? 'cursor-not-allowed opacity-70' : 'cursor-pointer'}`}
+                } ${currentWizardStep.id === 'initial-tasks' ? 'cursor-not-allowed opacity-100 bg-primary/5 border-primary/20' : 'cursor-pointer hover:shadow-md'}`}
                 onClick={currentWizardStep.id === 'initial-tasks' ? undefined : (e) => handleStepSelect(step.id, e)}
               >
                 <CardContent className="p-4">
@@ -471,9 +570,16 @@ export function RouteWizard({ isOpen, onClose, onStepAdd, onStepRemove, availabl
                         </Badge>
                       </div>
                     </div>
-                    {selectedForThisStep.includes(step.id) && (
-                      <Check className="h-5 w-5 text-primary" />
-                    )}
+                    <div className="flex items-center gap-2">
+                      {selectedForThisStep.includes(step.id) && (
+                        <Check className="h-5 w-5 text-primary" />
+                      )}
+                      {currentWizardStep.id === 'initial-tasks' && (
+                        <Badge variant="destructive" className="text-xs">
+                          Required
+                        </Badge>
+                      )}
+                    </div>
                   </div>
                 </CardContent>
               </Card>
@@ -506,70 +612,110 @@ export function RouteWizard({ isOpen, onClose, onStepAdd, onStepRemove, availabl
               </DialogDescription>
             </DialogHeader>
 
-            <div className="space-y-6 py-4">
-              <Card className="border-2 border-primary/20">
-                <CardContent className="p-8">
-                  <div className="space-y-6 text-center">
-                    <div className="flex justify-center">
-                      <div className="p-4 bg-primary/10 rounded-full">
-                        <Compass className="h-12 w-12 text-primary" />
+            <div className="relative py-8">
+              {/* Background gradient effect */}
+              <div className="absolute inset-0 bg-gradient-to-br from-primary/5 via-background to-primary/5 rounded-lg -z-10" />
+              
+              <div className="relative space-y-8">
+                {/* Hero Section */}
+                <div className="text-center space-y-6">
+                  <div className="flex justify-center">
+                    <div className="relative">
+                      <div className="absolute inset-0 bg-primary/20 rounded-full blur-xl" />
+                      <div className="relative p-6 bg-gradient-to-br from-primary/10 to-primary/5 rounded-full border-2 border-primary/20">
+                        <Compass className="h-16 w-16 text-primary" />
                       </div>
                     </div>
-                    
-                    <div className="space-y-4">
-                      <h3 className="text-2xl font-bold text-foreground">
-                        Welcome to the Route Builder
-                      </h3>
-                      <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-                        This wizard will help you create a personalized career roadmap tailored to your aviation goals. 
-                        We'll guide you through selecting the training, certifications, and career milestones that will 
-                        take you from where you are today to your dream airline job.
-                      </p>
-                    </div>
+                  </div>
+                  
+                  <div className="space-y-4 max-w-2xl mx-auto">
+                    <h3 className="text-3xl md:text-4xl font-bold text-foreground tracking-tight">
+                      Welcome to the Route Builder
+                    </h3>
+                    <p className="text-base md:text-lg text-muted-foreground leading-relaxed">
+                      Create your personalized career roadmap tailored to your aviation goals. 
+                      We'll guide you through selecting the training, certifications, and career milestones 
+                      that will take you from where you are today to your dream airline job.
+                    </p>
+                  </div>
+                </div>
 
-                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mt-8">
+                {/* Feature Cards */}
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-12">
+                  <div className="group relative p-6 rounded-xl border border-border/60 bg-card/50 hover:bg-card hover:border-primary/30 transition-all duration-300 hover:shadow-lg">
+                    <div className="flex flex-col items-center text-center space-y-4">
+                      <div className="p-4 bg-gradient-to-br from-primary/10 to-primary/5 rounded-xl group-hover:scale-110 transition-transform duration-300">
+                        <Target className="h-8 w-8 text-primary" />
+                      </div>
                       <div className="space-y-2">
-                        <div className="p-3 bg-primary/10 rounded-lg w-fit mx-auto">
-                          <Target className="h-6 w-6 text-primary" />
-                        </div>
-                        <h4 className="font-semibold">Set Your Goals</h4>
-                        <p className="text-sm text-muted-foreground">
+                        <h4 className="font-semibold text-lg">Set Your Goals</h4>
+                        <p className="text-sm text-muted-foreground leading-relaxed">
                           Define your career path and training objectives
                         </p>
                       </div>
+                    </div>
+                  </div>
+                  
+                  <div className="group relative p-6 rounded-xl border border-border/60 bg-card/50 hover:bg-card hover:border-primary/30 transition-all duration-300 hover:shadow-lg">
+                    <div className="flex flex-col items-center text-center space-y-4">
+                      <div className="p-4 bg-gradient-to-br from-primary/10 to-primary/5 rounded-xl group-hover:scale-110 transition-transform duration-300">
+                        <GraduationCap className="h-8 w-8 text-primary" />
+                      </div>
                       <div className="space-y-2">
-                        <div className="p-3 bg-primary/10 rounded-lg w-fit mx-auto">
-                          <GraduationCap className="h-6 w-6 text-primary" />
-                        </div>
-                        <h4 className="font-semibold">Plan Your Training</h4>
-                        <p className="text-sm text-muted-foreground">
+                        <h4 className="font-semibold text-lg">Plan Your Training</h4>
+                        <p className="text-sm text-muted-foreground leading-relaxed">
                           Select certifications and courses you need
                         </p>
                       </div>
+                    </div>
+                  </div>
+                  
+                  <div className="group relative p-6 rounded-xl border border-border/60 bg-card/50 hover:bg-card hover:border-primary/30 transition-all duration-300 hover:shadow-lg">
+                    <div className="flex flex-col items-center text-center space-y-4">
+                      <div className="p-4 bg-gradient-to-br from-primary/10 to-primary/5 rounded-xl group-hover:scale-110 transition-transform duration-300">
+                        <Plane className="h-8 w-8 text-primary" />
+                      </div>
                       <div className="space-y-2">
-                        <div className="p-3 bg-primary/10 rounded-lg w-fit mx-auto">
-                          <Plane className="h-6 w-6 text-primary" />
-                        </div>
-                        <h4 className="font-semibold">Track Progress</h4>
-                        <p className="text-sm text-muted-foreground">
+                        <h4 className="font-semibold text-lg">Track Progress</h4>
+                        <p className="text-sm text-muted-foreground leading-relaxed">
                           Monitor your journey to the airlines
                         </p>
                       </div>
                     </div>
-
-                    <div className="pt-6">
-                      <Button 
-                        onClick={handleBeginWizard}
-                        size="lg"
-                        className="gap-2 px-8 py-6 text-lg"
-                      >
-                        Begin Route Builder
-                        <ChevronRight className="h-5 w-5" />
-                      </Button>
-                    </div>
                   </div>
-                </CardContent>
-              </Card>
+                </div>
+
+                {/* CTA Section */}
+                <div className="pt-8 flex flex-col sm:flex-row gap-3 justify-center items-center">
+                  <Button 
+                    onClick={handleBeginWizard}
+                    size="lg"
+                    className="gap-2 px-8 py-6 text-lg font-semibold shadow-lg hover:shadow-xl transition-all duration-300"
+                  >
+                    Begin Route Builder
+                    <ChevronRight className="h-5 w-5" />
+                  </Button>
+                  {/* Only show reset button if user has an existing route (not on intro screen for new users) */}
+                  {currentUserRoute.length > 0 && onResetRoute && (
+                    <Button 
+                      onClick={async () => {
+                        const confirmed = window.confirm(
+                          'Are you sure you want to reset your route? This will deselect all previously selected steps and tasks. This action cannot be undone.'
+                        );
+                        if (confirmed) {
+                          await onResetRoute();
+                          onClose();
+                        }
+                      }}
+                      variant="outline"
+                      size="lg"
+                      className="gap-2 px-8 py-6 text-lg"
+                    >
+                      Reset Route
+                    </Button>
+                  )}
+                </div>
+              </div>
             </div>
           </>
         ) : (

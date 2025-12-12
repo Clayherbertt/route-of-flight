@@ -689,6 +689,72 @@ export default function RouteBuilder() {
     );
   };
 
+  // Reset route handler
+  const handleResetRoute = async () => {
+    if (!user) return;
+    
+    // Confirm with user
+    const confirmed = window.confirm(
+      'Are you sure you want to reset your route? This will deselect all previously selected steps and tasks, and clear all progress. This action cannot be undone.'
+    );
+    
+    if (!confirmed) return;
+    
+    try {
+      // Get all route step IDs that belong to this user before deleting
+      const { data: userRoutes } = await supabase
+        .from('user_routes')
+        .select('route_step_id')
+        .eq('user_id', user.id);
+      
+      const routeStepIds = userRoutes?.map(ur => ur.route_step_id) || [];
+      
+      // Delete all user_routes for this user
+      const { error } = await supabase
+        .from('user_routes')
+        .delete()
+        .eq('user_id', user.id);
+      
+      if (error) {
+        console.error('❌ Error resetting route:', error);
+        toast.error('Failed to reset route. Please try again.');
+        return;
+      }
+      
+      // Clear ALL checked status in route_step_details for the user's route steps
+      // This ensures that when steps are re-added, they start at 0% with nothing checked
+      if (routeStepIds.length > 0) {
+        const { error: updateError } = await supabase
+          .from('route_step_details')
+          .update({ checked: false })
+          .in('route_step_id', routeStepIds);
+        
+        if (updateError) {
+          console.warn('⚠️ Error clearing checked status:', updateError);
+          // Don't fail the reset if this fails - the main reset (deleting user_routes) succeeded
+        } else {
+          console.log('✅ Cleared all checked status for reset route');
+        }
+      }
+      
+      // Reset all state
+      setStudentRoute([]);
+      setHasCompletedWizard(false);
+      setShowWizard(false);
+      setExpandedSteps(new Set());
+      hasCheckedPrivatePilotTaskRef.current = false;
+      manuallyUncheckedPrivatePilotRef.current = false;
+      
+      toast.success('Route reset successfully. All progress has been cleared. You can now start building a new route.');
+      
+      // Reload the route data
+      setHasCheckedForExistingRoute(false);
+    } catch (error) {
+      console.error('❌ Error resetting route:', error);
+      toast.error('Failed to reset route. Please try again.');
+    }
+  };
+
   // Load existing user route on component mount
   useEffect(() => {
     if (!user) return;
@@ -811,16 +877,41 @@ export default function RouteBuilder() {
             return true;
           });
 
+          console.log('🔍 Loading user routes:', {
+            totalUserRoutes: uniqueUserRoutes.length,
+            routeStepIds: uniqueUserRoutes.map(ur => ur.route_step_id),
+            routeTitles: uniqueUserRoutes.map(ur => {
+              const step = routeSteps.find(s => s.id === ur.route_step_id);
+              return step ? `${step.title} (category: ${step.category})` : 'NOT FOUND';
+            })
+          });
+
           for (const userRoute of uniqueUserRoutes) {
             const step = routeSteps.find(s => s.id === userRoute.route_step_id);
-            if (step) {
-              // Calculate task progress from flight log data
-              const taskProgress = allFlights && allFlights.length > 0
-                ? await calculateTaskProgressFromFlights(step, allFlights, aircraftFeatureMap)
-                : {};
+            if (!step) {
+              console.warn('⚠️ Step not found for route_step_id:', userRoute.route_step_id);
+              continue;
+            }
+            
+            console.log('📋 Processing step:', {
+              title: step.title,
+              category: step.category,
+              route_step_id: userRoute.route_step_id
+            });
+            
+            // For initial tasks, always start at 0% - don't calculate progress from flights
+            const isInitialTask = step.title === 'Medical Certification' || step.title === 'Initial Training Preparation';
+            
+            // Calculate task progress from flight log data (skip for initial tasks)
+            const taskProgress = (isInitialTask || !allFlights || allFlights.length === 0)
+              ? {}
+              : await calculateTaskProgressFromFlights(step, allFlights, aircraftFeatureMap);
 
-              // Initialize tasks - use database state for manually-only tasks, otherwise use calculated or default to false
-              step.details.forEach(detail => {
+            // Initialize tasks - for initial tasks (Medical Certification, Initial Training Preparation), 
+            // always start at 0% with nothing checked when loading from database
+            // This ensures reset routes start fresh
+            
+            step.details.forEach(detail => {
                 // All tasks in Medical Certification, Initial Training Preparation, and Cadet Programs must be manually checked
                 const isMedicalOrInitialTrainingStep = step.title === 'Medical Certification' || step.title === 'Initial Training Preparation';
                 const isCadetProgramStep = step.category === 'Cadet Programs';
@@ -853,42 +944,55 @@ export default function RouteBuilder() {
                                        isDay100NMTask || isNight100NMTask2 || isSoloOrPICTask || is300NMTask || isNightVFRControlledTask || isPracticalTest2MonthsTask || isCertificateCheckRideTask;
                 
                 if (detail.id) {
-                  if (isManuallyOnly) {
-                    // For manually-only tasks, always use database state
-                    const dbChecked = databaseCheckedTasks.get(detail.id) ?? databaseCheckedTasks.get(detail.title) ?? false;
-                    taskProgress[detail.id] = dbChecked;
-                    console.log('🔒 Loading manually-only task from database:', detail.title, 'checked:', dbChecked);
+                  // For initial tasks, always start at 0% - ignore database checked status
+                  if (isInitialTask) {
+                    taskProgress[detail.id] = false;
+                    console.log('🔄 Initial task - starting at 0%:', detail.title);
+                  } else if (isManuallyOnly) {
+                    // For manually-only tasks, always start at false (unchecked)
+                    // They can only be checked by the user manually, not from database state
+                    taskProgress[detail.id] = false;
+                    console.log('🔒 Manually-only task - starting at 0%:', detail.title);
                   } else if (!(detail.id in taskProgress)) {
                     // For other tasks, use database state if available, otherwise false
                     const dbChecked = databaseCheckedTasks.get(detail.id) ?? databaseCheckedTasks.get(detail.title);
                     taskProgress[detail.id] = dbChecked !== undefined ? dbChecked : false;
                   }
                 }
-              });
+            });
 
-              // Recalculate order number based on wizard step key or category
-              // This ensures correct ordering even if database has old order numbers
-              const recalculatedOrder = getOrderNumberForStep(
-                step.category, 
-                userRoute.wizard_step_key || undefined, 
-                step.title
-              );
+            // Recalculate order number based on wizard step key or category
+            // This ensures correct ordering even if database has old order numbers
+            const recalculatedOrder = getOrderNumberForStep(
+              step.category, 
+              userRoute.wizard_step_key || undefined, 
+              step.title
+            );
 
-              loadedRoute.push({
-                id: `${step.id}-${userRoute.created_at}`,
-                stepId: step.id,
-                title: step.title,
-                category: step.category,
-                icon: step.icon,
-                completed: userRoute.completed,
-                order: recalculatedOrder,
-                taskProgress
-              });
-            }
+            loadedRoute.push({
+              id: `${step.id}-${userRoute.created_at}`,
+              stepId: step.id,
+              title: step.title,
+              category: step.category,
+              icon: step.icon,
+              completed: userRoute.completed,
+              order: recalculatedOrder,
+              taskProgress
+            });
           }
           
+          console.log('📊 Loaded route before reordering:', {
+            count: loadedRoute.length,
+            steps: loadedRoute.map(r => `${r.title} (category: ${r.category}, order: ${r.order})`)
+          });
+
           // Reorder all steps to ensure correct wizard sequence
           const reorderedRoute = reorderRouteByWizardSequence(loadedRoute);
+          
+          console.log('📊 Route after reordering:', {
+            count: reorderedRoute.length,
+            steps: reorderedRoute.map(r => `${r.title} (category: ${r.category}, order: ${r.order})`)
+          });
           
           // Sort by final order (should already be sorted, but just in case)
           reorderedRoute.sort((a, b) => a.order - b.order);
@@ -1085,16 +1189,34 @@ export default function RouteBuilder() {
         setAircraftMap(aircraftFeatureMap);
 
         // Fetch current checked state from database to preserve manually checked tasks
+        // But exclude initial tasks - they should always start at 0%
+        const initialTaskStepIds = studentRoute
+          .filter(s => {
+            const step = routeSteps.find(rs => rs.id === s.stepId);
+            return step && (step.title === 'Medical Certification' || step.title === 'Initial Training Preparation');
+          })
+          .map(s => s.stepId);
+        
+        const nonInitialStepIds = studentRoute
+          .map(s => s.stepId)
+          .filter(id => !initialTaskStepIds.includes(id));
+        
         const { data: routeDetails } = await supabase
           .from('route_step_details')
           .select('id, checked, route_step_id, title')
-          .in('route_step_id', studentRoute.map(s => s.stepId));
+          .in('route_step_id', nonInitialStepIds.length > 0 ? nonInitialStepIds : ['00000000-0000-0000-0000-000000000000']); // Use dummy ID if no non-initial steps
 
         // Create a map of manually checked tasks from database
         // Map by both ID and title to handle both cases
+        // Exclude initial tasks - they should always be false
         const manuallyCheckedTasks = new Map<string, boolean>();
         if (routeDetails) {
           routeDetails.forEach(detail => {
+            // Skip initial tasks - they should never be checked from database
+            if (initialTaskStepIds.includes(detail.route_step_id)) {
+              return;
+            }
+            
             // CRITICAL: If user has manually unchecked "Obtain your Private Pilot Certificate",
             // override the database value to false - user's manual choice takes precedence
             if (detail.title === 'Obtain your Private Pilot Certificate' && manuallyUncheckedPrivatePilotRef.current) {
@@ -1122,6 +1244,19 @@ export default function RouteBuilder() {
           return prevRoute.map(routeStep => {
             const fullStep = routeSteps.find(rs => rs.id === routeStep.stepId);
             if (!fullStep) return routeStep;
+
+            // For initial tasks, always keep at 0% - never calculate progress or read from database
+            const isInitialTask = fullStep.title === 'Medical Certification' || fullStep.title === 'Initial Training Preparation';
+            if (isInitialTask) {
+              // Reset all initial task progress to false
+              const resetProgress: Record<string, boolean> = {};
+              fullStep.details.forEach((detail: any) => {
+                if (detail.id) {
+                  resetProgress[detail.id] = false;
+                }
+              });
+              return { ...routeStep, taskProgress: resetProgress };
+            }
 
             // Calculate progress from flights (with aircraft data for complex/turbine/TAA)
             calculateTaskProgressFromFlights(fullStep, allFlights || [], aircraftFeatureMap).then(newProgress => {
@@ -1160,24 +1295,20 @@ export default function RouteBuilder() {
                                                    (detailTitle.includes('2 calendar months') || detailTitle.includes('2 months')) && 
                                                    detailTitle.includes('check ride');
                 
-                if (isMedicalOrInitialTrainingStep || isPracticeTestTask || is250NMTask || isNight100NMTask || is150NM3PointsTask || isControlledAirportTask || 
-                    isDay100NMTask || isNight100NMTask2 || isSoloOrPICTask || is300NMTask || isNightVFRControlledTask || isPracticalTest2MonthsTask || isCertificateCheckRideTask) {
-                  const taskKey = detail.id || detail.title;
-                  // Always preserve the current state or database state - never overwrite
-                  const isManuallyChecked = detail.id 
-                    ? manuallyCheckedTasks.get(detail.id) === true
-                    : manuallyCheckedTasks.get(detail.title) === true;
-                  
-                  // ALWAYS use database state for manually-only tasks - never use calculated or current state
-                  if (isManuallyChecked !== undefined) {
-                    mergedProgress[taskKey] = isManuallyChecked;
-                    console.log('🔒 Preserving manually-only task from database:', detail.title, 'checked:', isManuallyChecked);
-                  } else {
-                    // If not in database, default to false (but this shouldn't happen if task was checked)
-                    mergedProgress[taskKey] = false;
-                    console.log('⚠️ Manually-only task not found in database, defaulting to false:', detail.title);
-                  }
-                }
+                    if (isMedicalOrInitialTrainingStep || isPracticeTestTask || is250NMTask || isNight100NMTask || is150NM3PointsTask || isControlledAirportTask || 
+                        isDay100NMTask || isNight100NMTask2 || isSoloOrPICTask || is300NMTask || isNightVFRControlledTask || isPracticalTest2MonthsTask || isCertificateCheckRideTask) {
+                      const taskKey = detail.id || detail.title;
+                      // For manually-only tasks, always use database state if explicitly checked by user
+                      // Otherwise, default to false (unchecked)
+                      const isManuallyChecked = detail.id 
+                        ? manuallyCheckedTasks.get(detail.id) === true
+                        : manuallyCheckedTasks.get(detail.title) === true;
+                      
+                      // Only use database state if it's explicitly true (user checked it)
+                      // Otherwise, always default to false
+                      mergedProgress[taskKey] = isManuallyChecked === true ? true : false;
+                      console.log('🔒 Manually-only task - using database state:', detail.title, 'checked:', mergedProgress[taskKey]);
+                    }
               });
               
               // Only update tasks that weren't manually checked in the database
@@ -1499,14 +1630,35 @@ export default function RouteBuilder() {
   // Reorder route by wizard sequence - ensures correct order: Initial Tasks -> Initial Training -> Flight Instructing -> Cadet Programs -> Regional -> Major
   const reorderRouteByWizardSequence = (route: StudentRoute[]): StudentRoute[] => {
     // First, separate steps by category groups
-    const initialTasks = route.filter(s => s.category === 'Initial Tasks');
+    // Include both "Initial Tasks" category AND "Medical" category for initial tasks
+    // Also include steps by title for "Initial Training Preparation" and "Medical Certification"
+    const initialTasks = route.filter(s => 
+      s.category === 'Initial Tasks' || 
+      s.category === 'Medical' ||
+      s.title === 'Initial Training Preparation' ||
+      s.title === 'Medical Certification'
+    );
     const initialTraining = route.filter(s => 
-      s.category === 'Primary Training' || s.category === 'Advanced Training'
+      (s.category === 'Primary Training' || s.category === 'Advanced Training') &&
+      s.title !== 'Initial Training Preparation' // Exclude if already in initialTasks
     );
     const flightInstructing = route.filter(s => s.category === 'Flight Instructing');
     const cadetPrograms = route.filter(s => s.category === 'Cadet Programs');
     const regional = route.filter(s => s.category === 'Regional Airlines');
     const major = route.filter(s => s.category === 'Major Airlines');
+    
+    // Sort initial tasks: Initial Training Preparation first, then Medical Certification
+    const sortInitialTasks = (a: StudentRoute, b: StudentRoute) => {
+      const aTitle = a.title.toLowerCase();
+      const bTitle = b.title.toLowerCase();
+      const aOrder = aTitle.includes('initial training preparation') ? 1 : 
+                    aTitle.includes('medical certification') ? 2 : 3;
+      const bOrder = bTitle.includes('initial training preparation') ? 1 : 
+                    bTitle.includes('medical certification') ? 2 : 3;
+      return aOrder - bOrder;
+    };
+    
+    initialTasks.sort(sortInitialTasks);
     
     // Sort each group internally
     const sortInitialTraining = (a: StudentRoute, b: StudentRoute) => {
@@ -1688,6 +1840,14 @@ export default function RouteBuilder() {
   };
 
   const addStepToRoute = async (stepId: string, suppressToast: boolean = false, wizardStepKey?: string) => {
+    if (!user) {
+      console.error('❌ Cannot add step: user is not logged in');
+      if (!suppressToast) {
+        toast.error('You must be logged in to add steps to your route');
+      }
+      return;
+    }
+
     const step = routeSteps.find(s => s.id === stepId);
     if (!step) {
       console.error('❌ Step not found:', stepId);
@@ -1696,6 +1856,7 @@ export default function RouteBuilder() {
 
     const existingStep = studentRoute.find(s => s.stepId === stepId);
     if (existingStep) {
+      console.log('⚠️ Step already in route:', stepId);
       if (!suppressToast) {
         toast.error(`${step.title} is already in your route`);
       }
@@ -1727,7 +1888,15 @@ export default function RouteBuilder() {
 
     if (user) {
       try {
-        const { error } = await supabase
+        console.log('💾 Saving step to database:', {
+          stepId: step.id,
+          stepTitle: step.title,
+          userId: user.id,
+          wizardStepKey: wizardStepKey || 'manual',
+          orderNumber: orderNumber
+        });
+        
+        const { data, error } = await supabase
           .from('user_routes')
           .insert({
             user_id: user.id,
@@ -1736,9 +1905,15 @@ export default function RouteBuilder() {
             wizard_step_key: wizardStepKey || 'manual',
             order_number: orderNumber,
             completed: false
-          });
+          })
+          .select();
 
-        if (error) throw error;
+        if (error) {
+          console.error('❌ Error saving step to database:', error);
+          throw error;
+        }
+        
+        console.log('✅ Step saved to database successfully:', data);
 
         // Reorder all steps to ensure correct wizard sequence
         const updatedRoute = [...studentRoute, newStep];
@@ -1765,11 +1940,22 @@ export default function RouteBuilder() {
         if (!suppressToast) {
           toast.success(`${step.title} added to your route`);
         }
-      } catch (error) {
-        console.error('Error adding step:', error);
+      } catch (error: any) {
+        console.error('❌ Error adding step to route:', error);
+        console.error('Error details:', {
+          message: error?.message,
+          code: error?.code,
+          details: error?.details,
+          hint: error?.hint,
+          stepId: step.id,
+          stepTitle: step.title,
+          userId: user?.id
+        });
         if (!suppressToast) {
-          toast.error('Failed to add step to route');
+          toast.error(`Failed to add ${step.title} to route: ${error?.message || 'Unknown error'}`);
         }
+        // Re-throw to allow caller to handle
+        throw error;
       }
     } else {
       setStudentRoute(prev => [...prev, newStep].sort((a, b) => a.order - b.order));
@@ -2092,15 +2278,25 @@ const formatHtmlContent = (html: string) => {
               </p>
             </div>
             {studentRoute.length > 0 && (
-              <Button 
-                onClick={() => setShowWizard(true)}
-                variant="default"
-                size="lg"
-                className="gap-2 shrink-0"
-              >
-                <Sparkles className="h-4 w-4" />
-                Adjust Route
-              </Button>
+              <div className="flex gap-3">
+                <Button 
+                  onClick={() => setShowWizard(true)}
+                  variant="default"
+                  size="lg"
+                  className="gap-2 shrink-0"
+                >
+                  <Sparkles className="h-4 w-4" />
+                  Adjust Route
+                </Button>
+                <Button 
+                  onClick={handleResetRoute}
+                  variant="outline"
+                  size="lg"
+                  className="gap-2 shrink-0"
+                >
+                  Reset Route
+                </Button>
+              </div>
             )}
           </div>
           
@@ -2527,35 +2723,6 @@ const formatHtmlContent = (html: string) => {
                   <Sparkles className="h-4 w-4" />
                   Start Route Builder
                  </Button>
-                 <Button 
-                   variant="outline"
-                   size="lg"
-                   onClick={async () => {
-                     if (user) {
-                       try {
-                         const { error } = await supabase
-                           .from('user_routes')
-                           .delete()
-                           .eq('user_id', user.id);
-                         
-                         if (error) {
-                           toast.error('Failed to reset route');
-                           return;
-                         }
-                         
-                         setStudentRoute([]);
-                         setHasCompletedWizard(false);
-                         setHasCheckedForExistingRoute(false);
-                         setShowWizard(true);
-                         toast.success('Route reset successfully');
-                       } catch (error) {
-                         toast.error('Failed to reset route');
-                       }
-                     }
-                   }}
-                 >
-                  Reset & Start Over
-                 </Button>
               </div>
             </CardContent>
           </Card>
@@ -2574,6 +2741,7 @@ const formatHtmlContent = (html: string) => {
           onStepRemove={async (stepId: string) => {
             await removeStepFromRoute(stepId);
           }}
+          onResetRoute={handleResetRoute}
           availableSteps={routeSteps}
           currentUserRoute={studentRoute}
         />

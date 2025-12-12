@@ -1,10 +1,9 @@
 import { Button } from "@/components/ui/button";
-import { Plane, Book, Building2, FileText, Route } from "lucide-react";
 import { Link } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
 import { UserMenu } from "@/components/auth/UserMenu";
 import { useState, useEffect } from "react";
-import logo from "@/assets/Transparent ROF Only .png";
+import logo from "@/assets/ROF-logo-final-03.png";
 
 const Header = () => {
   const { user, loading } = useAuth();
@@ -21,52 +20,20 @@ const Header = () => {
   return (
     <header className="border-b border-border bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 sticky top-0 z-50">
       <div className="container flex h-16 items-center justify-between">
-        <div className="flex items-center space-x-2">
+        <div className="flex items-center">
           <Link 
             to="/" 
-            className="flex items-center space-x-2 group transition-all duration-300"
+            className="group transition-all duration-300"
           >
             <img 
               src={logo} 
               alt="Route of Flight" 
-              className={`h-9 w-auto object-contain transition-all duration-300 group-hover:opacity-80 group-hover:scale-105 ${
-                isScrolled ? 'h-7' : 'h-9'
+              className={`h-12 w-auto object-contain transition-all duration-300 group-hover:opacity-80 group-hover:scale-105 ${
+                isScrolled ? 'h-10' : 'h-12'
               }`}
             />
-            <h1 className="text-xl font-bold text-foreground">Route of Flight</h1>
           </Link>
         </div>
-        
-        <nav className="hidden md:flex items-center space-x-6">
-          <Link
-            to="/logbook"
-            className="text-sm font-medium text-muted-foreground hover:text-foreground smooth-transition"
-          >
-            <Book className="inline h-4 w-4 mr-2" />
-            Logbook
-          </Link>
-          <Link
-            to="/airlines"
-            className="text-sm font-medium text-muted-foreground hover:text-foreground smooth-transition"
-          >
-            <Building2 className="inline h-4 w-4 mr-2" />
-            Airlines
-          </Link>
-          <Link
-            to="/route"
-            className="text-sm font-medium text-muted-foreground hover:text-foreground smooth-transition"
-          >
-            <Route className="inline h-4 w-4 mr-2" />
-            Route Builder
-          </Link>
-          <Link
-            to="/resume"
-            className="text-sm font-medium text-muted-foreground hover:text-foreground smooth-transition"
-          >
-            <FileText className="inline h-4 w-4 mr-2" />
-            Resume Builder
-          </Link>
-        </nav>
 
         <div className="flex items-center space-x-4">
           {loading ? (

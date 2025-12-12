@@ -1,10 +1,13 @@
 import { motion } from 'framer-motion';
 import { BookOpen, ArrowRight } from 'lucide-react';
 import { useState } from 'react';
+import { Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
+import { useAuth } from '@/contexts/AuthContext';
 
 export function LogbookSection() {
   const [isHovered, setIsHovered] = useState(false);
+  const { user } = useAuth();
 
   const features = [
     {
@@ -84,21 +87,23 @@ export function LogbookSection() {
               onMouseEnter={() => setIsHovered(true)}
               onMouseLeave={() => setIsHovered(false)}
             >
-              <Button
-                className="w-full sm:w-auto px-6 py-3 text-white shadow-lg text-sm sm:text-base"
-                style={{
-                  backgroundColor: primaryColor,
-                  boxShadow: '0 10px 30px rgba(10, 46, 118, 0.3)'
-                }}
-              >
-                Start Your Logbook
-                <motion.div
-                  animate={{ x: isHovered ? 5 : 0 }}
-                  transition={{ duration: 0.3 }}
+              <Link to={user ? "/logbook" : "/signin"}>
+                <Button
+                  className="w-full sm:w-auto px-6 py-3 text-white shadow-lg text-sm sm:text-base"
+                  style={{
+                    backgroundColor: primaryColor,
+                    boxShadow: '0 10px 30px rgba(10, 46, 118, 0.3)'
+                  }}
                 >
-                  <ArrowRight size={18} />
-                </motion.div>
-              </Button>
+                  {user ? "View Your Logbook" : "Start Your Logbook"}
+                  <motion.div
+                    animate={{ x: isHovered ? 5 : 0 }}
+                    transition={{ duration: 0.3 }}
+                  >
+                    <ArrowRight size={18} />
+                  </motion.div>
+                </Button>
+              </Link>
             </motion.div>
           </motion.div>
 

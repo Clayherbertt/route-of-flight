@@ -1,6 +1,7 @@
 import { motion } from 'framer-motion';
 import { Lightbulb, Search, ArrowRight, Plane } from 'lucide-react';
 import { useState } from 'react';
+import { Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 
 export function AirlineSection() {
@@ -150,21 +151,23 @@ export function AirlineSection() {
               onMouseEnter={() => setIsButtonHovered(true)}
               onMouseLeave={() => setIsButtonHovered(false)}
             >
-              <Button
-                className="w-full sm:w-auto px-6 py-3 text-white shadow-lg text-sm sm:text-base"
-                style={{
-                  backgroundColor: primaryColor,
-                  boxShadow: '0 10px 30px rgba(10, 46, 118, 0.3)'
-                }}
-              >
-                Explore Database
-                <motion.div
-                  animate={{ x: isButtonHovered ? 5 : 0 }}
-                  transition={{ duration: 0.3 }}
+              <Link to="/airlines">
+                <Button
+                  className="w-full sm:w-auto px-6 py-3 text-white shadow-lg text-sm sm:text-base"
+                  style={{
+                    backgroundColor: primaryColor,
+                    boxShadow: '0 10px 30px rgba(10, 46, 118, 0.3)'
+                  }}
                 >
-                  <ArrowRight size={18} />
-                </motion.div>
-              </Button>
+                  Explore Database
+                  <motion.div
+                    animate={{ x: isButtonHovered ? 5 : 0 }}
+                    transition={{ duration: 0.3 }}
+                  >
+                    <ArrowRight size={18} />
+                  </motion.div>
+                </Button>
+              </Link>
             </motion.div>
           </motion.div>
         </div>

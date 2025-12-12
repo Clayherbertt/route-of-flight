@@ -1,10 +1,13 @@
 import { motion } from 'framer-motion';
 import { BookOpen, Database, Route, ChevronRight } from 'lucide-react';
 import { useState } from 'react';
+import { Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
+import { useAuth } from '@/contexts/AuthContext';
 
 export function Hero() {
   const [hoveredCard, setHoveredCard] = useState<number | null>(null);
+  const { user } = useAuth();
 
   const features = [
     {
@@ -103,38 +106,44 @@ export function Hero() {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8, delay: 0.6 }}
         >
-          <motion.div
-            className="w-full sm:w-auto"
-            whileHover={{ scale: 1.05 }}
-            whileTap={{ scale: 0.95 }}
-          >
-            <Button
-              className="w-full sm:w-auto px-6 sm:px-8 py-3 sm:py-4 text-white shadow-lg text-sm sm:text-base"
-              style={{ 
-                backgroundColor: primaryColor,
-                boxShadow: `0 10px 30px ${primaryColor70}`
-              }}
+          {!user && (
+            <motion.div
+              className="w-full sm:w-auto"
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
             >
-              Get Started Free
-              <ChevronRight className="w-4 h-4 sm:w-5 sm:h-5" />
-            </Button>
-          </motion.div>
+              <Link to="/signin">
+                <Button
+                  className="w-full sm:w-auto px-6 sm:px-8 py-3 sm:py-4 text-white shadow-lg text-sm sm:text-base"
+                  style={{ 
+                    backgroundColor: primaryColor,
+                    boxShadow: `0 10px 30px ${primaryColor70}`
+                  }}
+                >
+                  Get Started Free
+                  <ChevronRight className="w-4 h-4 sm:w-5 sm:h-5" />
+                </Button>
+              </Link>
+            </motion.div>
+          )}
 
           <motion.div
             className="w-full sm:w-auto"
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
           >
-            <Button
-              variant="outline"
-              className="w-full sm:w-auto px-6 sm:px-8 py-3 sm:py-4 bg-white text-slate-700 border-2 text-sm sm:text-base"
-              style={{
-                borderColor: 'rgba(10, 46, 118, 0.2)'
-              }}
-            >
-              Explore Airlines
-              <Database className="w-4 h-4 sm:w-5 sm:h-5" />
-            </Button>
+            <Link to="/airlines">
+              <Button
+                variant="outline"
+                className="w-full sm:w-auto px-6 sm:px-8 py-3 sm:py-4 bg-white text-slate-700 border-2 text-sm sm:text-base"
+                style={{
+                  borderColor: 'rgba(10, 46, 118, 0.2)'
+                }}
+              >
+                Explore Airlines
+                <Database className="w-4 h-4 sm:w-5 sm:h-5" />
+              </Button>
+            </Link>
           </motion.div>
         </motion.div>
 

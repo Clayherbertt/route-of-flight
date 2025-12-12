@@ -1,10 +1,13 @@
 import { motion } from 'framer-motion';
 import { Compass, CheckCircle2, TrendingUp, FileText, ArrowRight, Target } from 'lucide-react';
 import { useState } from 'react';
+import { Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
+import { useAuth } from '@/contexts/AuthContext';
 
 export function CareerPathSection() {
   const [isButtonHovered, setIsButtonHovered] = useState(false);
+  const { user } = useAuth();
 
   const features = [
     {
@@ -117,21 +120,23 @@ export function CareerPathSection() {
               onMouseEnter={() => setIsButtonHovered(true)}
               onMouseLeave={() => setIsButtonHovered(false)}
             >
-              <Button
-                className="w-full sm:w-auto px-6 py-3 text-white shadow-lg text-sm sm:text-base"
-                style={{
-                  backgroundColor: primaryColor,
-                  boxShadow: '0 10px 30px rgba(10, 46, 118, 0.3)'
-                }}
-              >
-                Start Building Your Route
-                <motion.div
-                  animate={{ x: isButtonHovered ? 5 : 0 }}
-                  transition={{ duration: 0.3 }}
+              <Link to={user ? "/route" : "/signin"}>
+                <Button
+                  className="w-full sm:w-auto px-6 py-3 text-white shadow-lg text-sm sm:text-base"
+                  style={{
+                    backgroundColor: primaryColor,
+                    boxShadow: '0 10px 30px rgba(10, 46, 118, 0.3)'
+                  }}
                 >
-                  <ArrowRight size={18} />
-                </motion.div>
-              </Button>
+                  {user ? "View Your Route" : "Start Building Your Route"}
+                  <motion.div
+                    animate={{ x: isButtonHovered ? 5 : 0 }}
+                    transition={{ duration: 0.3 }}
+                  >
+                    <ArrowRight size={18} />
+                  </motion.div>
+                </Button>
+              </Link>
             </motion.div>
           </motion.div>
 
