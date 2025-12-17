@@ -37,9 +37,12 @@ interface FlightEntry {
   night_time: number;
   instrument_time: number;
   approaches: string;
+  selected_approach?: string[] | null;
+  approach_circle_to_land?: Record<string, boolean> | null;
   landings: number;
   remarks: string | null;
   route?: string;
+  type_of_operation?: string | null;
   start_time?: string;
   end_time?: string;
   time_out?: string;
@@ -83,6 +86,7 @@ const Logbook = () => {
   const [deletingFlight, setDeletingFlight] = useState<FlightEntry | null>(null);
   const [showClearAllDialog, setShowClearAllDialog] = useState(false);
   const [viewingFlight, setViewingFlight] = useState<FlightEntry | null>(null);
+  const [selectedApproachNames, setSelectedApproachNames] = useState<string[]>([]);
   const [showPredictionsDialog, setShowPredictionsDialog] = useState(false);
   const [aircraftMap, setAircraftMap] = useState<Map<string, { type_code: string | null; make: string; model: string }>>(new Map());
 
@@ -224,8 +228,54 @@ const Logbook = () => {
     setShowAddFlightDialog(true);
   };
 
-  const handleViewFlight = (flight: FlightEntry) => {
+  const handleViewFlight = async (flight: FlightEntry) => {
     setViewingFlight(flight);
+    setSelectedApproachNames([]);
+    
+    // Fetch approach names if selected_approaches exists
+    if (flight.selected_approach && Array.isArray(flight.selected_approach) && flight.selected_approach.length > 0) {
+      try {
+        const { data, error } = await supabase
+          .from('instrument_approaches')
+          .select('approach_name, runway')
+          .in('id', flight.selected_approach);
+        
+        if (!error && data) {
+          const circleToLand = flight.approach_circle_to_land || {};
+          const approachDisplays = data.map((approach) => {
+            const baseName = approach.runway 
+              ? `${approach.approach_name} (${approach.runway})`
+              : approach.approach_name;
+            const isCircleToLand = circleToLand[approach.id] === true;
+            return isCircleToLand ? `${baseName} [Circle to Land]` : baseName;
+          });
+          setSelectedApproachNames(approachDisplays);
+        }
+      } catch (error) {
+        console.error('Error fetching approach names:', error);
+      }
+    } else if (flight.selected_approach && typeof flight.selected_approach === 'string') {
+      // Handle legacy single approach (backward compatibility)
+      try {
+        const { data, error } = await supabase
+          .from('instrument_approaches')
+          .select('approach_name, runway')
+          .eq('id', flight.selected_approach)
+          .single();
+        
+        if (!error && data) {
+          const circleToLand = flight.approach_circle_to_land || {};
+          const baseName = data.runway 
+            ? `${data.approach_name} (${data.runway})`
+            : data.approach_name;
+          const isCircleToLand = circleToLand[flight.selected_approach as string] === true;
+          const approachDisplay = isCircleToLand ? `${baseName} [Circle to Land]` : baseName;
+          setSelectedApproachNames([approachDisplay]);
+        }
+      } catch (error) {
+        console.error('Error fetching approach name:', error);
+      }
+    }
   };
 
   const handleCloseDialog = (open: boolean) => {
@@ -448,7 +498,6 @@ const Logbook = () => {
     { key: "sim-instrument", label: "Sim Instrument", value: totalSimInstrument, type: "hours" as const },
     { key: "xc-time", label: "Cross Country", value: totalXC, type: "hours" as const },
     { key: "holds", label: "Holds", value: totalHolds, type: "count" as const },
-    { key: "approaches", label: "Approaches", value: totalApproachCount, type: "count" as const },
     { key: "landings", label: "Landings", value: totalLandings, type: "count" as const },
     { key: "dual-given", label: "Dual Given", value: totalDualGiven, type: "hours" as const },
     { key: "dual-received", label: "Dual Received", value: totalDualReceived, type: "hours" as const },
@@ -1043,6 +1092,7 @@ const Logbook = () => {
                       <DialogTitle className="text-2xl font-bold">Flight Details</DialogTitle>
                       <DialogDescription className="text-base">
                         {viewingFlight.date} • {viewingFlight.aircraft_registration}
+                        {viewingFlight.type_of_operation && ` • ${viewingFlight.type_of_operation}`}
                       </DialogDescription>
                     </div>
                   </div>
@@ -1123,6 +1173,10 @@ const Logbook = () => {
                       {[
                         { label: "Holds", value: viewingFlight.holds ?? 0 },
                         { label: "Approaches", value: viewingFlight.approaches || '—' },
+                        ...(selectedApproachNames.length > 0 ? selectedApproachNames.map((name, index) => ({
+                          label: index === 0 ? "Approach Flown" : "",
+                          value: name
+                        })) : []),
                         { label: "Dual Given", value: formatHours(Number(viewingFlight.dual_given) || 0) },
                         { label: "Dual Received", value: formatHours(Number(viewingFlight.dual_received) || 0) },
                         { label: "Sim Flight", value: formatHours(Number(viewingFlight.simulated_flight) || 0) },

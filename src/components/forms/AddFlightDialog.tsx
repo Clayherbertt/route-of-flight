@@ -14,6 +14,9 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Checkbox } from "@/components/ui/checkbox";
+import { Switch } from "@/components/ui/switch";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/contexts/AuthContext";
@@ -22,6 +25,117 @@ import { useSubscription } from "@/hooks/useSubscription";
 import { useIsAdmin } from "@/hooks/useIsAdmin";
 import { hasFeature, FeatureKey } from "@/lib/featureGates";
 import { useNavigate } from "react-router-dom";
+
+// Helper function to convert time formats to HHMM
+const convertTimeToHHMM = (time: string | null | undefined): string => {
+  if (!time) return "";
+  
+  // If already in HHMM format (4 digits), return as is
+  if (/^\d{4}$/.test(time)) {
+    return time;
+  }
+  
+  // If in HH:MM:SS or HH:MM format, extract HH and MM
+  const match = time.match(/^(\d{1,2}):(\d{2})/);
+  if (match) {
+    const hours = match[1].padStart(2, '0');
+    const minutes = match[2];
+    return hours + minutes;
+  }
+  
+  // If in any other format, try to extract digits
+  const digits = time.replace(/\D/g, '');
+  if (digits.length >= 4) {
+    return digits.slice(0, 4);
+  }
+  
+  return "";
+};
+
+// Helper component for 4-digit Zulu time input (HHMM format)
+const ZuluTimeInput = ({ 
+  value, 
+  onChange, 
+  placeholder = "____"
+}: { 
+  value: string | undefined; 
+  onChange: (value: string) => void; 
+  placeholder?: string;
+}) => {
+  const [localValue, setLocalValue] = useState<string>(
+    value || ""
+  );
+  const [isFocused, setIsFocused] = useState(false);
+
+  // Sync when value changes externally AND we're not focused
+  useEffect(() => {
+    if (!isFocused) {
+      setLocalValue(value || "");
+    }
+  }, [value, isFocused]);
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    let input = e.target.value.replace(/\D/g, ''); // Remove non-digits
+    
+    // Limit to 4 digits
+    if (input.length > 4) {
+      input = input.slice(0, 4);
+    }
+    
+    setLocalValue(input);
+    
+    // Validate and format
+    if (input.length === 4) {
+      const hours = parseInt(input.slice(0, 2), 10);
+      const minutes = parseInt(input.slice(2, 4), 10);
+      
+      // Validate hours (00-23) and minutes (00-59)
+      if (hours >= 0 && hours <= 23 && minutes >= 0 && minutes <= 59) {
+        onChange(input); // Store as HHMM format (e.g., "1230")
+      } else {
+        // Invalid time, but still update local value for user feedback
+        onChange(input);
+      }
+    } else if (input.length > 0) {
+      // Partial input, still update
+      onChange(input);
+    } else {
+      onChange("");
+    }
+  };
+
+  const handleBlur = () => {
+    setIsFocused(false);
+    // Format on blur if we have a valid 4-digit time
+    if (localValue.length === 4) {
+      const hours = parseInt(localValue.slice(0, 2), 10);
+      const minutes = parseInt(localValue.slice(2, 4), 10);
+      
+      if (hours >= 0 && hours <= 23 && minutes >= 0 && minutes <= 59) {
+        // Value is valid, keep it
+        onChange(localValue);
+      } else {
+        // Invalid, clear it
+        setLocalValue("");
+        onChange("");
+      }
+    }
+  };
+
+  return (
+    <Input
+      type="text"
+      inputMode="numeric"
+      placeholder={placeholder}
+      value={localValue}
+      onChange={handleChange}
+      onFocus={() => setIsFocused(true)}
+      onBlur={handleBlur}
+      maxLength={4}
+      className="font-mono text-center"
+    />
+  );
+};
 
 // Helper component for editable number inputs that allows free editing
 const EditableNumberInput = ({ 
@@ -96,6 +210,7 @@ const addFlightSchema = z.object({
   departure_airport: z.string().min(3, "Departure airport code is required (3+ characters)"),
   arrival_airport: z.string().min(3, "Arrival airport code is required (3+ characters)"),
   route: z.string().optional(),
+  type_of_operation: z.enum(["FAR 91", "FAR 91k", "FAR 135", "FAR 121"]).optional(),
   time_out: z.string().optional(),
   time_off: z.string().optional(),
   time_on: z.string().optional(),
@@ -124,6 +239,8 @@ const addFlightSchema = z.object({
   simulated_instrument: z.number().min(0).optional().transform(val => val ?? 0),
   holds: z.number().int().min(0).optional().transform(val => val ?? 0),
   approaches: z.number().int().min(0).optional().transform(val => val ?? 0),
+  selected_approaches: z.array(z.string()).optional(),
+  approach_circle_to_land: z.record(z.boolean()).optional(),
   dual_given: z.number().min(0).optional().transform(val => val ?? 0),
   dual_received: z.number().min(0).optional().transform(val => val ?? 0),
   simulated_flight: z.number().min(0).optional().transform(val => val ?? 0),
@@ -146,9 +263,12 @@ interface FlightEntry {
   night_time: number;
   instrument_time: number;
   approaches: string;
+  selected_approaches?: string[] | null;
+  approach_circle_to_land?: Record<string, boolean> | null;
   landings: number;
   remarks: string | null;
-  route?: string;
+  route?: string | null;
+  type_of_operation?: string | null;
   start_time?: string;
   end_time?: string;
   time_out?: string;
@@ -204,6 +324,12 @@ export const AddFlightDialog = ({ open, onOpenChange, onFlightAdded, editingFlig
   const [showAircraftDialog, setShowAircraftDialog] = useState(false);
   const [aircraftSearchOpen, setAircraftSearchOpen] = useState(false);
   const [supportsFullStopLandings, setSupportsFullStopLandings] = useState<boolean>(true);
+  const [availableApproaches, setAvailableApproaches] = useState<Array<{
+    id: string;
+    approach_name: string;
+    approach_type: string;
+    runway: string | null;
+  }>>([]);
 
   const form = useForm<AddFlightForm>({
     resolver: zodResolver(addFlightSchema),
@@ -242,6 +368,38 @@ export const AddFlightDialog = ({ open, onOpenChange, onFlightAdded, editingFlig
     }
   }, [open, user]);
 
+  // Fetch available approaches when arrival airport changes
+  const arrivalAirport = form.watch('arrival_airport');
+  useEffect(() => {
+    const fetchApproaches = async () => {
+      if (arrivalAirport && arrivalAirport.length >= 3) {
+        try {
+          const { data, error } = await supabase
+            .from('instrument_approaches')
+            .select('id, approach_name, approach_type, runway')
+            .eq('airport_code', arrivalAirport.toUpperCase())
+            .eq('active', true)
+            .order('approach_name');
+          
+          if (!error && data) {
+            setAvailableApproaches(data);
+          } else {
+            setAvailableApproaches([]);
+          }
+        } catch (error) {
+          console.error('Error fetching approaches:', error);
+          setAvailableApproaches([]);
+        }
+      } else {
+        setAvailableApproaches([]);
+      }
+    };
+    
+    if (open) {
+      fetchApproaches();
+    }
+  }, [arrivalAirport, open, form]);
+
   const checkFullStopSupport = async () => {
     try {
       const { error } = await supabase
@@ -279,12 +437,13 @@ export const AddFlightDialog = ({ open, onOpenChange, onFlightAdded, editingFlig
         departure_airport: editingFlight.departure_airport,
         arrival_airport: editingFlight.arrival_airport,
         route: editingFlight.route || "",
-        time_out: editingFlight.time_out || editingFlight.start_time || "",
-        time_off: editingFlight.time_off || "",
-        time_on: editingFlight.time_on || "",
-        time_in: editingFlight.time_in || editingFlight.end_time || "",
-        on_duty: editingFlight.on_duty || "",
-        off_duty: editingFlight.off_duty || "",
+        type_of_operation: editingFlight.type_of_operation || undefined,
+        time_out: convertTimeToHHMM(editingFlight.time_out || editingFlight.start_time),
+        time_off: convertTimeToHHMM(editingFlight.time_off),
+        time_on: convertTimeToHHMM(editingFlight.time_on),
+        time_in: convertTimeToHHMM(editingFlight.time_in || editingFlight.end_time),
+        on_duty: convertTimeToHHMM(editingFlight.on_duty),
+        off_duty: convertTimeToHHMM(editingFlight.off_duty),
         hobbs_start: editingFlight.hobbs_start ?? 0,
         hobbs_end: editingFlight.hobbs_end ?? 0,
         tach_start: editingFlight.tach_start ?? 0,
@@ -307,6 +466,12 @@ export const AddFlightDialog = ({ open, onOpenChange, onFlightAdded, editingFlig
         simulated_instrument: editingFlight.simulated_instrument || 0,
         holds: editingFlight.holds || 0,
         approaches: editingFlight.approaches ? Number(editingFlight.approaches) : 0,
+        selected_approaches: Array.isArray(editingFlight.selected_approach) 
+          ? editingFlight.selected_approach 
+          : (editingFlight.selected_approach && typeof editingFlight.selected_approach === 'string' 
+            ? [editingFlight.selected_approach] 
+            : undefined),
+        approach_circle_to_land: editingFlight.approach_circle_to_land || undefined,
         dual_given: editingFlight.dual_given || 0,
         dual_received: editingFlight.dual_received || 0,
         simulated_flight: editingFlight.simulated_flight || 0,
@@ -342,6 +507,7 @@ export const AddFlightDialog = ({ open, onOpenChange, onFlightAdded, editingFlig
         actual_instrument: undefined,
         simulated_instrument: undefined,
         holds: undefined,
+        selected_approaches: undefined,
         dual_given: undefined,
         dual_received: undefined,
         simulated_flight: undefined,
@@ -405,6 +571,7 @@ export const AddFlightDialog = ({ open, onOpenChange, onFlightAdded, editingFlig
         departure_airport: values.departure_airport.toUpperCase(),
         arrival_airport: values.arrival_airport.toUpperCase(),
         route: values.route || null,
+        type_of_operation: values.type_of_operation || null,
         time_out: values.time_out || null,
         time_off: values.time_off || null,
         time_on: values.time_on || null,
@@ -432,7 +599,9 @@ export const AddFlightDialog = ({ open, onOpenChange, onFlightAdded, editingFlig
         actual_instrument: values.actual_instrument,
         simulated_instrument: values.simulated_instrument,
         holds: values.holds,
-        approaches: String(values.approaches ?? 0),
+        approaches: String(values.selected_approaches && values.selected_approaches.length > 0 ? values.selected_approaches.length : (values.approaches ?? 0)),
+        selected_approach: values.selected_approaches && values.selected_approaches.length > 0 ? values.selected_approaches : null,
+        approach_circle_to_land: values.approach_circle_to_land || null,
         dual_given: values.dual_given,
         dual_received: values.dual_received,
         simulated_flight: values.simulated_flight,
@@ -492,11 +661,13 @@ export const AddFlightDialog = ({ open, onOpenChange, onFlightAdded, editingFlig
           result.error.message?.includes("time_on") ||
           result.error.message?.includes("time_in") ||
           result.error.message?.includes("on_duty") ||
-          result.error.message?.includes("off_duty")
+          result.error.message?.includes("off_duty") ||
+          result.error.message?.includes("approach_circle_to_land")
         )) {
           const fallbackData = { ...flightData };
           delete (fallbackData as Record<string, unknown>).day_landings_full_stop;
           delete (fallbackData as Record<string, unknown>).night_landings_full_stop;
+          delete (fallbackData as Record<string, unknown>).approach_circle_to_land;
           const cleanedData = removeTimeTrackingColumns(fallbackData);
           result = await supabase
             .from('flight_entries')
@@ -551,11 +722,13 @@ export const AddFlightDialog = ({ open, onOpenChange, onFlightAdded, editingFlig
           result.error.message?.includes("time_on") ||
           result.error.message?.includes("time_in") ||
           result.error.message?.includes("on_duty") ||
-          result.error.message?.includes("off_duty")
+          result.error.message?.includes("off_duty") ||
+          result.error.message?.includes("approach_circle_to_land")
         )) {
           const fallbackData = { ...flightData };
           delete (fallbackData as Record<string, unknown>).day_landings_full_stop;
           delete (fallbackData as Record<string, unknown>).night_landings_full_stop;
+          delete (fallbackData as Record<string, unknown>).approach_circle_to_land;
           const cleanedData = removeTimeTrackingColumns(fallbackData);
           result = await supabase
             .from('flight_entries')
@@ -775,7 +948,15 @@ export const AddFlightDialog = ({ open, onOpenChange, onFlightAdded, editingFlig
                   <FormItem>
                     <FormLabel>From</FormLabel>
                     <FormControl>
-                      <Input placeholder="KJFK" {...field} />
+                      <Input 
+                        placeholder="KJFK" 
+                        {...field}
+                        onChange={(e) => {
+                          const upperValue = e.target.value.toUpperCase();
+                          field.onChange(upperValue);
+                        }}
+                        value={field.value || ''}
+                      />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -789,7 +970,15 @@ export const AddFlightDialog = ({ open, onOpenChange, onFlightAdded, editingFlig
                   <FormItem>
                     <FormLabel>To</FormLabel>
                     <FormControl>
-                      <Input placeholder="KLGA" {...field} />
+                      <Input 
+                        placeholder="KLGA" 
+                        {...field}
+                        onChange={(e) => {
+                          const upperValue = e.target.value.toUpperCase();
+                          field.onChange(upperValue);
+                        }}
+                        value={field.value || ''}
+                      />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -809,11 +998,38 @@ export const AddFlightDialog = ({ open, onOpenChange, onFlightAdded, editingFlig
                   </FormItem>
                 )}
               />
+
+              <FormField
+                control={form.control}
+                name="type_of_operation"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Type of Operation</FormLabel>
+                    <Select onValueChange={field.onChange} value={field.value}>
+                      <FormControl>
+                        <SelectTrigger>
+                          <SelectValue placeholder="Select type of operation" />
+                        </SelectTrigger>
+                      </FormControl>
+                      <SelectContent>
+                        <SelectItem value="FAR 91">FAR 91</SelectItem>
+                        <SelectItem value="FAR 91k">FAR 91k</SelectItem>
+                        <SelectItem value="FAR 135">FAR 135</SelectItem>
+                        <SelectItem value="FAR 121">FAR 121</SelectItem>
+                      </SelectContent>
+                    </Select>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
             </div>
 
             {/* Time Tracking */}
             <div className="space-y-4">
-              <h3 className="text-lg font-semibold">Time Tracking</h3>
+              <div>
+                <h3 className="text-lg font-semibold">Time Tracking</h3>
+                <p className="text-sm text-muted-foreground">All times in Zulu</p>
+              </div>
               <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
                 <FormField
                   control={form.control}
@@ -822,10 +1038,10 @@ export const AddFlightDialog = ({ open, onOpenChange, onFlightAdded, editingFlig
                     <FormItem>
                       <FormLabel>Time Out</FormLabel>
                       <FormControl>
-                        <Input
-                          type="time"
+                        <ZuluTimeInput
                           value={field.value || ""}
-                          onChange={(e) => field.onChange(e.target.value)}
+                          onChange={field.onChange}
+                          placeholder="____"
                         />
                       </FormControl>
                       <FormMessage />
@@ -840,10 +1056,10 @@ export const AddFlightDialog = ({ open, onOpenChange, onFlightAdded, editingFlig
                     <FormItem>
                       <FormLabel>Time Off</FormLabel>
                       <FormControl>
-                        <Input
-                          type="time"
+                        <ZuluTimeInput
                           value={field.value || ""}
-                          onChange={(e) => field.onChange(e.target.value)}
+                          onChange={field.onChange}
+                          placeholder="____"
                         />
                       </FormControl>
                       <FormMessage />
@@ -858,10 +1074,10 @@ export const AddFlightDialog = ({ open, onOpenChange, onFlightAdded, editingFlig
                     <FormItem>
                       <FormLabel>Time On</FormLabel>
                       <FormControl>
-                        <Input
-                          type="time"
+                        <ZuluTimeInput
                           value={field.value || ""}
-                          onChange={(e) => field.onChange(e.target.value)}
+                          onChange={field.onChange}
+                          placeholder="____"
                         />
                       </FormControl>
                       <FormMessage />
@@ -876,10 +1092,10 @@ export const AddFlightDialog = ({ open, onOpenChange, onFlightAdded, editingFlig
                     <FormItem>
                       <FormLabel>Time In</FormLabel>
                       <FormControl>
-                        <Input
-                          type="time"
+                        <ZuluTimeInput
                           value={field.value || ""}
-                          onChange={(e) => field.onChange(e.target.value)}
+                          onChange={field.onChange}
+                          placeholder="____"
                         />
                       </FormControl>
                       <FormMessage />
@@ -896,10 +1112,10 @@ export const AddFlightDialog = ({ open, onOpenChange, onFlightAdded, editingFlig
                     <FormItem>
                       <FormLabel>On Duty</FormLabel>
                       <FormControl>
-                        <Input
-                          type="time"
+                        <ZuluTimeInput
                           value={field.value || ""}
-                          onChange={(e) => field.onChange(e.target.value)}
+                          onChange={field.onChange}
+                          placeholder="____"
                         />
                       </FormControl>
                       <FormMessage />
@@ -914,10 +1130,10 @@ export const AddFlightDialog = ({ open, onOpenChange, onFlightAdded, editingFlig
                     <FormItem>
                       <FormLabel>Off Duty</FormLabel>
                       <FormControl>
-                        <Input
-                          type="time"
+                        <ZuluTimeInput
                           value={field.value || ""}
-                          onChange={(e) => field.onChange(e.target.value)}
+                          onChange={field.onChange}
+                          placeholder="____"
                         />
                       </FormControl>
                       <FormMessage />
@@ -1245,7 +1461,7 @@ export const AddFlightDialog = ({ open, onOpenChange, onFlightAdded, editingFlig
             </div>
             {/* Instrument and Training */}
             <div className="space-y-4">
-              <h3 className="text-lg font-semibold">Instrument & Training</h3>
+              <h3 className="text-lg font-semibold">Instrument</h3>
               <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
                 <FormField
                   control={form.control}
@@ -1304,25 +1520,170 @@ export const AddFlightDialog = ({ open, onOpenChange, onFlightAdded, editingFlig
                   )}
                 />
 
-                <FormField
-                  control={form.control}
-                  name="approaches"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Approaches</FormLabel>
-                      <FormControl>
-                        <EditableNumberInput
-                          value={field.value}
-                          onChange={field.onChange}
-                          placeholder="0"
-                          isInteger={true}
-                        />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
+              </div>
 
+              {/* Approach Selection */}
+              <FormField
+                control={form.control}
+                name="selected_approaches"
+                render={({ field }) => {
+                  const selectedIds = field.value || [];
+                  const selectedCount = selectedIds.length;
+                  
+                  return (
+                    <FormItem>
+                      <FormLabel>Approaches Flown</FormLabel>
+                      <Popover>
+                        <PopoverTrigger asChild>
+                          <FormControl>
+                            <Button
+                              variant="outline"
+                              role="combobox"
+                              className={cn(
+                                "w-full justify-between",
+                                !selectedIds.length && "text-muted-foreground"
+                              )}
+                              disabled={!form.watch('arrival_airport') || form.watch('arrival_airport')?.length < 3 || availableApproaches.length === 0}
+                            >
+                              {!form.watch('arrival_airport') || form.watch('arrival_airport')?.length < 3
+                                ? "Select arrival airport first"
+                                : availableApproaches.length === 0
+                                ? "No approaches found for this airport"
+                                : selectedCount === 0
+                                ? "Select approaches"
+                                : selectedCount === 1
+                                ? "1 approach selected"
+                                : `${selectedCount} approaches selected`}
+                              <Plane className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+                            </Button>
+                          </FormControl>
+                        </PopoverTrigger>
+                        <PopoverContent className="w-[400px] p-0" align="start">
+                          <Command>
+                            <CommandInput placeholder="Search approaches..." />
+                            <CommandList>
+                              <CommandEmpty>No approaches found.</CommandEmpty>
+                              <CommandGroup>
+                                {availableApproaches.map((approach) => {
+                                  const isSelected = selectedIds.includes(approach.id);
+                                  return (
+                                    <CommandItem
+                                      key={approach.id}
+                                      onSelect={() => {
+                                        const newSelected = isSelected
+                                          ? selectedIds.filter((id) => id !== approach.id)
+                                          : [...selectedIds, approach.id];
+                                        field.onChange(newSelected);
+                                      }}
+                                    >
+                                      <div className="flex items-center space-x-2 flex-1">
+                                        <Checkbox
+                                          checked={isSelected}
+                                          onCheckedChange={(checked) => {
+                                            const newSelected = checked
+                                              ? [...selectedIds, approach.id]
+                                              : selectedIds.filter((id) => id !== approach.id);
+                                            field.onChange(newSelected);
+                                          }}
+                                        />
+                                        <div className="flex-1">
+                                          <span className="font-medium">
+                                            {approach.approach_name}
+                                          </span>
+                                          {approach.runway && (
+                                            <span className="text-muted-foreground ml-2">
+                                              ({approach.runway})
+                                            </span>
+                                          )}
+                                          <span className="text-xs text-muted-foreground ml-2">
+                                            {approach.approach_type}
+                                          </span>
+                                        </div>
+                                      </div>
+                                    </CommandItem>
+                                  );
+                                })}
+                              </CommandGroup>
+                            </CommandList>
+                          </Command>
+                        </PopoverContent>
+                      </Popover>
+                      <FormMessage />
+                      {selectedCount > 0 && (
+                        <div className="space-y-2 mt-2">
+                          {selectedIds.map((id) => {
+                            const approach = availableApproaches.find((a) => a.id === id);
+                            if (!approach) return null;
+                            
+                            return (
+                              <div
+                                key={id}
+                                className="flex items-center justify-between p-2 border rounded-md bg-muted/30"
+                              >
+                                <div className="flex items-center gap-2 flex-1">
+                                  <span className="text-sm font-medium">
+                                    {approach.approach_name}
+                                    {approach.runway && ` (${approach.runway})`}
+                                  </span>
+                                  <span className="text-xs text-muted-foreground">
+                                    {approach.approach_type}
+                                  </span>
+                                </div>
+                                <div className="flex items-center gap-2">
+                                  <Label htmlFor={`circle-to-land-${id}`} className="text-xs text-muted-foreground cursor-pointer">
+                                    Circle to Land
+                                  </Label>
+                                  <FormField
+                                    control={form.control}
+                                    name="approach_circle_to_land"
+                                    render={({ field: circleField }) => (
+                                      <Switch
+                                        id={`circle-to-land-${id}`}
+                                        checked={circleField.value?.[id] || false}
+                                        onCheckedChange={(checked) => {
+                                          circleField.onChange({
+                                            ...circleField.value,
+                                            [id]: checked
+                                          });
+                                        }}
+                                      />
+                                    )}
+                                  />
+                                  <button
+                                    type="button"
+                                    onClick={() => {
+                                      // Remove from selected approaches
+                                      field.onChange(selectedIds.filter((selectedId) => selectedId !== id));
+                                      // Remove from circle-to-land mapping
+                                      const circleToLand = form.getValues('approach_circle_to_land') || {};
+                                      const { [id]: removed, ...rest } = circleToLand;
+                                      form.setValue('approach_circle_to_land', rest);
+                                    }}
+                                    className="ml-2 text-muted-foreground hover:text-destructive text-sm"
+                                  >
+                                    ×
+                                  </button>
+                                </div>
+                              </div>
+                            );
+                          })}
+                        </div>
+                      )}
+                      {availableApproaches.length === 0 && form.watch('arrival_airport') && form.watch('arrival_airport')?.length >= 3 && (
+                        <p className="text-xs text-muted-foreground mt-1">
+                          No approaches in database for {form.watch('arrival_airport')?.toUpperCase()}.
+                        </p>
+                      )}
+                    </FormItem>
+                  );
+                }}
+              />
+            </div>
+
+            {/* Type of Instruction */}
+            <div className="space-y-4">
+              <h3 className="text-lg font-semibold">Type of Instruction</h3>
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
                 <FormField
                   control={form.control}
                   name="dual_given"
