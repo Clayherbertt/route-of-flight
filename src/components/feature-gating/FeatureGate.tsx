@@ -1,5 +1,6 @@
 import { ReactNode } from 'react';
 import { useSubscription } from '@/hooks/useSubscription';
+import { useIsAdmin } from '@/hooks/useIsAdmin';
 import { hasFeature, FeatureKey, getUpgradeMessage } from '@/lib/featureGates';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
@@ -22,10 +23,11 @@ export function FeatureGate({
   fallback,
   showUpgradePrompt = true 
 }: FeatureGateProps) {
-  const { subscription, loading } = useSubscription();
+  const { subscription, loading: subscriptionLoading } = useSubscription();
+  const { isAdmin, loading: adminLoading } = useIsAdmin();
   const navigate = useNavigate();
 
-  if (loading) {
+  if (subscriptionLoading || adminLoading) {
     return (
       <div className="flex items-center justify-center p-8">
         <div className="text-muted-foreground">Loading...</div>
@@ -33,7 +35,7 @@ export function FeatureGate({
     );
   }
 
-  const hasAccess = hasFeature(subscription, feature);
+  const hasAccess = hasFeature(subscription, feature, isAdmin);
 
   if (hasAccess) {
     return <>{children}</>;

@@ -65,11 +65,20 @@ export function getEffectivePlan(subscription: UserSubscription | null): Plan {
 
 /**
  * Check if user has access to a specific feature
+ * @param subscription - User's subscription data
+ * @param feature - Feature key to check
+ * @param isAdmin - Optional admin status. If true, always returns true (full access)
  */
 export function hasFeature(
   subscription: UserSubscription | null,
-  feature: FeatureKey
+  feature: FeatureKey,
+  isAdmin: boolean = false
 ): boolean {
+  // Admins have full unlimited access to all features
+  if (isAdmin) {
+    return true;
+  }
+  
   if (!subscription) {
     // Default to Basic plan for unauthenticated users
     return hasFeatureForPlan(Plan.BASIC, false, feature);

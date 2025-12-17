@@ -19,6 +19,7 @@ import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/contexts/AuthContext";
 import { AddAircraftDialog } from "./AddAircraftDialog";
 import { useSubscription } from "@/hooks/useSubscription";
+import { useIsAdmin } from "@/hooks/useIsAdmin";
 import { hasFeature, FeatureKey } from "@/lib/featureGates";
 import { useNavigate } from "react-router-dom";
 
@@ -197,6 +198,7 @@ export const AddFlightDialog = ({ open, onOpenChange, onFlightAdded, editingFlig
   const { toast } = useToast();
   const navigate = useNavigate();
   const { subscription } = useSubscription();
+  const { isAdmin } = useIsAdmin();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [aircraft, setAircraft] = useState<Aircraft[]>([]);
   const [showAircraftDialog, setShowAircraftDialog] = useState(false);
@@ -507,8 +509,8 @@ export const AddFlightDialog = ({ open, onOpenChange, onFlightAdded, editingFlig
 
         error = result.error;
       } else {
-        // Check logbook entry limit for Basic users
-        const hasUnlimitedEntries = hasFeature(subscription, FeatureKey.LOGBOOK_UNLIMITED_ENTRIES);
+        // Check logbook entry limit for Basic users (admins have unlimited access)
+        const hasUnlimitedEntries = hasFeature(subscription, FeatureKey.LOGBOOK_UNLIMITED_ENTRIES, isAdmin);
         
         if (!hasUnlimitedEntries) {
           // Count existing entries for Basic users
