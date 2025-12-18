@@ -7,7 +7,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Calendar } from "@/components/ui/calendar";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from "@/components/ui/command";
-import { CalendarIcon, Plus, Plane } from "lucide-react";
+import { CalendarIcon, Plus, Plane, Trash2 } from "lucide-react";
 import { format } from "date-fns";
 import { cn } from "@/lib/utils";
 import { useForm } from "react-hook-form";
@@ -239,8 +239,11 @@ const addFlightSchema = z.object({
   simulated_instrument: z.number().min(0).optional().transform(val => val ?? 0),
   holds: z.number().int().min(0).optional().transform(val => val ?? 0),
   approaches: z.number().int().min(0).optional().transform(val => val ?? 0),
-  selected_approaches: z.array(z.string()).optional(),
-  approach_circle_to_land: z.record(z.boolean()).optional(),
+  manual_approaches: z.array(z.object({
+    runway: z.string().optional(),
+    approach_type: z.string().min(1, "Approach type is required"),
+    circle_to_land: z.boolean().default(false)
+  })).optional(),
   dual_given: z.number().min(0).optional().transform(val => val ?? 0),
   dual_received: z.number().min(0).optional().transform(val => val ?? 0),
   simulated_flight: z.number().min(0).optional().transform(val => val ?? 0),
@@ -324,12 +327,6 @@ export const AddFlightDialog = ({ open, onOpenChange, onFlightAdded, editingFlig
   const [showAircraftDialog, setShowAircraftDialog] = useState(false);
   const [aircraftSearchOpen, setAircraftSearchOpen] = useState(false);
   const [supportsFullStopLandings, setSupportsFullStopLandings] = useState<boolean>(true);
-  const [availableApproaches, setAvailableApproaches] = useState<Array<{
-    id: string;
-    approach_name: string;
-    approach_type: string;
-    runway: string | null;
-  }>>([]);
 
   const form = useForm<AddFlightForm>({
     resolver: zodResolver(addFlightSchema),
@@ -368,37 +365,6 @@ export const AddFlightDialog = ({ open, onOpenChange, onFlightAdded, editingFlig
     }
   }, [open, user]);
 
-  // Fetch available approaches when arrival airport changes
-  const arrivalAirport = form.watch('arrival_airport');
-  useEffect(() => {
-    const fetchApproaches = async () => {
-      if (arrivalAirport && arrivalAirport.length >= 3) {
-        try {
-          const { data, error } = await supabase
-            .from('instrument_approaches')
-            .select('id, approach_name, approach_type, runway')
-            .eq('airport_code', arrivalAirport.toUpperCase())
-            .eq('active', true)
-            .order('approach_name');
-          
-          if (!error && data) {
-            setAvailableApproaches(data);
-          } else {
-            setAvailableApproaches([]);
-          }
-        } catch (error) {
-          console.error('Error fetching approaches:', error);
-          setAvailableApproaches([]);
-        }
-      } else {
-        setAvailableApproaches([]);
-      }
-    };
-    
-    if (open) {
-      fetchApproaches();
-    }
-  }, [arrivalAirport, open, form]);
 
   const checkFullStopSupport = async () => {
     try {
@@ -466,12 +432,14 @@ export const AddFlightDialog = ({ open, onOpenChange, onFlightAdded, editingFlig
         simulated_instrument: editingFlight.simulated_instrument || 0,
         holds: editingFlight.holds || 0,
         approaches: editingFlight.approaches ? Number(editingFlight.approaches) : 0,
-        selected_approaches: Array.isArray(editingFlight.selected_approach) 
-          ? editingFlight.selected_approach 
-          : (editingFlight.selected_approach && typeof editingFlight.selected_approach === 'string' 
-            ? [editingFlight.selected_approach] 
-            : undefined),
-        approach_circle_to_land: editingFlight.approach_circle_to_land || undefined,
+        manual_approaches: (() => {
+          // Check if approach_circle_to_land contains manual approach data (array format)
+          if (editingFlight.approach_circle_to_land && Array.isArray(editingFlight.approach_circle_to_land)) {
+            return editingFlight.approach_circle_to_land as Array<{runway?: string; approach_type: string; circle_to_land: boolean}>;
+          }
+          // Otherwise, return empty array for new entries
+          return undefined;
+        })(),
         dual_given: editingFlight.dual_given || 0,
         dual_received: editingFlight.dual_received || 0,
         simulated_flight: editingFlight.simulated_flight || 0,
@@ -507,7 +475,7 @@ export const AddFlightDialog = ({ open, onOpenChange, onFlightAdded, editingFlig
         actual_instrument: undefined,
         simulated_instrument: undefined,
         holds: undefined,
-        selected_approaches: undefined,
+        manual_approaches: undefined,
         dual_given: undefined,
         dual_received: undefined,
         simulated_flight: undefined,
@@ -599,9 +567,9 @@ export const AddFlightDialog = ({ open, onOpenChange, onFlightAdded, editingFlig
         actual_instrument: values.actual_instrument,
         simulated_instrument: values.simulated_instrument,
         holds: values.holds,
-        approaches: String(values.selected_approaches && values.selected_approaches.length > 0 ? values.selected_approaches.length : (values.approaches ?? 0)),
-        selected_approach: values.selected_approaches && values.selected_approaches.length > 0 ? values.selected_approaches : null,
-        approach_circle_to_land: values.approach_circle_to_land || null,
+        approaches: String(values.manual_approaches && values.manual_approaches.length > 0 ? values.manual_approaches.length : (values.approaches ?? 0)),
+        selected_approach: null, // Not using database approach IDs anymore
+        approach_circle_to_land: values.manual_approaches && values.manual_approaches.length > 0 ? values.manual_approaches : null,
         dual_given: values.dual_given,
         dual_received: values.dual_received,
         simulated_flight: values.simulated_flight,
@@ -1522,158 +1490,114 @@ export const AddFlightDialog = ({ open, onOpenChange, onFlightAdded, editingFlig
 
               </div>
 
-              {/* Approach Selection */}
+              {/* Approaches Flown */}
               <FormField
                 control={form.control}
-                name="selected_approaches"
+                name="manual_approaches"
                 render={({ field }) => {
-                  const selectedIds = field.value || [];
-                  const selectedCount = selectedIds.length;
+                  const approaches = field.value || [];
                   
                   return (
                     <FormItem>
-                      <FormLabel>Approaches Flown</FormLabel>
-                      <Popover>
-                        <PopoverTrigger asChild>
-                          <FormControl>
-                            <Button
-                              variant="outline"
-                              role="combobox"
-                              className={cn(
-                                "w-full justify-between",
-                                !selectedIds.length && "text-muted-foreground"
-                              )}
-                              disabled={!form.watch('arrival_airport') || form.watch('arrival_airport')?.length < 3 || availableApproaches.length === 0}
-                            >
-                              {!form.watch('arrival_airport') || form.watch('arrival_airport')?.length < 3
-                                ? "Select arrival airport first"
-                                : availableApproaches.length === 0
-                                ? "No approaches found for this airport"
-                                : selectedCount === 0
-                                ? "Select approaches"
-                                : selectedCount === 1
-                                ? "1 approach selected"
-                                : `${selectedCount} approaches selected`}
-                              <Plane className="ml-2 h-4 w-4 shrink-0 opacity-50" />
-                            </Button>
-                          </FormControl>
-                        </PopoverTrigger>
-                        <PopoverContent className="w-[400px] p-0" align="start">
-                          <Command>
-                            <CommandInput placeholder="Search approaches..." />
-                            <CommandList>
-                              <CommandEmpty>No approaches found.</CommandEmpty>
-                              <CommandGroup>
-                                {availableApproaches.map((approach) => {
-                                  const isSelected = selectedIds.includes(approach.id);
-                                  return (
-                                    <CommandItem
-                                      key={approach.id}
-                                      onSelect={() => {
-                                        const newSelected = isSelected
-                                          ? selectedIds.filter((id) => id !== approach.id)
-                                          : [...selectedIds, approach.id];
-                                        field.onChange(newSelected);
-                                      }}
-                                    >
-                                      <div className="flex items-center space-x-2 flex-1">
-                                        <Checkbox
-                                          checked={isSelected}
-                                          onCheckedChange={(checked) => {
-                                            const newSelected = checked
-                                              ? [...selectedIds, approach.id]
-                                              : selectedIds.filter((id) => id !== approach.id);
-                                            field.onChange(newSelected);
-                                          }}
-                                        />
-                                        <div className="flex-1">
-                                          <span className="font-medium">
-                                            {approach.approach_name}
-                                          </span>
-                                          {approach.runway && (
-                                            <span className="text-muted-foreground ml-2">
-                                              ({approach.runway})
-                                            </span>
-                                          )}
-                                          <span className="text-xs text-muted-foreground ml-2">
-                                            {approach.approach_type}
-                                          </span>
-                                        </div>
-                                      </div>
-                                    </CommandItem>
-                                  );
-                                })}
-                              </CommandGroup>
-                            </CommandList>
-                          </Command>
-                        </PopoverContent>
-                      </Popover>
-                      <FormMessage />
-                      {selectedCount > 0 && (
-                        <div className="space-y-2 mt-2">
-                          {selectedIds.map((id) => {
-                            const approach = availableApproaches.find((a) => a.id === id);
-                            if (!approach) return null;
-                            
-                            return (
-                              <div
-                                key={id}
-                                className="flex items-center justify-between p-2 border rounded-md bg-muted/30"
-                              >
-                                <div className="flex items-center gap-2 flex-1">
-                                  <span className="text-sm font-medium">
-                                    {approach.approach_name}
-                                    {approach.runway && ` (${approach.runway})`}
-                                  </span>
-                                  <span className="text-xs text-muted-foreground">
-                                    {approach.approach_type}
-                                  </span>
-                                </div>
-                                <div className="flex items-center gap-2">
-                                  <Label htmlFor={`circle-to-land-${id}`} className="text-xs text-muted-foreground cursor-pointer">
-                                    Circle to Land
-                                  </Label>
-                                  <FormField
-                                    control={form.control}
-                                    name="approach_circle_to_land"
-                                    render={({ field: circleField }) => (
-                                      <Switch
-                                        id={`circle-to-land-${id}`}
-                                        checked={circleField.value?.[id] || false}
-                                        onCheckedChange={(checked) => {
-                                          circleField.onChange({
-                                            ...circleField.value,
-                                            [id]: checked
-                                          });
-                                        }}
-                                      />
-                                    )}
-                                  />
-                                  <button
-                                    type="button"
-                                    onClick={() => {
-                                      // Remove from selected approaches
-                                      field.onChange(selectedIds.filter((selectedId) => selectedId !== id));
-                                      // Remove from circle-to-land mapping
-                                      const circleToLand = form.getValues('approach_circle_to_land') || {};
-                                      const { [id]: removed, ...rest } = circleToLand;
-                                      form.setValue('approach_circle_to_land', rest);
-                                    }}
-                                    className="ml-2 text-muted-foreground hover:text-destructive text-sm"
-                                  >
-                                    ×
-                                  </button>
-                                </div>
+                      <div className="flex items-center justify-between mb-2">
+                        <FormLabel>Approaches Flown</FormLabel>
+                        <Button
+                          type="button"
+                          variant="outline"
+                          size="sm"
+                          onClick={() => {
+                            field.onChange([...approaches, { runway: '', approach_type: '', circle_to_land: false }]);
+                          }}
+                        >
+                          <Plus className="mr-2 h-4 w-4" />
+                          Add Approach
+                        </Button>
+                      </div>
+                      
+                      {approaches.length === 0 ? (
+                        <p className="text-sm text-muted-foreground py-4 text-center border rounded-md">
+                          No approaches added. Click "Add Approach" to add one.
+                        </p>
+                      ) : (
+                        <div className="space-y-2">
+                          <div className="grid grid-cols-12 gap-2 text-xs font-medium text-muted-foreground pb-2 border-b">
+                            <div className="col-span-4">Runway</div>
+                            <div className="col-span-5">Type of Approach</div>
+                            <div className="col-span-2 text-center">Circle to Land</div>
+                            <div className="col-span-1"></div>
+                          </div>
+                          
+                          {approaches.map((approach, index) => (
+                            <div key={index} className="grid grid-cols-12 gap-2 items-center">
+                              <div className="col-span-4">
+                                <Input
+                                  placeholder="13L"
+                                  value={approach.runway || ''}
+                                  onChange={(e) => {
+                                    const updated = [...approaches];
+                                    updated[index] = { ...updated[index], runway: e.target.value };
+                                    field.onChange(updated);
+                                  }}
+                                />
                               </div>
-                            );
-                          })}
+                              
+                              <div className="col-span-5">
+                                <Select
+                                  value={approach.approach_type || ''}
+                                  onValueChange={(value) => {
+                                    const updated = [...approaches];
+                                    updated[index] = { ...updated[index], approach_type: value };
+                                    field.onChange(updated);
+                                  }}
+                                >
+                                  <SelectTrigger>
+                                    <SelectValue placeholder="Select type" />
+                                  </SelectTrigger>
+                                  <SelectContent>
+                                    <SelectItem value="ILS">ILS</SelectItem>
+                                    <SelectItem value="RNAV">RNAV</SelectItem>
+                                    <SelectItem value="VOR">VOR</SelectItem>
+                                    <SelectItem value="LOC">LOC</SelectItem>
+                                    <SelectItem value="NDB">NDB</SelectItem>
+                                    <SelectItem value="GPS">GPS</SelectItem>
+                                    <SelectItem value="LDA">LDA</SelectItem>
+                                    <SelectItem value="SDF">SDF</SelectItem>
+                                    <SelectItem value="BC">BC (Back Course)</SelectItem>
+                                    <SelectItem value="DME">DME</SelectItem>
+                                    <SelectItem value="TACAN">TACAN</SelectItem>
+                                  </SelectContent>
+                                </Select>
+                              </div>
+                              
+                              <div className="col-span-2 flex justify-center">
+                                <Switch
+                                  checked={approach.circle_to_land || false}
+                                  onCheckedChange={(checked) => {
+                                    const updated = [...approaches];
+                                    updated[index] = { ...updated[index], circle_to_land: checked };
+                                    field.onChange(updated);
+                                  }}
+                                />
+                              </div>
+                              
+                              <div className="col-span-1 flex justify-end">
+                                <Button
+                                  type="button"
+                                  variant="ghost"
+                                  size="sm"
+                                  onClick={() => {
+                                    field.onChange(approaches.filter((_, i) => i !== index));
+                                  }}
+                                >
+                                  <Trash2 className="h-4 w-4 text-destructive" />
+                                </Button>
+                              </div>
+                            </div>
+                          ))}
                         </div>
                       )}
-                      {availableApproaches.length === 0 && form.watch('arrival_airport') && form.watch('arrival_airport')?.length >= 3 && (
-                        <p className="text-xs text-muted-foreground mt-1">
-                          No approaches in database for {form.watch('arrival_airport')?.toUpperCase()}.
-                        </p>
-                      )}
+                      
+                      <FormMessage />
                     </FormItem>
                   );
                 }}

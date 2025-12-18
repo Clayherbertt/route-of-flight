@@ -38,7 +38,7 @@ interface FlightEntry {
   instrument_time: number;
   approaches: string;
   selected_approach?: string[] | null;
-  approach_circle_to_land?: Record<string, boolean> | null;
+  approach_circle_to_land?: Record<string, boolean> | Array<{runway?: string; approach_type: string; circle_to_land: boolean}> | null;
   landings: number;
   remarks: string | null;
   route?: string;
@@ -232,8 +232,18 @@ const Logbook = () => {
     setViewingFlight(flight);
     setSelectedApproachNames([]);
     
-    // Fetch approach names if selected_approaches exists
-    if (flight.selected_approach && Array.isArray(flight.selected_approach) && flight.selected_approach.length > 0) {
+    // Handle manual approaches (new format - array of approach objects)
+    if (flight.approach_circle_to_land && Array.isArray(flight.approach_circle_to_land)) {
+      const manualApproaches = flight.approach_circle_to_land as Array<{runway?: string; approach_type: string; circle_to_land: boolean}>;
+      const approachDisplays = manualApproaches.map((approach) => {
+        const runwayPart = approach.runway ? ` ${approach.runway}` : '';
+        const baseName = `${approach.approach_type}${runwayPart}`;
+        return approach.circle_to_land ? `${baseName} [Circle to Land]` : baseName;
+      });
+      setSelectedApproachNames(approachDisplays);
+    }
+    // Handle legacy database approach IDs (backward compatibility)
+    else if (flight.selected_approach && Array.isArray(flight.selected_approach) && flight.selected_approach.length > 0) {
       try {
         const { data, error } = await supabase
           .from('instrument_approaches')
@@ -241,7 +251,7 @@ const Logbook = () => {
           .in('id', flight.selected_approach);
         
         if (!error && data) {
-          const circleToLand = flight.approach_circle_to_land || {};
+          const circleToLand = flight.approach_circle_to_land as Record<string, boolean> || {};
           const approachDisplays = data.map((approach) => {
             const baseName = approach.runway 
               ? `${approach.approach_name} (${approach.runway})`
@@ -264,7 +274,7 @@ const Logbook = () => {
           .single();
         
         if (!error && data) {
-          const circleToLand = flight.approach_circle_to_land || {};
+          const circleToLand = (flight.approach_circle_to_land as Record<string, boolean>) || {};
           const baseName = data.runway 
             ? `${data.approach_name} (${data.runway})`
             : data.approach_name;
