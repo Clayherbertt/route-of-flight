@@ -25,6 +25,13 @@ import { useSubscription } from "@/hooks/useSubscription";
 import { useIsAdmin } from "@/hooks/useIsAdmin";
 import { hasFeature, FeatureKey } from "@/lib/featureGates";
 import { useNavigate } from "react-router-dom";
+import airportCoordinates from "@/data/airportCoordinates.json";
+
+interface AirportCoords {
+  lat: number;
+  lng: number;
+  name: string;
+}
 
 // Helper function to convert time formats to HHMM
 const convertTimeToHHMM = (time: string | null | undefined): string => {
@@ -50,6 +57,34 @@ const convertTimeToHHMM = (time: string | null | undefined): string => {
   }
   
   return "";
+};
+
+// Helper function to calculate great circle distance in nautical miles
+const calculateDistanceNM = (depCode: string, arrCode: string): number | null => {
+  if (!depCode || !arrCode || depCode.length < 3 || arrCode.length < 3) {
+    return null;
+  }
+
+  const depCoords = (airportCoordinates as Record<string, AirportCoords>)[depCode.toUpperCase()];
+  const arrCoords = (airportCoordinates as Record<string, AirportCoords>)[arrCode.toUpperCase()];
+
+  if (!depCoords || !arrCoords) {
+    return null;
+  }
+
+  // Haversine formula for great circle distance
+  const R = 3440.065; // Earth's radius in nautical miles
+  const lat1 = (depCoords.lat * Math.PI) / 180;
+  const lat2 = (arrCoords.lat * Math.PI) / 180;
+  const deltaLat = ((arrCoords.lat - depCoords.lat) * Math.PI) / 180;
+  const deltaLng = ((arrCoords.lng - depCoords.lng) * Math.PI) / 180;
+
+  const a =
+    Math.sin(deltaLat / 2) * Math.sin(deltaLat / 2) +
+    Math.cos(lat1) * Math.cos(lat2) * Math.sin(deltaLng / 2) * Math.sin(deltaLng / 2);
+  const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+
+  return Math.round(R * c);
 };
 
 // Helper component for 4-digit Zulu time input (HHMM format)
@@ -327,6 +362,7 @@ export const AddFlightDialog = ({ open, onOpenChange, onFlightAdded, editingFlig
   const [showAircraftDialog, setShowAircraftDialog] = useState(false);
   const [aircraftSearchOpen, setAircraftSearchOpen] = useState(false);
   const [supportsFullStopLandings, setSupportsFullStopLandings] = useState<boolean>(true);
+  const [calculatedDistance, setCalculatedDistance] = useState<number | null>(null);
 
   const form = useForm<AddFlightForm>({
     resolver: zodResolver(addFlightSchema),
@@ -483,6 +519,19 @@ export const AddFlightDialog = ({ open, onOpenChange, onFlightAdded, editingFlig
       });
     }
   }, [editingFlight, open, form]);
+
+  // Calculate distance when airports change
+  const depAirport = form.watch('departure_airport');
+  const arrAirport = form.watch('arrival_airport');
+  
+  useEffect(() => {
+    if (depAirport && arrAirport && depAirport.length >= 3 && arrAirport.length >= 3) {
+      const distance = calculateDistanceNM(depAirport, arrAirport);
+      setCalculatedDistance(distance);
+    } else {
+      setCalculatedDistance(null);
+    }
+  }, [depAirport, arrAirport]);
 
   const fetchAircraft = async () => {
     if (!user) return;
@@ -1293,7 +1342,14 @@ export const AddFlightDialog = ({ open, onOpenChange, onFlightAdded, editingFlig
                   name="cross_country_time"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Cross Country</FormLabel>
+                      <FormLabel>
+                        Cross Country
+                        {calculatedDistance !== null && (
+                          <span className="text-muted-foreground font-normal ml-1">
+                            ({calculatedDistance} NM)
+                          </span>
+                        )}
+                      </FormLabel>
                       <FormControl>
                         <EditableNumberInput
                           value={field.value}
