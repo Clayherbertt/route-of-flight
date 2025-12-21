@@ -8,7 +8,8 @@ import { Badge } from "@/components/ui/badge";
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from "@/components/ui/alert-dialog";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Plus, Search, Filter, Download, Plane, Upload, Edit, Trash2, Clock, Calculator } from "lucide-react";
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useMemo } from "react";
+import { useIsMobile } from "@/hooks/use-mobile";
 import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
@@ -76,6 +77,7 @@ const Logbook = () => {
   const { user, loading } = useAuth();
   const { toast } = useToast();
   const navigate = useNavigate();
+  const isMobile = useIsMobile();
   const [searchTerm, setSearchTerm] = useState("");
   const [flights, setFlights] = useState<FlightEntry[]>([]);
   const [isLoadingFlights, setIsLoadingFlights] = useState(true);
@@ -94,7 +96,7 @@ const Logbook = () => {
   const fetchAndProcessFlights = useCallback(async (showLoading: boolean = true) => {
     try {
       if (showLoading) {
-        setIsLoadingFlights(true);
+      setIsLoadingFlights(true);
       }
       const pageSize = 1000;
       let from = 0;
@@ -193,8 +195,8 @@ const Logbook = () => {
       });
     } finally {
       if (showLoading) {
-        setIsLoadingFlights(false);
-      }
+      setIsLoadingFlights(false);
+    }
     }
   }, [user, toast]);
 
@@ -221,6 +223,86 @@ const Logbook = () => {
       fetchFlights();
     }
   }, [user, fetchFlights]);
+
+
+  // Calculate flight hours per month for the last 12 months
+  // MUST be called before any early returns to follow Rules of Hooks
+  const monthlyHoursData = useMemo(() => {
+    try {
+      const now = new Date();
+      const twelveMonthsAgo = subMonths(now, 11);
+      const months = eachMonthOfInterval({
+        start: startOfMonth(twelveMonthsAgo),
+        end: endOfMonth(now),
+      });
+
+      if (!months || months.length === 0) {
+        // Return 12 months with zero hours if date calculation fails
+        const fallbackMonths = [];
+        for (let i = 11; i >= 0; i--) {
+          const monthDate = subMonths(now, i);
+          fallbackMonths.push({
+            month: format(monthDate, "MMMM"),
+            monthShort: format(monthDate, "MMM"),
+            hours: 0,
+          });
+        }
+        return fallbackMonths;
+      }
+
+      const monthlyData = months.map((month) => {
+        const hoursInMonth = flights.reduce((sum, flight) => {
+          if (!flight.date) {
+            return sum;
+          }
+          
+          try {
+            const flightDate = new Date(flight.date);
+            if (Number.isNaN(flightDate.getTime())) {
+              return sum;
+            }
+            
+            // Check if flight date is within the month (compare year and month)
+            const flightYear = flightDate.getFullYear();
+            const flightMonth = flightDate.getMonth();
+            const monthYear = month.getFullYear();
+            const monthMonth = month.getMonth();
+            
+            if (flightYear === monthYear && flightMonth === monthMonth) {
+              return sum + (Number(flight.total_time) || 0);
+            }
+          } catch (e) {
+            console.error('Error processing flight date:', e, flight);
+          }
+          return sum;
+        }, 0);
+
+        return {
+          month: format(month, "MMMM"),
+          monthShort: format(month, "MMM"),
+          hours: Math.round(hoursInMonth * 100) / 100,
+        };
+      });
+
+      // Always return 12 months, even if some have zero hours
+      return monthlyData;
+    } catch (error) {
+      console.error('Error calculating monthly hours:', error);
+      // Return 12 months with zero hours on error
+      const fallbackMonths = [];
+      const now = new Date();
+      for (let i = 11; i >= 0; i--) {
+        const monthDate = subMonths(now, i);
+        fallbackMonths.push({
+          month: format(monthDate, "MMMM"),
+          monthShort: format(monthDate, "MMM"),
+          hours: 0,
+        });
+      }
+      return fallbackMonths;
+    }
+  }, [flights]);
+
 
   const handleEditFlight = (flight: FlightEntry) => {
     setViewingFlight(null);
@@ -595,43 +677,6 @@ const Logbook = () => {
     },
   ];
 
-  // Calculate flight hours per month for the last 12 months
-  const calculateMonthlyHours = () => {
-    const now = new Date();
-    const twelveMonthsAgo = subMonths(now, 11);
-    const months = eachMonthOfInterval({
-      start: startOfMonth(twelveMonthsAgo),
-      end: endOfMonth(now),
-    });
-
-    const monthlyData = months.map((month) => {
-      const monthStart = startOfMonth(month);
-      const monthEnd = endOfMonth(month);
-      
-      const hoursInMonth = flights.reduce((sum, flight) => {
-        const flightDate = flight.date ? new Date(flight.date) : null;
-        if (!flightDate || Number.isNaN(flightDate.getTime())) {
-          return sum;
-        }
-        
-        if (flightDate >= monthStart && flightDate <= monthEnd) {
-          return sum + (Number(flight.total_time) || 0);
-        }
-        return sum;
-      }, 0);
-
-      return {
-        month: format(month, "MMMM"),
-        monthShort: format(month, "MMM"),
-        hours: Math.round(hoursInMonth * 100) / 100,
-      };
-    });
-
-    return monthlyData;
-  };
-
-  const monthlyHoursData = calculateMonthlyHours();
-
   const lastFlight = flights.length > 0 ? flights[0] : null;
 
   let tableRows: React.ReactNode;
@@ -670,14 +715,14 @@ const Logbook = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-background via-aviation-light/40 to-background">
+    <div className="min-h-screen bg-gradient-to-b from-background via-aviation-light/40 to-background overflow-x-hidden">
       <Header />
 
-      <main className="relative pb-16">
-        <section className="relative overflow-hidden">
+      <main className="relative pb-16 overflow-x-hidden max-w-full">
+        <section className="relative overflow-hidden max-w-full">
           <div className="absolute inset-0 bg-gradient-to-br from-background via-aviation-sky/10 to-aviation-navy/20" />
-          <div className="absolute -top-20 right-[-10%] h-64 w-64 rounded-full bg-aviation-sky/30 blur-3xl opacity-70" />
-          <div className="absolute bottom-[-35%] left-[-15%] h-[420px] w-[420px] rounded-full bg-aviation-navy/30 blur-3xl opacity-60" />
+          <div className="absolute -top-20 right-[-10%] h-64 w-64 rounded-full bg-aviation-sky/30 blur-3xl opacity-70 md:block hidden" />
+          <div className="absolute bottom-[-35%] left-[-15%] h-[420px] w-[420px] rounded-full bg-aviation-navy/30 blur-3xl opacity-60 md:block hidden" />
           <div className="absolute inset-0 pointer-events-none">
             {[...Array(6)].map((_, index) => (
               <span
@@ -691,7 +736,7 @@ const Logbook = () => {
             ))}
           </div>
 
-          <div className="relative container mx-auto px-6 py-8 lg:py-12">
+          <div className="relative container mx-auto px-4 sm:px-6 py-8 lg:py-12 max-w-full">
             {/* Header Section */}
             <div className="mb-8">
               <div className="flex flex-col md:flex-row md:items-start md:justify-between gap-4 md:gap-6 mb-6">
@@ -718,15 +763,6 @@ const Logbook = () => {
                 >
                     <Upload className="mr-2 h-4 w-4" />
                   Import CSV
-                </Button>
-                <Button
-                    size="default"
-                  variant="outline"
-                  onClick={() => setShowClearAllDialog(true)}
-                    className="text-destructive hover:text-destructive hover:bg-destructive/10"
-                >
-                    <Trash2 className="mr-2 h-4 w-4" />
-                  Clear All
                 </Button>
                 </div>
               </div>
@@ -786,12 +822,12 @@ const Logbook = () => {
                     {flights.length} flights logged
                   </p>
                 </div>
-                <div className="overflow-x-auto">
-                  <div className="flex min-w-max gap-3 px-6 py-4">
+                <div className="overflow-x-auto -mx-4 sm:-mx-6 px-4 sm:px-6">
+                  <div className="flex min-w-max gap-3 py-4">
                     {masterTotals.map((item) => (
                       <div
                         key={item.key}
-                        className="min-w-[160px] rounded-2xl border border-white/50 bg-background/70 px-4 py-3 shadow-sm"
+                        className="min-w-[140px] sm:min-w-[160px] rounded-2xl border border-white/50 bg-background/70 px-4 py-3 shadow-sm"
                       >
                         <p className="text-[11px] uppercase tracking-[0.25em] text-muted-foreground">
                           {item.label}
@@ -807,11 +843,11 @@ const Logbook = () => {
           </div>
         </section>
 
-        <section className="relative -mt-10">
-          <div className="container mx-auto px-6 pt-12 space-y-8">
+        <section className="relative -mt-10 max-w-full overflow-x-hidden">
+          <div className="container mx-auto px-4 sm:px-6 pt-12 space-y-8 max-w-full">
             {/* Flight Hours Chart */}
-            <div className="rounded-3xl border border-border/60 bg-card/95 shadow-xl shadow-aviation-navy/15 backdrop-blur">
-              <div className="flex flex-wrap items-center justify-between gap-4 border-b border-border/60 px-6 py-5">
+            <div className="rounded-3xl border border-border/60 bg-card/95 shadow-xl shadow-aviation-navy/15 backdrop-blur max-w-full overflow-hidden">
+              <div className="flex flex-wrap items-center justify-between gap-4 border-b border-border/60 px-4 sm:px-6 py-5">
                 <div>
                   <p className="flex items-center gap-2 text-lg font-semibold text-foreground">
                     <Clock className="h-5 w-5 text-primary" />
@@ -845,35 +881,52 @@ const Logbook = () => {
                   </Button>
                 </FeatureGate>
               </div>
-              <div className="p-6">
-                <ResponsiveContainer width="100%" height={300}>
-                  <LineChart data={monthlyHoursData} margin={{ top: 5, right: 20, left: 0, bottom: 5 }}>
+              <div className="p-4 sm:p-6 w-full">
+                <div className="w-full h-[250px] sm:h-[300px] md:h-[350px]">
+                  <ResponsiveContainer width="100%" height="100%">
+                    <LineChart 
+                      data={monthlyHoursData || []}
+                      margin={{ top: 5, right: 10, left: 0, bottom: 50 }}
+                    >
                     <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" opacity={0.3} />
                     <XAxis 
                       dataKey="month"
                       stroke="hsl(var(--muted-foreground))"
-                      style={{ fontSize: '11px' }}
-                      tick={{ fill: 'hsl(var(--muted-foreground))' }}
+                      style={{ fontSize: '10px' }}
+                      tick={{ fill: 'hsl(var(--muted-foreground))', fontSize: '10px' }}
                       angle={-45}
                       textAnchor="end"
                       height={60}
+                      interval={0}
                     />
                     <YAxis 
                       domain={[0, 150]}
                       stroke="hsl(var(--muted-foreground))"
-                      style={{ fontSize: '12px' }}
-                      tick={{ fill: 'hsl(var(--muted-foreground))' }}
-                      label={{ value: 'Hours', angle: -90, position: 'insideLeft', style: { textAnchor: 'middle', fill: 'hsl(var(--muted-foreground))' } }}
+                      style={{ fontSize: '11px' }}
+                      tick={{ fill: 'hsl(var(--muted-foreground))', fontSize: '11px' }}
+                      width={40}
+                      label={{ value: 'Hours', angle: -90, position: 'insideLeft', style: { textAnchor: 'middle', fill: 'hsl(var(--muted-foreground))', fontSize: '11px' } }}
                     />
                     <Tooltip 
-                      contentStyle={{ 
-                        backgroundColor: 'hsl(var(--card))', 
-                        border: '1px solid hsl(var(--border))',
-                        borderRadius: '8px',
-                        padding: '8px 12px'
+                      content={({ active, payload }) => {
+                        if (active && payload && payload.length) {
+                          return (
+                            <div style={{
+                              backgroundColor: 'hsl(var(--card))',
+                              border: '1px solid hsl(var(--border))',
+                              borderRadius: '8px',
+                              padding: '8px 12px',
+                              boxShadow: 'none'
+                            }}>
+                              <p style={{ fontWeight: 600, marginBottom: '4px' }}>{payload[0].payload.month}</p>
+                              <p style={{ color: 'hsl(var(--muted-foreground))' }}>
+                                Hours: {payload[0].value?.toFixed(1)} hrs
+                              </p>
+                            </div>
+                          );
+                        }
+                        return null;
                       }}
-                      labelStyle={{ color: 'hsl(var(--foreground))', fontWeight: 600 }}
-                      formatter={(value: number) => [`${value.toFixed(1)} hrs`, 'Hours']}
                     />
                     <Line 
                       type="monotone" 
@@ -883,8 +936,9 @@ const Logbook = () => {
                       dot={{ fill: 'hsl(var(--primary))', r: 4 }}
                       activeDot={{ r: 6, fill: 'hsl(var(--primary))' }}
                     />
-                  </LineChart>
-                </ResponsiveContainer>
+                    </LineChart>
+                  </ResponsiveContainer>
+                </div>
               </div>
             </div>
 
@@ -922,7 +976,7 @@ const Logbook = () => {
                 </div>
               </div>
 
-              <div className="px-6 py-6">
+              <div className="px-4 sm:px-6 py-6">
                 <div className="grid gap-6 lg:grid-cols-[minmax(0,1fr),280px]">
                   <div className="rounded-3xl border border-border/50 bg-background/70 p-5 shadow-inner">
                     <Label htmlFor="search" className="text-xs uppercase tracking-[0.3em] text-muted-foreground/80">
@@ -998,7 +1052,7 @@ const Logbook = () => {
                 </div>
               </div>
 
-              <div className="overflow-x-auto">
+              <div className="overflow-x-auto -mx-4 sm:-mx-6 px-4 sm:px-6 md:mx-0 md:px-0">
                 <Table>
                   <TableHeader>
                     <TableRow>
@@ -1109,7 +1163,7 @@ const Logbook = () => {
                 </DialogHeader>
               </div>
 
-              <div className="px-6 py-6 space-y-6">
+              <div className="px-4 sm:px-6 py-6 space-y-6">
                 {/* Flight Overview Card */}
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                   <div className="rounded-xl border bg-card p-5 shadow-sm">

@@ -18,9 +18,9 @@ const Header = () => {
   }, []);
 
   return (
-    <header className="border-b border-border bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 sticky top-0 z-50">
-      <div className="container flex h-16 items-center justify-between">
-        <div className="flex items-center">
+    <header className="border-b border-border bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 sticky top-0 z-50 w-full">
+      <div className="w-full max-w-7xl mx-auto flex h-16 items-center justify-between pl-2 pr-3 sm:pl-4 sm:pr-4 md:pl-6 md:pr-6 gap-2">
+        <div className="flex items-center flex-shrink min-w-0 overflow-hidden">
           <Link 
             to="/" 
             className="group transition-all duration-300"
@@ -28,14 +28,14 @@ const Header = () => {
             <img 
               src={logo} 
               alt="Route of Flight" 
-              className={`h-12 w-auto object-contain transition-all duration-300 group-hover:opacity-80 group-hover:scale-105 ${
-                isScrolled ? 'h-10' : 'h-12'
+              className={`h-8 sm:h-10 md:h-12 w-auto object-contain transition-all duration-300 group-hover:opacity-80 group-hover:scale-105 ${
+                isScrolled ? 'h-7 sm:h-8 md:h-10' : 'h-8 sm:h-10 md:h-12'
               }`}
             />
           </Link>
         </div>
 
-        <div className="flex items-center space-x-4">
+        <div className="flex items-center flex-shrink-0 gap-1 sm:gap-2">
           {loading ? (
             <div className="w-8 h-8 animate-pulse bg-muted rounded-full" />
           ) : user ? (
@@ -43,12 +43,12 @@ const Header = () => {
           ) : (
             <>
               <Link to="/signin">
-                <Button variant="ghost" size="sm">
+                <Button variant="ghost" size="sm" className="hidden sm:inline-flex">
                   Sign In
                 </Button>
               </Link>
               <Link to="/signin">
-                <Button variant="default" size="sm">
+                <Button variant="default" size="sm" className="text-xs sm:text-sm px-2 sm:px-4">
                   Sign Up
                 </Button>
               </Link>

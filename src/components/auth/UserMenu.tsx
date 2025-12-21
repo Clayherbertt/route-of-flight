@@ -7,10 +7,9 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
-import { Avatar, AvatarFallback } from "@/components/ui/avatar"
 import { useAuth } from "@/contexts/AuthContext"
 import { useIsAdmin } from "@/hooks/useIsAdmin"
-import { User, Settings, LogOut, Shield, CreditCard, Book, Building2, Route, FileText } from "lucide-react"
+import { User, Settings, LogOut, Shield, CreditCard, Book, Building2, Route, FileText, Menu } from "lucide-react"
 import { useNavigate } from "react-router-dom"
 
 export function UserMenu() {
@@ -59,18 +58,21 @@ export function UserMenu() {
 
   if (!user) return null
 
-  const userInitials = user.email
-    ?.split('@')[0]
-    .slice(0, 2)
-    .toUpperCase() || "U"
-
   return (
-    <DropdownMenu>
+    <DropdownMenu onOpenChange={(open) => {
+      if (!open) {
+        // Blur the button when menu closes to remove focus outline
+        setTimeout(() => {
+          const button = document.activeElement as HTMLElement;
+          if (button && button.blur) {
+            button.blur();
+          }
+        }, 0);
+      }
+    }}>
       <DropdownMenuTrigger asChild>
-        <Button variant="ghost" className="relative h-8 w-8 rounded-full">
-          <Avatar className="h-8 w-8">
-            <AvatarFallback className="text-xs">{userInitials}</AvatarFallback>
-          </Avatar>
+        <Button variant="ghost" className="relative h-8 w-8 rounded-md flex-shrink-0 p-0 focus:ring-0 focus:ring-offset-0 focus-visible:ring-0 focus-visible:ring-offset-0 outline-none">
+          <Menu className="h-5 w-5" />
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent className="w-56" align="end" forceMount>

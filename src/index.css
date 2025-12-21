@@ -2,6 +2,22 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Prevent horizontal scrolling on mobile */
+@media (max-width: 768px) {
+  html, body {
+    overflow-x: hidden !important;
+    max-width: 100vw !important;
+  }
+  
+  body {
+    position: relative;
+  }
+  
+  * {
+    max-width: 100%;
+  }
+}
+
 /* Aviation-focused design system for Route of Flight app */
 
 @layer base {
