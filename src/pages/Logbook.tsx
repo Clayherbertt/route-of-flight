@@ -694,24 +694,86 @@ const Logbook = () => {
       </TableRow>
     );
   } else {
-    tableRows = flights.map((flight) => (
-      <TableRow 
-        key={flight.id} 
-        className="hover:bg-muted/50 cursor-pointer transition-colors"
-        onClick={() => handleViewFlight(flight)}
-      >
-        <TableCell className="min-w-[110px] whitespace-nowrap font-medium">{flight.date}</TableCell>
-        <TableCell>
-          <Badge variant="outline">{flight.aircraft_registration}</Badge>
-        </TableCell>
-        <TableCell>{flight.departure_airport}</TableCell>
-        <TableCell>{flight.arrival_airport}</TableCell>
-        <TableCell className="font-medium text-center">{formatHours(Number(flight.total_time) || 0)}</TableCell>
-        <TableCell className="text-center">{formatHours(Number(flight.pic_time) || 0)}</TableCell>
-        <TableCell className="text-center">{formatHours(Number(flight.sic_time) || 0)}</TableCell>
-        <TableCell className="text-center">{formatHours(Number(flight.cross_country_time) || 0)}</TableCell>
-      </TableRow>
-    ));
+    tableRows = flights.map((flight) => {
+      // Get aircraft type
+      const aircraft = aircraftMap.get(flight.aircraft_registration?.toUpperCase() || '');
+      const aircraftType = aircraft?.type_code || flight.aircraft_type || '';
+      
+      if (isMobile) {
+        // Mobile layout: card-style with specific positioning
+        return (
+          <>
+            <TableRow 
+              key={flight.id} 
+              className="hover:bg-muted/50 cursor-pointer transition-colors border-0"
+              onClick={() => handleViewFlight(flight)}
+            >
+              <TableCell colSpan={8} className="px-4 sm:px-6 pb-3 pt-4">
+                <div className="flex items-start justify-between gap-4">
+                  {/* Left side */}
+                  <div className="flex-1 min-w-0">
+                    {/* Top left: Route (To - From) */}
+                    <div className="font-bold text-base text-foreground mb-2 uppercase">
+                      {flight.arrival_airport} - {flight.departure_airport}
+                    </div>
+                    {/* Bottom left: Tail Number and Type */}
+                    <div className="text-sm text-muted-foreground">
+                      {flight.aircraft_registration} {aircraftType && `(${aircraftType})`}
+                    </div>
+                  </div>
+                  
+                  {/* Right side - aligned to match left margin */}
+                  <div className="flex flex-col items-end gap-2 flex-shrink-0">
+                    {/* Top right: Date */}
+                    <div className="text-sm text-primary font-medium">
+                      {flight.date}
+                    </div>
+                    {/* Bottom right: Total Time */}
+                    <div className="text-base">
+                      <span className="text-muted-foreground">Total Time: </span>
+                      <span className="font-bold text-foreground">{formatHours(Number(flight.total_time) || 0)}</span>
+                    </div>
+                  </div>
+                </div>
+              </TableCell>
+            </TableRow>
+            {/* Full-width separator line */}
+            <TableRow className="border-0">
+              <TableCell colSpan={8} className="p-0">
+                <div className="border-b border-border/60" style={{ 
+                  width: '100vw',
+                  position: 'relative',
+                  left: '50%',
+                  right: '50%',
+                  marginLeft: '-50vw',
+                  marginRight: '-50vw'
+                }}></div>
+              </TableCell>
+            </TableRow>
+          </>
+        );
+      } else {
+        // Desktop layout: table cells
+        return (
+          <TableRow 
+            key={flight.id} 
+            className="hover:bg-muted/50 cursor-pointer transition-colors"
+            onClick={() => handleViewFlight(flight)}
+          >
+            <TableCell className="min-w-[110px] whitespace-nowrap font-medium">{flight.date}</TableCell>
+            <TableCell>
+              <Badge variant="outline">{flight.aircraft_registration}</Badge>
+            </TableCell>
+            <TableCell>{flight.departure_airport}</TableCell>
+            <TableCell>{flight.arrival_airport}</TableCell>
+            <TableCell className="font-medium text-center">{formatHours(Number(flight.total_time) || 0)}</TableCell>
+            <TableCell className="text-center">{formatHours(Number(flight.pic_time) || 0)}</TableCell>
+            <TableCell className="text-center">{formatHours(Number(flight.sic_time) || 0)}</TableCell>
+            <TableCell className="text-center">{formatHours(Number(flight.cross_country_time) || 0)}</TableCell>
+          </TableRow>
+        );
+      }
+    });
   }
 
   return (
@@ -741,7 +803,9 @@ const Logbook = () => {
             <div className="mb-8">
               <div className="flex flex-col md:flex-row md:items-start md:justify-between gap-4 md:gap-6 mb-6">
                 <div className="flex-1">
-                  <h1 className="text-3xl md:text-4xl font-bold text-foreground mb-2">Flight Logbook</h1>
+                  <h1 className="text-3xl md:text-4xl font-bold text-foreground mb-2">
+                    {user?.user_metadata?.display_name || user?.user_metadata?.full_name || user?.email?.split('@')[0] || 'Your'}'s Logbook
+                  </h1>
                   <p className="text-muted-foreground text-sm md:text-base">
                     Manage your flight records and track your aviation experience
                   </p>
@@ -1014,87 +1078,10 @@ const Logbook = () => {
               />
             </FeatureGate>
 
-            <div className="rounded-3xl border border-border/60 bg-card/95 shadow-xl shadow-aviation-navy/15 backdrop-blur">
-              <div className="flex flex-wrap items-start justify-between gap-4 border-b border-border/60 px-6 py-6">
-                <div className="space-y-1">
-                  <p className="text-sm font-semibold text-foreground">Search &amp; Filter</p>
-                  <p className="text-xs text-muted-foreground">Fine-tune your logbook view or prepare an export in seconds</p>
-                </div>
-                <div className="flex flex-wrap items-center gap-2">
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    className="rounded-full border-white/40 bg-white/20 text-foreground hover:bg-white/40"
-                  >
-                    <Filter className="mr-2 h-4 w-4" />
-                    More Filters
-                  </Button>
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    className="rounded-full border-white/40 bg-white/20 text-foreground hover:bg-white/40"
-                  >
-                    <Download className="mr-2 h-4 w-4" />
-                    Export
-                  </Button>
-                </div>
-              </div>
-
-              <div className="px-4 sm:px-6 py-6">
-                <div className="grid gap-6 lg:grid-cols-[minmax(0,1fr),280px]">
-                  <div className="rounded-3xl border border-border/50 bg-background/70 p-5 shadow-inner">
-                    <Label htmlFor="search" className="text-xs uppercase tracking-[0.3em] text-muted-foreground/80">
-                      Search flights
-                    </Label>
-                    <div className="relative mt-4">
-                      <Search className="absolute left-4 top-1/2 h-5 w-5 -translate-y-1/2 text-muted-foreground" />
-                      <Input
-                        id="search"
-                        placeholder="Search by aircraft, route, or remarks..."
-                        value={searchTerm}
-                        onChange={(e) => setSearchTerm(e.target.value)}
-                        className="h-14 rounded-2xl border-border/40 bg-card pl-12 text-base"
-                      />
-                    </div>
-                    <div className="mt-6 grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
-                      {timeWindowInsights.map((insight) => (
-                        <div key={insight.key} className="rounded-2xl border border-border/40 bg-background/80 p-4">
-                          <p className="text-[10px] uppercase tracking-[0.4em] text-muted-foreground/80">{insight.label}</p>
-                          <p className="mt-2 text-base font-semibold text-foreground">{insight.value}</p>
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-
-                  <div className="flex flex-col gap-6 rounded-3xl border border-border/50 bg-background/70 p-5 shadow-inner">
-                    <div>
-                      <Label htmlFor="aircraft-filter" className="text-xs uppercase tracking-[0.3em] text-muted-foreground/80">
-                        Aircraft type
-                      </Label>
-                      <Select>
-                        <SelectTrigger className="mt-3 h-12 rounded-2xl border-border/40 bg-card">
-                          <SelectValue placeholder="All aircraft" />
-                        </SelectTrigger>
-                        <SelectContent>
-                          <SelectItem value="all">All Aircraft</SelectItem>
-                          <SelectItem value="c172">Cessna 172</SelectItem>
-                          <SelectItem value="pa28">Piper Cherokee</SelectItem>
-                          <SelectItem value="c152">Cessna 152</SelectItem>
-                        </SelectContent>
-                      </Select>
-                    </div>
-                    <div className="rounded-2xl border border-dashed border-border/40 bg-background/60 p-4 text-center text-xs text-muted-foreground">
-                      Additional filters coming soon — use the search or aircraft selector above to narrow your logbook.
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-
             {/* Endorsement Carousel */}
             <EndorsementCarousel />
 
-            <div className="rounded-3xl border border-border/60 bg-card/95 shadow-xl shadow-aviation-navy/15 backdrop-blur">
+            <div className="rounded-3xl border border-border/60 bg-card/95 shadow-xl shadow-aviation-navy/15 backdrop-blur overflow-visible md:overflow-hidden">
               <div className="flex flex-wrap items-center justify-between gap-4 border-b border-border/60 px-6 py-5">
                 <div>
                   <p className="flex items-center gap-2 text-lg font-semibold text-foreground">
@@ -1116,22 +1103,83 @@ const Logbook = () => {
                 </div>
               </div>
 
-              <div className="overflow-x-auto -mx-4 sm:-mx-6 px-4 sm:px-6 md:mx-0 md:px-0">
-                <Table>
-                  <TableHeader>
-                    <TableRow>
-                      <TableHead className="min-w-[110px] whitespace-nowrap">Date</TableHead>
-                      <TableHead>Aircraft ID</TableHead>
-                      <TableHead>From</TableHead>
-                      <TableHead>To</TableHead>
-                      <TableHead className="text-center">Total Time</TableHead>
-                      <TableHead className="text-center">PIC</TableHead>
-                      <TableHead className="text-center">SIC</TableHead>
-                      <TableHead className="text-center">Cross Country</TableHead>
-                    </TableRow>
-                  </TableHeader>
-                  <TableBody>{tableRows}</TableBody>
-                </Table>
+              <div className="md:mx-0 md:px-0">
+                <div className="md:hidden">
+                  {/* Mobile: Full-width container with proper padding */}
+                  <div className="space-y-0">
+                    {flights.map((flight, index) => {
+                      const aircraft = aircraftMap.get(flight.aircraft_registration?.toUpperCase() || '');
+                      const aircraftType = aircraft?.type_code || flight.aircraft_type || '';
+                      
+                      return (
+                        <div key={flight.id} className="relative">
+                          <div 
+                            className="py-4 px-4 sm:px-6 cursor-pointer hover:bg-muted/50 transition-colors"
+                            onClick={() => handleViewFlight(flight)}
+                          >
+                            <div className="flex items-start justify-between gap-4">
+                              {/* Left side */}
+                              <div className="flex-1 min-w-0">
+                                {/* Top left: Route (To - From) */}
+                                <div className="font-bold text-base text-foreground mb-2 uppercase">
+                                  {flight.arrival_airport} - {flight.departure_airport}
+                                </div>
+                                {/* Bottom left: Tail Number and Type */}
+                                <div className="text-sm text-muted-foreground">
+                                  {flight.aircraft_registration} {aircraftType && `(${aircraftType})`}
+                                </div>
+                              </div>
+                              
+                              {/* Right side */}
+                              <div className="flex flex-col items-end gap-2 flex-shrink-0">
+                                {/* Top right: Date */}
+                                <div className="text-sm text-primary font-medium">
+                                  {flight.date}
+                                </div>
+                                {/* Bottom right: Total Time */}
+                                <div className="text-base">
+                                  <span className="text-muted-foreground">Total Time: </span>
+                                  <span className="font-bold text-foreground">{formatHours(Number(flight.total_time) || 0)}</span>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                          {/* Full-width separator line - spans from left edge to right edge of window */}
+                          {index < flights.length - 1 && (
+                            <div 
+                              className="border-b border-border/60"
+                              style={{ 
+                                width: '100vw',
+                                position: 'relative',
+                                left: '50%',
+                                marginLeft: 'calc(-50vw + 1rem)',
+                                marginRight: 'calc(-50vw - 1rem)'
+                              }}
+                            ></div>
+                          )}
+                        </div>
+                      );
+                    })}
+                  </div>
+                </div>
+                {/* Desktop: Table view */}
+                <div className="hidden md:block -mx-4 sm:-mx-6 px-4 sm:px-6 md:mx-0 md:px-0">
+                  <Table>
+                    <TableHeader>
+                      <TableRow>
+                        <TableHead className="min-w-[110px] whitespace-nowrap">Date</TableHead>
+                        <TableHead>Aircraft ID</TableHead>
+                        <TableHead>From</TableHead>
+                        <TableHead>To</TableHead>
+                        <TableHead className="text-center">Total Time</TableHead>
+                        <TableHead className="text-center">PIC</TableHead>
+                        <TableHead className="text-center">SIC</TableHead>
+                        <TableHead className="text-center">Cross Country</TableHead>
+                      </TableRow>
+                    </TableHeader>
+                    <TableBody>{tableRows}</TableBody>
+                  </Table>
+                </div>
               </div>
             </div>
           </div>

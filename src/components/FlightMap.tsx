@@ -5,8 +5,9 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Plane, ZoomIn, ZoomOut, RotateCcw, CalendarIcon } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
-import { Calendar } from "@/components/ui/calendar";
 import { Label } from "@/components/ui/label";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { cn } from "@/lib/utils";
 import airportCoordinates from "@/data/airportCoordinates.json";
 
@@ -219,8 +220,18 @@ export const FlightMap = ({ flights, onDateRangeChange }: FlightMapProps) => {
   const [isDragging, setIsDragging] = useState(false);
   const [dragStart, setDragStart] = useState<{ x: number; y: number; rotation: [number, number, number] } | null>(null);
   const mapContainerRef = useRef<HTMLDivElement>(null);
+  const [touchStartDistance, setTouchStartDistance] = useState<number | null>(null);
+  const [touchStartZoom, setTouchStartZoom] = useState<number>(1);
   const [dateRange, setDateRange] = useState<{ from: Date | null; to: Date | null }>({ from: null, to: null });
   const [isDatePickerOpen, setIsDatePickerOpen] = useState(false);
+  
+  // State for dropdown date selectors
+  const [fromMonth, setFromMonth] = useState<string>("");
+  const [fromDay, setFromDay] = useState<string>("");
+  const [fromYear, setFromYear] = useState<string>("");
+  const [toMonth, setToMonth] = useState<string>("");
+  const [toDay, setToDay] = useState<string>("");
+  const [toYear, setToYear] = useState<string>("");
 
   // Filter flights based on selected date range
   // Map starts blank - only shows flights when a date range is explicitly selected and applied
@@ -332,7 +343,7 @@ export const FlightMap = ({ flights, onDateRangeChange }: FlightMapProps) => {
 
   // Handle zoom
   const handleZoomIn = useCallback(() => {
-    setZoom((z) => Math.min(z * 1.5, 8));
+    setZoom((z) => Math.min(z * 1.5, 20));
   }, []);
 
   const handleZoomOut = useCallback(() => {
@@ -392,6 +403,78 @@ export const FlightMap = ({ flights, onDateRangeChange }: FlightMapProps) => {
     setDragStart(null);
   }, []);
 
+  // Calculate distance between two touch points
+  const getTouchDistance = (touch1: Touch, touch2: Touch): number => {
+    const dx = touch2.clientX - touch1.clientX;
+    const dy = touch2.clientY - touch1.clientY;
+    return Math.sqrt(dx * dx + dy * dy);
+  };
+
+  // Handle touch start for pinch-to-zoom
+  const handleTouchStart = useCallback((e: React.TouchEvent) => {
+    if (e.touches.length === 2) {
+      // Two-finger pinch gesture
+      const distance = getTouchDistance(e.touches[0], e.touches[1]);
+      setTouchStartDistance(distance);
+      setTouchStartZoom(zoom);
+      e.preventDefault();
+    } else if (e.touches.length === 1) {
+      // Single finger - allow dragging
+      setIsDragging(true);
+      setDragStart({ 
+        x: e.touches[0].clientX, 
+        y: e.touches[0].clientY,
+        rotation: [...rotation] as [number, number, number]
+      });
+    }
+  }, [zoom, rotation]);
+
+  // Handle touch move for pinch-to-zoom
+  const handleTouchMove = useCallback((e: React.TouchEvent) => {
+    if (e.touches.length === 2 && touchStartDistance !== null) {
+      // Two-finger pinch gesture - zoom
+      const currentDistance = getTouchDistance(e.touches[0], e.touches[1]);
+      const scale = currentDistance / touchStartDistance;
+      const newZoom = touchStartZoom * scale;
+      setZoom(Math.max(0.5, Math.min(20, newZoom)));
+      e.preventDefault();
+    } else if (e.touches.length === 1 && isDragging && dragStart) {
+      // Single finger drag - rotate map
+      const deltaX = e.touches[0].clientX - dragStart.x;
+      const deltaY = e.touches[0].clientY - dragStart.y;
+      
+      const baseSensitivity = 0.5;
+      const sensitivity = baseSensitivity / zoom;
+      const newRotation: [number, number, number] = [
+        dragStart.rotation[0] + deltaX * sensitivity,
+        Math.max(-90, Math.min(90, dragStart.rotation[1] - deltaY * sensitivity)),
+        dragStart.rotation[2],
+      ];
+      
+      setRotation(newRotation);
+      e.preventDefault();
+    }
+  }, [touchStartDistance, touchStartZoom, isDragging, dragStart, zoom]);
+
+  // Handle touch end
+  const handleTouchEnd = useCallback((e: React.TouchEvent) => {
+    if (e.touches.length === 0) {
+      // All fingers lifted
+      setTouchStartDistance(null);
+      setIsDragging(false);
+      setDragStart(null);
+    } else if (e.touches.length === 1) {
+      // One finger remaining - switch to drag mode
+      setTouchStartDistance(null);
+      setIsDragging(true);
+      setDragStart({ 
+        x: e.touches[0].clientX, 
+        y: e.touches[0].clientY,
+        rotation: [...rotation] as [number, number, number]
+      });
+    }
+  }, [rotation]);
+
   // Handle wheel/scroll for zoom (Mac-style natural scrolling)
   const handleWheel = useCallback((e: WheelEvent) => {
     e.preventDefault();
@@ -414,7 +497,7 @@ export const FlightMap = ({ flights, onDateRangeChange }: FlightMapProps) => {
       // Scrolling up - zoom in
       setZoom((z) => {
         const newZoom = z + zoomIncrement;
-        return Math.min(newZoom, 8);
+        return Math.min(newZoom, 20);
       });
     } else {
       // Scrolling down - zoom out
@@ -436,6 +519,117 @@ export const FlightMap = ({ flights, onDateRangeChange }: FlightMapProps) => {
       container.removeEventListener('wheel', handleWheel);
     };
   }, [handleWheel]);
+
+  // Initialize dropdown values from dateRange
+  useEffect(() => {
+    if (dateRange.from) {
+      setFromMonth(String(dateRange.from.getMonth() + 1).padStart(2, '0'));
+      setFromDay(String(dateRange.from.getDate()).padStart(2, '0'));
+      setFromYear(String(dateRange.from.getFullYear()));
+    }
+    if (dateRange.to) {
+      setToMonth(String(dateRange.to.getMonth() + 1).padStart(2, '0'));
+      setToDay(String(dateRange.to.getDate()).padStart(2, '0'));
+      setToYear(String(dateRange.to.getFullYear()));
+    }
+  }, [dateRange]);
+
+  // Generate month options
+  const months = Array.from({ length: 12 }, (_, i) => {
+    const monthNum = i + 1;
+    const date = new Date(2000, i, 1);
+    return { value: String(monthNum).padStart(2, '0'), label: format(date, 'MMMM') };
+  });
+
+  // Generate year options (current year and 10 years back)
+  const currentYear = new Date().getFullYear();
+  const years = Array.from({ length: 11 }, (_, i) => {
+    const year = currentYear - i;
+    return { value: String(year), label: String(year) };
+  });
+
+  // Get days in month (handles leap years)
+  const getDaysInMonth = (month: string, year: string): number => {
+    if (!month || !year) return 31;
+    const monthNum = parseInt(month, 10);
+    const yearNum = parseInt(year, 10);
+    return new Date(yearNum, monthNum, 0).getDate();
+  };
+
+  // Generate day options based on selected month/year
+  const getDayOptions = (month: string, year: string) => {
+    const daysInMonth = getDaysInMonth(month, year);
+    return Array.from({ length: daysInMonth }, (_, i) => {
+      const day = i + 1;
+      return { value: String(day).padStart(2, '0'), label: String(day) };
+    });
+  };
+
+  // Update dateRange when dropdowns change
+  const updateFromDate = (month: string, day: string, year: string) => {
+    if (month && day && year) {
+      const date = new Date(parseInt(year, 10), parseInt(month, 10) - 1, parseInt(day, 10));
+      if (!isNaN(date.getTime())) {
+        setDateRange(prev => ({ ...prev, from: date }));
+      }
+    }
+  };
+
+  const updateToDate = (month: string, day: string, year: string) => {
+    if (month && day && year) {
+      const date = new Date(parseInt(year, 10), parseInt(month, 10) - 1, parseInt(day, 10));
+      if (!isNaN(date.getTime())) {
+        setDateRange(prev => ({ ...prev, to: date }));
+      }
+    }
+  };
+
+  // Handle dropdown changes
+  const handleFromMonthChange = (value: string) => {
+    setFromMonth(value);
+    const daysInMonth = getDaysInMonth(value, fromYear);
+    const day = parseInt(fromDay, 10);
+    const adjustedDay = day > daysInMonth ? String(daysInMonth).padStart(2, '0') : fromDay;
+    setFromDay(adjustedDay);
+    updateFromDate(value, adjustedDay, fromYear);
+  };
+
+  const handleFromDayChange = (value: string) => {
+    setFromDay(value);
+    updateFromDate(fromMonth, value, fromYear);
+  };
+
+  const handleFromYearChange = (value: string) => {
+    setFromYear(value);
+    const daysInMonth = getDaysInMonth(fromMonth, value);
+    const day = parseInt(fromDay, 10);
+    const adjustedDay = day > daysInMonth ? String(daysInMonth).padStart(2, '0') : fromDay;
+    setFromDay(adjustedDay);
+    updateFromDate(fromMonth, adjustedDay, value);
+  };
+
+  const handleToMonthChange = (value: string) => {
+    setToMonth(value);
+    const daysInMonth = getDaysInMonth(value, toYear);
+    const day = parseInt(toDay, 10);
+    const adjustedDay = day > daysInMonth ? String(daysInMonth).padStart(2, '0') : toDay;
+    setToDay(adjustedDay);
+    updateToDate(value, adjustedDay, toYear);
+  };
+
+  const handleToDayChange = (value: string) => {
+    setToDay(value);
+    updateToDate(toMonth, value, toYear);
+  };
+
+  const handleToYearChange = (value: string) => {
+    setToYear(value);
+    const daysInMonth = getDaysInMonth(toMonth, value);
+    const day = parseInt(toDay, 10);
+    const adjustedDay = day > daysInMonth ? String(daysInMonth).padStart(2, '0') : toDay;
+    setToDay(adjustedDay);
+    updateToDate(toMonth, adjustedDay, value);
+  };
 
   const getDateRangeLabel = () => {
     if (!dateRange.from || !dateRange.to) {
@@ -492,7 +686,41 @@ export const FlightMap = ({ flights, onDateRangeChange }: FlightMapProps) => {
           </p>
         </div>
         <div className="flex items-center gap-2">
-          <div className="flex items-center gap-1.5">
+          {/* Mobile: Dropdown menu */}
+          <div className="md:hidden">
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  className="h-9 text-xs px-3"
+                >
+                  Select Range
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end" className="w-40">
+                <DropdownMenuItem onClick={() => handleQuickSelect(1)}>
+                  1 Month
+                </DropdownMenuItem>
+                <DropdownMenuItem onClick={() => handleQuickSelect(6)}>
+                  6 Months
+                </DropdownMenuItem>
+                <DropdownMenuItem onClick={() => handleQuickSelect(12)}>
+                  12 Months
+                </DropdownMenuItem>
+                <DropdownMenuItem 
+                  onSelect={(e) => {
+                    e.preventDefault();
+                    setIsDatePickerOpen(true);
+                  }}
+                >
+                  Custom Range
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
+          </div>
+          {/* Desktop: Individual buttons */}
+          <div className="hidden md:flex items-center gap-1.5">
             <Button
               variant="outline"
               size="sm"
@@ -518,12 +746,13 @@ export const FlightMap = ({ flights, onDateRangeChange }: FlightMapProps) => {
               12 Months
             </Button>
           </div>
+          {/* Custom Range button - hidden on mobile, shown on desktop */}
           <Popover open={isDatePickerOpen} onOpenChange={setIsDatePickerOpen}>
             <PopoverTrigger asChild>
               <Button
                 variant="outline"
                 className={cn(
-                  "h-9 justify-start text-left font-normal bg-background/50 hover:bg-background border-border/60",
+                  "hidden md:flex h-9 justify-start text-left font-normal bg-background/50 hover:bg-background border-border/60",
                   !dateRange.from && !dateRange.to && "text-muted-foreground"
                 )}
               >
@@ -539,35 +768,122 @@ export const FlightMap = ({ flights, onDateRangeChange }: FlightMapProps) => {
             </PopoverTrigger>
             <PopoverContent className="w-auto p-0" align="end">
               <div className="p-5 space-y-5">
-                <div className="space-y-3">
-                  <div className="space-y-1.5">
+                <div className="space-y-4">
+                  <div className="space-y-2">
                     <Label className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">From Date</Label>
-                    <Calendar
-                      mode="single"
-                      selected={dateRange.from || undefined}
-                      onSelect={(date) => setDateRange(prev => ({ ...prev, from: date || null }))}
-                      disabled={(date) => date > new Date() || (dateRange.to ? date > dateRange.to : false)}
-                      initialFocus
-                      className="rounded-lg border border-border/40"
-                    />
+                    <div className="grid grid-cols-3 gap-3">
+                      <div className="space-y-2">
+                        <Label className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">Month</Label>
+                        <Select value={fromMonth} onValueChange={handleFromMonthChange}>
+                          <SelectTrigger>
+                            <SelectValue placeholder="Month" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            {months.map((month) => (
+                              <SelectItem key={month.value} value={month.value}>
+                                {month.label}
+                              </SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+                      </div>
+                      <div className="space-y-2">
+                        <Label className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">Day</Label>
+                        <Select value={fromDay} onValueChange={handleFromDayChange}>
+                          <SelectTrigger>
+                            <SelectValue placeholder="Day" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            {getDayOptions(fromMonth, fromYear).map((day) => (
+                              <SelectItem key={day.value} value={day.value}>
+                                {day.label}
+                              </SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+                      </div>
+                      <div className="space-y-2">
+                        <Label className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">Year</Label>
+                        <Select value={fromYear} onValueChange={handleFromYearChange}>
+                          <SelectTrigger>
+                            <SelectValue placeholder="Year" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            {years.map((year) => (
+                              <SelectItem key={year.value} value={year.value}>
+                                {year.label}
+                              </SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+                      </div>
+                    </div>
                   </div>
-                  <div className="space-y-1.5">
+                  
+                  <div className="space-y-2">
                     <Label className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">To Date</Label>
-                    <Calendar
-                      mode="single"
-                      selected={dateRange.to || undefined}
-                      onSelect={(date) => setDateRange(prev => ({ ...prev, to: date || null }))}
-                      disabled={(date) => date > new Date() || (dateRange.from ? date < dateRange.from : false)}
-                      className="rounded-lg border border-border/40"
-                    />
+                    <div className="grid grid-cols-3 gap-3">
+                      <div className="space-y-2">
+                        <Label className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">Month</Label>
+                        <Select value={toMonth} onValueChange={handleToMonthChange}>
+                          <SelectTrigger>
+                            <SelectValue placeholder="Month" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            {months.map((month) => (
+                              <SelectItem key={month.value} value={month.value}>
+                                {month.label}
+                              </SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+                      </div>
+                      <div className="space-y-2">
+                        <Label className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">Day</Label>
+                        <Select value={toDay} onValueChange={handleToDayChange}>
+                          <SelectTrigger>
+                            <SelectValue placeholder="Day" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            {getDayOptions(toMonth, toYear).map((day) => (
+                              <SelectItem key={day.value} value={day.value}>
+                                {day.label}
+                              </SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+                      </div>
+                      <div className="space-y-2">
+                        <Label className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">Year</Label>
+                        <Select value={toYear} onValueChange={handleToYearChange}>
+                          <SelectTrigger>
+                            <SelectValue placeholder="Year" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            {years.map((year) => (
+                              <SelectItem key={year.value} value={year.value}>
+                                {year.label}
+                              </SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+                      </div>
+                    </div>
                   </div>
                 </div>
+                
                 <div className="flex justify-end gap-2 pt-3 border-t border-border/60">
                   <Button
                     variant="ghost"
                     size="sm"
                     onClick={() => {
                       setDateRange({ from: null, to: null });
+                      setFromMonth("");
+                      setFromDay("");
+                      setFromYear("");
+                      setToMonth("");
+                      setToDay("");
+                      setToYear("");
                       setIsDatePickerOpen(false);
                     }}
                     className="text-muted-foreground hover:text-foreground"
@@ -588,22 +904,28 @@ export const FlightMap = ({ flights, onDateRangeChange }: FlightMapProps) => {
           </Popover>
         </div>
       </div>
-      <CardContent className="p-6">
+      <CardContent className="p-0">
         <div 
           ref={mapContainerRef}
-          className="w-full" 
+          className="w-full rounded-b-3xl" 
           style={{ 
-            height: "500px", 
+            height: "calc(100vh - 300px)",
+            minHeight: "500px",
             position: "relative", 
             backgroundColor: "#0a0a1a", 
             cursor: isDragging ? "grabbing" : "grab",
             overflow: "hidden",
-            touchAction: "none"
+            touchAction: "none",
+            WebkitUserSelect: "none",
+            userSelect: "none"
           }}
           onMouseDown={handleMouseDown}
           onMouseMove={handleMouseMove}
           onMouseUp={handleMouseUp}
           onMouseLeave={handleMouseLeave}
+          onTouchStart={handleTouchStart}
+          onTouchMove={handleTouchMove}
+          onTouchEnd={handleTouchEnd}
         >
           {mapError && (
             <div className="absolute inset-0 flex items-center justify-center text-sm text-muted-foreground z-10">
