@@ -137,6 +137,8 @@ export default function RouteBuilder() {
   const [expandedSteps, setExpandedSteps] = useState<Set<string>>(new Set());
   const [hasCheckedForExistingRoute, setHasCheckedForExistingRoute] = useState(false);
   const [isManuallyUpdating, setIsManuallyUpdating] = useState(false); // Flag to prevent refresh during manual updates
+  const isManuallyUpdatingRef = React.useRef(false); // Ref version for immediate access in useEffect
+  const manuallyUpdatedTasksRef = React.useRef<Set<string>>(new Set()); // Track which tasks were manually updated
   const hasCheckedPrivatePilotTaskRef = React.useRef(false); // Track if we've already auto-checked the Private Pilot Certificate task
   const manuallyUncheckedPrivatePilotRef = React.useRef(false); // Track if user has manually unchecked the Private Pilot Certificate task
   const [lastPracticeTestUpdate, setLastPracticeTestUpdate] = useState<number>(0); // Track when practice test task was manually updated
@@ -274,6 +276,14 @@ export default function RouteBuilder() {
       // Skip "take offs and landings at a controlled airport" - controlled airport status not tracked
       if ((title.includes('take off') || title.includes('takeoff') || title.includes('landing')) && 
           title.includes('controlled airport')) {
+        // Don't auto-check this task - it must be manually checked by the customer
+        return;
+      }
+      
+      // Skip "take offs and landings to a full stop" - full stop landings are tracked separately
+      // and should not be auto-checked from regular landing counts
+      if ((title.includes('take off') || title.includes('takeoff') || title.includes('landing')) && 
+          (title.includes('full stop') || title.includes('fullstop'))) {
         // Don't auto-check this task - it must be manually checked by the customer
         return;
       }
@@ -910,11 +920,18 @@ export default function RouteBuilder() {
               ? {}
               : await calculateTaskProgressFromFlights(step, allFlights, aircraftFeatureMap);
 
-            // Initialize tasks - for initial tasks (Medical Certification, Initial Training Preparation), 
-            // always start at 0% with nothing checked when loading from database
-            // This ensures reset routes start fresh
+            // Initialize tasks - load checked state from database for all tasks
+            // Sort details the same way as in render to get correct indices
+            const sortedDetails = [...step.details].sort((a, b) => {
+              if (a.taskType !== b.taskType) {
+                if (a.taskType === 'flight') return -1;
+                if (b.taskType === 'flight') return 1;
+                return 0;
+              }
+              return (a.orderNumber || 0) - (b.orderNumber || 0);
+            });
             
-            step.details.forEach(detail => {
+            sortedDetails.forEach((detail, sortedIndex) => {
                 // All tasks in Medical Certification, Initial Training Preparation, and Cadet Programs must be manually checked
                 const isMedicalOrInitialTrainingStep = step.title === 'Medical Certification' || step.title === 'Initial Training Preparation';
                 const isCadetProgramStep = step.category === 'Cadet Programs';
@@ -946,22 +963,32 @@ export default function RouteBuilder() {
                 const isManuallyOnly = isMedicalOrInitialTrainingStep || isCadetProgramStep || isPracticeTestTask || is250NMTask || isNight100NMTask || is150NM3PointsTask || isControlledAirportTask || 
                                        isDay100NMTask || isNight100NMTask2 || isSoloOrPICTask || is300NMTask || isNightVFRControlledTask || isPracticalTest2MonthsTask || isCertificateCheckRideTask;
                 
-                if (detail.id) {
-                  // For initial tasks, always start at 0% - ignore database checked status
-                  if (isInitialTask) {
-                    taskProgress[detail.id] = false;
-                    console.log('🔄 Initial task - starting at 0%:', detail.title);
-                  } else if (isManuallyOnly) {
-                    // For manually-only tasks, always start at false (unchecked)
-                    // They can only be checked by the user manually, not from database state
-                    taskProgress[detail.id] = false;
-                    console.log('🔒 Manually-only task - starting at 0%:', detail.title);
-                  } else if (!(detail.id in taskProgress)) {
-                    // For other tasks, use database state if available, otherwise false
-                    const dbChecked = databaseCheckedTasks.get(detail.id) ?? databaseCheckedTasks.get(detail.title);
-                    taskProgress[detail.id] = dbChecked !== undefined ? dbChecked : false;
-                  }
+              // Use the same key format as in render
+              // In render, we use step.stepId which equals step.id (the route step ID)
+              // So we use step.id here to match
+              const taskKey = detail.id || `${step.id}-${sortedIndex}-${detail.title}`;
+              
+              if (detail.id) {
+                // For initial tasks, load checked state from database
+                if (isInitialTask) {
+                  const dbChecked = databaseCheckedTasks.get(detail.id) ?? databaseCheckedTasks.get(detail.title);
+                  taskProgress[taskKey] = dbChecked === true ? true : false;
+                  console.log('🔄 Initial task - loaded from database:', detail.title, 'checked:', taskProgress[taskKey]);
+                } else if (isManuallyOnly) {
+                  // For manually-only tasks, load from database
+                  const dbChecked = databaseCheckedTasks.get(detail.id) ?? databaseCheckedTasks.get(detail.title);
+                  taskProgress[taskKey] = dbChecked === true ? true : false;
+                  console.log('🔒 Manually-only task - loaded from database:', detail.title, 'checked:', taskProgress[taskKey]);
+                } else if (!(taskKey in taskProgress)) {
+                  // For other tasks, use database state if available, otherwise false
+                  const dbChecked = databaseCheckedTasks.get(detail.id) ?? databaseCheckedTasks.get(detail.title);
+                  taskProgress[taskKey] = dbChecked !== undefined ? dbChecked : false;
                 }
+              } else {
+                // For tasks without IDs, check database by title
+                const dbChecked = databaseCheckedTasks.get(detail.title);
+                taskProgress[taskKey] = dbChecked === true ? true : false;
+              }
             });
 
             // Recalculate order number based on wizard step key or category
@@ -1107,7 +1134,13 @@ export default function RouteBuilder() {
 
   // Refresh task progress when flights change
   useEffect(() => {
-    if (!user || studentRoute.length === 0 || routeSteps.length === 0 || isManuallyUpdating) return;
+    if (!user || studentRoute.length === 0 || routeSteps.length === 0) return;
+    
+    // CRITICAL: Check both state and ref to catch any timing issues
+    if (isManuallyUpdating || isManuallyUpdatingRef.current) {
+      console.log('⏸️ Refresh blocked - manual update in progress (state:', isManuallyUpdating, 'ref:', isManuallyUpdatingRef.current, ')');
+      return;
+    }
     
     // Don't refresh if a practice test task was just manually updated (within last 5 seconds)
     const timeSinceLastUpdate = Date.now() - lastPracticeTestUpdate;
@@ -1118,8 +1151,9 @@ export default function RouteBuilder() {
 
     const refreshTaskProgress = async () => {
       // CRITICAL: Check flags at the very start before doing anything
-      if (isManuallyUpdating) {
-        console.log('⏸️ Refresh blocked - manual update in progress');
+      // Check both state and ref for maximum reliability
+      if (isManuallyUpdating || isManuallyUpdatingRef.current) {
+        console.log('⏸️ Refresh blocked in async function - manual update in progress (state:', isManuallyUpdating, 'ref:', isManuallyUpdatingRef.current, ')');
         return;
       }
       
@@ -1200,25 +1234,21 @@ export default function RouteBuilder() {
           })
           .map(s => s.stepId);
         
-        const nonInitialStepIds = studentRoute
-          .map(s => s.stepId)
-          .filter(id => !initialTaskStepIds.includes(id));
+        // Get all route step IDs (including initial tasks)
+        const allStepIds = studentRoute.map(s => s.stepId);
         
         const { data: routeDetails } = await supabase
           .from('route_step_details')
           .select('id, checked, route_step_id, title')
-          .in('route_step_id', nonInitialStepIds.length > 0 ? nonInitialStepIds : ['00000000-0000-0000-0000-000000000000']); // Use dummy ID if no non-initial steps
+          .in('route_step_id', allStepIds.length > 0 ? allStepIds : ['00000000-0000-0000-0000-000000000000']); // Use dummy ID if no steps
 
         // Create a map of manually checked tasks from database
         // Map by both ID and title to handle both cases
-        // Exclude initial tasks - they should always be false
+        // Include initial tasks - they can be manually checked by the user
         const manuallyCheckedTasks = new Map<string, boolean>();
         if (routeDetails) {
           routeDetails.forEach(detail => {
-            // Skip initial tasks - they should never be checked from database
-            if (initialTaskStepIds.includes(detail.route_step_id)) {
-              return;
-            }
+            // Include initial tasks - they can be manually checked
             
             // CRITICAL: If user has manually unchecked "Obtain your Private Pilot Certificate",
             // override the database value to false - user's manual choice takes precedence
@@ -1248,17 +1278,53 @@ export default function RouteBuilder() {
             const fullStep = routeSteps.find(rs => rs.id === routeStep.stepId);
             if (!fullStep) return routeStep;
 
-            // For initial tasks, always keep at 0% - never calculate progress or read from database
+            // For initial tasks, load checked state from database (they can be manually checked)
             const isInitialTask = fullStep.title === 'Medical Certification' || fullStep.title === 'Initial Training Preparation';
             if (isInitialTask) {
-              // Reset all initial task progress to false
-              const resetProgress: Record<string, boolean> = {};
-              fullStep.details.forEach((detail: any) => {
-                if (detail.id) {
-                  resetProgress[detail.id] = false;
+              // CRITICAL: Preserve existing taskProgress and only update from database
+              // Don't replace everything - merge with existing state
+              const existingProgress = { ...routeStep.taskProgress };
+              
+              // Sort details the same way as in render to get correct indices
+              const sortedDetails = [...fullStep.details].sort((a, b) => {
+                if (a.taskType !== b.taskType) {
+                  if (a.taskType === 'flight') return -1;
+                  if (b.taskType === 'flight') return 1;
+                  return 0;
+                }
+                return (a.orderNumber || 0) - (b.orderNumber || 0);
+              });
+              
+              // Update only tasks that are in the database AND not manually updated
+              sortedDetails.forEach((detail: any, sortedIndex: number) => {
+                // Use the same unique key format as in the render (sorted index)
+                const taskKey = detail.id || `${routeStep.stepId}-${sortedIndex}-${detail.title}`;
+                // Use routeStep.id (the student route entry ID) to match what we use in toggleTaskCompletion
+                const taskUpdateKey = `${routeStep.id}-${taskKey}`;
+                
+                // CRITICAL: If this task was manually updated, NEVER overwrite it
+                if (manuallyUpdatedTasksRef.current.has(taskUpdateKey)) {
+                  console.log('🔒 Preserving manually updated task:', taskKey, 'current value:', existingProgress[taskKey]);
+                  return; // Skip this task - preserve its current state
+                }
+                
+                // Check database for manually checked state - try ID first, then title
+                const dbChecked = detail.id 
+                  ? manuallyCheckedTasks.get(detail.id) 
+                  : manuallyCheckedTasks.get(detail.title);
+                
+                // Only update if we have a database value, otherwise preserve existing state
+                if (dbChecked !== undefined) {
+                  existingProgress[taskKey] = dbChecked === true;
+                } else {
+                  // If not in database, preserve existing state (don't overwrite to false)
+                  if (existingProgress[taskKey] === undefined) {
+                    existingProgress[taskKey] = false;
+                  }
                 }
               });
-              return { ...routeStep, taskProgress: resetProgress };
+              
+              return { ...routeStep, taskProgress: existingProgress };
             }
 
             // Calculate progress from flights (with aircraft data for complex/turbine/TAA)
@@ -1300,7 +1366,9 @@ export default function RouteBuilder() {
                 
                     if (isMedicalOrInitialTrainingStep || isPracticeTestTask || is250NMTask || isNight100NMTask || is150NM3PointsTask || isControlledAirportTask || 
                         isDay100NMTask || isNight100NMTask2 || isSoloOrPICTask || is300NMTask || isNightVFRControlledTask || isPracticalTest2MonthsTask || isCertificateCheckRideTask) {
-                      const taskKey = detail.id || detail.title;
+                      // Use the same unique key format as in the render
+                      const detailIndex = fullStep.details.findIndex((d: any) => d.id === detail.id || d.title === detail.title);
+                      const taskKey = detail.id || `${routeStep.stepId}-${detailIndex}-${detail.title}`;
                       // For manually-only tasks, always use database state if explicitly checked by user
                       // Otherwise, default to false (unchecked)
                       const isManuallyChecked = detail.id 
@@ -1441,7 +1509,9 @@ export default function RouteBuilder() {
                 
                 if (isMedicalOrInitialTrainingStep || isPracticeTestTask || is250NMTask || isNight100NMTask || is150NM3PointsTask || isControlledAirportTask || 
                     isDay100NMTask || isNight100NMTask2 || isSoloOrPICTask || is300NMTask || isNightVFRControlledTask || isPracticalTest2MonthsTask || isCertificateCheckRideTask) {
-                        const taskKey = detail.id || detail.title;
+                        // Use the same unique key format as in the render
+                        const detailIndex = fullStep.details.findIndex((d: any) => d.id === detail.id || d.title === detail.title);
+                        const taskKey = detail.id || `${step.stepId}-${detailIndex}-${detail.title}`;
                         
                         // CRITICAL: If user has manually unchecked "Obtain your Private Pilot Certificate", 
                         // override database state and preserve unchecked state
@@ -1482,8 +1552,16 @@ export default function RouteBuilder() {
     };
 
     // Refresh on mount and periodically (every 30 seconds)
-    refreshTaskProgress();
-    const interval = setInterval(refreshTaskProgress, 30000);
+    // But only if not manually updating
+    if (!isManuallyUpdating && !isManuallyUpdatingRef.current) {
+      refreshTaskProgress();
+    }
+    
+    const interval = setInterval(() => {
+      if (!isManuallyUpdating && !isManuallyUpdatingRef.current) {
+        refreshTaskProgress();
+      }
+    }, 30000);
 
     return () => clearInterval(interval);
   }, [user, studentRoute.length, routeSteps.length, isManuallyUpdating]);
@@ -1869,10 +1947,10 @@ export default function RouteBuilder() {
     // Initialize all tasks as unchecked for new routes
     // Tasks should only be checked when the user explicitly marks them as complete
     const taskProgress: Record<string, boolean> = {};
-    step.details.forEach(detail => {
-      if (detail.id) {
-        taskProgress[detail.id] = false; // Always start unchecked for new routes
-      }
+    step.details.forEach((detail, detailIndex) => {
+      // Use the same unique key format as in the render
+      const taskKey = detail.id || `${step.id}-${detailIndex}-${detail.title}`;
+      taskProgress[taskKey] = false; // Always start unchecked for new routes
     });
 
     // Calculate order number based on wizard step position
@@ -2043,124 +2121,7 @@ export default function RouteBuilder() {
     ));
   };
 
-  const toggleTaskCompletion = async (stepId: string, taskId: string, checked: boolean) => {
-    console.log('🎯 toggleTaskCompletion called:', { stepId, taskId, checked });
-    
-    // Set flag to prevent auto-refresh from overwriting manual selection
-    setIsManuallyUpdating(true);
-    
-    // Find the student step and route step first
-    const studentStep = studentRoute.find(ss => ss.id === stepId);
-    if (!studentStep) {
-      console.error("Student step not found:", stepId);
-      setIsManuallyUpdating(false);
-      return;
-    }
-
-    const routeStep = routeSteps.find(rs => rs.id === studentStep.stepId);
-    
-    // If user is manually unchecking "Obtain your Private Pilot Certificate", mark it IMMEDIATELY
-    // This must happen BEFORE any state updates to prevent race conditions
-    if (routeStep) {
-      const detail = routeStep.details.find((d: any) => (d.id || d.title) === taskId);
-      if (detail && detail.title === 'Obtain your Private Pilot Certificate') {
-        if (!checked) {
-          // Mark that user has manually unchecked it - this will prevent the useEffect from ever re-checking it
-          manuallyUncheckedPrivatePilotRef.current = true;
-          hasCheckedPrivatePilotTaskRef.current = false; // Reset this so we don't think it was auto-checked
-          console.log('🔒 User manually unchecked Private Pilot Certificate - will not auto-check again');
-        } else {
-          // If user manually checks it back, reset the flag so it can be auto-checked again if needed
-          manuallyUncheckedPrivatePilotRef.current = false;
-          console.log('✅ User manually checked Private Pilot Certificate - auto-check enabled again');
-        }
-      }
-    }
-    if (!routeStep) {
-      console.error("Route step not found:", studentStep.stepId);
-      setIsManuallyUpdating(false);
-      return;
-    }
-    
-    // Find the detail by ID or title - handle both cases
-    const detailIndex = routeStep.details.findIndex((d: any) => {
-      // Try to match by ID first, then by title
-      if (d.id && d.id === taskId) return true;
-      if (d.title === taskId) return true;
-      return false;
-    });
-    
-    if (detailIndex === -1) {
-      console.error("Task detail not found:", taskId, "in step:", routeStep.title);
-      console.log("Available details:", routeStep.details.map((d: any) => ({ id: d.id, title: d.title })));
-      setIsManuallyUpdating(false);
-      return;
-    }
-
-    const detail = routeStep.details[detailIndex];
-    
-    // Update local state immediately for responsive UI
-    setStudentRoute(prev => prev.map(step => 
-      step.id === stepId 
-        ? { 
-            ...step, 
-            taskProgress: { ...step.taskProgress, [taskId]: checked }
-          } 
-        : step
-    ));
-
-    try {
-      // If detail has no ID, we can't save to database, but we can still update local state
-      if (!detail?.id) {
-        console.warn("Detail has no ID, updating local state only:", detail);
-        // Local state is already updated, so we're done
-        setIsManuallyUpdating(false);
-        return;
-      }
-
-      // Update in database using the detail's ID
-      // This marks the task as manually checked/unchecked
-      await updateStepDetailChecked(routeStep.id, detailIndex, checked);
-      
-      console.log('✅ Task completion updated in database:', {
-        stepId: routeStep.id,
-        taskId: detail.id,
-        checked,
-        taskTitle: detail.title
-      });
-      
-      // For "practice test within 60 days" tasks, keep the flag set longer
-      // to ensure refresh doesn't overwrite the manual check
-      const detailTitle = detail.title?.toLowerCase() || '';
-      const isPracticeTestTask = detailTitle.includes('practice test') && detailTitle.includes('60 days');
-      
-      if (isPracticeTestTask) {
-        // Track when this task was manually updated
-        setLastPracticeTestUpdate(Date.now());
-        console.log('📝 Practice test task manually updated, blocking refresh for 5 seconds');
-      }
-      
-      const delay = isPracticeTestTask ? 5000 : 2000; // Longer delay for practice test tasks
-      
-      // Wait to ensure database update is complete before allowing refresh
-      setTimeout(() => {
-        setIsManuallyUpdating(false);
-      }, delay);
-    } catch (error) {
-      console.error("Failed to update task status:", error);
-      toast.error("Failed to save task status");
-      // Revert the local state change on error
-      setStudentRoute(prev => prev.map(step => 
-        step.id === stepId 
-          ? { 
-              ...step, 
-              taskProgress: { ...step.taskProgress, [taskId]: !checked }
-            } 
-          : step
-      ));
-      setIsManuallyUpdating(false);
-    }
-  };
+  // REMOVED: All checkbox/checking logic has been removed
 
   const updateTaskDetails = async (stepId: string, taskId: string, updates: { 
     flightHours?: number; 
@@ -2224,9 +2185,10 @@ const formatHtmlContent = (html: string) => {
   const getStepProgress = (step: any, fullStep: any) => {
     if (!fullStep || !fullStep.details || fullStep.details.length === 0) return 0;
     
-    const completedTasks = fullStep.details.filter((detail: any) => 
-      step.taskProgress[detail.id || detail.title] || false
-    ).length;
+    const completedTasks = fullStep.details.filter((detail: any, detailIndex: number) => {
+      const taskKey = detail.id || `${step.stepId}-${detailIndex}-${detail.title}`;
+      return step.taskProgress[taskKey] || false;
+    }).length;
     
     return (completedTasks / fullStep.details.length) * 100;
   };
@@ -2312,9 +2274,10 @@ const formatHtmlContent = (html: string) => {
             const completedTasks = studentRoute.reduce((sum, step) => {
               const fullStep = routeSteps.find(rs => rs.id === step.stepId);
               if (!fullStep) return sum;
-              return sum + fullStep.details.filter((detail: any) => 
-                step.taskProgress[detail.id || detail.title] || false
-              ).length;
+              return sum + fullStep.details.filter((detail: any, detailIndex: number) => {
+                const taskKey = detail.id || `${step.stepId}-${detailIndex}-${detail.title}`;
+                return step.taskProgress[taskKey] || false;
+              }).length;
             }, 0);
             const overallProgress = totalTasks > 0 ? (completedTasks / totalTasks) * 100 : 0;
             
@@ -2346,9 +2309,10 @@ const formatHtmlContent = (html: string) => {
 
                 const isExpanded = expandedSteps.has(step.id);
                 const stepProgress = getStepProgress(step, fullStep);
-              const completedCount = fullStep.details.filter((detail: any) => 
-                step.taskProgress[detail.id || detail.title] || false
-              ).length;
+              const completedCount = fullStep.details.filter((detail: any, detailIndex: number) => {
+                const taskKey = detail.id || `${step.stepId}-${detailIndex}-${detail.title}`;
+                return step.taskProgress[taskKey] || false;
+              }).length;
               const totalTasks = fullStep.details.length;
 
                 return (
@@ -2467,56 +2431,65 @@ const formatHtmlContent = (html: string) => {
                                   return (a.orderNumber || 0) - (b.orderNumber || 0);
                                 })
                                 .map((detail, detailIndex) => {
-                                // Use a consistent key for taskProgress lookup
-                                const taskKey = detail.id || detail.title;
-                                
-                                // Get completion status from taskProgress - respect manual user changes
-                                const isCompleted = step.taskProgress[taskKey] || false;
-                                
                                  // Check if this step should show dropdowns (only Medical Certification and Initial Training Preparation)
                                  const shouldShowDropdown = step.title === 'Medical Certification' || step.title === 'Initial Training Preparation';
                                  const hasDescription = detail.description && detail.description.trim() && detail.description.trim() !== '<p></p>' && detail.description.trim() !== '<p><br></p>';
                                  
-                                 // All tasks in Medical Certification, Initial Training Preparation, and Cadet Programs are manually-only
-                                 const isMedicalOrInitialTrainingStep = step.title === 'Medical Certification' || step.title === 'Initial Training Preparation';
-                                 const isCadetProgramStep = step.category === 'Cadet Programs';
-                                 
                                  return (
                                   <div 
                                     key={detail.id || `task-${detailIndex}`} 
-                                    className={`rounded-lg border transition-all ${
-                                      isCompleted 
-                                        ? 'bg-muted/40 border-muted/60' 
-                                        : 'bg-card border-border/60 hover:border-primary/30 hover:bg-muted/20'
-                                    }`}
+                                    className="rounded-lg border transition-all bg-card border-border/60 hover:border-primary/30 hover:bg-muted/20"
                                   >
                                     {shouldShowDropdown && hasDescription ? (
                                       <Collapsible>
                                         <div className="flex items-center gap-3 p-3">
                                           <Checkbox
                                             id={`task-${detail.id || detailIndex}`}
-                                            checked={isCompleted}
-                                            onCheckedChange={(checked) => {
-                                              console.log('Checkbox clicked:', { stepId: step.id, taskKey, checked, detail });
-                                              toggleTaskCompletion(step.id, taskKey, !!checked);
+                                            checked={step.taskProgress[detail.id || `${step.stepId}-${detailIndex}-${detail.title}`] || false}
+                                            onCheckedChange={async (checked) => {
+                                              const taskKey = detail.id || `${step.stepId}-${detailIndex}-${detail.title}`;
+                                              
+                                              // Update local state immediately
+                                              setStudentRoute(prev => prev.map(s => 
+                                                s.id === step.id 
+                                                  ? { ...s, taskProgress: { ...s.taskProgress, [taskKey]: !!checked } }
+                                                  : s
+                                              ));
+                                              
+                                              // Save to database if detail has an ID
+                                              if (detail.id) {
+                                                const routeStep = routeSteps.find(rs => rs.id === step.stepId);
+                                                if (routeStep) {
+                                                  // Find the detail index in the route step's details array
+                                                  const detailIndexInRoute = routeStep.details.findIndex((d: any) => d.id === detail.id);
+                                                  if (detailIndexInRoute >= 0) {
+                                                    try {
+                                                      await updateStepDetailChecked(routeStep.id, detailIndexInRoute, !!checked);
+                                                    } catch (error) {
+                                                      console.error('Failed to save checkbox state:', error);
+                                                      toast.error('Failed to save task status');
+                                                      // Revert local state on error
+                                                      setStudentRoute(prev => prev.map(s => 
+                                                        s.id === step.id 
+                                                          ? { ...s, taskProgress: { ...s.taskProgress, [taskKey]: !checked } }
+                                                          : s
+                                                      ));
+                                                    }
+                                                  }
+                                                }
+                                              }
                                             }}
                                             className="shrink-0"
                                           />
-                                          
-                                          <label 
-                                            htmlFor={`task-${detail.id || detailIndex}`}
-                                            className={`flex-1 cursor-pointer text-sm ${
-                                              isCompleted 
-                                                ? 'line-through text-muted-foreground' 
-                                                : 'text-foreground font-medium'
-                                            }`}
-                                          >
+                                          <div className="flex-1 text-sm text-foreground font-medium">
                                             {detail.title}
-                                          </label>
+                                          </div>
                                           
                                           {/* Pie chart for tasks that require hours */}
                                           {(() => {
                                             const detailTitle = detail.title?.toLowerCase() || '';
+                                            const isMedicalOrInitialTrainingStep = step.title === 'Medical Certification' || step.title === 'Initial Training Preparation';
+                                            const isCadetProgramStep = step.category === 'Cadet Programs';
                                             const isPracticeTestTask = detailTitle.includes('practice test') && detailTitle.includes('60 days');
                                             const is250NMTask = detailTitle.includes('250 nm') && detailTitle.includes('cross country') && 
                                                                 (detailTitle.includes('instructor') || detailTitle.includes('simulated instrument')) &&
@@ -2570,12 +2543,6 @@ const formatHtmlContent = (html: string) => {
                                               </Badge>
                                             )}
                                             
-                                            {isCompleted && (
-                                              <Badge variant="default" className="text-xs bg-green-500/90">
-                                                <Check className="h-3 w-3 mr-1" />
-                                                Done
-                                              </Badge>
-                                            )}
                                             
                                             <CollapsibleTrigger asChild>
                                               <Button
@@ -2601,29 +2568,52 @@ const formatHtmlContent = (html: string) => {
                                       <div className="flex items-center gap-3 p-3">
                                         <Checkbox
                                           id={`task-${detail.id || detailIndex}`}
-                                          checked={isCompleted}
-                                          onCheckedChange={(checked) => {
-                                            console.log('Checkbox clicked:', { stepId: step.id, taskKey, checked, detail });
-                                            toggleTaskCompletion(step.id, taskKey, !!checked);
+                                          checked={step.taskProgress[detail.id || `${step.stepId}-${detailIndex}-${detail.title}`] || false}
+                                          onCheckedChange={async (checked) => {
+                                            const taskKey = detail.id || `${step.stepId}-${detailIndex}-${detail.title}`;
+                                            
+                                            // Update local state immediately
+                                            setStudentRoute(prev => prev.map(s => 
+                                              s.id === step.id 
+                                                ? { ...s, taskProgress: { ...s.taskProgress, [taskKey]: !!checked } }
+                                                : s
+                                            ));
+                                            
+                                            // Save to database if detail has an ID
+                                            if (detail.id) {
+                                              const routeStep = routeSteps.find(rs => rs.id === step.stepId);
+                                              if (routeStep) {
+                                                // Find the detail index in the route step's details array
+                                                const detailIndexInRoute = routeStep.details.findIndex((d: any) => d.id === detail.id);
+                                                if (detailIndexInRoute >= 0) {
+                                                  try {
+                                                    await updateStepDetailChecked(routeStep.id, detailIndexInRoute, !!checked);
+                                                  } catch (error) {
+                                                    console.error('Failed to save checkbox state:', error);
+                                                    toast.error('Failed to save task status');
+                                                    // Revert local state on error
+                                                    setStudentRoute(prev => prev.map(s => 
+                                                      s.id === step.id 
+                                                        ? { ...s, taskProgress: { ...s.taskProgress, [taskKey]: !checked } }
+                                                        : s
+                                                    ));
+                                                  }
+                                                }
+                                              }
+                                            }
                                           }}
                                           className="shrink-0"
                                         />
-                                        
-                                        <label 
-                                          htmlFor={`task-${detail.id || detailIndex}`}
-                                          className={`flex-1 cursor-pointer text-sm ${
-                                            isCompleted 
-                                              ? 'line-through text-muted-foreground' 
-                                              : 'text-foreground font-medium'
-                                          }`}
-                                        >
+                                        <div className="flex-1 text-sm text-foreground font-medium">
                                           {detail.title}
-                                        </label>
+                                        </div>
                                         
                                         {/* Pie chart for tasks that require hours */}
                                         {/* Exclude pie chart for manually-only tasks - these cannot be auto-checked */}
                                         {(() => {
                                           const detailTitle = detail.title?.toLowerCase() || '';
+                                          const isMedicalOrInitialTrainingStep = step.title === 'Medical Certification' || step.title === 'Initial Training Preparation';
+                                          const isCadetProgramStep = step.category === 'Cadet Programs';
                                           const isPracticeTestTask = detailTitle.includes('practice test') && detailTitle.includes('60 days');
                                           const is250NMTask = detailTitle.includes('250 nm') && detailTitle.includes('cross country') && 
                                                               (detailTitle.includes('instructor') || detailTitle.includes('simulated instrument')) &&
@@ -2677,12 +2667,6 @@ const formatHtmlContent = (html: string) => {
                                             </Badge>
                                           )}
                                           
-                                          {isCompleted && (
-                                            <Badge variant="default" className="text-xs bg-green-500/90">
-                                              <Check className="h-3 w-3 mr-1" />
-                                              Done
-                                            </Badge>
-                                          )}
                                         </div>
                                       </div>
                                     )}

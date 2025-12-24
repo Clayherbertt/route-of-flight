@@ -769,33 +769,6 @@ const Logbook = () => {
 
               {/* Quick Stats */}
               <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-                <div className="rounded-lg border bg-card p-4 shadow-sm">
-                  <div className="flex items-center justify-between">
-                    <div>
-                      <p className="text-xs text-muted-foreground mb-1">Total Flights</p>
-                      <p className="text-2xl font-bold text-foreground">{flights.length}</p>
-                    </div>
-                    <Plane className="h-8 w-8 text-muted-foreground/40" />
-                  </div>
-                </div>
-                <div className="rounded-lg border bg-card p-4 shadow-sm">
-                  <div className="flex items-center justify-between">
-                    <div>
-                      <p className="text-xs text-muted-foreground mb-1">Last 30 Days</p>
-                      <p className="text-2xl font-bold text-foreground">{recentHours.toFixed(1)} hrs</p>
-                    </div>
-                    <Clock className="h-8 w-8 text-muted-foreground/40" />
-                  </div>
-                </div>
-                <div className="rounded-lg border bg-card p-4 shadow-sm">
-                  <div className="flex items-center justify-between">
-                    <div>
-                      <p className="text-xs text-muted-foreground mb-1">Total Hours</p>
-                      <p className="text-2xl font-bold text-foreground">{formatHours(totalHours)}</p>
-                    </div>
-                    <Clock className="h-8 w-8 text-muted-foreground/40" />
-                  </div>
-                </div>
                 {lastFlight && (
                   <div className="rounded-lg border bg-card p-4 shadow-sm">
                     <div>
@@ -809,10 +782,28 @@ const Logbook = () => {
                     </div>
                   </div>
                 )}
+                <div className="rounded-lg border bg-card p-4 shadow-sm">
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <p className="text-xs text-muted-foreground mb-1">Total Hours</p>
+                      <p className="text-2xl font-bold text-foreground">{formatHours(totalHours)}</p>
+                    </div>
+                    <Clock className="h-8 w-8 text-muted-foreground/40" />
+                  </div>
+                </div>
+                <div className="rounded-lg border bg-card p-4 shadow-sm">
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <p className="text-xs text-muted-foreground mb-1">Last 30 Days</p>
+                      <p className="text-2xl font-bold text-foreground">{recentHours.toFixed(1)} hrs</p>
+                    </div>
+                    <Clock className="h-8 w-8 text-muted-foreground/40" />
+                  </div>
+                </div>
               </div>
               </div>
 
-              <div className="rounded-3xl border border-white/50 bg-white/45 shadow-2xl shadow-aviation-navy/20 backdrop-blur">
+              <div className="rounded-3xl border border-white/50 bg-white/45 shadow-2xl shadow-aviation-navy/20 backdrop-blur overflow-hidden">
                 <div className="flex flex-wrap items-center justify-between gap-4 border-b border-white/40 px-6 py-5">
                   <div>
                     <p className="text-xs uppercase tracking-[0.3em] text-muted-foreground">Master Flight Log</p>
@@ -822,7 +813,7 @@ const Logbook = () => {
                     {flights.length} flights logged
                   </p>
                 </div>
-                <div className="overflow-x-auto -mx-4 sm:-mx-6 px-4 sm:px-6">
+                <div className="overflow-x-auto px-6">
                   <div className="flex min-w-max gap-3 py-4">
                     {masterTotals.map((item) => (
                       <div
@@ -843,10 +834,10 @@ const Logbook = () => {
           </div>
         </section>
 
-        <section className="relative -mt-10 max-w-full overflow-x-hidden">
+        <section className="relative -mt-10 max-w-full overflow-x-visible md:overflow-x-hidden">
           <div className="container mx-auto px-4 sm:px-6 pt-12 space-y-8 max-w-full">
             {/* Flight Hours Chart */}
-            <div className="rounded-3xl border border-border/60 bg-card/95 shadow-xl shadow-aviation-navy/15 backdrop-blur max-w-full overflow-hidden">
+            <div className="rounded-3xl border border-border/60 bg-card/95 shadow-xl shadow-aviation-navy/15 backdrop-blur max-w-full overflow-visible md:overflow-hidden">
               <div className="flex flex-wrap items-center justify-between gap-4 border-b border-border/60 px-4 sm:px-6 py-5">
                 <div>
                   <p className="flex items-center gap-2 text-lg font-semibold text-foreground">
@@ -882,7 +873,80 @@ const Logbook = () => {
                 </FeatureGate>
               </div>
               <div className="p-4 sm:p-6 w-full">
-                <div className="w-full h-[250px] sm:h-[300px] md:h-[350px]">
+                {/* Mobile: Horizontal scrollable container */}
+                <div 
+                  className="md:hidden w-full" 
+                  style={{ 
+                    overflowX: 'auto',
+                    overflowY: 'hidden',
+                    WebkitOverflowScrolling: 'touch',
+                    scrollbarWidth: 'thin',
+                    msOverflowStyle: '-ms-autohiding-scrollbar',
+                    touchAction: 'pan-x'
+                  }}
+                >
+                  <div style={{ minWidth: '900px', height: '250px', display: 'inline-block' }}>
+                    <ResponsiveContainer width={900} height={250}>
+                      <LineChart 
+                        data={monthlyHoursData || []}
+                        margin={{ top: 5, right: 10, left: 0, bottom: 50 }}
+                        width={900}
+                        height={250}
+                      >
+                      <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" opacity={0.3} />
+                      <XAxis 
+                        dataKey="month"
+                        stroke="hsl(var(--muted-foreground))"
+                        style={{ fontSize: '10px' }}
+                        tick={{ fill: 'hsl(var(--muted-foreground))', fontSize: '10px' }}
+                        angle={-45}
+                        textAnchor="end"
+                        height={60}
+                        interval={0}
+                      />
+                      <YAxis 
+                        domain={[0, 150]}
+                        stroke="hsl(var(--muted-foreground))"
+                        style={{ fontSize: '11px' }}
+                        tick={{ fill: 'hsl(var(--muted-foreground))', fontSize: '11px' }}
+                        width={40}
+                        label={{ value: 'Hours', angle: -90, position: 'insideLeft', style: { textAnchor: 'middle', fill: 'hsl(var(--muted-foreground))', fontSize: '11px' } }}
+                      />
+                      <Tooltip 
+                        content={({ active, payload }) => {
+                          if (active && payload && payload.length) {
+                            return (
+                              <div style={{
+                                backgroundColor: 'hsl(var(--card))',
+                                border: '1px solid hsl(var(--border))',
+                                borderRadius: '8px',
+                                padding: '8px 12px',
+                                boxShadow: 'none'
+                              }}>
+                                <p style={{ fontWeight: 600, marginBottom: '4px' }}>{payload[0].payload.month}</p>
+                                <p style={{ color: 'hsl(var(--muted-foreground))' }}>
+                                  Hours: {payload[0].value?.toFixed(1)} hrs
+                                </p>
+                              </div>
+                            );
+                          }
+                          return null;
+                        }}
+                      />
+                      <Line 
+                        type="monotone" 
+                        dataKey="hours" 
+                        stroke="hsl(var(--primary))" 
+                        strokeWidth={2}
+                        dot={{ fill: 'hsl(var(--primary))', r: 4 }}
+                        activeDot={{ r: 6, fill: 'hsl(var(--primary))' }}
+                      />
+                      </LineChart>
+                    </ResponsiveContainer>
+                  </div>
+                </div>
+                {/* Desktop: Normal responsive container */}
+                <div className="hidden md:block w-full h-[300px] lg:h-[350px]">
                   <ResponsiveContainer width="100%" height="100%">
                     <LineChart 
                       data={monthlyHoursData || []}
