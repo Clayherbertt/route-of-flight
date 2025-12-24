@@ -2399,19 +2399,6 @@ const formatHtmlContent = (html: string) => {
                       {/* Expandable Content */}
                         {isExpanded && (
                         <div className="border-t border-border/60 bg-muted/20">
-                          {/* Overview Section */}
-                            {fullStep.description && fullStep.description.trim() && (
-                            <div className="p-6 border-b border-border/60">
-                              <div className="flex items-center gap-2 mb-3">
-                                <BookOpen className="h-4 w-4 text-primary" />
-                                <h4 className="font-semibold text-base">Overview</h4>
-                              </div>
-                              <div className="prose prose-sm max-w-none text-muted-foreground">
-                                {formatHtmlContent(fullStep.description)}
-                              </div>
-                            </div>
-                            )}
-                            
                           {/* Tasks Section */}
                           <div className="p-6">
                             <div className="flex items-center gap-2 mb-4">
@@ -2524,25 +2511,11 @@ const formatHtmlContent = (html: string) => {
                                           })()}
                                           
                                           <div className="flex items-center gap-2 shrink-0">
-                                            {detail.taskType && step.category !== 'Cadet Programs' && step.category !== 'Initial Tasks' && (
-                                              <Badge 
-                                                variant={detail.taskType === 'flight' ? 'default' : 'secondary'}
-                                                className="text-xs"
-                                              >
-                                                {detail.taskType === 'flight' ? (
-                                                  <><Plane className="h-3 w-3 mr-1" />Flight</>
-                                                ) : (
-                                                  <><BookOpen className="h-3 w-3 mr-1" />Ground</>
-                                                )}
-                                              </Badge>
-                                            )}
-                                            
                                             {detail.mandatory && (
                                               <Badge variant="destructive" className="text-xs">
                                                 Required
                                               </Badge>
                                             )}
-                                            
                                             
                                             <CollapsibleTrigger asChild>
                                               <Button
@@ -2648,25 +2621,11 @@ const formatHtmlContent = (html: string) => {
                                         })()}
                                         
                                         <div className="flex items-center gap-2 shrink-0">
-                                          {detail.taskType && step.category !== 'Cadet Programs' && step.category !== 'Initial Tasks' && (
-                                            <Badge 
-                                              variant={detail.taskType === 'flight' ? 'default' : 'secondary'}
-                                              className="text-xs"
-                                            >
-                                              {detail.taskType === 'flight' ? (
-                                                <><Plane className="h-3 w-3 mr-1" />Flight</>
-                                              ) : (
-                                                <><BookOpen className="h-3 w-3 mr-1" />Ground</>
-                                              )}
-                                            </Badge>
-                                          )}
-                                          
                                           {detail.mandatory && (
                                             <Badge variant="destructive" className="text-xs">
                                               Required
                                             </Badge>
                                           )}
-                                          
                                         </div>
                                       </div>
                                     )}

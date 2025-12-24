@@ -800,109 +800,91 @@ const Logbook = () => {
 
           <div className="relative container mx-auto px-4 sm:px-6 py-8 lg:py-12 max-w-full">
             {/* Header Section */}
-            <div className="mb-8">
-              <div className="flex flex-col md:flex-row md:items-start md:justify-between gap-4 md:gap-6 mb-6">
-                <div className="flex-1">
-                  <h1 className="text-3xl md:text-4xl font-bold text-foreground mb-2">
-                    {user?.user_metadata?.display_name || user?.user_metadata?.full_name || user?.email?.split('@')[0] || 'Your'}'s Logbook
-                  </h1>
-                  <p className="text-muted-foreground text-sm md:text-base">
-                    Manage your flight records and track your aviation experience
-                  </p>
-                </div>
-                <div className="flex flex-wrap gap-2">
+            <div className="mb-6 md:mb-8">
+              <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+                <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold text-foreground">
+                  {(() => {
+                    const displayName = user?.user_metadata?.display_name;
+                    const fullName = user?.user_metadata?.full_name;
+                    const email = user?.email?.split('@')[0];
+                    
+                    // Get first name from display_name or full_name
+                    if (displayName) {
+                      return displayName.split(' ')[0];
+                    }
+                    if (fullName) {
+                      return fullName.split(' ')[0];
+                    }
+                    if (email) {
+                      return email;
+                    }
+                    return 'Your';
+                  })()}'s Logbook
+                </h1>
+                <div className="flex gap-2">
                   <Button 
-                    size="default" 
+                    size="sm" 
                     onClick={() => setShowAddFlightDialog(true)}
-                    className="shadow-sm"
                   >
                     <Plus className="mr-2 h-4 w-4" />
-                  Add Flight
-                </Button>
-                <Button
-                    size="default"
-                  variant="outline"
-                  onClick={() => setShowImportDialog(true)}
-                    className="shadow-sm"
-                >
+                    Add Flight
+                  </Button>
+                  <Button
+                    size="sm"
+                    variant="outline"
+                    onClick={() => setShowImportDialog(true)}
+                  >
                     <Upload className="mr-2 h-4 w-4" />
-                  Import CSV
-                </Button>
-                </div>
-              </div>
-
-              {/* Quick Stats */}
-              <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-                {lastFlight && (
-                  <div className="rounded-lg border bg-card p-4 shadow-sm">
-                    <div>
-                      <p className="text-xs text-muted-foreground mb-1">Last Flight</p>
-                      <p className="text-sm font-semibold text-foreground truncate">
-                        {lastFlight.departure_airport} → {lastFlight.arrival_airport}
-                      </p>
-                      <p className="text-xs text-muted-foreground mt-1">
-                        {lastFlight.date}
-                      </p>
-                    </div>
-                  </div>
-                )}
-                <div className="rounded-lg border bg-card p-4 shadow-sm">
-                  <div className="flex items-center justify-between">
-                    <div>
-                      <p className="text-xs text-muted-foreground mb-1">Total Hours</p>
-                      <p className="text-2xl font-bold text-foreground">{formatHours(totalHours)}</p>
-                    </div>
-                    <Clock className="h-8 w-8 text-muted-foreground/40" />
-                  </div>
-                </div>
-                <div className="rounded-lg border bg-card p-4 shadow-sm">
-                  <div className="flex items-center justify-between">
-                    <div>
-                      <p className="text-xs text-muted-foreground mb-1">Last 30 Days</p>
-                      <p className="text-2xl font-bold text-foreground">{recentHours.toFixed(1)} hrs</p>
-                    </div>
-                    <Clock className="h-8 w-8 text-muted-foreground/40" />
-                  </div>
-                </div>
-              </div>
-              </div>
-
-              <div className="rounded-3xl border border-white/50 bg-white/45 shadow-2xl shadow-aviation-navy/20 backdrop-blur overflow-hidden">
-                <div className="flex flex-wrap items-center justify-between gap-4 border-b border-white/40 px-6 py-5">
-                  <div>
-                    <p className="text-xs uppercase tracking-[0.3em] text-muted-foreground">Master Flight Log</p>
-                    <p className="text-sm text-muted-foreground">High-level totals across your entire logbook</p>
-                  </div>
-                  <p className="text-sm font-medium text-foreground/80">
-                    {flights.length} flights logged
-                  </p>
-                </div>
-                <div className="overflow-x-auto px-6">
-                  <div className="flex min-w-max gap-3 py-4">
-                    {masterTotals.map((item) => (
-                      <div
-                        key={item.key}
-                        className="min-w-[140px] sm:min-w-[160px] rounded-2xl border border-white/50 bg-background/70 px-4 py-3 shadow-sm"
-                      >
-                        <p className="text-[11px] uppercase tracking-[0.25em] text-muted-foreground">
-                          {item.label}
-                        </p>
-                        <p className="mt-2 text-lg font-semibold text-foreground">
-                          {formatMetric(item.value, item.type)}
-                        </p>
-                      </div>
-                    ))}
+                    Import CSV
+                  </Button>
                 </div>
               </div>
             </div>
+
           </div>
         </section>
 
-        <section className="relative -mt-10 max-w-full overflow-x-visible md:overflow-x-hidden">
-          <div className="container mx-auto px-4 sm:px-6 pt-12 space-y-8 max-w-full">
-            {/* Flight Hours Chart */}
-            <div className="rounded-3xl border border-border/60 bg-card/95 shadow-xl shadow-aviation-navy/15 backdrop-blur max-w-full overflow-visible md:overflow-hidden">
-              <div className="flex flex-wrap items-center justify-between gap-4 border-b border-border/60 px-4 sm:px-6 py-5">
+        {/* Combined Master Flight Log and Flight Hours Chart */}
+        <section className="relative w-full overflow-x-visible md:overflow-x-hidden mb-6 md:mb-8">
+          <div className="w-full">
+            <div className="rounded-3xl border border-white/50 bg-white/45 shadow-2xl shadow-aviation-navy/20 backdrop-blur overflow-hidden mx-4 sm:mx-6 md:mx-0">
+              {/* Master Flight Log Section */}
+              <div className="flex flex-wrap items-center justify-between gap-4 border-b border-white/40 px-6 py-5">
+                <div>
+                  <p className="text-xs uppercase tracking-[0.3em] text-muted-foreground">Master Flight Log</p>
+                  <p className="text-sm text-muted-foreground">High-level totals across your entire logbook</p>
+                </div>
+                <p className="text-sm font-medium text-foreground/80">
+                  {flights.length} flights logged
+                </p>
+              </div>
+              <div 
+                className="overflow-x-auto px-6"
+                style={{
+                  WebkitOverflowScrolling: 'touch',
+                  scrollbarWidth: 'thin',
+                  msOverflowStyle: '-ms-autohiding-scrollbar'
+                }}
+              >
+                <div className="flex min-w-max gap-3 py-4">
+                  {masterTotals.map((item) => (
+                    <div
+                      key={item.key}
+                      className="min-w-[140px] sm:min-w-[160px] rounded-2xl border border-white/50 bg-background/70 px-4 py-3 shadow-sm"
+                    >
+                      <p className="text-[11px] uppercase tracking-[0.25em] text-muted-foreground">
+                        {item.label}
+                      </p>
+                      <p className="mt-2 text-lg font-semibold text-foreground">
+                        {formatMetric(item.value, item.type)}
+                      </p>
+                    </div>
+                  ))}
+                </div>
+              </div>
+              
+              {/* Flight Hours Chart Section */}
+              <div className="flex flex-wrap items-center justify-between gap-4 border-t border-white/40 px-4 sm:px-6 py-5">
                 <div>
                   <p className="flex items-center gap-2 text-lg font-semibold text-foreground">
                     <Clock className="h-5 w-5 text-primary" />
@@ -936,7 +918,7 @@ const Logbook = () => {
                   </Button>
                 </FeatureGate>
               </div>
-              <div className="p-4 sm:p-6 w-full">
+              <div className="p-4 sm:p-6 w-full pb-6">
                 {/* Mobile: Horizontal scrollable container */}
                 <div 
                   className="md:hidden w-full" 
@@ -1069,7 +1051,11 @@ const Logbook = () => {
                 </div>
               </div>
             </div>
+          </div>
+        </section>
 
+        <section className="relative max-w-full overflow-x-visible md:overflow-x-hidden">
+          <div className="container mx-auto px-4 sm:px-6 pt-12 space-y-8 max-w-full">
             {/* Flight Map */}
             <FeatureGate feature={FeatureKey.LOGBOOK_WORLD_MAP_VIEW}>
               <FlightMap 

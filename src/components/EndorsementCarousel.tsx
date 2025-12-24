@@ -3,7 +3,7 @@ import { supabase } from '@/integrations/supabase/client'
 import { useAuth } from '@/contexts/AuthContext'
 import { Card, CardContent } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
-import { ChevronLeft, ChevronRight, Award, FileText, UserPlus, Send, Clock, CheckCircle, XCircle, AlertTriangle } from 'lucide-react'
+import { ChevronLeft, ChevronRight, Award, FileText, UserPlus, Send, Clock, CheckCircle, XCircle, AlertTriangle, Menu } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogFooter } from '@/components/ui/dialog'
 import { ScrollArea } from '@/components/ui/scroll-area'
@@ -13,6 +13,12 @@ import { Label } from '@/components/ui/label'
 import { Input } from '@/components/ui/input'
 import { Textarea } from '@/components/ui/textarea'
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion'
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu'
 import { useToast } from '@/hooks/use-toast'
 import { format } from 'date-fns'
 import { ENDORSEMENT_SECTIONS, organizeEndorsementsBySection, getSectionTitle } from '@/utils/endorsementSections'
@@ -1229,8 +1235,48 @@ export function EndorsementCarousel() {
     return (
       <>
         <div className="rounded-3xl border border-border/60 bg-card/95 shadow-xl shadow-aviation-navy/15 backdrop-blur">
-          <div className="px-6 py-6">
-            <div className="flex items-center justify-between mb-4">
+          <div className="px-4 sm:px-6 py-6">
+            {/* Mobile: Full-width header */}
+            <div className="md:hidden mb-4">
+              <div className="w-full mb-4">
+                <p className="flex items-center gap-2 text-lg font-semibold text-foreground">
+                  <Award className="h-5 w-5 text-primary" />
+                  My Endorsements
+                </p>
+                <p className="text-sm text-muted-foreground mt-1">Endorsements you've received from instructors</p>
+              </div>
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button variant="outline" size="sm" className="w-full">
+                    <Menu className="mr-2 h-4 w-4" />
+                    Menu
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="end" className="w-56">
+                  <DropdownMenuItem onClick={() => {
+                    setShowDisclaimerDialog(true)
+                  }}>
+                    <Send className="mr-2 h-4 w-4" />
+                    Issue Endorsements
+                  </DropdownMenuItem>
+                  <DropdownMenuItem onClick={() => setShowRequestDialog(true)}>
+                    <UserPlus className="mr-2 h-4 w-4" />
+                    Request Endorsements
+                  </DropdownMenuItem>
+                  <DropdownMenuItem onClick={() => setShowPendingDialog(true)}>
+                    <Clock className="mr-2 h-4 w-4" />
+                    Pending Endorsements
+                    {pendingEndorsements.length > 0 && (
+                      <Badge variant="destructive" className="ml-auto h-5 w-5 flex items-center justify-center p-0 text-xs">
+                        {pendingEndorsements.length}
+                      </Badge>
+                    )}
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
+            </div>
+            {/* Desktop: Original layout */}
+            <div className="hidden md:flex items-center justify-between mb-4">
               <div>
                 <p className="flex items-center gap-2 text-lg font-semibold text-foreground">
                   <Award className="h-5 w-5 text-primary" />
@@ -1293,8 +1339,48 @@ export function EndorsementCarousel() {
 
   return (
     <div className="rounded-3xl border border-border/60 bg-card/95 shadow-xl shadow-aviation-navy/15 backdrop-blur">
-      <div className="px-6 py-6">
-        <div className="flex items-center justify-between mb-4">
+      <div className="px-4 sm:px-6 py-6">
+        {/* Mobile: Full-width header */}
+        <div className="md:hidden mb-4">
+          <div className="w-full mb-4">
+            <p className="flex items-center gap-2 text-lg font-semibold text-foreground">
+              <Award className="h-5 w-5 text-primary" />
+              My Endorsements
+            </p>
+            <p className="text-sm text-muted-foreground mt-1">{endorsements.length} endorsement{endorsements.length !== 1 ? 's' : ''} received</p>
+          </div>
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button variant="outline" size="sm" className="w-full">
+                <Menu className="mr-2 h-4 w-4" />
+                Menu
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end" className="w-56">
+              <DropdownMenuItem onClick={() => {
+                setShowDisclaimerDialog(true)
+              }}>
+                <Send className="mr-2 h-4 w-4" />
+                Issue Endorsements
+              </DropdownMenuItem>
+              <DropdownMenuItem onClick={() => setShowRequestDialog(true)}>
+                <UserPlus className="mr-2 h-4 w-4" />
+                Request Endorsements
+              </DropdownMenuItem>
+              <DropdownMenuItem onClick={() => setShowPendingDialog(true)}>
+                <Clock className="mr-2 h-4 w-4" />
+                Pending Endorsements
+                {pendingEndorsements.length > 0 && (
+                  <Badge variant="destructive" className="ml-auto h-5 w-5 flex items-center justify-center p-0 text-xs">
+                    {pendingEndorsements.length}
+                  </Badge>
+                )}
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
+        </div>
+        {/* Desktop: Original layout */}
+        <div className="hidden md:flex items-center justify-between mb-4">
           <div>
             <p className="flex items-center gap-2 text-lg font-semibold text-foreground">
               <Award className="h-5 w-5 text-primary" />
