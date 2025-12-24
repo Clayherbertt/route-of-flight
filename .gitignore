@@ -22,3 +22,13 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+# Monorepo / mobile app ignores
+apps/**/node_modules/
+apps/**/.expo/
+apps/**/.turbo/
+apps/**/dist/
+apps/**/build/
+
+# iOS / Android build output
+apps/**/ios/build/
+apps/**/android/app/build/
